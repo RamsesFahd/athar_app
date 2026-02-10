@@ -8,6 +8,7 @@ import 'firebase_options.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart'; 
 import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
+import 'package:athar_app/features/auth/screens/signup_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,7 +46,8 @@ class AtharApp extends ConsumerWidget { // حولناه لـ ConsumerWidget لي
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       
-      home: const AtharHomePage(), 
+      //home: const AtharHomePage(), 
+      home: const SignUpScreen(),
     );
   }
 }
