@@ -3,12 +3,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-// استيراد ملفات المشروع (تأكدي من صحة المسارات في مجلدك)
+// استيرادات الفريق (تأكدي من صحة المسارات)
 import 'firebase_options.dart';
-import 'package:athar_app/generated/l10n/app_localizations.dart'; 
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
-import 'package:athar_app/features/auth/screens/signup_screen.dart';
+
+// استيراد نظام المسارات
+import 'package:athar_app/core/navigation/app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +20,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // تغليف التطبيق بـ ProviderScope لتفعيل Riverpod
   runApp(
     const ProviderScope(
       child: AtharApp(),
@@ -26,64 +27,33 @@ void main() async {
   );
 }
 
-class AtharApp extends ConsumerWidget { // حولناه لـ ConsumerWidget ليدعم Riverpod
+class AtharApp extends ConsumerWidget {
   const AtharApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // مراقبة الإعدادات (اللغة، الخط، التباين) من الـ Provider
+    
     final settings = ref.watch(settingsProvider);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Athar App',
-      
-      // ربط الثيم الديناميكي بالإعدادات
-      theme: AppTheme.getTheme(settings), 
-      
-      // إعدادات اللغة من الـ Provider بدلاً من الحالة المحلية
-      locale: settings.locale, 
+
+      // تطبيق ثيم الفريق بناءً على الإعدادات
+      theme: AppTheme.getTheme(settings),
+      locale: settings.locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
+
       
-      //home: const AtharHomePage(), 
-      home: const SignUpScreen(),
-    );
-  }
-}
+      
+      
+      initialRoute: AppRoutes.splash, 
 
-class AtharHomePage extends ConsumerWidget {
-  const AtharHomePage({super.key});
+      
+      routes: AppRoutes.getRoutes(),
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // الوصول للإعدادات والمتحكم بها
-    final settings = ref.watch(settingsProvider);
-    final settingsNotifier = ref.read(settingsProvider.notifier);
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context).appName), // تأكدي من وجودها في arb
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.language),
-            onPressed: () {
-              // تبديل اللغة عبر الـ Provider
-              if (settings.locale.languageCode == 'ar') {
-                settingsNotifier.setLocale(const Locale('en'));
-              } else {
-                settingsNotifier.setLocale(const Locale('ar'));
-              }
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: Text(
-          AppLocalizations.of(context).welcome, // تأكدي من وجودها في arb
-          style: Theme.of(context).textTheme.bodyLarge, // يستخدم حجم الخط من الثيم
-        ),
-      ),
+      
     );
   }
 }
