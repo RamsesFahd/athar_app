@@ -98,23 +98,179 @@ abstract class AppLocalizations {
     Locale('en')
   ];
 
-  /// No description provided for @appName.
+  /// Title shown on splash screen
   ///
   /// In en, this message translates to:
-  /// **'Athar'**
-  String get appName;
+  /// **'Welcome To Athar'**
+  String get splashTitle;
 
-  /// No description provided for @login.
+  /// Subtitle on splash screen
   ///
   /// In en, this message translates to:
-  /// **'Login'**
-  String get login;
+  /// **'Timeless heritage, modern vision'**
+  String get splashSubtitle;
 
-  /// No description provided for @welcome.
+  /// Welcome header on sign in screen
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Athar'**
-  String get welcome;
+  /// **'Welcome To Athar'**
+  String get signInWelcome;
+
+  /// Subtitle on sign in screen
+  ///
+  /// In en, this message translates to:
+  /// **'Discover heritage with a modern vision'**
+  String get signInSubtitle;
+
+  /// Label for email input field
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get emailLabel;
+
+  /// Label for password input field
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordLabel;
+
+  /// Checkbox text to remember user credentials
+  ///
+  /// In en, this message translates to:
+  /// **'Remember Me'**
+  String get rememberMe;
+
+  /// Link to reset forgotten password
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgotPassword;
+
+  /// Button to proceed to next screen
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueButton;
+
+  /// Divider text between different sign-in options
+  ///
+  /// In en, this message translates to:
+  /// **'OR'**
+  String get orDivider;
+
+  /// Text before sign up link
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account?'**
+  String get noAccount;
+
+  /// Link to create a new account
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Up'**
+  String get signUpLink;
+
+  /// Option to use the app without signing in
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as Guest'**
+  String get continueAsGuest;
+
+  /// Hint text inside email field
+  ///
+  /// In en, this message translates to:
+  /// **'example@mail.com'**
+  String get emailHint;
+
+  /// Hint text inside password field (bullets)
+  ///
+  /// In en, this message translates to:
+  /// **'••••••••'**
+  String get passwordHint;
+
+  /// Title on sign up screen header
+  ///
+  /// In en, this message translates to:
+  /// **'Join Athar'**
+  String get signUpTitle;
+
+  /// Subtitle on sign up screen
+  ///
+  /// In en, this message translates to:
+  /// **'Be part of our cultural journey'**
+  String get signUpSubtitle;
+
+  /// Label for full name input field
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullNameLabel;
+
+  /// Label for confirm password field
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmPasswordLabel;
+
+  /// Hint text inside full name field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name'**
+  String get nameHint;
+
+  /// Button to register a new account
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get createAccountButton;
+
+  /// Text before sign in link on sign up screen
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? '**
+  String get alreadyHaveAccount;
+
+  /// Link to sign in screen
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In'**
+  String get signInLink;
+
+  /// Title on forgot password screen
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPasswordTitle;
+
+  /// Instruction text on forgot password screen
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your registered email address to receive a password reset link'**
+  String get resetPasswordSubtitle;
+
+  /// Button to send password reset email
+  ///
+  /// In en, this message translates to:
+  /// **'Send Link'**
+  String get sendLinkButton;
+
+  /// Title shown after reset email is sent
+  ///
+  /// In en, this message translates to:
+  /// **'Email Sent!'**
+  String get emailSentTitle;
+
+  /// Message after reset email is sent
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email and follow the instructions'**
+  String get emailSentMessage;
+
+  /// Button to return to sign in screen
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Sign In'**
+  String get backToSignInButton;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,119 @@
 {
-  "appName": "Athar",
-  "login": "Login",
-  "welcome": "Welcome to Athar",
-  "@@locale": "en"
+  "@@locale": "en",
+  "splashTitle": "Welcome To Athar",
+  "@splashTitle": {
+    "description": "Title shown on splash screen"
+  },
+  "splashSubtitle": "Timeless heritage, modern vision",
+  "@splashSubtitle": {
+    "description": "Subtitle on splash screen"
+  },
+  "signInWelcome": "Welcome To Athar",
+  "@signInWelcome": {
+    "description": "Welcome header on sign in screen"
+  },
+  "signInSubtitle": "Discover heritage with a modern vision",
+  "@signInSubtitle": {
+    "description": "Subtitle on sign in screen"
+  },
+  "emailLabel": "Email Address",
+  "@emailLabel": {
+    "description": "Label for email input field"
+  },
+  "passwordLabel": "Password",
+  "@passwordLabel": {
+    "description": "Label for password input field"
+  },
+  "rememberMe": "Remember Me",
+  "@rememberMe": {
+    "description": "Checkbox text to remember user credentials"
+  },
+  "forgotPassword": "Forgot Password?",
+  "@forgotPassword": {
+    "description": "Link to reset forgotten password"
+  },
+  "continueButton": "Continue",
+  "@continueButton": {
+    "description": "Button to proceed to next screen"
+  },
+  "orDivider": "OR",
+  "@orDivider": {
+    "description": "Divider text between different sign-in options"
+  },
+  "noAccount": "Don't have an account?",
+  "@noAccount": {
+    "description": "Text before sign up link"
+  },
+  "signUpLink": "Sign Up",
+  "@signUpLink": {
+    "description": "Link to create a new account"
+  },
+  "continueAsGuest": "Continue as Guest",
+  "@continueAsGuest": {
+    "description": "Option to use the app without signing in"
+  },
+  "emailHint": "example@mail.com",
+  "@emailHint": {
+    "description": "Hint text inside email field"
+  },
+  "passwordHint": "••••••••",
+  "@passwordHint": {
+    "description": "Hint text inside password field (bullets)"
+  },
+  "signUpTitle": "Join Athar",
+  "@signUpTitle": {
+    "description": "Title on sign up screen header"
+  },
+  "signUpSubtitle": "Be part of our cultural journey",
+  "@signUpSubtitle": {
+    "description": "Subtitle on sign up screen"
+  },
+  "fullNameLabel": "Full Name",
+  "@fullNameLabel": {
+    "description": "Label for full name input field"
+  },
+  "confirmPasswordLabel": "Confirm Password",
+  "@confirmPasswordLabel": {
+    "description": "Label for confirm password field"
+  },
+  "nameHint": "Enter your name",
+  "@nameHint": {
+    "description": "Hint text inside full name field"
+  },
+  "createAccountButton": "Create Account",
+  "@createAccountButton": {
+    "description": "Button to register a new account"
+  },
+  "alreadyHaveAccount": "Already have an account? ",
+  "@alreadyHaveAccount": {
+    "description": "Text before sign in link on sign up screen"
+  },
+  "signInLink": "Sign In",
+  "@signInLink": {
+    "description": "Link to sign in screen"
+  },
+  "resetPasswordTitle": "Reset Password",
+  "@resetPasswordTitle": {
+    "description": "Title on forgot password screen"
+  },
+  "resetPasswordSubtitle": "Enter your registered email address to receive a password reset link",
+  "@resetPasswordSubtitle": {
+    "description": "Instruction text on forgot password screen"
+  },
+  "sendLinkButton": "Send Link",
+  "@sendLinkButton": {
+    "description": "Button to send password reset email"
+  },
+  "emailSentTitle": "Email Sent!",
+  "@emailSentTitle": {
+    "description": "Title shown after reset email is sent"
+  },
+  "emailSentMessage": "Check your email and follow the instructions",
+  "@emailSentMessage": {
+    "description": "Message after reset email is sent"
+  },
+  "backToSignInButton": "Back to Sign In",
+  "@backToSignInButton": {
+    "description": "Button to return to sign in screen"
+  }
 }

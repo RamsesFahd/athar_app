@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/navigation/app_routes.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -23,6 +24,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final l10n = AppLocalizations.of(context); // for using localization 
     return Scaffold(
       // استخدام اللون الأسود كخلفية احتياطية أثناء تحميل الصورة
       backgroundColor: Colors.black, 
@@ -58,13 +61,13 @@ class _SplashScreenState extends State<SplashScreen> {
               children: [
                 // شعار أثر المرفوع
                 Image.asset(
-                  'assets/images/athar_logo.png', 
+                  'assets/images/athar_logo_white.png', 
                   width: 280, // حجم مناسب لعرض الشعار بوضوح
                 ),
                 const SizedBox(height: 25),
-                const Text(
-                  'Welcome To Athar',
-                  style: TextStyle(
+                Text(
+                  l10n.splashTitle, 
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 34,
                     fontWeight: FontWeight.bold,
@@ -72,9 +75,9 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'عراقة الماضي.. برؤية حديثة',
-                  style: TextStyle(
+                Text(
+                  l10n.splashSubtitle,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 22,
                     fontWeight: FontWeight.w500,

@@ -9,11 +9,90 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'Athar';
+  String get splashTitle => 'Welcome To Athar';
 
   @override
-  String get login => 'Login';
+  String get splashSubtitle => 'Timeless heritage, modern vision';
 
   @override
-  String get welcome => 'Welcome to Athar';
+  String get signInWelcome => 'Welcome To Athar';
+
+  @override
+  String get signInSubtitle => 'Discover heritage with a modern vision';
+
+  @override
+  String get emailLabel => 'Email Address';
+
+  @override
+  String get passwordLabel => 'Password';
+
+  @override
+  String get rememberMe => 'Remember Me';
+
+  @override
+  String get forgotPassword => 'Forgot Password?';
+
+  @override
+  String get continueButton => 'Continue';
+
+  @override
+  String get orDivider => 'OR';
+
+  @override
+  String get noAccount => 'Don\'t have an account?';
+
+  @override
+  String get signUpLink => 'Sign Up';
+
+  @override
+  String get continueAsGuest => 'Continue as Guest';
+
+  @override
+  String get emailHint => 'example@mail.com';
+
+  @override
+  String get passwordHint => '••••••••';
+
+  @override
+  String get signUpTitle => 'Join Athar';
+
+  @override
+  String get signUpSubtitle => 'Be part of our cultural journey';
+
+  @override
+  String get fullNameLabel => 'Full Name';
+
+  @override
+  String get confirmPasswordLabel => 'Confirm Password';
+
+  @override
+  String get nameHint => 'Enter your name';
+
+  @override
+  String get createAccountButton => 'Create Account';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account? ';
+
+  @override
+  String get signInLink => 'Sign In';
+
+  @override
+  String get resetPasswordTitle => 'Reset Password';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Enter your registered email address to receive a password reset link';
+
+  @override
+  String get sendLinkButton => 'Send Link';
+
+  @override
+  String get emailSentTitle => 'Email Sent!';
+
+  @override
+  String get emailSentMessage => 'Check your email and follow the instructions';
+
+  @override
+  String get backToSignInButton => 'Back to Sign In';
 }

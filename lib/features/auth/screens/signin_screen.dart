@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/navigation/app_routes.dart';
-import '../../../core/widgets/custom_header.dart';
+import '../widgets/custom_header.dart';
 import '../../../core/widgets/custom_button.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -12,6 +13,7 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
+  
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _hidePassword = true;
@@ -19,13 +21,16 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final l10n = AppLocalizations.of(context); // Example of using localization for the title
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          const CustomHeader(
-            title: 'Welcome To Athar',
-            subtitle: 'Discover heritage with a modern vision',
+          CustomHeader(
+            title: l10n.signInWelcome, 
+            subtitle: l10n.signInSubtitle,
           ),
           Expanded(
             child: Container(
@@ -37,35 +42,34 @@ class _SignInScreenState extends State<SignInScreen> {
                   topRight: Radius.circular(35),
                 ),
               ),
+              
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(24, 35, 24, 20),
-                child: Directionality(
-                  textDirection: TextDirection.ltr,
+                //deleted the directionality widget to fix the text direction issue in the text fields
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Email Address', style: TextStyle(fontWeight: FontWeight.w600)),
+                      Text(l10n.emailLabel, style: const TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 8),
-                      _buildTextField(_email, 'example@mail.com', false),
+                      _buildTextField(_email, l10n.emailHint, false),
                       const SizedBox(height: 18),
-                      const Text('Password', style: TextStyle(fontWeight: FontWeight.w600)),
+                      Text(l10n.passwordLabel, style: const TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 8),
-                      _buildTextField(_password, '••••••••', true),
+                      _buildTextField(_password, l10n.passwordHint, true),
                       const SizedBox(height: 10),
-                      _buildRememberMeRow(),
+                      _buildRememberMeRow(l10n),
                       const SizedBox(height: 20),
                       AtharButton(
-                        label: 'Continue',
+                        label: l10n.continueButton,
                         onPressed: () => Navigator.pushNamed(context, AppRoutes.home),
                       ),
                       const SizedBox(height: 25),
-                      _buildDivider(),
+                      _buildDivider(l10n),
                       const SizedBox(height: 25),
                       _buildSocialButtons(),
                       const SizedBox(height: 25),
-                      _buildFooterLinks(),
+                      _buildFooterLinks(l10n),
                     ],
-                  ),
                 ),
               ),
             ),
@@ -92,10 +96,8 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Widget _buildRememberMeRow() {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Row(
+  Widget _buildRememberMeRow(AppLocalizations l10n) {
+      return Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
@@ -110,24 +112,23 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
               ),
               const SizedBox(width: 8),
-              const Text('Remember Me'),
+              Text(l10n.rememberMe),
             ],
           ),
           TextButton(
             onPressed: () => Navigator.pushNamed(context, AppRoutes.forgotPassword),
-            child: const Text('Forgot Password?'),
+            child: Text(l10n.forgotPassword),
           ),
         ],
-      ),
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildDivider(AppLocalizations l10n) {
     return Row(children: [
       const Expanded(child: Divider()),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Text("OR", style: TextStyle(color: Colors.grey[400], fontWeight: FontWeight.bold)),
+        child: Text(l10n.orDivider, style: TextStyle(color: Colors.grey[400], fontWeight: FontWeight.bold)),
       ),
       const Expanded(child: Divider()),
     ]);
@@ -159,18 +160,18 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Widget _buildFooterLinks() {
+  Widget _buildFooterLinks(AppLocalizations l10n) {
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("Don't have an account?"),
+        Text(l10n.noAccount),
         TextButton(
           onPressed: () => Navigator.pushNamed(context, AppRoutes.signUp),
-          child: Text('Sign Up', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+          child: Text(l10n.signUpLink, style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
         ),
       ]),
       TextButton(
         onPressed: () => Navigator.pushNamed(context, AppRoutes.home),
-        child: Text('Continue as Guest', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+        child: Text(l10n.continueAsGuest, style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
       ),
     ]);
   }

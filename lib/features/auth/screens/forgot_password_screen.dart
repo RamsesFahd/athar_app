@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/custom_button.dart'; // استدعاء الزر المشترك
+import '../../../core/widgets/custom_button.dart'; 
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -21,6 +22,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context); // for using localization
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -32,34 +34,31 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      // نستخدم Directionality لإصلاح مشكلة قلب النصوص
-      body: Directionality(
-        textDirection: TextDirection.ltr,
-        child: Padding(
+      
+        body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: _isSubmitted ? _buildSuccessState() : _buildFormState(),
+          child: _isSubmitted ? _buildSuccessState(l10n) : _buildFormState(l10n),
         ),
-      ),
     );
   }
 
-  Widget _buildFormState() {
+  Widget _buildFormState(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 40),
-        const Text(
-          'Reset Password',
-          style: TextStyle(
+        Text(
+          l10n.forgotPassword,
+          style: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF111827), // لون غامق قريب للصورة
-            fontFamily: 'Playfair Display', // إذا كنتم تستخدمون هذا الخط
+            color: Color(0xFF111827), 
+            fontFamily: 'Playfair Display', 
           ),
         ),
         const SizedBox(height: 12),
         Text(
-          'Enter your registered email address to receive a password reset link',
+          l10n.resetPasswordSubtitle,
           style: TextStyle(
             fontSize: 16,
             color: Colors.grey[600],
@@ -67,8 +66,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
         ),
         const SizedBox(height: 48),
-        const Text(
-          'Email Address',
+        Text(
+          l10n.emailLabel,
           style: TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 14,
@@ -80,7 +79,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            hintText: 'example@mail.com',
+            hintText: l10n.emailHint,
             prefixIcon: const Icon(Icons.mail_outline, size: 20),
             filled: true,
             fillColor: const Color(0xFFF9FAFB),
@@ -98,7 +97,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         
         // استخدام الزر المشترك
         AtharButton(
-          label: 'Send Link',
+          label: l10n.sendLinkButton,
           onPressed: () {
             setState(() => _isSubmitted = true);
           },
@@ -107,20 +106,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-  Widget _buildSuccessState() {
+  Widget _buildSuccessState(AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.check_circle, color: AppColors.primary, size: 80),
           const SizedBox(height: 24),
-          const Text(
-            'Email Sent!',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          Text(
+            l10n.emailSentTitle,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
           Text(
-            'Check your email and follow the instructions',
+            l10n.emailSentMessage,
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey[600]),
           ),
@@ -128,7 +127,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           
           // استخدام الزر المشترك بنوع Outline
           AtharButton(
-            label: 'Back to Sign In',
+            label: l10n.backToSignInButton,
             variant: ButtonVariant.outline,
             onPressed: () => Navigator.pop(context),
           ),
