@@ -154,5 +154,12 @@
         "type": "int"
       }
     }
-  }
+  },
+
+  "errorEmailAlreadyInUse": "This email is already in use.",
+  "errorInvalidEmail": "The email address is invalid.",
+  "errorUserNotFound": "No user found with this email.",
+  "errorWrongPassword": "Incorrect password. Please try again.",
+  "errorWeakPassword": "The password is too weak.",
+  "errorUnexpected": "An unexpected error occurred. Please try again later."
 }

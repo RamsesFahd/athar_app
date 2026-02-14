@@ -29,6 +29,7 @@
   "emailSentTitle": "تم إرسال الرابط!",
   "emailSentMessage": "تفقد بريدك الإلكتروني واتبع التعليمات",
   "backToSignInButton": "العودة لتسجيل الدخول",
+  "backToSignUpButton": "العودة لإنشاء حساب",
 
   "verifyEmailTitle": "تحقق من بريدك الإلكتروني",
   "verifyEmailSubtitle": "أدخل الرمز المرسل إلى بريدك",
@@ -43,6 +44,12 @@
         "type": "int"
         }
       }
-    }
-  }
+    },
 
+  "errorEmailAlreadyInUse": "هذا البريد الإلكتروني مستخدم بالفعل.",
+  "errorInvalidEmail": "عنوان البريد الإلكتروني غير صحيح.",
+  "errorUserNotFound": "لا يوجد مستخدم مسجل بهذا البريد.",
+  "errorWrongPassword": "كلمة المرور خاطئة. حاول مرة أخرى.",
+  "errorWeakPassword": "كلمة المرور ضعيفة جداً.",
+  "errorUnexpected": "حدث خطأ غير متوقع. يرجى المحاولة لاحقاً."
+}
