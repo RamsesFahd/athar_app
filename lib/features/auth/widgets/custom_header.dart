@@ -8,7 +8,7 @@ class CustomHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // لم نعد بحاجة لتعريف متغير isRtl يدويًا للمحاذاة لأننا سنستخدم .start
+    
     
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.35,
