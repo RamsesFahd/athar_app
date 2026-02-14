@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-// استيرادات الفريق (تأكدي من صحة المسارات)
 import 'firebase_options.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
@@ -41,7 +40,8 @@ class AtharApp extends ConsumerWidget {
 
       // تطبيق ثيم الفريق بناءً على الإعدادات
       theme: AppTheme.getTheme(settings),
-      locale: settings.locale,
+      // locale: settings.locale,
+      locale: const Locale('en'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
 

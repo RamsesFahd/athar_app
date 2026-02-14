@@ -8,18 +8,21 @@ class CustomHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isRtl = Directionality.of(context) == TextDirection.rtl;
-
+    // لم نعد بحاجة لتعريف متغير isRtl يدويًا للمحاذاة لأننا سنستخدم .start
+    
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.35,
       width: double.infinity,
       child: Stack(
         fit: StackFit.expand,
         children: [
+          // 1. صورة الخلفية الخاصة بمشروع أثر
           Image.asset(
             'assets/images/image.png',
             fit: BoxFit.cover,
           ),
+          
+          // 2. التدرج اللوني لضمان وضوح النص
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -32,32 +35,31 @@ class CustomHeader extends StatelessWidget {
               ),
             ),
           ),
-          // قمنا بتغيير الـ Padding والـ Alignment ليتناسب مع شكل التصميم
+
+          // 3. نصوص الهيدر (العنوان والوصف)
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-                24, 0, 24, 60), // زدنا الـ bottom لرفع النص قليلاً عن المنحنى
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 60), 
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
-              // جعلنا المحاذاة تعتمد على اللغة بشكل مباشر
-              crossAxisAlignment:
-                  isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              // التعديل الجوهري: CrossAxisAlignment.start تعني اليمين في العربي تلقائيًا
+              crossAxisAlignment: CrossAxisAlignment.start, 
               children: [
                 Text(
                   title,
-                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                  // TextAlign.start تتبع اتجاه لغة التطبيق الحالية
+                  textAlign: TextAlign.start,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 32, // صغرنا الحجم قليلاً ليتناسق مع فيجما
+                    fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    fontFamily:
-                        'Playfair Display', // تأكدي من إضافة الخط إذا كان موجوداً
+                    // استخدام Playfair Display للإنجليزي كما هو مفضل لديكِ
+                    fontFamily: 'Playfair Display', 
                   ),
                 ),
-                const SizedBox(
-                    height: 4), // مسافة بسيطة جداً بين العنوان والوصف
+                const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  textAlign: isRtl ? TextAlign.right : TextAlign.left,
+                  textAlign: TextAlign.start,
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 16,

@@ -9,13 +9,13 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get splashTitle => 'مرحباً بك في أثر';
+  String get splashTitle => ' مرحبًا بك في أثر';
 
   @override
   String get splashSubtitle => 'عراقة الماضي.. برؤية حديثة';
 
   @override
-  String get signInWelcome => 'مرحباً بك في أثر';
+  String get signInWelcome => ' مرحبًا بك في أثر';
 
   @override
   String get signInSubtitle => 'اكتشف التراث برؤية حديثة';
