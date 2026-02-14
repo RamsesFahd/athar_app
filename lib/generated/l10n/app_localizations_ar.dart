@@ -95,4 +95,27 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backToSignInButton => 'العودة لتسجيل الدخول';
+
+  @override
+  String get backToSignUpButton => 'Back to Sign Up';
+
+  @override
+  String get verifyEmailTitle => 'تحقق من بريدك الإلكتروني';
+
+  @override
+  String get verifyEmailSubtitle => 'أدخل الرمز المرسل إلى بريدك';
+
+  @override
+  String get verifyEmailInfoText => 'تم إرسال رمز التحقق إلى:';
+
+  @override
+  String get verifyButton => 'تحقق';
+
+  @override
+  String get resendCode => 'إعادة إرسال الرمز';
+
+  @override
+  String resendCodeInSeconds(int seconds) {
+    return 'إعادة إرسال الرمز خلال $seconds ثانية';
+  }
 }

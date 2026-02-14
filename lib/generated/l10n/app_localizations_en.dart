@@ -95,4 +95,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backToSignInButton => 'Back to Sign In';
+
+  @override
+  String get backToSignUpButton => 'Back to Sign Up';
+
+  @override
+  String get verifyEmailTitle => 'Verify Your Email';
+
+  @override
+  String get verifyEmailSubtitle => 'Enter the code sent to your email';
+
+  @override
+  String get verifyEmailInfoText => 'We have sent a verification code to:';
+
+  @override
+  String get verifyButton => 'Verify';
+
+  @override
+  String get resendCode => 'Resend code';
+
+  @override
+  String resendCodeInSeconds(int seconds) {
+    return 'Resend code in $seconds seconds';
+  }
 }

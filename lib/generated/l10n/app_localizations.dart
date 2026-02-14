@@ -271,6 +271,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to Sign In'**
   String get backToSignInButton;
+
+  /// Button to return to sign up screen
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Sign Up'**
+  String get backToSignUpButton;
+
+  /// Title on verify email screen
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Your Email'**
+  String get verifyEmailTitle;
+
+  /// Subtitle on verify email screen
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code sent to your email'**
+  String get verifyEmailSubtitle;
+
+  /// Info text shown above the email on verify screen
+  ///
+  /// In en, this message translates to:
+  /// **'We have sent a verification code to:'**
+  String get verifyEmailInfoText;
+
+  /// Verify button label
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get verifyButton;
+
+  /// Resend code label
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get resendCode;
+
+  /// No description provided for @resendCodeInSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code in {seconds} seconds'**
+  String resendCodeInSeconds(int seconds);
 }
 
 class _AppLocalizationsDelegate

@@ -28,5 +28,21 @@
   "sendLinkButton": "إرسال الرابط",
   "emailSentTitle": "تم إرسال الرابط!",
   "emailSentMessage": "تفقد بريدك الإلكتروني واتبع التعليمات",
-  "backToSignInButton": "العودة لتسجيل الدخول"
-}
+  "backToSignInButton": "العودة لتسجيل الدخول",
+
+  "verifyEmailTitle": "تحقق من بريدك الإلكتروني",
+  "verifyEmailSubtitle": "أدخل الرمز المرسل إلى بريدك",
+  "verifyEmailInfoText": "تم إرسال رمز التحقق إلى:",
+  "verifyButton": "تحقق",
+  "resendCode": "إعادة إرسال الرمز",
+  
+  "resendCodeInSeconds": "إعادة إرسال الرمز خلال {seconds} ثانية",
+  "@resendCodeInSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+        }
+      }
+    }
+  }
+
