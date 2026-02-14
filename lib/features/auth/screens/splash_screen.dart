@@ -61,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen> {
               children: [
                 // شعار أثر المرفوع
                 Image.asset(
-                  'assets/imagees/logo.png', 
+                  'assets/images/athar_logo_white.png', 
                   width: 280, // حجم مناسب لعرض الشعار بوضوح
                 ),
                 const SizedBox(height: 25),
