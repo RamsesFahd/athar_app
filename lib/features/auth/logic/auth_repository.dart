@@ -41,13 +41,14 @@ class AuthRepository {
     required String fullName,
   }) async {
     try {
-      UserCredential cred = await _auth.createUserWithEmailAndPassword(
+      UserCredential cred = await         _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 // After creating the user with Firebase Authentication, we need to create a corresponding document in Firestore to store additional user data (like full name, role, etc.)
       final String uId = cred.user!.uid;
-
+      await sendEmailVerification();
+      
       final newUser = UserModel(
         uId: uId,
         fullName: fullName,
@@ -153,4 +154,29 @@ class AuthRepository {
         return "errorUnexpected";
     }
   }
+
+  // send email verification method that sends a verification email to the currently authenticated user
+  Future<String?> sendEmailVerification() async {
+    try {
+      final user = _auth.currentUser;
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+      }
+      return null; // return null to indicate that the email was sent successfully
+    } catch (e) {
+      return e.toString(); // return the error message if sending the email failed
+    }
+  }
+
+  // check email verification status method that checks if the currently authenticated user's email is verified
+  Future<bool> isEmailVerified() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      // reload the user to get the latest email verification status from Firebase Authentication, then return whether the email is verified or not
+      await user.reload(); 
+      return _auth.currentUser!.emailVerified;
+    }
+    return false;
+  }
+
 }

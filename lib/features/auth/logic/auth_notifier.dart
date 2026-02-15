@@ -70,4 +70,55 @@ class AuthNotifier extends _$AuthNotifier {
       return null; // return null to indicate that the user is now logged out and there's no authenticated user data
     });
   }
+
+  // Guest login method that allows users to continue without creating an account. It creates a temporary anonymous user in Firebase Authentication and returns their data as a UserModel instance. This is useful for allowing users to explore the app without the friction of signing up, while still providing them with a unique identifier and some level of personalization.
+  Future<void> guestLogin() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final repo = ref.read(authRepositoryProvider);
+      final error = await repo.guestLogin();
+
+      if (error != null) throw error;
+
+      return await _checkAuthStatus();
+    });
+  }
+
+  // reset password method that takes an email address and sends a password reset email to the user. This allows users who have forgotten their password to regain access to their account by following the instructions in the email.
+  Future<void> resetPassword({required String email}) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final repo = ref.read(authRepositoryProvider);
+      final error = await repo.resetPassword(email);
+
+      if (error != null) throw error;
+
+      return state.value; // return the current user data without changing it, since resetting the password doesn't affect the authentication status
+    });
+  }
+
+  // send verfication link method
+  Future<void> sendVerificationLink() async {
+    // we don't need to change the state here because sending the verification email doesn't affect the authentication status
+    final repo = ref.read(authRepositoryProvider);
+    await repo.sendEmailVerification();
+  }
+
+  // checking email verification status method that checks if the user's email is verified. If it is, it refreshes the user data to reflect any changes. If it's not, it throws an error that can be caught and displayed in the UI
+  Future<void> checkEmailVerificationStatus() async {
+    state = const AsyncLoading(); // we set the state to loading while we check the verification status
+    
+    state = await AsyncValue.guard(() async {
+      final repo = ref.read(authRepositoryProvider);
+      final isVerified = await repo.isEmailVerified();
+
+      if (isVerified) {
+        // if the email is verified, we refresh the user data to reflect any changes
+        return await _checkAuthStatus();
+      } else {
+        // if the email is not verified, we throw an error that can be caught and displayed in the UI
+        throw 'errorEmailNotVerified';
+      }
+    });
+  }
 }

@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/custom_button.dart'; 
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../logic/auth_notifier.dart';
+import '../../../core/models/user_model.dart';
 
-class ForgotPasswordScreen extends StatefulWidget {
+class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
   bool _isSubmitted = false;
 
@@ -23,6 +26,29 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context); // for using localization
+
+    // Listen to auth state changes to show error messages or update the UI when the user logs in successfully
+    ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
+    next.whenOrNull(
+      error: (error, stack) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_translateError(error.toString(), l10n)),
+            backgroundColor: Colors.red,
+          ),
+        );
+      },
+      data: (_) {
+        // if the previous state was loading, it means the form was submitted and we can show the success state
+        if (previous is AsyncLoading) {
+          setState(() => _isSubmitted = true);
+        }
+      },
+    );
+  });
+
+  final authState = ref.watch(authNotifierProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -37,12 +63,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: _isSubmitted ? _buildSuccessState(l10n) : _buildFormState(l10n),
+          child: _isSubmitted ? _buildSuccessState(l10n) : _buildFormState(l10n, authState.isLoading),
         ),
     );
   }
 
-  Widget _buildFormState(AppLocalizations l10n) {
+  Widget _buildFormState(AppLocalizations l10n, bool isLoading) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -98,8 +124,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         // استخدام الزر المشترك
         AtharButton(
           label: l10n.sendLinkButton,
+          isLoading: isLoading, 
           onPressed: () {
-            setState(() => _isSubmitted = true);
+            final email = _emailController.text.trim();
+            if (email.isEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(l10n.fillAllFieldsError)),
+              );
+              return;
+            }
+            // call the reset password method from the auth notifier
+            ref.read(authNotifierProvider.notifier).resetPassword(email:  email);
           },
         ),
       ],
@@ -134,5 +169,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ],
       ),
     );
+  }
+
+  String _translateError(String errorKey, AppLocalizations l10n) {
+    switch (errorKey) {
+      case 'errorEmailAlreadyInUse': return l10n.errorEmailAlreadyInUse;
+      case 'errorInvalidEmail': return l10n.errorInvalidEmail;
+      case 'errorUserNotFound': return l10n.errorUserNotFound;
+      case 'errorWrongPassword': return l10n.errorWrongPassword;
+      case 'errorWeakPassword': return l10n.errorWeakPassword;
+      default: return l10n.errorUnexpected;
+    }
   }
 }

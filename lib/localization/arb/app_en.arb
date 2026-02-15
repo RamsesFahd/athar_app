@@ -161,5 +161,16 @@
   "errorUserNotFound": "No user found with this email.",
   "errorWrongPassword": "Incorrect password. Please try again.",
   "errorWeakPassword": "The password is too weak.",
-  "errorUnexpected": "An unexpected error occurred. Please try again later."
+  "errorUnexpected": "An unexpected error occurred. Please try again later.",
+
+  "fillAllFieldsError": "Please fill in all fields",
+  "passwordsDoNotMatchError": "Passwords do not match. Please try again.",
+  "guestUser": "Guest",
+  "@guestUser": {
+    "description": "Default name for anonymous users"
+  },
+  "errorEmailNotVerified": "Please verify your email via the link sent to you.",
+  "@errorEmailNotVerified": { 
+    "description": "Error message shown when user tries to sign in without verifying their email"
+  }
 }

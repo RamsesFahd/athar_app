@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class CustomHeader extends StatelessWidget {
   final String title;
   final String subtitle;
-
-  const CustomHeader({super.key, required this.title, required this.subtitle});
+  final String imagePath;
+  const CustomHeader({super.key, required this.title, required this.subtitle, required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class CustomHeader extends StatelessWidget {
         children: [
           // 1. صورة الخلفية الخاصة بمشروع أثر
           Image.asset(
-            'assets/images/image.png',
+            imagePath,
             fit: BoxFit.cover,
           ),
           

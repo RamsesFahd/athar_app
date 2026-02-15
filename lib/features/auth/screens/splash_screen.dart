@@ -2,25 +2,42 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/navigation/app_routes.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; 
+import '../logic/auth_notifier.dart'; 
 
-class SplashScreen extends StatefulWidget {
+// We used a ConsumerStatefulWidget to manage the timer and navigation logic while still being able to access the authentication state if needed in the future. 
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // الانتقال التلقائي لصفحة تسجيل الدخول بعد 4 ثوانٍ
-    Timer(const Duration(seconds: 4), () {
-      if (mounted) {
+    
+    // wait for 3 seconds before navigating to the next screen then check the authentication state
+    Future.delayed(const Duration(seconds: 3), () async {
+      // Ensure the widget is still mounted before navigating
+      if (!mounted) return; 
+
+      // Check the authentication state using Riverpod
+      final user = await ref.read(authNotifierProvider.future);
+
+      if (!mounted) return; // Check again if the widget is still mounted before navigating
+
+      if (user != null) {
+        // if the user is authenticated -> navigate to the home screen
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
+      } else {
+        // else navigate to the sign-in screen
         Navigator.pushReplacementNamed(context, AppRoutes.signIn);
-      }
-    });
-  }
+        }
+      });
+    }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
           // 1. الخلفية: صورة رجال ألمع (تغطي كامل الشاشة)
           Positioned.fill(
             child: Image.asset(
-              'assets/images/image.png', // امتداد .jpg مطابق لملفك
+              'assets/images/splash_bg.png', // امتداد .jpg مطابق لملفك
               fit: BoxFit.cover,
             ),
           ),

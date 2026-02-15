@@ -313,6 +313,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Resend code in {seconds} seconds'**
   String resendCodeInSeconds(int seconds);
+
+  /// No description provided for @errorEmailAlreadyInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'This email is already in use.'**
+  String get errorEmailAlreadyInUse;
+
+  /// No description provided for @errorInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'The email address is invalid.'**
+  String get errorInvalidEmail;
+
+  /// No description provided for @errorUserNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No user found with this email.'**
+  String get errorUserNotFound;
+
+  /// No description provided for @errorWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect password. Please try again.'**
+  String get errorWrongPassword;
+
+  /// No description provided for @errorWeakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The password is too weak.'**
+  String get errorWeakPassword;
+
+  /// No description provided for @errorUnexpected.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please try again later.'**
+  String get errorUnexpected;
+
+  /// No description provided for @fillAllFieldsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in all fields'**
+  String get fillAllFieldsError;
+
+  /// No description provided for @passwordsDoNotMatchError.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match. Please try again.'**
+  String get passwordsDoNotMatchError;
+
+  /// Default name for anonymous users
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guestUser;
+
+  /// Error message shown when user tries to sign in without verifying their email
+  ///
+  /// In en, this message translates to:
+  /// **'Please verify your email via the link sent to you.'**
+  String get errorEmailNotVerified;
 }
 
 class _AppLocalizationsDelegate

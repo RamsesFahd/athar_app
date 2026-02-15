@@ -97,7 +97,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backToSignInButton => 'العودة لتسجيل الدخول';
 
   @override
-  String get backToSignUpButton => 'Back to Sign Up';
+  String get backToSignUpButton => 'العودة لإنشاء حساب';
 
   @override
   String get verifyEmailTitle => 'تحقق من بريدك الإلكتروني';
@@ -118,4 +118,36 @@ class AppLocalizationsAr extends AppLocalizations {
   String resendCodeInSeconds(int seconds) {
     return 'إعادة إرسال الرمز خلال $seconds ثانية';
   }
+
+  @override
+  String get errorEmailAlreadyInUse => 'هذا البريد الإلكتروني مستخدم بالفعل.';
+
+  @override
+  String get errorInvalidEmail => 'عنوان البريد الإلكتروني غير صحيح.';
+
+  @override
+  String get errorUserNotFound => 'لا يوجد مستخدم مسجل بهذا البريد.';
+
+  @override
+  String get errorWrongPassword => 'كلمة المرور خاطئة. حاول مرة أخرى.';
+
+  @override
+  String get errorWeakPassword => 'كلمة المرور ضعيفة جداً.';
+
+  @override
+  String get errorUnexpected => 'حدث خطأ غير متوقع. يرجى المحاولة لاحقاً.';
+
+  @override
+  String get fillAllFieldsError => 'يرجى ملء جميع الحقول';
+
+  @override
+  String get passwordsDoNotMatchError =>
+      'كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get guestUser => 'ضيف';
+
+  @override
+  String get errorEmailNotVerified =>
+      'يرجى التحقق من بريدك الإلكتروني عبر الرابط المرسل إليك أولًا.';
 }

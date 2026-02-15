@@ -51,5 +51,16 @@
   "errorUserNotFound": "لا يوجد مستخدم مسجل بهذا البريد.",
   "errorWrongPassword": "كلمة المرور خاطئة. حاول مرة أخرى.",
   "errorWeakPassword": "كلمة المرور ضعيفة جداً.",
-  "errorUnexpected": "حدث خطأ غير متوقع. يرجى المحاولة لاحقاً."
+  "errorUnexpected": "حدث خطأ غير متوقع. يرجى المحاولة لاحقاً.",
+  "fillAllFieldsError": "يرجى ملء جميع الحقول",
+  "passwordsDoNotMatchError": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى.",
+  "guestUser": "ضيف",
+  "@guestUser": {
+    "description": "Default name for anonymous users"
+  },
+
+  "errorEmailNotVerified": "يرجى التحقق من بريدك الإلكتروني عبر الرابط المرسل إليك أولًا.",
+  "@errorEmailNotVerified": {
+    "description": "Error message shown when user tries to sign in without verifying their email"
+  }
 }

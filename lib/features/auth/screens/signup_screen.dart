@@ -4,15 +4,18 @@ import '../../../core/navigation/app_routes.dart';
 import '../widgets/custom_header.dart';
 import '../../../core/widgets/custom_button.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../logic/auth_notifier.dart';
+import '../../../core/models/user_model.dart';
 
-class SignUpScreen extends StatefulWidget {
+class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _fullName = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
@@ -35,6 +38,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
+    // listening to auth state changes to show error messages or navigate to home screen on successful login
+    ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
+    next.whenOrNull(
+      error: (error, stack) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_translateError(error.toString(), l10n)),
+            backgroundColor: Colors.red,
+          ),
+        );
+      },
+      data: (user) {
+        if (user != null) {
+          
+          Navigator.pushReplacementNamed(
+            context, 
+            AppRoutes.verifyEmail,
+            arguments: _email.text, 
+          );
+        }
+      },
+    );
+  });
+
+  // checking for loading state 
+  final authState = ref.watch(authNotifierProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -42,6 +72,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           CustomHeader(
             title: l10n.signUpTitle,
             subtitle: l10n.signUpSubtitle,
+            imagePath: 'assets/images/signup_header.png',
           ),
           Expanded(
             child: Container(
@@ -83,40 +114,47 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     const SizedBox(height: 20),
                     AtharButton(
-                      label: l10n.continueButton,
+                      label: l10n.createAccountButton,
+                      isLoading: authState.isLoading,
                       onPressed: () {
                         final email = _email.text.trim();
                         final pass = _password.text;
                         final confirm = _confirmPassword.text;
+                        final name = _fullName.text.trim();
 
-                        if (email.isEmpty) {
+                        // Basic validation before calling sign up method
+                        if (name.isEmpty || email.isEmpty || pass.isEmpty) {
+                          // you show a snackbar or dialog to inform the user to fill all fields
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Please enter your email')),
-                          );
-                          return;
-                        }
-
-                        if (pass.isEmpty || confirm.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Please enter your password')),
+                            SnackBar(
+                              content: Text(l10n.fillAllFieldsError),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                            ),
                           );
                           return;
                         }
 
                         if (pass != confirm) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Passwords do not match')),
+                          // you show a snackbar or dialog to inform the user that passwords do not match
+                          ScaffoldMessenger.of(context).showSnackBar( 
+                            SnackBar(
+                              content: Text(l10n.passwordsDoNotMatchError),
+                              backgroundColor: Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                            ),
                           );
                           return;
                         }
-                        
-                          Navigator.pushNamed(
-                            context,
-                            AppRoutes.verifyEmail,
-                            arguments: email, // <-- string 
-                          );
-                        },
-                      ),
+
+                        // call sign up method from auth notifier
+                        ref.read(authNotifierProvider.notifier).signUp(
+                              email: email,
+                              password: pass,
+                              fullName: name,
+                            );
+                      },
+                    ),
                         
 
                     const SizedBox(height: 25),
@@ -124,7 +162,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SizedBox(height: 25),
                     _buildSocialButtons(),
                     const SizedBox(height: 25),
-                    _buildFooterLinks(l10n),
+                    _buildFooterLinks(l10n, authState.isLoading),
                   ],
                 ),
               ),
@@ -224,25 +262,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Widget _buildFooterLinks(AppLocalizations l10n) {
+  Widget _buildFooterLinks(AppLocalizations l10n, bool isLoading) {
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(l10n.alreadyHaveAccount),
         TextButton(
-          onPressed: () => Navigator.pushNamed(context, AppRoutes.signIn),
-          child: Text(
-            l10n.signInLink,
-            style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
-          ),
+          onPressed: isLoading ? null : () => Navigator.pushNamed(context, AppRoutes.signIn),
+        child: Text(
+          l10n.signInLink,
+          style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
+        ),
         ),
       ]),
       TextButton(
-        onPressed: () => Navigator.pushNamed(context, AppRoutes.home),
-        child: Text(
-          l10n.continueAsGuest,
-          style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
-        ),
+        onPressed: isLoading 
+          ? null 
+          : () => ref.read(authNotifierProvider.notifier).guestLogin(),
+      child: Text(
+        l10n.continueAsGuest,
+        style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
+      ),
       ),
     ]);
+  }
+
+  String _translateError(String errorKey, AppLocalizations l10n) {
+    switch (errorKey) {
+      case 'errorEmailAlreadyInUse': return l10n.errorEmailAlreadyInUse;
+      case 'errorInvalidEmail': return l10n.errorInvalidEmail;
+      case 'errorUserNotFound': return l10n.errorUserNotFound;
+      case 'errorWrongPassword': return l10n.errorWrongPassword;
+      case 'errorWeakPassword': return l10n.errorWeakPassword;
+      default: return l10n.errorUnexpected;
+    }
   }
 }

@@ -118,4 +118,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String resendCodeInSeconds(int seconds) {
     return 'Resend code in $seconds seconds';
   }
+
+  @override
+  String get errorEmailAlreadyInUse => 'This email is already in use.';
+
+  @override
+  String get errorInvalidEmail => 'The email address is invalid.';
+
+  @override
+  String get errorUserNotFound => 'No user found with this email.';
+
+  @override
+  String get errorWrongPassword => 'Incorrect password. Please try again.';
+
+  @override
+  String get errorWeakPassword => 'The password is too weak.';
+
+  @override
+  String get errorUnexpected =>
+      'An unexpected error occurred. Please try again later.';
+
+  @override
+  String get fillAllFieldsError => 'Please fill in all fields';
+
+  @override
+  String get passwordsDoNotMatchError =>
+      'Passwords do not match. Please try again.';
+
+  @override
+  String get guestUser => 'Guest';
+
+  @override
+  String get errorEmailNotVerified =>
+      'Please verify your email via the link sent to you.';
 }

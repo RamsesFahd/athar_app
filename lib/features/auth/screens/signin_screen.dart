@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/navigation/app_routes.dart';
 import '../widgets/custom_header.dart';
 import '../../../core/widgets/custom_button.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import '../logic/auth_notifier.dart';
+import '../../../core/models/user_model.dart';
 
-class SignInScreen extends StatefulWidget {
+class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({super.key});
 
   @override
-  State<SignInScreen> createState() => _SignInScreenState();
+  ConsumerState<SignInScreen> createState() => _SignInScreenState();
 }
 
-class _SignInScreenState extends State<SignInScreen> {
+class _SignInScreenState extends ConsumerState<SignInScreen> {
   
   final _email = TextEditingController();
   final _password = TextEditingController();
@@ -22,7 +25,29 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final l10n = AppLocalizations.of(context); // Example of using localization for the title
+    final l10n = AppLocalizations.of(context); 
+
+    // listening to auth state changes to show error messages or navigate to home screen on successful login
+    ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
+      next.whenOrNull(
+        error: (error, stack) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(_translateError(error.toString(), l10n)),
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+        data: (user) {
+          if (user != null) {
+            Navigator.pushReplacementNamed(context, AppRoutes.home);
+          }
+        },
+      );
+    });
+
+    // checking the auth state to show loading indicator on the sign in button when the sign in process is ongoing
+    final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -31,6 +56,7 @@ class _SignInScreenState extends State<SignInScreen> {
           CustomHeader(
             title: l10n.signInWelcome, 
             subtitle: l10n.signInSubtitle,
+            imagePath: 'assets/images/signin_header.png',
           ),
           Expanded(
             child: Container(
@@ -49,26 +75,37 @@ class _SignInScreenState extends State<SignInScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Email label
                       Text(l10n.emailLabel, style: const TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 8),
                       _buildTextField(_email, l10n.emailHint, false),
                       const SizedBox(height: 18),
+                      // Password label
                       Text(l10n.passwordLabel, style: const TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 8),
                       _buildTextField(_password, l10n.passwordHint, true),
                       const SizedBox(height: 10),
+                      // Remember me checkbox
                       _buildRememberMeRow(l10n),
                       const SizedBox(height: 20),
+                      // Sign in button
                       AtharButton(
                         label: l10n.continueButton,
-                        onPressed: () => Navigator.pushNamed(context, AppRoutes.home),
+                        isLoading: authState.isLoading, // pass loading state to button
+                      // disable the button when loading to prevent multiple taps (New)
+                        onPressed: () {
+                          ref.read(authNotifierProvider.notifier).signIn(
+                            email: _email.text.trim(),
+                            password: _password.text.trim(),
+                          );
+                        },
                       ),
                       const SizedBox(height: 25),
                       _buildDivider(l10n),
                       const SizedBox(height: 25),
                       _buildSocialButtons(),
                       const SizedBox(height: 25),
-                      _buildFooterLinks(l10n),
+                      _buildFooterLinks(l10n,authState.isLoading),
                     ],
                 ),
               ),
@@ -160,7 +197,7 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  Widget _buildFooterLinks(AppLocalizations l10n) {
+  Widget _buildFooterLinks(AppLocalizations l10n, bool isLoading) {
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(l10n.noAccount),
@@ -170,9 +207,25 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       ]),
       TextButton(
-        onPressed: () => Navigator.pushNamed(context, AppRoutes.home),
-        child: Text(l10n.continueAsGuest, style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+        onPressed: isLoading 
+      ? null 
+      : () => ref.read(authNotifierProvider.notifier).guestLogin(), // تحتاجين إضافة الميثود في النوتيفاير
+  child: Text(
+    l10n.continueAsGuest, 
+    style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)
+  ),
       ),
     ]);
+  }
+
+  String _translateError(String errorKey, AppLocalizations l10n) {
+    switch (errorKey) {
+      case 'errorEmailAlreadyInUse': return l10n.errorEmailAlreadyInUse;
+      case 'errorInvalidEmail': return l10n.errorInvalidEmail;
+      case 'errorUserNotFound': return l10n.errorUserNotFound;
+      case 'errorWrongPassword': return l10n.errorWrongPassword;
+      case 'errorWeakPassword': return l10n.errorWeakPassword;
+      default: return l10n.errorUnexpected;
+    }
   }
 }

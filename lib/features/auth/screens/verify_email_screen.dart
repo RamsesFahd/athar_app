@@ -1,28 +1,22 @@
-
-
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/navigation/app_routes.dart';
 import '../../../core/widgets/custom_button.dart';
-import '../widgets/custom_header.dart';
+import '../logic/auth_notifier.dart';
+import '../../../core/models/user_model.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
-class VerifyEmailScreen extends StatefulWidget {
+class VerifyEmailScreen extends ConsumerStatefulWidget {
   const VerifyEmailScreen({super.key});
 
   @override
-  State<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
+  ConsumerState<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
 }
 
-class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
+class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
   final _emailController = TextEditingController();
-  final List<TextEditingController> _otpControllers =
-      List.generate(6, (_) => TextEditingController());
-
   Timer? _timer;
   int _secondsLeft = 50;
 
@@ -30,15 +24,16 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   void initState() {
     super.initState();
     _startTimer();
+    // إرسال الرابط تلقائياً عند فتح الصفحة
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(authNotifierProvider.notifier).sendVerificationLink();
+    });
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
-    // Read email passed from Sign In as a String
     final args = ModalRoute.of(context)?.settings.arguments;
-
     if (args is String) {
       final email = args.trim();
       if (email.isNotEmpty && _emailController.text.isEmpty) {
@@ -51,17 +46,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   void dispose() {
     _timer?.cancel();
     _emailController.dispose();
-    for (final c in _otpControllers) {
-      c.dispose();
-    }
     super.dispose();
   }
 
-  // Starts/Restarts the resend countdown timer
   void _startTimer() {
     _timer?.cancel();
     setState(() => _secondsLeft = 50);
-
     _timer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (_secondsLeft <= 1) {
         t.cancel();
@@ -72,188 +62,134 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     });
   }
 
-  // Builds the whole screen layout
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final authState = ref.watch(authNotifierProvider);
+
+    // مراقبة الحالة للانتقال للهوم
+    ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
+      next.whenOrNull(
+        error: (error, stack) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(_translateError(error.toString(), l10n)), backgroundColor: Colors.red),
+          );
+        },
+        data: (user) {
+          if (user != null) {
+            Navigator.pushReplacementNamed(context, AppRoutes.home);
+          }
+        },
+      );
+    });
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          CustomHeader(
-            title: l10n.verifyEmailTitle,
-            subtitle: l10n.verifyEmailSubtitle,
-          ),
-          Expanded(
-            child: Container(
-              transform: Matrix4.translationValues(0, -30, 0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(35),
-                  topRight: Radius.circular(35),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.close, color: Colors.black),
+          onPressed: () => _handleBackToLogin(),
+        ),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // أيقونة كبيرة معبرة
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.email_outlined, size: 100, color: AppColors.primary),
+              ),
+              const SizedBox(height: 40),
+              
+              // العنوان بخط Playfair
+              Text(
+                l10n.verifyEmailTitle,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Playfair Display',
                 ),
               ),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(24, 35, 24, 20),
-                    child: ConstrainedBox(
-                      constraints:
-                          BoxConstraints(minHeight: constraints.maxHeight),
-                      child: Center(
-                        child: Directionality(
-                          textDirection: TextDirection.ltr,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              _buildEmailInfo(l10n),
-                              const SizedBox(height: 18),
-                              _buildOtpInputs(),
-                              const SizedBox(height: 18),
-                              _buildVerifyButton(l10n),
-                              const SizedBox(height: 12),
-                              _buildResendRow(l10n),
-                              const SizedBox(height: 18),
-                              _buildBackButton(l10n),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
+              const SizedBox(height: 16),
+              
+              // رسالة الشرح والإيميل
+              Text(
+                l10n.verifyEmailSubtitle,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey[600], fontSize: 16, height: 1.5),
               ),
-            ),
+              const SizedBox(height: 10),
+              Text(
+                _emailController.text,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 48),
+
+              // الزر الرئيسي للتحقق
+              AtharButton(
+                label: l10n.verifyButton,
+                isLoading: authState.isLoading,
+                onPressed: () => ref.read(authNotifierProvider.notifier).checkEmailVerificationStatus(),
+              ),
+              
+              const SizedBox(height: 20),
+
+              // زر إعادة الإرسال
+              _buildResendButton(l10n, authState.isLoading),
+
+              const SizedBox(height: 40),
+
+              // زر العودة لتسجيل الدخول (بشكل بسيط)
+              TextButton(
+                onPressed: () => _handleBackToLogin(),
+                child: Text(
+                  l10n.backToSignInButton,
+                  style: TextStyle(color: Colors.grey[600], decoration: TextDecoration.underline),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  // Shows the email info text
-  Widget _buildEmailInfo(AppLocalizations l10n) {
-    return Column(
-      children: [
-        Text(
-          l10n.verifyEmailInfoText,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey[600]),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          _emailController.text.isEmpty ? '—' : _emailController.text,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 6),
-      ],
-    );
-  }
-
-  // Builds OTP boxes without overflow (Wrap instead of Row)
-  Widget _buildOtpInputs() {
-    return Wrap(
-      alignment: WrapAlignment.center,
-      spacing: 10,
-      runSpacing: 10,
-      children: List.generate(6, (i) => _buildOtpBox(i)),
-    );
-  }
-
-  // Builds a single OTP input box
-  Widget _buildOtpBox(int index) {
-    return SizedBox(
-      width: 46,
-      height: 54,
-      child: TextField(
-        controller: _otpControllers[index],
-        textAlign: TextAlign.center,
-        keyboardType: TextInputType.number,
-        inputFormatters: [
-          FilteringTextInputFormatter.digitsOnly,
-          LengthLimitingTextInputFormatter(1),
-        ],
-        decoration: InputDecoration(
-          filled: true,
-          fillColor: const Color(0xFFF9FAFB),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
-          ),
-        ),
-        onChanged: (v) => _handleOtpTyping(index, v),
-      ),
-    );
-  }
-
-  // Moves focus between OTP boxes automatically
-  void _handleOtpTyping(int index, String value) {
-    if (value.isNotEmpty) {
-      if (index < _otpControllers.length - 1) {
-        FocusScope.of(context).nextFocus();
-      } else {
-        FocusScope.of(context).unfocus();
-      }
-    } else {
-      if (index > 0) {
-        FocusScope.of(context).previousFocus();
-      }
-    }
-  }
-
-  // Main verify button (front-end only for now)
-  Widget _buildVerifyButton(AppLocalizations l10n) {
-    return AtharButton(
-      label: l10n.verifyButton,
-      onPressed: () {
-        // Front-end only: later you will connect it to backend
-        Navigator.pushNamed(context, AppRoutes.home);
-      },
-    );
-  }
-
-  // Resend logic + countdown UI
-  Widget _buildResendRow(AppLocalizations l10n) {
+  Widget _buildResendButton(AppLocalizations l10n, bool isLoading) {
     final canResend = _secondsLeft == 0;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (!canResend)
-          Text(
-            l10n.resendCodeInSeconds(_secondsLeft),
-            style: TextStyle(color: Colors.grey[600]),
-          ),
-        if (canResend)
-          TextButton(
-            onPressed: () {
-              // Front-end only: later you will trigger resend API
+    return canResend
+        ? TextButton(
+            onPressed: isLoading ? null : () {
+              ref.read(authNotifierProvider.notifier).sendVerificationLink();
               _startTimer();
             },
-            child: Text(
-              l10n.resendCode,
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-      ],
-    );
+            child: Text(l10n.resendCode, style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+          )
+        : Text(
+            l10n.resendCodeInSeconds(_secondsLeft),
+            style: TextStyle(color: Colors.grey[400]),
+          );
   }
 
-  // Back to Sign Up button (outline style)
-  Widget _buildBackButton(AppLocalizations l10n) {
-    return AtharButton(
-      label: l10n.backToSignUpButton,
-      variant: ButtonVariant.outline,
-      onPressed: () => Navigator.pushNamedAndRemoveUntil(
-        context,
-        AppRoutes.signUp,
-        (route) => false,
-      ),
-    );
+  void _handleBackToLogin() {
+    // يفضل تسجيل الخروج قبل العودة لضمان نظافة الحالة
+    ref.read(authNotifierProvider.notifier).logout();
+    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.signIn, (route) => false);
+  }
+
+  String _translateError(String errorKey, AppLocalizations l10n) {
+    switch (errorKey) {
+      case 'errorEmailNotVerified': return l10n.errorEmailNotVerified;
+      default: return l10n.errorUnexpected;
+    }
   }
 }
