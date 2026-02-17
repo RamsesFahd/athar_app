@@ -1,3 +1,4 @@
+import 'package:athar_app/core/widgets/accessibility_controls.dart';
 import 'package:flutter/material.dart';
 
 class CustomHeader extends StatelessWidget {
@@ -67,6 +68,32 @@ class CustomHeader extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+          ),
+          // ✨ 4. زر سهولة الوصول (في الزاوية العلوية)
+          PositionedDirectional(
+            top: 50, // مسافة من الأعلى ليتجاوز النوتش
+            end: 20, // في نهاية الشاشة حسب اتجاه اللغة
+            child: Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                shape: BoxShape.circle,
+                // أضفنا ظل خفيف عشان تبرز الأيقونة فوق صورة الخلفية
+                boxShadow: const [
+                  BoxShadow(color: Colors.black45, blurRadius: 8, offset: Offset(0, 2))
+                ],
+              ),
+              child: IconButton(
+                icon: const Icon(Icons.accessibility_new, color: Colors.white, size: 22),
+                tooltip: 'سهولة الوصول',
+                onPressed: () {
+                  // فتح النافذة المنبثقة للأداة
+                  showDialog(
+                    context: context,
+                    builder: (context) => const AccessibilityControls(),
+                  );
+                },
+              ),
             ),
           ),
         ],

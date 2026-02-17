@@ -57,5 +57,19 @@
   "mapLabel": "الخريطة",
   "assistantLabel": "المساعد",
   "calendarLabel": "التقويم",
-  "profileLabel": "الملف"
+  "profileLabel": "الملف",
+
+  "accessibilityOptionsTitle": "خيارات سهولة الوصول",
+  "accessibilityFontSize": "حجم الخط",
+  "accessibilitySmall": "صغير",
+  "accessibilityMedium": "متوسط",
+  "accessibilityLarge": "كبير",
+  "accessibilityLanguage": "اللغة",
+  "accessibilityEnglish": "الإنجليزية",
+  "accessibilityArabic": "العربية",
+  "accessibilityContrast": "التباين",
+  "accessibilityRegular": "عادي",
+  "accessibilityHighContrast": "تباين عالي",
+  "accessibilityTextReader": "قارئ النصوص",
+  "accessibilityTextReaderHint": "الاستماع إلى محتوى الصفحة بصوت عالٍ"
 }

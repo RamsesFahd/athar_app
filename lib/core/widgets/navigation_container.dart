@@ -3,6 +3,8 @@ import 'package:athar_app/core/widgets/bottom_navigation.dart';
 import 'package:athar_app/features/auth/screens/home.dart';
 import 'package:athar_app/core/widgets/header.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+// For the accessibility controls
+import 'package:athar_app/core/widgets/accessibility_controls.dart';
 
 class NavigationContainer extends StatefulWidget {
   const NavigationContainer({super.key});
@@ -49,7 +51,12 @@ class _NavigationContainerState extends State<NavigationContainer> {
         isHome: _currentIndex == 0,
         title: _getPageTitle(context),
       ),
-      body: AnimatedSwitcher(
+
+      // we need a stack to layer the accessibility controls on top of the content
+      body: Stack(
+        children: [
+      
+      AnimatedSwitcher(
         duration: const Duration(milliseconds: 400),
         // هذا هو الجزء السحري لتحقيق حركة الفيديو (Slide Animation)
         transitionBuilder: (Widget child, Animation<double> animation) {
@@ -78,6 +85,9 @@ class _NavigationContainerState extends State<NavigationContainer> {
           key: ValueKey<int>(_currentIndex),
           child: _screens[_currentIndex],
         ),
+      ),
+      
+        ],
       ),
       bottomNavigationBar: AtharBottomNavigation(
         currentIndex: _currentIndex,

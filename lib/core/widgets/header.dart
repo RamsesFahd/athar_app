@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:athar_app/core/widgets/accessibility_controls.dart';
 import 'package:flutter/material.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
@@ -59,6 +60,26 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           ),
 
           actions: [
+
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.primary, // يأخذ اللون الأخضر (أو الأسود في التباين العالي)
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.accessibility_new, color: Colors.white, size: 22),
+                  tooltip: 'سهولة الوصول',
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const AccessibilityControls(),
+                    );
+                  },
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Stack(

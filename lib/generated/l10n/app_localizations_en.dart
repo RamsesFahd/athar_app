@@ -166,4 +166,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileLabel => 'Profile';
+
+  @override
+  String get accessibilityOptionsTitle => 'Accessibility Options';
+
+  @override
+  String get accessibilityFontSize => 'Font Size';
+
+  @override
+  String get accessibilitySmall => 'Small';
+
+  @override
+  String get accessibilityMedium => 'Medium';
+
+  @override
+  String get accessibilityLarge => 'Large';
+
+  @override
+  String get accessibilityLanguage => 'Language';
+
+  @override
+  String get accessibilityEnglish => 'English';
+
+  @override
+  String get accessibilityArabic => 'Arabic';
+
+  @override
+  String get accessibilityContrast => 'Contrast';
+
+  @override
+  String get accessibilityRegular => 'Regular';
+
+  @override
+  String get accessibilityHighContrast => 'High Contrast';
+
+  @override
+  String get accessibilityTextReader => 'Text Reader';
+
+  @override
+  String get accessibilityTextReaderHint => 'Listen to page content read aloud';
 }

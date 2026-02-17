@@ -1,114 +1,129 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../providers/settings_provider.dart';
+import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
-class AccessibilityControls extends ConsumerStatefulWidget {
+// حولناها إلى ConsumerWidget لأننا ما نحتاج State لفتح وإغلاق الزر بعد الآن
+class AccessibilityControls extends ConsumerWidget {
   const AccessibilityControls({super.key});
 
   @override
-  ConsumerState<AccessibilityControls> createState() => _AccessibilityControlsState();
-}
-
-class _AccessibilityControlsState extends ConsumerState<AccessibilityControls> {
-  bool _isOpen = false;
-
-  @override
-  Widget build(BuildContext context) {
-    // مراقبة حالة الإعدادات (ستفعل برمجياً في الخطوة الرابعة)
+  Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
-    final l10n = AppLocalizations.of(context);
-    final isRtl = Directionality.of(context) == TextDirection.rtl;
+    final notifier = ref.read(settingsProvider.notifier);
+    final l10n = AppLocalizations.of(context)!;
+    final sage600 = const Color(0xFF1A4D32);
 
-    return Stack(
-      children: [
-        Positioned(
-          top: 45,
-          // الزر يتبع الاتجاه تلقائياً: يمين في الإنجليزي، يسار في العربي
-          right: isRtl ? null : 16,
-          left: isRtl ? 16 : null,
-          child: Column(
-            crossAxisAlignment: isRtl ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-            children: [
-              // الزر العائم الأساسي
-              FloatingActionButton.small(
-                heroTag: 'accessibility_fab',
-                backgroundColor: const Color(0xFF6B8E23), // لون الـ Sage المعتمد لأثر
-                onPressed: () => setState(() => _isOpen = !_isOpen),
-                child: Icon(_isOpen ? Icons.close : Icons.accessibility_new, color: Colors.white),
-              ),
-              if (_isOpen) ...[
-                const SizedBox(height: 10),
-                _buildOptionsPanel(l10n, isRtl, settings),
-              ],
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildOptionsPanel(AppLocalizations l10n, bool isRtl, dynamic settings) {
-    return Container(
-      width: 220,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            isRtl ? 'سهولة الوصول' : 'Accessibility',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-          ),
-          const Divider(height: 20),
-          
-          // خيار تغيير اللغة
-          _buildOptionItem(
-            icon: Icons.language,
-            label: isRtl ? 'English' : 'العربية',
-            onTap: () {
-              // TODO: سيتم ربط منطق تغيير اللغة هنا في الخطوة الرابعة
-              debugPrint("Language toggle clicked");
-            },
-          ),
-          
-          const SizedBox(height: 10),
-          
-          // خيار حجم الخط (قالب فقط حالياً)
-          _buildOptionItem(
-            icon: Icons.text_fields,
-            label: isRtl ? 'حجم الخط' : 'Font Size',
-            onTap: () => debugPrint("Font size clicked"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOptionItem({required IconData icon, required String label, required VoidCallback onTap}) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-        child: Row(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // عشان النافذة تاخذ مساحة العناصر بس
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: 20, color: const Color(0xFF6B8E23)),
-            const SizedBox(width: 12),
-            Text(label, style: const TextStyle(fontSize: 13)),
+            // الهيدر حق النافذة مع زر الإغلاق
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l10n.accessibilityOptionsTitle,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.grey),
+                  onPressed: () => Navigator.of(context).pop(), // إغلاق النافذة
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // -- حجم الخط --
+            _buildSectionHeader(Icons.text_fields, l10n.accessibilityFontSize, sage600),
+            Row(
+              children: [
+                Expanded(child: _buildOptionButton(l10n.accessibilitySmall, settings.fontSize == AppFontSize.small, () => notifier.setFontSize(AppFontSize.small), sage600)),
+                Expanded(child: _buildOptionButton(l10n.accessibilityMedium, settings.fontSize == AppFontSize.medium, () => notifier.setFontSize(AppFontSize.medium), sage600)),
+                Expanded(child: _buildOptionButton(l10n.accessibilityLarge, settings.fontSize == AppFontSize.large, () => notifier.setFontSize(AppFontSize.large), sage600)),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // -- اللغة --
+            _buildSectionHeader(Icons.language, l10n.accessibilityLanguage, sage600),
+            Row(
+              children: [
+                Expanded(child: _buildOptionButton(l10n.accessibilityEnglish, settings.locale.languageCode == 'en', () => notifier.setLocale(const Locale('en')), sage600)),
+                Expanded(child: _buildOptionButton(l10n.accessibilityArabic, settings.locale.languageCode == 'ar', () => notifier.setLocale(const Locale('ar')), sage600)),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // -- التباين --
+            _buildSectionHeader(Icons.brightness_6, l10n.accessibilityContrast, sage600),
+            Row(
+              children: [
+                Expanded(child: _buildOptionButton(l10n.accessibilityRegular, !settings.highContrast, () { if(settings.highContrast) notifier.toggleContrast(); }, sage600)),
+                Expanded(child: _buildOptionButton(l10n.accessibilityHighContrast, settings.highContrast, () { if(!settings.highContrast) notifier.toggleContrast(); }, sage600)),
+              ],
+            ),
+            
+            const Divider(height: 32),
+
+            // -- قارئ النصوص (TTS) --
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildSectionHeader(Icons.volume_up, l10n.accessibilityTextReader, sage600, padding: 0),
+                Switch(
+                  value: settings.isTtsEnabled,
+                  onChanged: (_) => notifier.toggleTts(),
+                  activeColor: sage600,
+                ),
+              ],
+            ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // دوال مساعدة
+  Widget _buildSectionHeader(IconData icon, String title, Color color, {double padding = 8}) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: padding),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: color),
+          const SizedBox(width: 8),
+          Text(title, style: TextStyle(fontSize: 14, color: Colors.grey.shade700)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOptionButton(String text, bool isSelected, VoidCallback onTap, Color activeColor) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? activeColor : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: isSelected ? activeColor : Colors.grey.shade300),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 12,
+            color: isSelected ? Colors.white : Colors.black87,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+          textAlign: TextAlign.center,
         ),
       ),
     );

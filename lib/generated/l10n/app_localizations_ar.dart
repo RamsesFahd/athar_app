@@ -165,4 +165,44 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileLabel => 'الملف';
+
+  @override
+  String get accessibilityOptionsTitle => 'خيارات سهولة الوصول';
+
+  @override
+  String get accessibilityFontSize => 'حجم الخط';
+
+  @override
+  String get accessibilitySmall => 'صغير';
+
+  @override
+  String get accessibilityMedium => 'متوسط';
+
+  @override
+  String get accessibilityLarge => 'كبير';
+
+  @override
+  String get accessibilityLanguage => 'اللغة';
+
+  @override
+  String get accessibilityEnglish => 'الإنجليزية';
+
+  @override
+  String get accessibilityArabic => 'العربية';
+
+  @override
+  String get accessibilityContrast => 'التباين';
+
+  @override
+  String get accessibilityRegular => 'عادي';
+
+  @override
+  String get accessibilityHighContrast => 'تباين عالي';
+
+  @override
+  String get accessibilityTextReader => 'قارئ النصوص';
+
+  @override
+  String get accessibilityTextReaderHint =>
+      'الاستماع إلى محتوى الصفحة بصوت عالٍ';
 }
