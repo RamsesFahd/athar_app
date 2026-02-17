@@ -38,33 +38,33 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
 
     // listening to auth state changes to show error messages or navigate to home screen on successful login
     ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
-    next.whenOrNull(
-      error: (error, stack) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AuthUtils.translateError(error.toString(), l10n)),
-            backgroundColor: Colors.red,
-          ),
-        );
-      },
-      data: (user) {
-        if (user != null) {
-          
-          Navigator.pushReplacementNamed(
-            context, 
-            AppRoutes.verifyEmail,
-            arguments: _email.text, 
+      next.whenOrNull(
+        error: (error, stack) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AuthUtils.translateError(error.toString(), l10n)),
+              backgroundColor: Colors.red,
+            ),
           );
-        }
-      },
-    );
-  });
+        },
+        data: (user) {
+          if (user != null) {
+            Navigator.pushReplacementNamed(
+              context,
+              AppRoutes.verifyEmail,
+              arguments: _email.text,
+            );
+          }
+        },
+      );
+    });
 
-  // checking for loading state 
-  final authState = ref.watch(authNotifierProvider);
+    // checking for loading state
+    final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -78,9 +78,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           Expanded(
             child: Container(
               transform: Matrix4.translationValues(0, -30, 0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(35),
                   topRight: Radius.circular(35),
                 ),
@@ -90,33 +90,44 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // FullName lable
                     Text(l10n.fullNameLabel,
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontSize: theme.textTheme.bodyLarge?.fontSize,
+                        )),
                     const SizedBox(height: 8),
                     _buildTextField(_fullName, l10n.nameHint, false),
 
-                    const SizedBox(height: 18),
+                    // Email label
                     Text(l10n.emailLabel,
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                            fontSize: theme.textTheme.bodyLarge?.fontSize)),
                     const SizedBox(height: 8),
                     _buildTextField(_email, l10n.emailHint, false),
+                    const SizedBox(height: 18),
 
+                    // Password label
                     const SizedBox(height: 18),
                     Text(l10n.passwordLabel,
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                            fontSize: theme.textTheme.bodyLarge?.fontSize)),
                     const SizedBox(height: 8),
-                    _buildPasswordField(_password, l10n.passwordHint, isConfirm: false),
+                    _buildTextField(_password, l10n.passwordHint, true),
 
+                    // Confirm Password label
                     const SizedBox(height: 18),
                     Text(l10n.confirmPasswordLabel,
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                            fontSize: theme.textTheme.bodyLarge?.fontSize)),
                     const SizedBox(height: 8),
-                    _buildPasswordField(_confirmPassword, l10n.passwordHint, isConfirm: true),
+                    _buildTextField(_confirmPassword, l10n.passwordHint,true),
 
+                    // Sign up button
                     const SizedBox(height: 20),
                     AtharButton(
                       label: l10n.createAccountButton,
-                      isLoading: authState.isLoading,
+                      isLoading:
+                          authState.isLoading, // pass loading state to button
                       onPressed: () {
                         final email = _email.text.trim();
                         final pass = _password.text;
@@ -129,7 +140,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(l10n.fillAllFieldsError),
-                              backgroundColor: Colors.red,
+                              backgroundColor: AppColors.error,
                               behavior: SnackBarBehavior.floating,
                             ),
                           );
@@ -138,10 +149,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
                         if (pass != confirm) {
                           // you show a snackbar or dialog to inform the user that passwords do not match
-                          ScaffoldMessenger.of(context).showSnackBar( 
+                          ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(l10n.passwordsDoNotMatchError),
-                              backgroundColor: Colors.red,
+                              backgroundColor: AppColors.error,
                               behavior: SnackBarBehavior.floating,
                             ),
                           );
@@ -156,7 +167,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             );
                       },
                     ),
-                        
 
                     const SizedBox(height: 25),
                     AuthUtils.buildDivider(l10n),
@@ -174,61 +184,59 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint, bool isPassword) {
-    return TextField(
-      controller: controller,
-      obscureText: isPassword ? _hidePassword : false,
-      decoration: InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: const Color(0xFFF9FAFB),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
+  Widget _buildTextField( TextEditingController controller, String hint, bool isPassword, { bool isConfirm = false,}) {
 
-  Widget _buildPasswordField(TextEditingController controller, String hint, {required bool isConfirm}) {
+    final theme = Theme.of(context);
     final hide = isConfirm ? _hideConfirmPassword : _hidePassword;
 
     return TextField(
       controller: controller,
-      obscureText: hide,
+      obscureText: isPassword ? hide : false,
+      style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         hintText: hint,
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
         filled: true,
-        fillColor: const Color(0xFFF9FAFB),
+        fillColor: theme.colorScheme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: Colors.grey.shade200),
         ),
-        suffixIcon: IconButton(
-          icon: Icon(hide ? Icons.visibility_off : Icons.visibility),
-          onPressed: () {
-            setState(() {
-              if (isConfirm) {
-                _hideConfirmPassword = !_hideConfirmPassword;
-              } else {
-                _hidePassword = !_hidePassword;
-              }
-            });
-          },
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade200),
         ),
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  hide ? Icons.visibility_off : Icons.visibility,
+                  color: theme.colorScheme.primary,
+                ),
+                onPressed: () => setState(() {
+                  if (isConfirm) {
+                    _hideConfirmPassword = !_hideConfirmPassword;
+                  } else {
+                    _hidePassword = !_hidePassword;
+                  }
+                }),
+              )
+            : null,
       ),
     );
   }
 
+  
   Widget _buildSocialButtons() {
+    final theme = Theme.of(context);
     return Row(children: [
-      _socialBtn(Icons.apple, Colors.black, Colors.white),
+      _socialBtn(Icons.apple, theme.colorScheme.onSurface, theme.colorScheme.surface),
       const SizedBox(width: 12),
-      _socialBtn(null, Colors.white, Colors.black, isGoogle: true),
+      _socialBtn(null, theme.colorScheme.surface, theme.colorScheme.onSurface, isGoogle: true),
     ]);
   }
 
-  Widget _socialBtn(IconData? icon, Color bg, Color fg, {bool isGoogle = false}) {
+  Widget _socialBtn(IconData? icon, Color bg, Color fg,
+      {bool isGoogle = false}) {
     return Expanded(
       child: Container(
         height: 50,
@@ -249,27 +257,36 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     );
   }
 
+  
   Widget _buildFooterLinks(AppLocalizations l10n, bool isLoading) {
+    final theme = Theme.of(context);
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text(l10n.alreadyHaveAccount),
+        Text(l10n.alreadyHaveAccount, style: theme.textTheme.bodyMedium),
         TextButton(
-          onPressed: isLoading ? null : () => Navigator.pushNamed(context, AppRoutes.signIn),
-        child: Text(
-          l10n.signInLink,
-          style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
-        ),
+          onPressed: isLoading
+              ? null
+              : () => Navigator.pushNamed(context, AppRoutes.signIn),
+          child: Text(
+            l10n.signInLink,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ]),
       TextButton(
-        onPressed: isLoading 
-          ? null 
-          : () => ref.read(authNotifierProvider.notifier).guestLogin(), // guest login method in auth notifier
-      child: Text(
-        l10n.continueAsGuest,
-        style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
+        onPressed: isLoading
+            ? null
+            : () => ref.read(authNotifierProvider.notifier).guestLogin(),
+        child: Text(
+          l10n.continueAsGuest,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.bold),
       ),
       ),
     ]);
-  }
+}
 }

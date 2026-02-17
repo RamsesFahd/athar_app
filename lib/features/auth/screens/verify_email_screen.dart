@@ -77,7 +77,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
             SnackBar(
                 // استخدام ملف الأدوات المشترك لترجمة الخطأ
                 content: Text(AuthUtils.translateError(error.toString(), l10n)),
-                backgroundColor: Colors.red),
+                backgroundColor: AppColors.error),
           );
         },
         data: (user) {
@@ -87,6 +87,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
         },
       );
     });
+
 
     return Scaffold(
       appBar: AppBar(
