@@ -40,9 +40,18 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   void setLocale(Locale locale) => state = state.copyWith(locale: locale);
   void toggleContrast() => state = state.copyWith(highContrast: !state.highContrast);
   void toggleTts() => state = state.copyWith(isTtsEnabled: !state.isTtsEnabled);
+  
+  // Toggle AR/EN 
+void toggleLocale() {
+  final isArabic = state.locale.languageCode == 'ar';
+  state = state.copyWith(
+    locale: isArabic ? const Locale('en') : const Locale('ar'),
+  );
+}
 }
 
 // 3. تعريف الـ Provider
 final settingsProvider = StateNotifierProvider<SettingsNotifier, AppSettings>((ref) {
   return SettingsNotifier();
 });
+
