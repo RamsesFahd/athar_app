@@ -5,6 +5,8 @@ import 'package:athar_app/core/widgets/header.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 // For the accessibility controls
 import 'package:athar_app/core/widgets/accessibility_controls.dart';
+// For the Profile
+import 'package:athar_app/features/profile/screens/profile_screen.dart';
 
 class NavigationContainer extends StatefulWidget {
   const NavigationContainer({super.key});
@@ -23,6 +25,7 @@ class _NavigationContainerState extends State<NavigationContainer> {
     const Scaffold(body: Center(child: Text('AI Assistant'))),
     const Scaffold(body: Center(child: Text('Calendar'))),
     const Scaffold(body: Center(child: Text('Profile'))),
+    const ProfileScreen(),
   ];
 
   String _getPageTitle(BuildContext context) {

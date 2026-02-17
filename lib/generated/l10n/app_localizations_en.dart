@@ -205,4 +205,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accessibilityTextReaderHint => 'Listen to page content read aloud';
+
+  @override
+  String get profileEditButton => 'Edit Profile';
+
+  @override
+  String get editProfileTitle => 'Edit Profile';
+
+  @override
+  String get savedTitle => 'Saved';
+
+  @override
+  String get bookingTitle => 'Booking';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get upcomingBookingTitle => 'Upcoming Booking';
+
+  @override
+  String get detailsButton => 'Details';
+
+  @override
+  String get contributeContent => 'Contribute Content';
+
+  @override
+  String get changeEmailTitle => 'Change Email';
+
+  @override
+  String get newEmailLabel => 'New Email';
+
+  @override
+  String get confirmEmailLabel => 'Confirm Email';
+
+  @override
+  String get addPhoneTitle => 'Add Phone Number';
+
+  @override
+  String get newPhoneLabel => 'New Phone Number';
+
+  @override
+  String get confirmPhoneLabel => 'Confirm Phone Number';
+
+  @override
+  String get languageTitle => 'App Language';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageArabic => 'Arabic';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get bookingNotifications => 'Booking Notifications';
+
+  @override
+  String get eventReminders => 'Event Reminders';
+
+  @override
+  String get marketingEmails => 'Marketing Emails';
+
+  @override
+  String get logoutTitle => 'Log Out';
+
+  @override
+  String get chooseFromGallery => 'Choose from Gallery';
+
+  @override
+  String get takePhoto => 'Take Photo';
 }

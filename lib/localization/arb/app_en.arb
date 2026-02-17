@@ -111,5 +111,32 @@
   "accessibilityRegular": "Regular",
   "accessibilityHighContrast": "High Contrast",
   "accessibilityTextReader": "Text Reader",
-  "accessibilityTextReaderHint": "Listen to page content read aloud"
+  "accessibilityTextReaderHint": "Listen to page content read aloud",
+  
+  
+  "profileEditButton": "Edit Profile",
+  "editProfileTitle": "Edit Profile",
+  "savedTitle": "Saved",
+  "bookingTitle": "Booking",
+  "settingsTitle": "Settings",
+  "upcomingBookingTitle": "Upcoming Booking",
+  "detailsButton": "Details",
+  "contributeContent": "Contribute Content",
+  "changeEmailTitle": "Change Email",
+  "newEmailLabel": "New Email",
+  "confirmEmailLabel": "Confirm Email",
+  "addPhoneTitle": "Add Phone Number",
+  "newPhoneLabel": "New Phone Number",
+  "confirmPhoneLabel": "Confirm Phone Number",
+  "languageTitle": "App Language",
+  "languageEnglish": "English",
+  "languageArabic": "Arabic",
+  "notificationsTitle": "Notifications",
+  "bookingNotifications": "Booking Notifications",
+  "eventReminders": "Event Reminders",
+  "marketingEmails": "Marketing Emails",
+  "logoutTitle": "Log Out",
+  "chooseFromGallery": "Choose from Gallery",
+  "takePhoto": "Take Photo"
+
 }

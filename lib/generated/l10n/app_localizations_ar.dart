@@ -205,4 +205,76 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get accessibilityTextReaderHint =>
       'الاستماع إلى محتوى الصفحة بصوت عالٍ';
+
+  @override
+  String get profileEditButton => 'تعديل الملف';
+
+  @override
+  String get editProfileTitle => 'تعديل الملف';
+
+  @override
+  String get savedTitle => 'المحفوظات';
+
+  @override
+  String get bookingTitle => 'الحجوزات';
+
+  @override
+  String get settingsTitle => 'الإعدادات';
+
+  @override
+  String get upcomingBookingTitle => 'الحجوزات القادمة';
+
+  @override
+  String get detailsButton => 'تفاصيل';
+
+  @override
+  String get contributeContent => 'إضافة محتوى';
+
+  @override
+  String get changeEmailTitle => 'تعديل البريد';
+
+  @override
+  String get newEmailLabel => 'البريد الجديد';
+
+  @override
+  String get confirmEmailLabel => 'تأكيد البريد';
+
+  @override
+  String get addPhoneTitle => 'إضافة رقم الجوال';
+
+  @override
+  String get newPhoneLabel => 'رقم الجوال الجديد';
+
+  @override
+  String get confirmPhoneLabel => 'تأكيد رقم الجوال';
+
+  @override
+  String get languageTitle => 'لغة التطبيق';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageArabic => 'العربية';
+
+  @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get bookingNotifications => 'إشعارات الحجوزات';
+
+  @override
+  String get eventReminders => 'تذكير الفعاليات';
+
+  @override
+  String get marketingEmails => 'رسائل تسويقية';
+
+  @override
+  String get logoutTitle => 'تسجيل الخروج';
+
+  @override
+  String get chooseFromGallery => 'اختيار من المعرض';
+
+  @override
+  String get takePhoto => 'التقاط صورة';
 }

@@ -481,6 +481,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Listen to page content read aloud'**
   String get accessibilityTextReaderHint;
+
+  /// No description provided for @profileEditButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get profileEditButton;
+
+  /// No description provided for @editProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfileTitle;
+
+  /// No description provided for @savedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get savedTitle;
+
+  /// No description provided for @bookingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking'**
+  String get bookingTitle;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @upcomingBookingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Booking'**
+  String get upcomingBookingTitle;
+
+  /// No description provided for @detailsButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get detailsButton;
+
+  /// No description provided for @contributeContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribute Content'**
+  String get contributeContent;
+
+  /// No description provided for @changeEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Email'**
+  String get changeEmailTitle;
+
+  /// No description provided for @newEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New Email'**
+  String get newEmailLabel;
+
+  /// No description provided for @confirmEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Email'**
+  String get confirmEmailLabel;
+
+  /// No description provided for @addPhoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Phone Number'**
+  String get addPhoneTitle;
+
+  /// No description provided for @newPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New Phone Number'**
+  String get newPhoneLabel;
+
+  /// No description provided for @confirmPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Phone Number'**
+  String get confirmPhoneLabel;
+
+  /// No description provided for @languageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App Language'**
+  String get languageTitle;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// No description provided for @languageArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get languageArabic;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @bookingNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Notifications'**
+  String get bookingNotifications;
+
+  /// No description provided for @eventReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Reminders'**
+  String get eventReminders;
+
+  /// No description provided for @marketingEmails.
+  ///
+  /// In en, this message translates to:
+  /// **'Marketing Emails'**
+  String get marketingEmails;
+
+  /// No description provided for @logoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get logoutTitle;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get chooseFromGallery;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo'**
+  String get takePhoto;
 }
 
 class _AppLocalizationsDelegate

@@ -71,5 +71,31 @@
   "accessibilityRegular": "عادي",
   "accessibilityHighContrast": "تباين عالي",
   "accessibilityTextReader": "قارئ النصوص",
-  "accessibilityTextReaderHint": "الاستماع إلى محتوى الصفحة بصوت عالٍ"
+  "accessibilityTextReaderHint": "الاستماع إلى محتوى الصفحة بصوت عالٍ",
+
+
+  "profileEditButton": "تعديل الملف",
+  "editProfileTitle": "تعديل الملف",
+  "savedTitle": "المحفوظات",
+  "bookingTitle": "الحجوزات",
+  "settingsTitle": "الإعدادات",
+  "upcomingBookingTitle": "الحجوزات القادمة",
+  "detailsButton": "تفاصيل",
+  "contributeContent": "إضافة محتوى",
+  "changeEmailTitle": "تعديل البريد",
+  "newEmailLabel": "البريد الجديد",
+  "confirmEmailLabel": "تأكيد البريد",
+  "addPhoneTitle": "إضافة رقم الجوال",
+  "newPhoneLabel": "رقم الجوال الجديد",
+  "confirmPhoneLabel": "تأكيد رقم الجوال",
+  "languageTitle": "لغة التطبيق",
+  "languageEnglish": "English",
+  "languageArabic": "العربية",
+  "notificationsTitle": "الإشعارات",
+  "bookingNotifications": "إشعارات الحجوزات",
+  "eventReminders": "تذكير الفعاليات",
+  "marketingEmails": "رسائل تسويقية",
+  "logoutTitle": "تسجيل الخروج",
+  "chooseFromGallery": "اختيار من المعرض",
+  "takePhoto": "التقاط صورة"
 }
