@@ -150,4 +150,19 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get errorEmailNotVerified =>
       'يرجى التحقق من بريدك الإلكتروني عبر الرابط المرسل إليك أولًا.';
+
+  @override
+  String get homeLabel => 'الرئيسية';
+
+  @override
+  String get mapLabel => 'الخريطة';
+
+  @override
+  String get assistantLabel => 'المساعد';
+
+  @override
+  String get calendarLabel => 'التقويم';
+
+  @override
+  String get profileLabel => 'الملف';
 }

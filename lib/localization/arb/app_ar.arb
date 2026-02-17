@@ -30,22 +30,19 @@
   "emailSentMessage": "تفقد بريدك الإلكتروني واتبع التعليمات",
   "backToSignInButton": "العودة لتسجيل الدخول",
   "backToSignUpButton": "العودة لإنشاء حساب",
-
   "verifyEmailTitle": "تحقق من بريدك الإلكتروني",
   "verifyEmailSubtitle": "أدخل الرمز المرسل إلى بريدك",
   "verifyEmailInfoText": "تم إرسال رمز التحقق إلى:",
   "verifyButton": "تحقق",
   "resendCode": "إعادة إرسال الرمز",
-  
   "resendCodeInSeconds": "إعادة إرسال الرمز خلال {seconds} ثانية",
   "@resendCodeInSeconds": {
     "placeholders": {
       "seconds": {
         "type": "int"
-        }
       }
-    },
-
+    }
+  },
   "errorEmailAlreadyInUse": "هذا البريد الإلكتروني مستخدم بالفعل.",
   "errorInvalidEmail": "عنوان البريد الإلكتروني غير صحيح.",
   "errorUserNotFound": "لا يوجد مستخدم مسجل بهذا البريد.",
@@ -55,12 +52,10 @@
   "fillAllFieldsError": "يرجى ملء جميع الحقول",
   "passwordsDoNotMatchError": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى.",
   "guestUser": "ضيف",
-  "@guestUser": {
-    "description": "Default name for anonymous users"
-  },
-
   "errorEmailNotVerified": "يرجى التحقق من بريدك الإلكتروني عبر الرابط المرسل إليك أولًا.",
-  "@errorEmailNotVerified": {
-    "description": "Error message shown when user tries to sign in without verifying their email"
-  }
+  "homeLabel": "الرئيسية",
+  "mapLabel": "الخريطة",
+  "assistantLabel": "المساعد",
+  "calendarLabel": "التقويم",
+  "profileLabel": "الملف"
 }

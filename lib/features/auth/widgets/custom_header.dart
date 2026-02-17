@@ -4,12 +4,16 @@ class CustomHeader extends StatelessWidget {
   final String title;
   final String subtitle;
   final String imagePath;
-  const CustomHeader({super.key, required this.title, required this.subtitle, required this.imagePath});
+  const CustomHeader(
+      {super.key,
+      required this.title,
+      required this.subtitle,
+      required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
-    
-    
+    final theme = Theme.of(context);
+
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.35,
       width: double.infinity,
@@ -21,7 +25,7 @@ class CustomHeader extends StatelessWidget {
             imagePath,
             fit: BoxFit.cover,
           ),
-          
+
           // 2. التدرج اللوني لضمان وضوح النص
           Container(
             decoration: BoxDecoration(
@@ -38,32 +42,28 @@ class CustomHeader extends StatelessWidget {
 
           // 3. نصوص الهيدر (العنوان والوصف)
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 60), 
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 60),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               // التعديل الجوهري: CrossAxisAlignment.start تعني اليمين في العربي تلقائيًا
-              crossAxisAlignment: CrossAxisAlignment.start, 
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
                   // TextAlign.start تتبع اتجاه لغة التطبيق الحالية
                   textAlign: TextAlign.start,
-                  style: const TextStyle(
+                  style: theme.textTheme.displayLarge?.copyWith(
                     color: Colors.white,
                     fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    // استخدام Playfair Display للإنجليزي كما هو مفضل لديكِ
-                    fontFamily: 'Playfair Display', 
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
                   textAlign: TextAlign.start,
-                  style: TextStyle(
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.white.withOpacity(0.9),
                     fontSize: 16,
-                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],

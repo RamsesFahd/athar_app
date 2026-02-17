@@ -151,4 +151,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorEmailNotVerified =>
       'Please verify your email via the link sent to you.';
+
+  @override
+  String get homeLabel => 'Home';
+
+  @override
+  String get mapLabel => 'Map';
+
+  @override
+  String get assistantLabel => 'AI Chat';
+
+  @override
+  String get calendarLabel => 'Calendar';
+
+  @override
+  String get profileLabel => 'Profile';
 }

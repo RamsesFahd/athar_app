@@ -368,11 +368,41 @@ abstract class AppLocalizations {
   /// **'Guest'**
   String get guestUser;
 
-  /// Error message shown when user tries to sign in without verifying their email
+  /// Error message
   ///
   /// In en, this message translates to:
   /// **'Please verify your email via the link sent to you.'**
   String get errorEmailNotVerified;
+
+  /// Label for Home tab
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homeLabel;
+
+  /// Label for Map tab
+  ///
+  /// In en, this message translates to:
+  /// **'Map'**
+  String get mapLabel;
+
+  /// Label for Chatbot tab
+  ///
+  /// In en, this message translates to:
+  /// **'AI Chat'**
+  String get assistantLabel;
+
+  /// Label for Calendar tab
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendarLabel;
+
+  /// Label for Profile tab
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileLabel;
 }
 
 class _AppLocalizationsDelegate

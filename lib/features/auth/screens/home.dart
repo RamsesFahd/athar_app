@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
+import 'package:athar_app/core/widgets/header.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -10,30 +11,11 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    
-    // مراقبة حالة المستخدم الحالية
     final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Athar Home (Test Mode)'),
-        actions: [
-          // زر تسجيل الخروج للتجربة
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await ref.read(authNotifierProvider.notifier).logout();
-              // بعد تسجيل الخروج، السبلاش أو صفحة الدخول راح تتولى التوجيه
-              if (context.mounted) {
-                Navigator.pushReplacementNamed(context, AppRoutes.signIn);
-              }
-            },
-          ),
-        ],
-      ),
       body: Center(
         child: authState.when(
-          // 1. حالة وجود بيانات المستخدم
           data: (user) => Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -41,22 +23,37 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(height: 20),
               Text(
                 '${l10n.signInWelcome}, ${user?.fullName ?? "User"}!',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
               Text('Email: ${user?.email ?? "No Email"}'),
               const SizedBox(height: 40),
+              // زر تسجيل الخروج خليته هنا في النص عشان الهيدر صار نظيف باللوقو
+              ElevatedButton.icon(
+                onPressed: () async {
+                  await ref.read(authNotifierProvider.notifier).logout();
+                  if (context.mounted) {
+                    Navigator.pushReplacementNamed(context, AppRoutes.signIn);
+                  }
+                },
+                icon: const Icon(Icons.logout),
+                label: const Text('تسجيل الخروج'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color(0xFF1A4D32),
+                ),
+              ),
+              const SizedBox(height: 20),
               const Text(
-                'هذه الصفحة "مؤقتة" لتجربة تسجيل الدخول.\n الحين تقدرين تبدأين تصميم الواجهة الحقيقية لأثر!',
+                'محتوى الصفحة سيتم تصميمه لاحقاً...\n الهيدر والفوتر الآن جاهزان! ✅',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey),
               ),
             ],
           ),
-          // 2. حالة التحميل
           loading: () => const CircularProgressIndicator(),
-          // 3. حالة الخطأ
           error: (err, stack) => Text('Error: $err'),
         ),
       ),

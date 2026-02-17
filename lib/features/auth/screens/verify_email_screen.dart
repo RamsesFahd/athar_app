@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/navigation/app_routes.dart';
-import '../../../core/widgets/custom_button.dart';
+import '../widgets/custom_button.dart';
 import '../logic/auth_notifier.dart';
 import '../../../core/models/user_model.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import '../widgets/auth_utils.dart';
 
 class VerifyEmailScreen extends ConsumerStatefulWidget {
   const VerifyEmailScreen({super.key});
@@ -65,6 +66,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     final authState = ref.watch(authNotifierProvider);
 
     // مراقبة الحالة للانتقال للهوم
@@ -72,7 +74,10 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
       next.whenOrNull(
         error: (error, stack) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(_translateError(error.toString(), l10n)), backgroundColor: Colors.red),
+            SnackBar(
+                // استخدام ملف الأدوات المشترك لترجمة الخطأ
+                content: Text(AuthUtils.translateError(error.toString(), l10n)),
+                backgroundColor: Colors.red),
           );
         },
         data: (user) {
@@ -84,12 +89,10 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     });
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.black),
+          icon: const Icon(Icons.close),
           onPressed: () => _handleBackToLogin(),
         ),
       ),
@@ -103,35 +106,39 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: theme.colorScheme.primary.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.email_outlined, size: 100, color: AppColors.primary),
+                child: Icon(Icons.email_outlined,
+                    size: 100, color: theme.colorScheme.primary),
               ),
               const SizedBox(height: 40),
-              
-              // العنوان بخط Playfair
+
+              // العنوان بخط الثيم الرسمي
               Text(
                 l10n.verifyEmailTitle,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Playfair Display',
+                style: theme.textTheme.displayLarge?.copyWith(
+                  fontSize:
+                      (theme.textTheme.displayLarge?.fontSize ?? 32) * 0.9,
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // رسالة الشرح والإيميل
               Text(
                 l10n.verifyEmailSubtitle,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey[600], fontSize: 16, height: 1.5),
+                style: theme.textTheme.bodyLarge?.copyWith(
+                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                    height: 1.5),
               ),
               const SizedBox(height: 10),
               Text(
                 _emailController.text,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontSize: theme.textTheme.bodyLarge?.fontSize,
+                ),
               ),
               const SizedBox(height: 48),
 
@@ -139,9 +146,11 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
               AtharButton(
                 label: l10n.verifyButton,
                 isLoading: authState.isLoading,
-                onPressed: () => ref.read(authNotifierProvider.notifier).checkEmailVerificationStatus(),
+                onPressed: () => ref
+                    .read(authNotifierProvider.notifier)
+                    .checkEmailVerificationStatus(),
               ),
-              
+
               const SizedBox(height: 20),
 
               // زر إعادة الإرسال
@@ -154,7 +163,9 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                 onPressed: () => _handleBackToLogin(),
                 child: Text(
                   l10n.backToSignInButton,
-                  style: TextStyle(color: Colors.grey[600], decoration: TextDecoration.underline),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.textTheme.bodySmall?.color,
+                      decoration: TextDecoration.underline),
                 ),
               ),
             ],
@@ -165,31 +176,34 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
   }
 
   Widget _buildResendButton(AppLocalizations l10n, bool isLoading) {
+    final theme = Theme.of(context);
     final canResend = _secondsLeft == 0;
     return canResend
         ? TextButton(
-            onPressed: isLoading ? null : () {
-              ref.read(authNotifierProvider.notifier).sendVerificationLink();
-              _startTimer();
-            },
-            child: Text(l10n.resendCode, style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+            onPressed: isLoading
+                ? null
+                : () {
+                    ref
+                        .read(authNotifierProvider.notifier)
+                        .sendVerificationLink();
+                    _startTimer();
+                  },
+            child: Text(l10n.resendCode,
+                style: theme.textTheme.titleLarge?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontSize: theme.textTheme.bodyLarge?.fontSize)),
           )
         : Text(
             l10n.resendCodeInSeconds(_secondsLeft),
-            style: TextStyle(color: Colors.grey[400]),
+            style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.textTheme.bodySmall?.color?.withOpacity(0.5)),
           );
   }
 
   void _handleBackToLogin() {
     // يفضل تسجيل الخروج قبل العودة لضمان نظافة الحالة
     ref.read(authNotifierProvider.notifier).logout();
-    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.signIn, (route) => false);
-  }
-
-  String _translateError(String errorKey, AppLocalizations l10n) {
-    switch (errorKey) {
-      case 'errorEmailNotVerified': return l10n.errorEmailNotVerified;
-      default: return l10n.errorUnexpected;
-    }
+    Navigator.pushNamedAndRemoveUntil(
+        context, AppRoutes.signIn, (route) => false);
   }
 }

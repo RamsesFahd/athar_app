@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/navigation/app_routes.dart';
-import '../widgets/custom_header.dart';
-import '../../../core/widgets/custom_button.dart';
-import 'package:athar_app/generated/l10n/app_localizations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../logic/auth_notifier.dart';
 import '../../../core/models/user_model.dart';
+import '../widgets/custom_header.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/auth_utils.dart';
+import '../logic/auth_notifier.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
@@ -44,7 +45,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       error: (error, stack) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(_translateError(error.toString(), l10n)),
+            content: Text(AuthUtils.translateError(error.toString(), l10n)),
             backgroundColor: Colors.red,
           ),
         );
@@ -158,7 +159,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         
 
                     const SizedBox(height: 25),
-                    _buildDivider(l10n),
+                    AuthUtils.buildDivider(l10n),
                     const SizedBox(height: 25),
                     _buildSocialButtons(),
                     const SizedBox(height: 25),
@@ -219,20 +220,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     );
   }
 
-  Widget _buildDivider(AppLocalizations l10n) {
-    return Row(children: [
-      const Expanded(child: Divider()),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Text(
-          l10n.orDivider,
-          style: TextStyle(color: Colors.grey[400], fontWeight: FontWeight.bold),
-        ),
-      ),
-      const Expanded(child: Divider()),
-    ]);
-  }
-
   Widget _buildSocialButtons() {
     return Row(children: [
       _socialBtn(Icons.apple, Colors.black, Colors.white),
@@ -277,23 +264,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       TextButton(
         onPressed: isLoading 
           ? null 
-          : () => ref.read(authNotifierProvider.notifier).guestLogin(),
+          : () => ref.read(authNotifierProvider.notifier).guestLogin(), // guest login method in auth notifier
       child: Text(
         l10n.continueAsGuest,
         style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
       ),
       ),
     ]);
-  }
-
-  String _translateError(String errorKey, AppLocalizations l10n) {
-    switch (errorKey) {
-      case 'errorEmailAlreadyInUse': return l10n.errorEmailAlreadyInUse;
-      case 'errorInvalidEmail': return l10n.errorInvalidEmail;
-      case 'errorUserNotFound': return l10n.errorUserNotFound;
-      case 'errorWrongPassword': return l10n.errorWrongPassword;
-      case 'errorWeakPassword': return l10n.errorWeakPassword;
-      default: return l10n.errorUnexpected;
-    }
   }
 }

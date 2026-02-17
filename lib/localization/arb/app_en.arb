@@ -1,176 +1,101 @@
 {
   "@@locale": "en",
   "splashTitle": "Welcome To Athar",
-  "@splashTitle": {
-    "description": "Title shown on splash screen"
-  },
+  "@splashTitle": { "description": "Title shown on splash screen" },
   "splashSubtitle": "Timeless heritage, modern vision",
-  "@splashSubtitle": {
-    "description": "Subtitle on splash screen"
-  },
+  "@splashSubtitle": { "description": "Subtitle on splash screen" },
   "signInWelcome": "Welcome To Athar",
-  "@signInWelcome": {
-    "description": "Welcome header on sign in screen"
-  },
+  "@signInWelcome": { "description": "Welcome header on sign in screen" },
   "signInSubtitle": "Discover heritage with a modern vision",
-  "@signInSubtitle": {
-    "description": "Subtitle on sign in screen"
-  },
+  "@signInSubtitle": { "description": "Subtitle on sign in screen" },
   "emailLabel": "Email Address",
-  "@emailLabel": {
-    "description": "Label for email input field"
-  },
+  "@emailLabel": { "description": "Label for email input field" },
   "passwordLabel": "Password",
-  "@passwordLabel": {
-    "description": "Label for password input field"
-  },
+  "@passwordLabel": { "description": "Label for password input field" },
   "rememberMe": "Remember Me",
-  "@rememberMe": {
-    "description": "Checkbox text to remember user credentials"
-  },
+  "@rememberMe": { "description": "Checkbox text to remember user credentials" },
   "forgotPassword": "Forgot Password?",
-  "@forgotPassword": {
-    "description": "Link to reset forgotten password"
-  },
+  "@forgotPassword": { "description": "Link to reset forgotten password" },
   "continueButton": "Continue",
-  "@continueButton": {
-    "description": "Button to proceed to next screen"
-  },
+  "@continueButton": { "description": "Button to proceed to next screen" },
   "orDivider": "OR",
-  "@orDivider": {
-    "description": "Divider text between different sign-in options"
-  },
+  "@orDivider": { "description": "Divider text between different sign-in options" },
   "noAccount": "Don't have an account?",
-  "@noAccount": {
-    "description": "Text before sign up link"
-  },
+  "@noAccount": { "description": "Text before sign up link" },
   "signUpLink": "Sign Up",
-  "@signUpLink": {
-    "description": "Link to create a new account"
-  },
+  "@signUpLink": { "description": "Link to create a new account" },
   "continueAsGuest": "Continue as Guest",
-  "@continueAsGuest": {
-    "description": "Option to use the app without signing in"
-  },
+  "@continueAsGuest": { "description": "Option to use the app without signing in" },
   "emailHint": "example@mail.com",
-  "@emailHint": {
-    "description": "Hint text inside email field"
-  },
+  "@emailHint": { "description": "Hint text inside email field" },
   "passwordHint": "••••••••",
-  "@passwordHint": {
-    "description": "Hint text inside password field (bullets)"
-  },
+  "@passwordHint": { "description": "Hint text inside password field (bullets)" },
   "signUpTitle": "Join Athar",
-  "@signUpTitle": {
-    "description": "Title on sign up screen header"
-  },
+  "@signUpTitle": { "description": "Title on sign up screen header" },
   "signUpSubtitle": "Be part of our cultural journey",
-  "@signUpSubtitle": {
-    "description": "Subtitle on sign up screen"
-  },
+  "@signUpSubtitle": { "description": "Subtitle on sign up screen" },
   "fullNameLabel": "Full Name",
-  "@fullNameLabel": {
-    "description": "Label for full name input field"
-  },
+  "@fullNameLabel": { "description": "Label for full name input field" },
   "confirmPasswordLabel": "Confirm Password",
-  "@confirmPasswordLabel": {
-    "description": "Label for confirm password field"
-  },
+  "@confirmPasswordLabel": { "description": "Label for confirm password field" },
   "nameHint": "Enter your name",
-  "@nameHint": {
-    "description": "Hint text inside full name field"
-  },
+  "@nameHint": { "description": "Hint text inside full name field" },
   "createAccountButton": "Create Account",
-  "@createAccountButton": {
-    "description": "Button to register a new account"
-  },
+  "@createAccountButton": { "description": "Button to register a new account" },
   "alreadyHaveAccount": "Already have an account? ",
-  "@alreadyHaveAccount": {
-    "description": "Text before sign in link on sign up screen"
-  },
+  "@alreadyHaveAccount": { "description": "Text before sign in link on sign up screen" },
   "signInLink": "Sign In",
-  "@signInLink": {
-    "description": "Link to sign in screen"
-  },
+  "@signInLink": { "description": "Link to sign in screen" },
   "resetPasswordTitle": "Reset Password",
-  "@resetPasswordTitle": {
-    "description": "Title on forgot password screen"
-  },
+  "@resetPasswordTitle": { "description": "Title on forgot password screen" },
   "resetPasswordSubtitle": "Enter your registered email address to receive a password reset link",
-  "@resetPasswordSubtitle": {
-    "description": "Instruction text on forgot password screen"
-  },
+  "@resetPasswordSubtitle": { "description": "Instruction text on forgot password screen" },
   "sendLinkButton": "Send Link",
-  "@sendLinkButton": {
-    "description": "Button to send password reset email"
-  },
+  "@sendLinkButton": { "description": "Button to send password reset email" },
   "emailSentTitle": "Email Sent!",
-  "@emailSentTitle": {
-    "description": "Title shown after reset email is sent"
-  },
+  "@emailSentTitle": { "description": "Title shown after reset email is sent" },
   "emailSentMessage": "Check your email and follow the instructions",
-  "@emailSentMessage": {
-    "description": "Message after reset email is sent"
-  },
+  "@emailSentMessage": { "description": "Message after reset email is sent" },
   "backToSignInButton": "Back to Sign In",
-  "@backToSignInButton": {
-    "description": "Button to return to sign in screen"
-  },
+  "@backToSignInButton": { "description": "Button to return to sign in screen" },
   "backToSignUpButton": "Back to Sign Up",
-  "@backToSignUpButton": {
-    "description": "Button to return to sign up screen"
-  },
-
-
+  "@backToSignUpButton": { "description": "Button to return to sign up screen" },
   "verifyEmailTitle": "Verify Your Email",
-  "@verifyEmailTitle": {
-    "description": "Title on verify email screen"
-  },
-
+  "@verifyEmailTitle": { "description": "Title on verify email screen" },
   "verifyEmailSubtitle": "Enter the code sent to your email",
-  "@verifyEmailSubtitle": {
-    "description": "Subtitle on verify email screen"
-  },
-
+  "@verifyEmailSubtitle": { "description": "Subtitle on verify email screen" },
   "verifyEmailInfoText": "We have sent a verification code to:",
-  "@verifyEmailInfoText": {
-    "description": "Info text shown above the email on verify screen"
-  },
-
+  "@verifyEmailInfoText": { "description": "Info text shown above the email on verify screen" },
   "verifyButton": "Verify",
-  "@verifyButton": {
-    "description": "Verify button label"
-  },
-
+  "@verifyButton": { "description": "Verify button label" },
   "resendCode": "Resend code",
-  "@resendCode": {
-    "description": "Resend code label"
-  },
-
+  "@resendCode": { "description": "Resend code label" },
   "resendCodeInSeconds": "Resend code in {seconds} seconds",
   "@resendCodeInSeconds": {
     "placeholders": {
-      "seconds": {
-        "type": "int"
-      }
+      "seconds": { "type": "int" }
     }
   },
-
   "errorEmailAlreadyInUse": "This email is already in use.",
   "errorInvalidEmail": "The email address is invalid.",
   "errorUserNotFound": "No user found with this email.",
   "errorWrongPassword": "Incorrect password. Please try again.",
   "errorWeakPassword": "The password is too weak.",
   "errorUnexpected": "An unexpected error occurred. Please try again later.",
-
   "fillAllFieldsError": "Please fill in all fields",
   "passwordsDoNotMatchError": "Passwords do not match. Please try again.",
   "guestUser": "Guest",
-  "@guestUser": {
-    "description": "Default name for anonymous users"
-  },
+  "@guestUser": { "description": "Default name for anonymous users" },
   "errorEmailNotVerified": "Please verify your email via the link sent to you.",
-  "@errorEmailNotVerified": { 
-    "description": "Error message shown when user tries to sign in without verifying their email"
-  }
+  "@errorEmailNotVerified": { "description": "Error message" },
+  "homeLabel": "Home",
+  "@homeLabel": { "description": "Label for Home tab" },
+  "mapLabel": "Map",
+  "@mapLabel": { "description": "Label for Map tab" },
+  "assistantLabel": "AI Chat",
+  "@assistantLabel": { "description": "Label for Chatbot tab" },
+  "calendarLabel": "Calendar",
+  "@calendarLabel": { "description": "Label for Calendar tab" },
+  "profileLabel": "Profile",
+  "@profileLabel": { "description": "Label for Profile tab" }
 }
