@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:athar_app/core/navigation/app_routes.dart';
+
 
 class AtharBottomNavigation extends StatelessWidget {
   final int currentIndex;
@@ -18,6 +20,15 @@ class AtharBottomNavigation extends StatelessWidget {
     final theme = Theme.of(context);
 
     final l10n = AppLocalizations.of(context)!;
+
+    // نفس ترتيب الأيقونات
+    final routes = <String>[
+      AppRoutes.home,     // Home tab
+      AppRoutes.home,     // Map tab (مؤقت لين يكون عندك route خاص)
+      AppRoutes.home,     // Assistant tab (مؤقت)
+      AppRoutes.home,     // Booking tab (مؤقت)
+      AppRoutes.profile,  // Profile tab ✅
+    ];
 
     return Container(
       decoration: BoxDecoration(
