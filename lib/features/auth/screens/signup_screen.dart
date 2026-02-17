@@ -97,6 +97,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         )),
                     const SizedBox(height: 8),
                     _buildTextField(_fullName, l10n.nameHint, false),
+                    const SizedBox(height: 18),
 
                     // Email label
                     Text(l10n.emailLabel,
@@ -107,20 +108,19 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     const SizedBox(height: 18),
 
                     // Password label
-                    const SizedBox(height: 18),
                     Text(l10n.passwordLabel,
                         style: theme.textTheme.titleLarge?.copyWith(
                             fontSize: theme.textTheme.bodyLarge?.fontSize)),
                     const SizedBox(height: 8),
                     _buildTextField(_password, l10n.passwordHint, true),
+                    const SizedBox(height: 18),
 
                     // Confirm Password label
-                    const SizedBox(height: 18),
                     Text(l10n.confirmPasswordLabel,
                         style: theme.textTheme.titleLarge?.copyWith(
                             fontSize: theme.textTheme.bodyLarge?.fontSize)),
                     const SizedBox(height: 8),
-                    _buildTextField(_confirmPassword, l10n.passwordHint,true),
+                    _buildTextField(_confirmPassword, l10n.passwordHint, true, isConfirm: true),
 
                     // Sign up button
                     const SizedBox(height: 20),
@@ -194,6 +194,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       obscureText: isPassword ? hide : false,
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
+      // استخدمتو عشان تعديل مربع الايميل 
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         hintText: hint,
         hintStyle: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
         filled: true,
@@ -206,6 +209,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade200),
         ),
+             //  يثبت مساحة الأيقونة عشان ما يأثر على ارتفاع الحقل
+      suffixIconConstraints: const BoxConstraints(minWidth: 48, minHeight: 48),
         suffixIcon: isPassword
             ? IconButton(
                 icon: Icon(
