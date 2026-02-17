@@ -13,6 +13,7 @@ class NavigationContainer extends StatefulWidget {
 
 class _NavigationContainerState extends State<NavigationContainer> {
   int _currentIndex = 0;
+  int _previousIndex = 0; // لمقارنة اتجاه الحركة (يمين/يسار)
 
   final List<Widget> _screens = [
     const HomeScreen(),
@@ -22,9 +23,8 @@ class _NavigationContainerState extends State<NavigationContainer> {
     const Scaffold(body: Center(child: Text('Profile'))),
   ];
 
-  // دالة ديناميكية تجلب الترجمة الصحيحة بناءً على الـ index ولغة التطبيق الحالية
   String _getPageTitle(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     switch (_currentIndex) {
       case 0:
         return l10n.homeLabel;
@@ -44,20 +44,50 @@ class _NavigationContainerState extends State<NavigationContainer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: Header(
         isHome: _currentIndex == 0,
-        title: _getPageTitle(context), // تمرير context لجلب الترجمة
+        title: _getPageTitle(context),
       ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 400),
+        // هذا هو الجزء السحري لتحقيق حركة الفيديو (Slide Animation)
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          final isMovingForward = _currentIndex > _previousIndex;
+
+          // تحديد من أين تبدأ الصفحة الجديدة بالظهور
+          final beginOffset = isMovingForward
+              ? const Offset(1.0, 0.0) // تدخل من اليمين
+              : const Offset(-1.0, 0.0); // تدخل من اليسار
+
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: beginOffset,
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeOutQuart, // حركة ناعمة جداً
+            )),
+            child: FadeTransition(
+              opacity: animation,
+              child: child,
+            ),
+          );
+        },
+        child: Container(
+          key: ValueKey<int>(_currentIndex),
+          child: _screens[_currentIndex],
+        ),
       ),
       bottomNavigationBar: AtharBottomNavigation(
         currentIndex: _currentIndex,
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          if (index != _currentIndex) {
+            setState(() {
+              _previousIndex = _currentIndex; // حفظ المكان السابق
+              _currentIndex = index; // التوجه للمكان الجديد
+            });
+          }
         },
       ),
     );
