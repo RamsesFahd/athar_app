@@ -97,5 +97,19 @@
   "calendarLabel": "Calendar",
   "@calendarLabel": { "description": "Label for Calendar tab" },
   "profileLabel": "Profile",
-  "@profileLabel": { "description": "Label for Profile tab" }
+  "@profileLabel": { "description": "Label for Profile tab" },
+
+  "accessibilityOptionsTitle": "Accessibility Options",
+  "accessibilityFontSize": "Font Size",
+  "accessibilitySmall": "Small",
+  "accessibilityMedium": "Medium",
+  "accessibilityLarge": "Large",
+  "accessibilityLanguage": "Language",
+  "accessibilityEnglish": "English",
+  "accessibilityArabic": "Arabic",
+  "accessibilityContrast": "Contrast",
+  "accessibilityRegular": "Regular",
+  "accessibilityHighContrast": "High Contrast",
+  "accessibilityTextReader": "Text Reader",
+  "accessibilityTextReaderHint": "Listen to page content read aloud"
 }

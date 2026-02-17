@@ -15,11 +15,15 @@ class AppTheme {
     }
 
     // 2. تحديد الألوان (عادي أو تباين عالي)
-    final Color primaryColor = settings.highContrast ? Colors.black : AppColors.primary;
-    final Color surfaceColor = settings.highContrast ? Colors.white : AppColors.sand50;
+    final bool isHighContrast = settings.highContrast;
+    
+    // ✨ في التباين العالي، نجبر النصوص والأزرار على ألوان شديدة الوضوح (أسود/أبيض)
+    final Color primaryColor = isHighContrast ? Colors.black : AppColors.primary;
+    final Color surfaceColor = isHighContrast ? Colors.white : AppColors.sand50;
+    final Color textColorPrimary = isHighContrast ? Colors.black : AppColors.sage900;
+    final Color textColorSecondary = isHighContrast ? Colors.black87 : AppColors.sage800;
 
-    // 3. تجهيز أسماء الخطوط لدمجها
-    // ملاحظة: Playfair لا يدعم العربي، لذا سيترك المهمة لـ IBM Plex تلقائياً
+    // 3. الخطوط
     final String? englishFont = GoogleFonts.playfairDisplay().fontFamily;
     final List<String> fallbackArabicFont = [GoogleFonts.ibmPlexSansArabic().fontFamily!];
 
@@ -34,7 +38,6 @@ class AppTheme {
       ),
       
       textTheme: TextTheme(
-        // العناوين الكبيرة
         displayLarge: TextStyle(
           fontFamily: englishFont,
           fontFamilyFallback: fallbackArabicFont,
@@ -42,38 +45,42 @@ class AppTheme {
           fontWeight: FontWeight.bold,
           color: primaryColor,
         ),
-        // العناوين الفرعية
         titleLarge: TextStyle(
           fontFamily: englishFont,
           fontFamilyFallback: fallbackArabicFont,
           fontSize: baseFontSize + 4,
           fontWeight: FontWeight.w600,
+          color: textColorPrimary, // ✨ تم ربطه بالتباين
         ),
-        // النصوص الأساسية
         bodyLarge: TextStyle(
           fontFamily: englishFont,
           fontFamilyFallback: fallbackArabicFont,
           fontSize: baseFontSize,
-          color: AppColors.sage900,
+          color: textColorPrimary, // ✨ تم ربطه بالتباين
         ),
-        // النصوص الصغيرة
         bodyMedium: TextStyle(
           fontFamily: englishFont,
           fontFamilyFallback: fallbackArabicFont,
           fontSize: baseFontSize - 2,
-          color: AppColors.sage800,
+          color: textColorSecondary, // ✨ تم ربطه بالتباين
         ),
       ),
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
+          backgroundColor: primaryColor, // ✨ يتغير للأسود في التباين العالي
+          foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          // نطبق نفس المنطق داخل الأزرار
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            // ✨ إضافة حدود واضحة للزر في وضع التباين العالي
+            side: isHighContrast ? const BorderSide(color: Colors.black, width: 2) : BorderSide.none,
+          ),
           textStyle: TextStyle(
             fontFamily: englishFont,
             fontFamilyFallback: fallbackArabicFont,
             fontWeight: FontWeight.bold,
+            fontSize: baseFontSize, // ✨ ربط حجم خط الزر بالإعدادات أيضاً
           ),
         ),
       ),

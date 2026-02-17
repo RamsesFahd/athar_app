@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class AtharBottomNavigation extends StatelessWidget {
   final int currentIndex;
+
   final Function(int) onTap;
 
   const AtharBottomNavigation({
@@ -14,7 +16,8 @@ class AtharBottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
+
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       decoration: BoxDecoration(
@@ -36,49 +39,55 @@ class AtharBottomNavigation extends StatelessWidget {
       child: SafeArea(
         child: BottomNavigationBar(
           currentIndex: currentIndex,
+
           onTap: onTap,
-          // إعدادات التصميم لتبدو مثل كود React (بدون خلفية افتراضية)
+
           type: BottomNavigationBarType.fixed,
+
           backgroundColor: Colors.transparent,
+
           elevation: 0,
-          selectedItemColor: theme.colorScheme.primary, // Sage 700
+
+          selectedItemColor: theme.colorScheme.primary,
+
           unselectedItemColor: Colors.grey.shade400,
 
-          // ربط الخطوط بالثيم (IBM Plex Sans Arabic)
-          selectedLabelStyle: theme.textTheme.bodyMedium?.copyWith(
-            fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 12) *
-                0.8, // نص صغير 9px تقريباً
+          // تم إزالة const من هنا ليعمل الثيم بشكل ديناميكي
+
+          selectedLabelStyle: TextStyle(
+            fontSize: 10,
             fontWeight: FontWeight.bold,
           ),
-          unselectedLabelStyle: theme.textTheme.bodyMedium?.copyWith(
-            fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 12) * 0.8,
+
+          unselectedLabelStyle: TextStyle(
+            fontSize: 10,
           ),
 
           items: [
             BottomNavigationBarItem(
               icon: const Icon(Icons.home_outlined),
               activeIcon: const Icon(Icons.home),
-              label: l10n.homeLabel, // 'الرئيسية'
+              label: l10n.homeLabel,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.map_outlined),
               activeIcon: const Icon(Icons.map),
-              label: l10n.mapLabel, // 'الخريطة'
+              label: l10n.mapLabel,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.message_outlined),
               activeIcon: const Icon(Icons.message),
-              label: l10n.assistantLabel, // 'المساعد'
+              label: l10n.assistantLabel,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.calendar_today_outlined),
-              activeIcon: const Icon(Icons.calendar_today),
-              label: l10n.calendarLabel, // 'التقويم'
+              activeIcon: const Icon(Icons.calendar_today, size: 22),
+              label: l10n.calendarLabel,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.person_outline),
               activeIcon: const Icon(Icons.person),
-              label: l10n.profileLabel, // 'الملف'
+              label: l10n.profileLabel,
             ),
           ],
         ),

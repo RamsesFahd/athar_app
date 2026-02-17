@@ -40,8 +40,7 @@ class AtharApp extends ConsumerWidget {
 
       // تطبيق ثيم الفريق بناءً على الإعدادات
       theme: AppTheme.getTheme(settings),
-      // locale: settings.locale,
-      locale: const Locale('en'),
+      locale: settings.locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
 

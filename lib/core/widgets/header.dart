@@ -1,3 +1,5 @@
+import 'dart:ui';
+import 'package:athar_app/core/widgets/accessibility_controls.dart';
 import 'package:flutter/material.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
@@ -12,61 +14,110 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    // الاعتماد على context الثيم لضمان التوافق مع الـ High Contrast وإعدادات الخطوط العالمية
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return AppBar(
-      backgroundColor: colorScheme.surface,
-      elevation: 0,
-      centerTitle: true,
-      automaticallyImplyLeading: !isHome,
+    return ClipRect(
+      child: BackdropFilter(
+        // إعداد تأثير التمويه (Blur) للخلفية
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: AppBar(
+          backgroundColor: colorScheme.surface.withOpacity(0.8),
+          elevation: 0,
+          centerTitle: true,
+          automaticallyImplyLeading: !isHome,
 
-      title: isHome
-          ? Image.asset('assets/images/athar_logo.png', height: 35)
-          : Text(
-              title ?? '',
-              // الالتزام بـ titleLarge لضمان تفعيل الـ Fallback للحروف العربية المعرف في AppTheme
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-
-      actions: [
-        if (isHome)
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon:
-                    const Icon(Icons.notifications_none, color: Colors.black87),
-                onPressed: () {},
-              ),
-              // Indicator مرتبط بالـ primary color لتعزيز الهوية البصرية في الـ Header
-              Positioned(
-                top: 12,
-                right: 12,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: colorScheme.primary,
-                    shape: BoxShape.circle,
-                    // إضافة Stroke أبيض لمنع تداخل لون النقطة مع خلفية الـ AppBar
-                    border: Border.all(color: colorScheme.surface, width: 1.5),
+          // تطبيق أنميشن التلاشي والحركة عند تبديل العناوين
+          title: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.1),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
+                ),
+              );
+            },
+            child: isHome
+                ? Image.asset(
+                    'assets/images/athar_header_logo.png',
+                    key: const ValueKey('logo'),
+                    height: 35,
+                  )
+                : Text(
+                    title ?? '',
+                    key: ValueKey(title),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                    ),
                   ),
+          ),
+
+          actions: [
+
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.primary, // يأخذ اللون الأخضر (أو الأسود في التباين العالي)
+                  shape: BoxShape.circle,
+                ),
+                child: IconButton(
+                  icon: const Icon(Icons.accessibility_new, color: Colors.white, size: 22),
+                  tooltip: 'سهولة الوصول',
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const AccessibilityControls(),
+                    );
+                  },
                 ),
               ),
-            ],
-          ),
-      ],
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.notifications_none_rounded,
+                        color: Colors.black87),
+                    onPressed: () {},
+                  ),
+                  // نقطة إشعار مرتبطة بهوية التطبيق البصرية
+                  Positioned(
+                    top: 15,
+                    right: 12,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
 
-      // تعويض الـ elevation بـ Border شفاف (0.1 opacity) للحفاظ على هوية الـ Minimal Design
-      bottom: PreferredSize(
-        preferredSize: const Size.fromHeight(1.0),
-        child: Container(
-            color: colorScheme.onSurface.withOpacity(0.1), height: 1.0),
+          // حد سفلي نحيف للفصل بين الهيدر والمحتوى بأسلوب Minimalist
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1.0),
+            child: Container(
+              color: colorScheme.onSurface.withOpacity(0.05),
+              height: 1.0,
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -403,6 +403,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile'**
   String get profileLabel;
+
+  /// No description provided for @accessibilityOptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessibility Options'**
+  String get accessibilityOptionsTitle;
+
+  /// No description provided for @accessibilityFontSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Font Size'**
+  String get accessibilityFontSize;
+
+  /// No description provided for @accessibilitySmall.
+  ///
+  /// In en, this message translates to:
+  /// **'Small'**
+  String get accessibilitySmall;
+
+  /// No description provided for @accessibilityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get accessibilityMedium;
+
+  /// No description provided for @accessibilityLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Large'**
+  String get accessibilityLarge;
+
+  /// No description provided for @accessibilityLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get accessibilityLanguage;
+
+  /// No description provided for @accessibilityEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get accessibilityEnglish;
+
+  /// No description provided for @accessibilityArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get accessibilityArabic;
+
+  /// No description provided for @accessibilityContrast.
+  ///
+  /// In en, this message translates to:
+  /// **'Contrast'**
+  String get accessibilityContrast;
+
+  /// No description provided for @accessibilityRegular.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular'**
+  String get accessibilityRegular;
+
+  /// No description provided for @accessibilityHighContrast.
+  ///
+  /// In en, this message translates to:
+  /// **'High Contrast'**
+  String get accessibilityHighContrast;
+
+  /// No description provided for @accessibilityTextReader.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Reader'**
+  String get accessibilityTextReader;
+
+  /// No description provided for @accessibilityTextReaderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen to page content read aloud'**
+  String get accessibilityTextReaderHint;
 }
 
 class _AppLocalizationsDelegate

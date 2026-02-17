@@ -14,12 +14,13 @@ class AccessibilitySettings {
   final String fontSize;
   final bool highContrast;
   final String languagePreference;
-
+  final bool textReaderEnabled;
 // Constructor for AccessibilitySettings with default values for font size, contrast, and language preference.
   AccessibilitySettings({
     this.fontSize = 'medium',
     this.highContrast = false,
     this.languagePreference = 'ar',
+    this.textReaderEnabled = false,
   });
 // Converts the AccessibilitySettings instance into a map for storage or transmission.
   Map<String, dynamic> toMap() {
@@ -27,6 +28,7 @@ class AccessibilitySettings {
       'fontSize': fontSize,
       'highContrast': highContrast,
       'languagePreference': languagePreference,
+      'textReaderEnabled': textReaderEnabled,
     };
   }
 // Factory constructor to create an AccessibilitySettings instance from a map, providing default values if the map is null or missing keys.
@@ -36,6 +38,7 @@ class AccessibilitySettings {
       fontSize: map['fontSize'] ?? 'medium',
       highContrast: map['highContrast'] ?? false,
       languagePreference: map['languagePreference'] ?? 'ar',
+      textReaderEnabled: map['textReaderEnabled'] ?? false,
     );
   }
 }
@@ -105,7 +108,6 @@ class UserModel {
     String? fullName,
     String? phoneNumber,
     UserRole? role,
-    String? languagePreference,
     AccessibilitySettings? accessibilitySettings,
     int? points,
     String? profileImage,
