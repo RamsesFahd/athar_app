@@ -26,7 +26,6 @@ class CulturalItemCard extends StatelessWidget {
     final theme = Theme.of(context);
     final loc = AppLocalizations.of(context)!;
 
-    // قاموس لربط المعرفات بالمفاتيح المقابلة لها في ملفات اللغة (ARB)
     final Map<String, Map<String, String>> localizedContent = {
       'coffee': {
         'title': loc.coffeeTitle,
@@ -55,7 +54,8 @@ class CulturalItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildVerticalLayout(String title, bool isAr, ThemeData theme, AppLocalizations loc) {
+  Widget _buildVerticalLayout(
+      String title, bool isAr, ThemeData theme, AppLocalizations loc) {
     return Container(
       width: 180,
       margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -81,8 +81,8 @@ class CulturalItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildHorizontalLayout(
-      String title, String desc, bool isAr, ThemeData theme, AppLocalizations loc) {
+  Widget _buildHorizontalLayout(String title, String desc, bool isAr,
+      ThemeData theme, AppLocalizations loc) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       padding: const EdgeInsets.all(12),
@@ -132,13 +132,13 @@ class CulturalItemCard extends StatelessWidget {
       children: [
         _badgeTemplate(
           _getTranslatedCategory(category, loc),
-          theme.colorScheme.primary.withOpacity(0.1),
+          theme.colorScheme.primary.withOpacity(0.12),
           theme.colorScheme.primary,
         ),
         _badgeTemplate(
           _getTranslatedRegion(region, loc),
-          AppColors.secondary.withOpacity(0.1),
-          AppColors.secondary,
+          theme.colorScheme.secondary.withOpacity(0.12),
+          theme.colorScheme.secondary,
         ),
       ],
     );
@@ -159,27 +159,41 @@ class CulturalItemCard extends StatelessWidget {
 
   String _getTranslatedCategory(String cat, AppLocalizations loc) {
     switch (cat.toLowerCase()) {
-      case 'food': return loc.cat_food;
-      case 'craft': return loc.cat_craft;
-      case 'music': return loc.cat_music;
-      case 'dance': return loc.cat_dance;
-      case 'architecture': return loc.cat_architecture;
-      case 'clothing': return loc.cat_clothing;
-      default: return cat;
+      case 'food':
+        return loc.cat_food;
+      case 'craft':
+        return loc.cat_craft;
+      case 'music':
+        return loc.cat_music;
+      case 'dance':
+        return loc.cat_dance;
+      case 'architecture':
+        return loc.cat_architecture;
+      case 'clothing':
+        return loc.cat_clothing;
+      default:
+        return cat;
     }
   }
 
   String _getTranslatedRegion(String reg, AppLocalizations loc) {
     switch (reg.toLowerCase()) {
-      case 'riyadh': return loc.reg_riyadh;
+      case 'riyadh':
+        return loc.reg_riyadh;
       case 'makkah':
-      case 'mecca': return loc.reg_makkah;
-      case 'medina': return loc.reg_medina;
+      case 'mecca':
+        return loc.reg_makkah;
+      case 'medina':
+        return loc.reg_medina;
       case 'eastern':
-      case 'eastern province': return loc.reg_eastern;
-      case 'qassim': return loc.reg_qassim;
-      case 'asir': return loc.reg_asir;
-      default: return reg;
+      case 'eastern province':
+        return loc.reg_eastern;
+      case 'qassim':
+        return loc.reg_qassim;
+      case 'asir':
+        return loc.reg_asir;
+      default:
+        return reg;
     }
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
-import '../widgets/cultural_item_card.dart';
+import '../../auth/widgets/cultural_item_card.dart';
 import '../../../core/widgets/search_bar.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -103,8 +103,7 @@ class _CulturalArchiveState extends State<CulturalArchive> {
       width: double.infinity,
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: NetworkImage(
-              'https://images.pexels.com/photos/3889891/pexels-photo-3889891.jpeg'),
+          image: AssetImage('assets/images/cultural_archive_header.jpg'),
           fit: BoxFit.cover,
         ),
       ),
@@ -127,15 +126,20 @@ class _CulturalArchiveState extends State<CulturalArchive> {
           children: [
             Text(
               loc.culturalArchiveTitle,
-              style:
-                  theme.textTheme.displayLarge?.copyWith(color: Colors.white),
+              style: theme.textTheme.displayLarge?.copyWith(
+                color: Colors.white,
+                height: isAr ? 1.4 : 1.1,
+              ),
             ),
+            const SizedBox(height: 8),
             Text(
               isAr
                   ? 'اكتشف الثقافة السعودية الغنية'
                   : 'Discover Saudi heritage',
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: Colors.white.withOpacity(0.8)),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.white.withOpacity(0.8),
+                height: isAr ? 1.4 : 1.1,
+              ),
             ),
           ],
         ),
@@ -169,6 +173,7 @@ class _CulturalArchiveState extends State<CulturalArchive> {
               labelStyle: TextStyle(
                 color: isSelected ? AppColors.primary : AppColors.sage900,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                height: 1.0,
               ),
             ),
           );

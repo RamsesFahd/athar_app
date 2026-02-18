@@ -31,7 +31,6 @@ class AtharApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    
     final settings = ref.watch(settingsProvider);
 
     return MaterialApp(
@@ -44,15 +43,9 @@ class AtharApp extends ConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
 
-      
-      
-      
-      initialRoute: AppRoutes.splash, 
+      initialRoute: AppRoutes.splash,
 
-      
       routes: AppRoutes.getRoutes(),
-
-      
     );
   }
 }

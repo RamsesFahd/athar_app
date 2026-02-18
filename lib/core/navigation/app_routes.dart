@@ -7,8 +7,7 @@ import 'package:athar_app/features/auth/screens/signup_screen.dart';
 import 'package:athar_app/features/auth/screens/forgot_password_screen.dart';
 import 'package:athar_app/features/auth/screens/splash_screen.dart';
 import 'package:athar_app/features/auth/screens/verify_email_screen.dart';
-
-
+import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -18,7 +17,8 @@ class AppRoutes {
   static const String home = '/home';
   static const String verifyEmail = '/verify-email';
   static const String culturalArchive = '/cultural-archive';
-  
+  static const String culturalDetails = '/cultural-details';
+
   static Map<String, WidgetBuilder> getRoutes() {
     return {
       splash: (context) => const SplashScreen(),
@@ -26,11 +26,17 @@ class AppRoutes {
       signUp: (context) => const SignUpScreen(),
       forgotPassword: (context) => const ForgotPasswordScreen(),
       verifyEmail: (context) => const VerifyEmailScreen(),
-      
+
       // ✨ the main navigation container that holds the bottom navigation and the main screens of the app, we will navigate to this screen after successful login or if the user is already logged in when opening the app
-      home: (context) => const NavigationContainer(),    
-      
+      home: (context) => const NavigationContainer(),
+
       culturalArchive: (context) => const CulturalArchive(),
-      };
+
+      culturalDetails: (context) {
+        final String itemId =
+            ModalRoute.of(context)!.settings.arguments as String;
+        return CulturalItemDetails(id: itemId);
+      },
+    };
   }
 }
