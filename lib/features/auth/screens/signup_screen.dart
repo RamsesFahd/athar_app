@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/navigation/app_routes.dart';
-import '../../../core/models/user_model.dart';
+// استيراد ملف الموديل الأساسي للوصول للأدوار
+import '../../../core/models/user/user_model.dart'; 
 import '../widgets/custom_header.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/auth_utils.dart';
@@ -17,6 +18,9 @@ class SignUpScreen extends ConsumerStatefulWidget {
 }
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen> {
+  // 1. إدارة حالة الدور المختار (سائح بشكل افتراضي)
+  UserRole _selectedRole = UserRole.tourist; 
+
   final _fullName = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
@@ -27,7 +31,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   @override
   void dispose() {
-    // Dispose controllers to prevent memory leaks
     _fullName.dispose();
     _email.dispose();
     _password.dispose();
@@ -38,36 +41,36 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
 
-    // listening to auth state changes to show error messages or navigate to home screen on successful login
+    // مراقبة حالة المصادقة للتوجيه بعد النجاح
     ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
-    next.whenOrNull(
-      error: (error, stack) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AuthUtils.translateError(error.toString(), l10n)),
-            backgroundColor: Colors.red,
-          ),
-        );
-      },
-      data: (user) {
-        if (user != null) {
-          
-          Navigator.pushReplacementNamed(
-            context, 
-            AppRoutes.verifyEmail,
-            arguments: _email.text, 
+      next.whenOrNull(
+        error: (error, stack) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AuthUtils.translateError(error.toString(), l10n)),
+              backgroundColor: AppColors.error, // استخدام لون الخطأ من الثيم
+            ),
           );
-        }
-      },
-    );
-  });
+        },
+        data: (user) {
+          if (user != null) {
+            Navigator.pushReplacementNamed(
+              context,
+              AppRoutes.verifyEmail,
+              arguments: _email.text,
+            );
+          }
+        },
+      );
+    });
 
-  // checking for loading state 
-  final authState = ref.watch(authNotifierProvider);
+    final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      // التعديل: استخدام لون الخلفية من الثيم ليدعم التباين العالي
+      backgroundColor: theme.scaffoldBackgroundColor, 
       body: Column(
         children: [
           CustomHeader(
@@ -78,9 +81,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           Expanded(
             child: Container(
               transform: Matrix4.translationValues(0, -30, 0),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface, // التزام بلون السطح
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(35),
                   topRight: Radius.circular(35),
                 ),
@@ -90,73 +93,36 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(l10n.fullNameLabel,
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 8),
+                    // --- اختيار الدور ---
+                    _buildSectionLabel("سجل في أثر كـ:", theme),
+                    const SizedBox(height: 12),
+                    _buildRoleSelector(theme),
+                    const SizedBox(height: 25),
+
+                    // --- حقول البيانات ---
+                    _buildSectionLabel(l10n.fullNameLabel, theme),
                     _buildTextField(_fullName, l10n.nameHint, false),
-
                     const SizedBox(height: 18),
-                    Text(l10n.emailLabel,
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 8),
+
+                    _buildSectionLabel(l10n.emailLabel, theme),
                     _buildTextField(_email, l10n.emailHint, false),
-
                     const SizedBox(height: 18),
-                    Text(l10n.passwordLabel,
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 8),
-                    _buildPasswordField(_password, l10n.passwordHint, isConfirm: false),
 
+                    _buildSectionLabel(l10n.passwordLabel, theme),
+                    _buildTextField(_password, l10n.passwordHint, true),
                     const SizedBox(height: 18),
-                    Text(l10n.confirmPasswordLabel,
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 8),
-                    _buildPasswordField(_confirmPassword, l10n.passwordHint, isConfirm: true),
 
-                    const SizedBox(height: 20),
+                    _buildSectionLabel(l10n.confirmPasswordLabel, theme),
+                    _buildTextField(_confirmPassword, l10n.passwordHint, true, isConfirm: true),
+
+                    const SizedBox(height: 30),
+
+                    // زر التسجيل مع تمرير الدور المختار
                     AtharButton(
                       label: l10n.createAccountButton,
                       isLoading: authState.isLoading,
-                      onPressed: () {
-                        final email = _email.text.trim();
-                        final pass = _password.text;
-                        final confirm = _confirmPassword.text;
-                        final name = _fullName.text.trim();
-
-                        // Basic validation before calling sign up method
-                        if (name.isEmpty || email.isEmpty || pass.isEmpty) {
-                          // you show a snackbar or dialog to inform the user to fill all fields
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(l10n.fillAllFieldsError),
-                              backgroundColor: Colors.red,
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                          return;
-                        }
-
-                        if (pass != confirm) {
-                          // you show a snackbar or dialog to inform the user that passwords do not match
-                          ScaffoldMessenger.of(context).showSnackBar( 
-                            SnackBar(
-                              content: Text(l10n.passwordsDoNotMatchError),
-                              backgroundColor: Colors.red,
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                          return;
-                        }
-
-                        // call sign up method from auth notifier
-                        ref.read(authNotifierProvider.notifier).signUp(
-                              email: email,
-                              password: pass,
-                              fullName: name,
-                            );
-                      },
+                      onPressed: () => _handleSignUp(l10n),
                     ),
-                        
 
                     const SizedBox(height: 25),
                     AuthUtils.buildDivider(l10n),
@@ -174,57 +140,151 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint, bool isPassword) {
-    return TextField(
-      controller: controller,
-      obscureText: isPassword ? _hidePassword : false,
-      decoration: InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: const Color(0xFFF9FAFB),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+  // ودجت اختيار الدور (سائح أو مرشد)
+  Widget _buildRoleSelector(ThemeData theme) {
+    return Row(
+      children: [
+        _roleCard(UserRole.tourist, "سائح", Icons.explore_outlined, theme),
+        const SizedBox(width: 12),
+        _roleCard(UserRole.tutor, "مرشد (Tutor)", Icons.account_balance_outlined, theme),
+      ],
+    );
+  }
+
+  Widget _roleCard(UserRole role, String label, IconData icon, ThemeData theme) {
+    final bool isSelected = _selectedRole == role;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _selectedRole = role),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(
+              color: isSelected ? theme.colorScheme.primary : Colors.grey.shade300,
+              width: 2,
+            ),
+            boxShadow: isSelected ? [BoxShadow(color: theme.colorScheme.primary.withOpacity(0.2), blurRadius: 8)] : null,
+          ),
+          child: Column(
+            children: [
+              Icon(
+                icon, 
+                color: isSelected ? Colors.white : theme.colorScheme.primary,
+                size: 28,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: isSelected ? Colors.white : theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildPasswordField(TextEditingController controller, String hint, {required bool isConfirm}) {
-    final hide = isConfirm ? _hideConfirmPassword : _hidePassword;
+  void _handleSignUp(AppLocalizations l10n) {
+    final name = _fullName.text.trim();
+    final email = _email.text.trim();
+    final pass = _password.text;
+    final confirm = _confirmPassword.text;
+
+    if (name.isEmpty || email.isEmpty || pass.isEmpty) {
+      _showError(l10n.fillAllFieldsError);
+      return;
+    }
+
+    if (pass != confirm) {
+      _showError(l10n.passwordsDoNotMatchError);
+      return;
+    }
+
+    // استدعاء المنطق مع تمرير الدور المختار
+    ref.read(authNotifierProvider.notifier).signUp(
+      email: email,
+      password: pass,
+      fullName: name,
+      role: _selectedRole, 
+    );
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.error,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Widget _buildSectionLabel(String text, ThemeData theme) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(
+        text,
+        style: theme.textTheme.titleLarge?.copyWith(
+          fontSize: theme.textTheme.bodyLarge?.fontSize,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String hint, bool isPassword, {bool isConfirm = false}) {
+    final theme = Theme.of(context);
+    final bool hide = isConfirm ? _hideConfirmPassword : _hidePassword;
 
     return TextField(
       controller: controller,
-      obscureText: hide,
+      obscureText: isPassword ? hide : false,
+      style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         hintText: hint,
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
         filled: true,
-        fillColor: const Color(0xFFF9FAFB),
+        fillColor: theme.colorScheme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: Colors.grey.shade300),
         ),
-        suffixIcon: IconButton(
-          icon: Icon(hide ? Icons.visibility_off : Icons.visibility),
-          onPressed: () {
-            setState(() {
-              if (isConfirm) {
-                _hideConfirmPassword = !_hideConfirmPassword;
-              } else {
-                _hidePassword = !_hidePassword;
-              }
-            });
-          },
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade300),
         ),
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  hide ? Icons.visibility_off : Icons.visibility,
+                  color: theme.colorScheme.primary,
+                ),
+                onPressed: () => setState(() {
+                  if (isConfirm) {
+                    _hideConfirmPassword = !_hideConfirmPassword;
+                  } else {
+                    _hidePassword = !_hidePassword;
+                  }
+                }),
+              )
+            : null,
       ),
     );
   }
 
   Widget _buildSocialButtons() {
+    final theme = Theme.of(context);
     return Row(children: [
-      _socialBtn(Icons.apple, Colors.black, Colors.white),
+      _socialBtn(Icons.apple, theme.colorScheme.onSurface, theme.colorScheme.surface),
       const SizedBox(width: 12),
-      _socialBtn(null, Colors.white, Colors.black, isGoogle: true),
+      _socialBtn(null, theme.colorScheme.surface, theme.colorScheme.onSurface, isGoogle: true),
     ]);
   }
 
@@ -250,25 +310,30 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   }
 
   Widget _buildFooterLinks(AppLocalizations l10n, bool isLoading) {
+    final theme = Theme.of(context);
     return Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text(l10n.alreadyHaveAccount),
+        Text(l10n.alreadyHaveAccount, style: theme.textTheme.bodyMedium),
         TextButton(
           onPressed: isLoading ? null : () => Navigator.pushNamed(context, AppRoutes.signIn),
-        child: Text(
-          l10n.signInLink,
-          style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
-        ),
+          child: Text(
+            l10n.signInLink,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ]),
       TextButton(
-        onPressed: isLoading 
-          ? null 
-          : () => ref.read(authNotifierProvider.notifier).guestLogin(), // guest login method in auth notifier
-      child: Text(
-        l10n.continueAsGuest,
-        style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
-      ),
+        onPressed: isLoading ? null : () => ref.read(authNotifierProvider.notifier).guestLogin(),
+        child: Text(
+          l10n.continueAsGuest,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     ]);
   }

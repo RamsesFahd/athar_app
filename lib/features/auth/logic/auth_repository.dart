@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// importing annotation for code generation
 import 'package:riverpod_annotation/riverpod_annotation.dart'; 
-import 'package:athar_app/core/models/user_model.dart';
+import 'package:athar_app/core/models/user/user_model.dart';
 
 // This line link this file to the generated file Riverpod will create
 part 'auth_repository.g.dart'; 
@@ -35,30 +34,43 @@ class AuthRepository {
   User? get currentUser => _auth.currentUser;
 
   // sign up method that takes email, password, and full name to create a new user account
-  Future<String?> signUp({
+Future<String?> signUp({
     required String email,
     required String password,
     required String fullName,
+    required UserRole role, // so the user can choose if they are a tutor or a tourist during sign up, and we can create the appropriate user document in Firestore based on their role
   }) async {
     try {
-      UserCredential cred = await         _auth.createUserWithEmailAndPassword(
+      UserCredential cred = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-// After creating the user with Firebase Authentication, we need to create a corresponding document in Firestore to store additional user data (like full name, role, etc.)
+      
       final String uId = cred.user!.uid;
       await sendEmailVerification();
       
-      final newUser = UserModel(
-        uId: uId,
-        fullName: fullName,
-        email: email,
-        accessibilitySettings: AccessibilitySettings(),
-        createdAt: DateTime.now(),
-        role: UserRole.tourist,
-        points: 0,
-      );
-// We use the toMap method of UserModel to convert our user data into a format that can be stored in Firestore
+      UserModel newUser;
+      // in case the user is a tutor, we create a TutorModel with the provided information, and if they are a tourist, we create a TouristModel. Both models extend UserModel, so we can store them in the same 'users' collection in Firestore.
+      if (role == UserRole.tutor) {
+        newUser = TutorModel(
+          uId: uId,
+          fullName: fullName,
+          email: email,
+          createdAt: DateTime.now(),
+          accessibilitySettings: AccessibilitySettings(),
+        
+        );
+      } else {
+        newUser = TouristModel(
+          uId: uId,
+          fullName: fullName,
+          email: email,
+          createdAt: DateTime.now(),
+          accessibilitySettings: AccessibilitySettings(),
+          
+        );
+      }
+      
       await _users.doc(uId).set(newUser.toMap());
       return null;
     } on FirebaseAuthException catch (e) {
@@ -103,21 +115,22 @@ class AuthRepository {
     }
   }
 
-  // login as guest method that creates an anonymous user in Firebase Authentication and a corresponding document in Firestore with the role of guest
-  Future<String?> guestLogin() async {
+// guest login method that allows users to sign in anonymously without creating an account. This is useful for users who want to try the app without committing to creating an account, and we can still track them in our database as guest users.
+Future<String?> guestLogin() async {
     try {
       UserCredential cred = await _auth.signInAnonymously();
       final String uId = cred.user!.uid;
 
-      final guestUser = UserModel(
+
+      final guestUser = TouristModel(
         uId: uId,
         fullName: "Guest User",
         email: "",
+        role: UserRole.guest, 
         accessibilitySettings: AccessibilitySettings(),
         createdAt: DateTime.now(),
-        role: UserRole.guest,
       );
-// We create a new user document in Firestore for the guest user, even though they are anonymous in Firebase Authentication, so we can store their role and other data if needed
+
       await _users.doc(uId).set(guestUser.toMap());
       return null;
     } on FirebaseAuthException catch (e) {
@@ -126,6 +139,7 @@ class AuthRepository {
       return "Unexpected error: $e";
     }
   }
+
 
   // This method checks the authentication status of the user by first checking if there's a currently authenticated user in Firebase Authentication, and if there is, it then fetches the corresponding user data from Firestore to return a UserModel instance. This is useful for determining if the user is logged in and getting their details when the app starts.
   Future<UserModel?> getUserData(String uId) async {

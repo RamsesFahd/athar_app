@@ -5,7 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/navigation/app_routes.dart';
 import '../widgets/custom_button.dart';
 import '../logic/auth_notifier.dart';
-import '../../../core/models/user_model.dart';
+import '../../../core/models/user/user_model.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import '../widgets/auth_utils.dart';
 
@@ -77,7 +77,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
             SnackBar(
                 // استخدام ملف الأدوات المشترك لترجمة الخطأ
                 content: Text(AuthUtils.translateError(error.toString(), l10n)),
-                backgroundColor: Colors.red),
+                backgroundColor: AppColors.error),
           );
         },
         data: (user) {
@@ -87,6 +87,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
         },
       );
     });
+
 
     return Scaffold(
       appBar: AppBar(

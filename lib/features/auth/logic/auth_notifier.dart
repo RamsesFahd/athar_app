@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/features/auth/logic/auth_repository.dart';
-import 'package:athar_app/core/models/user_model.dart';
+import 'package:athar_app/core/models/user/user_model.dart';
 
 // This line link this file to the generated file Riverpod will create
 part 'auth_notifier.g.dart'; 
@@ -41,27 +41,30 @@ class AuthNotifier extends _$AuthNotifier {
     });
   }
 
-  // Sign up method that takes email, password, and full name to create a new user account
+  // Sign up method that takes email, password, full name, and role to create a new user account. It sets the state to loading while the sign up process is happening, and then uses AsyncValue.guard to handle the asynchronous operation and update the state accordingly based on whether the sign up was successful or if it threw an error.
   Future<void> signUp({
     required String email, 
     required String password, 
-    required String fullName
+    required String fullName,
+    required UserRole role,
   }) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final repo = ref.read(authRepositoryProvider);
+      
+
       final error = await repo.signUp(
         email: email, 
         password: password, 
-        fullName: fullName
+        fullName: fullName,
+        role: role, 
       );
 
       if (error != null) throw error;
 
-      return await _checkAuthStatus();
+      return await _checkAuthStatus(); 
     });
   }
-
   // Logout method that signs the user out and sets the state to null (not authenticated)
   Future<void> logout() async {
     state = const AsyncLoading();
