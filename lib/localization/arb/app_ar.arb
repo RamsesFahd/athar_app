@@ -121,5 +121,37 @@
   "profileAccountTitle": "الحساب",
   "profileBookingNotifications": "إشعارات الحجوزات",
   "profileEventReminders": "تذكيرات الفعاليات",
-  "profileMarketingEmails": "البريد التسويقي"
+  "profileMarketingEmails": "البريد التسويقي",
+
+
+
+  "culturalArchiveTitle": "الأرشيف الثقافي",
+  "searchHint": "ابحث عن التراث، الأماكن...",
+  "descriptionLabel": "الوصف",
+  "servingLabel": "التقديم",
+  "categoryLabel": "التصنيف",
+  "locationLabel": "الموقع",
+  "filterAll": "الكل",
+  
+  "cat_food": "طعام تقليدي",
+  "cat_craft": "حرفة يدوية",
+  "cat_music": "موسيقى",
+  "cat_dance": "رقص",
+  "cat_architecture": "عمارة",
+  "cat_clothing": "ملابس تقليدية",
+  
+  "reg_qassim": "منطقة القصيم",
+  "reg_riyadh": "الرياض",
+  "reg_makkah": "مكة المكرمة",
+  "reg_medina": "المدينة المنورة",
+  "reg_eastern": "المنطقة الشرقية",
+  "reg_asir": "عسير",
+
+  "coffeeTitle": "القهوة السعودية التقليدية",
+  "coffeeDesc": "القهوة السعودية هي مشروب قهوة تقليدي يتم تحضيره باستخدام حبوب قهوة محمصة قليلاً ممزوجة بالهيل والزعفران.",
+  "saduTitle": "نسيج السدو التقليدي",
+  "saduDesc": "السدو هو أحد أنواع النسيج التقليدي البدوي الذي يطرز يدوياً ويعبر عن الهوية الثقافية الصحراوية.",
+  "kleijaTitle": "الكليجا القصيمية",
+  "kleijaDesc": "الكليجا هي حلوى سعودية تقليدية محبوبة، تُصنع من عجينة متبلة، ومحشوة بمزيج حلو من التمر والهيل والقرفة.",
+  "servingDesc": "تُقدم عادة مع القهوة السعودية، وتعتبر رمزاً ثقافياً للضيافة."
 }

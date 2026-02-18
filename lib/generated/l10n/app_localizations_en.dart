@@ -322,4 +322,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileMarketingEmails => 'Marketing Emails';
+
+  @override
+  String get culturalArchiveTitle => 'Cultural Archive';
+
+  @override
+  String get searchHint => 'Search for heritage, places...';
+
+  @override
+  String get descriptionLabel => 'Description';
+
+  @override
+  String get servingLabel => 'Serving';
+
+  @override
+  String get categoryLabel => 'Category';
+
+  @override
+  String get locationLabel => 'Location';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get cat_food => 'Traditional Food';
+
+  @override
+  String get cat_craft => 'Handicraft';
+
+  @override
+  String get cat_music => 'Music';
+
+  @override
+  String get cat_dance => 'Dance';
+
+  @override
+  String get cat_architecture => 'Architecture';
+
+  @override
+  String get cat_clothing => 'Traditional Clothing';
+
+  @override
+  String get reg_qassim => 'Qassim Region';
+
+  @override
+  String get reg_riyadh => 'Riyadh';
+
+  @override
+  String get reg_makkah => 'Makkah';
+
+  @override
+  String get reg_medina => 'Medina';
+
+  @override
+  String get reg_eastern => 'Eastern Province';
+
+  @override
+  String get reg_asir => 'Asir';
+
+  @override
+  String get coffeeTitle => 'Traditional Saudi Coffee';
+
+  @override
+  String get coffeeDesc =>
+      'Saudi coffee is a traditional beverage prepared with lightly roasted coffee beans mixed with cardamom and saffron.';
+
+  @override
+  String get saduTitle => 'Traditional Sadu Weaving';
+
+  @override
+  String get saduDesc =>
+      'Sadu is a traditional Bedouin weaving craft, handmade to express desert cultural identity.';
+
+  @override
+  String get kleijaTitle => 'Qassim Kleija';
+
+  @override
+  String get kleijaDesc =>
+      'Kleija is a traditional Saudi pastry made from spiced dough filled with a sweet mixture of dates and cardamom.';
+
+  @override
+  String get servingDesc =>
+      'Usually served with Saudi coffee, representing a symbol of hospitality.';
 }

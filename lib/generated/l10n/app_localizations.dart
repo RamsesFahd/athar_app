@@ -715,6 +715,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Marketing Emails'**
   String get profileMarketingEmails;
+
+  /// No description provided for @culturalArchiveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cultural Archive'**
+  String get culturalArchiveTitle;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for heritage, places...'**
+  String get searchHint;
+
+  /// No description provided for @descriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get descriptionLabel;
+
+  /// No description provided for @servingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Serving'**
+  String get servingLabel;
+
+  /// No description provided for @categoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get categoryLabel;
+
+  /// No description provided for @locationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get locationLabel;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @cat_food.
+  ///
+  /// In en, this message translates to:
+  /// **'Traditional Food'**
+  String get cat_food;
+
+  /// No description provided for @cat_craft.
+  ///
+  /// In en, this message translates to:
+  /// **'Handicraft'**
+  String get cat_craft;
+
+  /// No description provided for @cat_music.
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get cat_music;
+
+  /// No description provided for @cat_dance.
+  ///
+  /// In en, this message translates to:
+  /// **'Dance'**
+  String get cat_dance;
+
+  /// No description provided for @cat_architecture.
+  ///
+  /// In en, this message translates to:
+  /// **'Architecture'**
+  String get cat_architecture;
+
+  /// No description provided for @cat_clothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Traditional Clothing'**
+  String get cat_clothing;
+
+  /// No description provided for @reg_qassim.
+  ///
+  /// In en, this message translates to:
+  /// **'Qassim Region'**
+  String get reg_qassim;
+
+  /// No description provided for @reg_riyadh.
+  ///
+  /// In en, this message translates to:
+  /// **'Riyadh'**
+  String get reg_riyadh;
+
+  /// No description provided for @reg_makkah.
+  ///
+  /// In en, this message translates to:
+  /// **'Makkah'**
+  String get reg_makkah;
+
+  /// No description provided for @reg_medina.
+  ///
+  /// In en, this message translates to:
+  /// **'Medina'**
+  String get reg_medina;
+
+  /// No description provided for @reg_eastern.
+  ///
+  /// In en, this message translates to:
+  /// **'Eastern Province'**
+  String get reg_eastern;
+
+  /// No description provided for @reg_asir.
+  ///
+  /// In en, this message translates to:
+  /// **'Asir'**
+  String get reg_asir;
+
+  /// No description provided for @coffeeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Traditional Saudi Coffee'**
+  String get coffeeTitle;
+
+  /// No description provided for @coffeeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Saudi coffee is a traditional beverage prepared with lightly roasted coffee beans mixed with cardamom and saffron.'**
+  String get coffeeDesc;
+
+  /// No description provided for @saduTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Traditional Sadu Weaving'**
+  String get saduTitle;
+
+  /// No description provided for @saduDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Sadu is a traditional Bedouin weaving craft, handmade to express desert cultural identity.'**
+  String get saduDesc;
+
+  /// No description provided for @kleijaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Qassim Kleija'**
+  String get kleijaTitle;
+
+  /// No description provided for @kleijaDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Kleija is a traditional Saudi pastry made from spiced dough filled with a sweet mixture of dates and cardamom.'**
+  String get kleijaDesc;
+
+  /// No description provided for @servingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Usually served with Saudi coffee, representing a symbol of hospitality.'**
+  String get servingDesc;
 }
 
 class _AppLocalizationsDelegate

@@ -322,4 +322,86 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileMarketingEmails => 'البريد التسويقي';
+
+  @override
+  String get culturalArchiveTitle => 'الأرشيف الثقافي';
+
+  @override
+  String get searchHint => 'ابحث عن التراث، الأماكن...';
+
+  @override
+  String get descriptionLabel => 'الوصف';
+
+  @override
+  String get servingLabel => 'التقديم';
+
+  @override
+  String get categoryLabel => 'التصنيف';
+
+  @override
+  String get locationLabel => 'الموقع';
+
+  @override
+  String get filterAll => 'الكل';
+
+  @override
+  String get cat_food => 'طعام تقليدي';
+
+  @override
+  String get cat_craft => 'حرفة يدوية';
+
+  @override
+  String get cat_music => 'موسيقى';
+
+  @override
+  String get cat_dance => 'رقص';
+
+  @override
+  String get cat_architecture => 'عمارة';
+
+  @override
+  String get cat_clothing => 'ملابس تقليدية';
+
+  @override
+  String get reg_qassim => 'منطقة القصيم';
+
+  @override
+  String get reg_riyadh => 'الرياض';
+
+  @override
+  String get reg_makkah => 'مكة المكرمة';
+
+  @override
+  String get reg_medina => 'المدينة المنورة';
+
+  @override
+  String get reg_eastern => 'المنطقة الشرقية';
+
+  @override
+  String get reg_asir => 'عسير';
+
+  @override
+  String get coffeeTitle => 'القهوة السعودية التقليدية';
+
+  @override
+  String get coffeeDesc =>
+      'القهوة السعودية هي مشروب قهوة تقليدي يتم تحضيره باستخدام حبوب قهوة محمصة قليلاً ممزوجة بالهيل والزعفران.';
+
+  @override
+  String get saduTitle => 'نسيج السدو التقليدي';
+
+  @override
+  String get saduDesc =>
+      'السدو هو أحد أنواع النسيج التقليدي البدوي الذي يطرز يدوياً ويعبر عن الهوية الثقافية الصحراوية.';
+
+  @override
+  String get kleijaTitle => 'الكليجا القصيمية';
+
+  @override
+  String get kleijaDesc =>
+      'الكليجا هي حلوى سعودية تقليدية محبوبة، تُصنع من عجينة متبلة، ومحشوة بمزيج حلو من التمر والهيل والقرفة.';
+
+  @override
+  String get servingDesc =>
+      'تُقدم عادة مع القهوة السعودية، وتعتبر رمزاً ثقافياً للضيافة.';
 }

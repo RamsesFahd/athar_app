@@ -161,5 +161,37 @@
   "profileAccountTitle": "Account",
   "profileBookingNotifications": "Booking Notifications",
   "profileEventReminders": "Event Reminders",
-  "profileMarketingEmails": "Marketing Emails"
+  "profileMarketingEmails": "Marketing Emails",
+
+
+   "culturalArchiveTitle": "Cultural Archive",
+  "searchHint": "Search for heritage, places...",
+  "descriptionLabel": "Description",
+  "servingLabel": "Serving",
+  "categoryLabel": "Category",
+  "locationLabel": "Location",
+  "filterAll": "All",
+
+  "cat_food": "Traditional Food",
+  "cat_craft": "Handicraft",
+  "cat_music": "Music",
+  "cat_dance": "Dance",
+  "cat_architecture": "Architecture",
+  "cat_clothing": "Traditional Clothing",
+
+  "reg_qassim": "Qassim Region",
+  "reg_riyadh": "Riyadh",
+  "reg_makkah": "Makkah",
+  "reg_medina": "Medina",
+  "reg_eastern": "Eastern Province",
+  "reg_asir": "Asir",
+
+  "coffeeTitle": "Traditional Saudi Coffee",
+  "coffeeDesc": "Saudi coffee is a traditional beverage prepared with lightly roasted coffee beans mixed with cardamom and saffron.",
+  "saduTitle": "Traditional Sadu Weaving",
+  "saduDesc": "Sadu is a traditional Bedouin weaving craft, handmade to express desert cultural identity.",
+  "kleijaTitle": "Qassim Kleija",
+  "kleijaDesc": "Kleija is a traditional Saudi pastry made from spiced dough filled with a sweet mixture of dates and cardamom.",
+  "servingDesc": "Usually served with Saudi coffee, representing a symbol of hospitality."
+
 }
