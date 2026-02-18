@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/navigation/app_routes.dart';
-import '../../../core/models/user_model.dart';
+import '../../../core/models/user/user_model.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/auth_utils.dart';
 import '../logic/auth_notifier.dart';

@@ -1,0 +1,46 @@
+part of 'user_model.dart';
+
+class TouristModel extends UserModel {
+  final int points;
+  final List<String>? interests;
+  final int contributionsCount;
+
+  TouristModel({
+    required super.uId,
+    required super.fullName,
+    required super.email,
+    super.role = UserRole.tourist,
+    required super.createdAt,
+    super.profileImage,
+    required super.accessibilitySettings,
+    this.points = 0,
+    this.interests,
+    this.contributionsCount = 0,
+  });
+
+  @override
+  Map<String, dynamic> toMap() => {
+    'uId': uId,
+    'fullName': fullName,
+    'email': email,
+    'role': role.name,
+    'createdAt': Timestamp.fromDate(createdAt),
+    'profileImage': profileImage,
+    'accessibilitySettings': accessibilitySettings.toMap(),
+    'points': points,
+    'interests': interests,
+    'contributionsCount': contributionsCount,
+  };
+
+  factory TouristModel.fromMap(Map<String, dynamic> map) => TouristModel(
+    uId: map['uId'] ?? '',
+    fullName: map['fullName'] ?? '',
+    email: map['email'] ?? '',
+    createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+    profileImage: map['profileImage'],
+    accessibilitySettings: AccessibilitySettings.fromMap(map['accessibilitySettings']),
+    points: map['points'] ?? 0,
+    interests: map['interests'] != null ? List<String>.from(map['interests']) : null,
+    contributionsCount: map['contributionsCount'] ?? 0,
+  );
+}
