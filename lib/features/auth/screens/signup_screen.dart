@@ -56,11 +56,16 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         },
         data: (user) {
           if (user != null) {
-            Navigator.pushReplacementNamed(
-              context,
-              AppRoutes.verifyEmail,
-              arguments: _email.text,
-            );
+            //  التعديل: فحص التفعيل فور التسجيل
+            if (!user.emailVerified && user.role != UserRole.guest) {
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.verifyEmail,
+                arguments: _email.text, // تمرير الإيميل للشاشة التالية
+              );
+            } else {
+              Navigator.pushReplacementNamed(context, AppRoutes.home);
+            }
           }
         },
       );

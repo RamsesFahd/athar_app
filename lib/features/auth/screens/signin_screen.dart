@@ -39,19 +39,19 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           );
         },
         data: (user) {
-  if (user != null) {
-    
-    if (!user.emailVerified && user.role != UserRole.guest) {
-      Navigator.pushReplacementNamed(
-        context, 
-        AppRoutes.verifyEmail, 
-        arguments: _email.text, 
-      );
-    } else {
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
-    }
-  }
-},
+          if (user != null) {
+            // 🛡️ توجيه المستخدم غير المفعل لشاشة التحقق
+            if (!user.emailVerified && user.role != UserRole.guest) {
+              Navigator.pushReplacementNamed(
+                context, 
+                AppRoutes.verifyEmail, 
+                arguments: _email.text, 
+              );
+            } else {
+              Navigator.pushReplacementNamed(context, AppRoutes.home);
+            }
+          }
+        },
       );
     });
 

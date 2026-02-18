@@ -30,6 +30,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         return; // Check again if the widget is still mounted before navigating
 
       if (user != null) {
+        // ✨ فحص التفعيل قبل الدخول للهوم
         if (!user.emailVerified && user.role != UserRole.guest) {
           Navigator.pushReplacementNamed(
             context, 
