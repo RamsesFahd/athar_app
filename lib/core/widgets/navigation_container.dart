@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/core/widgets/bottom_navigation.dart';
-import 'package:athar_app/features/auth/screens/home.dart';
 import 'package:athar_app/core/widgets/header.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 // Screens:
 import 'package:athar_app/features/profile/screens/profile_screen.dart';
-
+import 'package:athar_app/features/home/screens/home_screen.dart';
 
 class NavigationContainer extends StatefulWidget {
   const NavigationContainer({super.key});
