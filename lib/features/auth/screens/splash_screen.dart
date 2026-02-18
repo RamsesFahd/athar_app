@@ -4,7 +4,7 @@ import '../../../core/navigation/app_routes.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../logic/auth_notifier.dart';
-
+import 'package:athar_app/core/models/user/user_model.dart';
 // We used a ConsumerStatefulWidget to manage the timer and navigation logic while still being able to access the authentication state if needed in the future.
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -30,10 +30,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         return; // Check again if the widget is still mounted before navigating
 
       if (user != null) {
-        // if the user is authenticated -> navigate to the home screen
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
+        if (!user.emailVerified && user.role != UserRole.guest) {
+          Navigator.pushReplacementNamed(
+            context, 
+            AppRoutes.verifyEmail, 
+            arguments: user.email,
+          );
+        } else {
+          Navigator.pushReplacementNamed(context, AppRoutes.home);
+        }
       } else {
-        // else navigate to the sign-in screen
         Navigator.pushReplacementNamed(context, AppRoutes.signIn);
       }
     });

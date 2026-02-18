@@ -18,12 +18,14 @@ class AccessibilitySettings {
   final bool highContrast;
   final String languagePreference;
   final bool textReaderEnabled;
+
 // Constructor for AccessibilitySettings with default values for font size, contrast, and language preference.
   AccessibilitySettings({
     this.fontSize = 'medium',
     this.highContrast = false,
     this.languagePreference = 'ar',
     this.textReaderEnabled = false,
+
   });
 // Converts the AccessibilitySettings instance into a map for storage or transmission.
   Map<String, dynamic> toMap() {
@@ -54,6 +56,7 @@ abstract class UserModel {
   final DateTime createdAt;
   final String? profileImage;
   final AccessibilitySettings accessibilitySettings;
+  final bool emailVerified;
 
   UserModel({
     required this.uId,
@@ -63,6 +66,7 @@ abstract class UserModel {
     required this.createdAt,
     this.profileImage,
     required this.accessibilitySettings,
+    this.emailVerified = false,
   });
 
   // المصنع الذكي الذي يقرر أي ملف فرعي سيتم استدعاؤه

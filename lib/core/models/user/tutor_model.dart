@@ -16,6 +16,7 @@ class TutorModel extends UserModel {
     this.bio,
     this.licenceNumber,
     this.verificationStatus,
+    super.emailVerified,
   });
 
   @override
@@ -30,6 +31,7 @@ class TutorModel extends UserModel {
     'bio': bio,
     'licenceNumber': licenceNumber,
     'verificationStatus': verificationStatus,
+    'emailVerified': emailVerified,
   };
 
   factory TutorModel.fromMap(Map<String, dynamic> map) => TutorModel(
@@ -42,5 +44,6 @@ class TutorModel extends UserModel {
     bio: map['bio'],
     licenceNumber: map['licenceNumber'],
     verificationStatus: map['verificationStatus'],
+    emailVerified: map['emailVerified'] ?? false,
   );
 }

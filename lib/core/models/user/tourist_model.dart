@@ -16,6 +16,7 @@ class TouristModel extends UserModel {
     this.points = 0,
     this.interests,
     this.contributionsCount = 0,
+    super.emailVerified,
   });
 
   @override
@@ -30,6 +31,8 @@ class TouristModel extends UserModel {
     'points': points,
     'interests': interests,
     'contributionsCount': contributionsCount,
+    'emailVerified': emailVerified,
+
   };
 
   factory TouristModel.fromMap(Map<String, dynamic> map) => TouristModel(
@@ -42,5 +45,6 @@ class TouristModel extends UserModel {
     points: map['points'] ?? 0,
     interests: map['interests'] != null ? List<String>.from(map['interests']) : null,
     contributionsCount: map['contributionsCount'] ?? 0,
+    emailVerified: map['emailVerified'] ?? false,
   );
 }

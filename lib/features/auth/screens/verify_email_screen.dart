@@ -70,21 +70,27 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     final authState = ref.watch(authNotifierProvider);
 
     // مراقبة الحالة للانتقال للهوم
-    ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
-      next.whenOrNull(
-        error: (error, stack) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                // استخدام ملف الأدوات المشترك لترجمة الخطأ
-                content: Text(AuthUtils.translateError(error.toString(), l10n)),
-                backgroundColor: AppColors.error),
-          );
-        },
+ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
+      next.when(
         data: (user) {
           if (user != null) {
+            // رسالة نجاح تظهر قبل الانتقال
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("تم تفعيل حسابك بنجاح! أهلاً بك في أثر"), backgroundColor: Colors.green),
+            );
             Navigator.pushReplacementNamed(context, AppRoutes.home);
           }
         },
+        error: (error, stack) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AuthUtils.translateError(error.toString(), l10n)),
+              backgroundColor: AppColors.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        },
+        loading: () {},
       );
     });
 
@@ -139,6 +145,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                 _emailController.text,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontSize: theme.textTheme.bodyLarge?.fontSize,
+                  color: AppColors.sand900,
                 ),
               ),
               const SizedBox(height: 48),

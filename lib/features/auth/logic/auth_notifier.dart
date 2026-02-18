@@ -16,14 +16,18 @@ class AuthNotifier extends _$AuthNotifier {
 
   // This private method checks the authentication status of the user by first checking if there's a currently authenticated user in Firebase Authentication, and if there is, it then fetches the corresponding user data from Firestore to return a UserModel instance. This is useful for determining if the user is logged in and getting their details when the app starts.
   Future<UserModel?> _checkAuthStatus() async {
-    final repo = ref.read(authRepositoryProvider);//get the auth repository instance
-    final firebaseUser = repo.currentUser; // is there a currently authenticated user in Firebase Authentication?
+  final repo = ref.read(authRepositoryProvider);
+  final firebaseUser = repo.currentUser;
 
-    if (firebaseUser == null) return null; //return null if there's no authenticated user
+  if (firebaseUser == null) return null;
 
-    
-    return await repo.getUserData(firebaseUser.uid);// get the user data from Firestore and return it as a UserModel instance
+  // If the user's email is not verified and they are not an anonymous user, we return null to prevent them from accessing the app and keep them on the authentication pages until they verify their email. 
+  if (!firebaseUser.emailVerified && !firebaseUser.isAnonymous) {
+    return null; 
   }
+
+  return await repo.getUserData(firebaseUser.uid);
+}
 
   // sign in methode that takes email and password to authenticate the user
   Future<void> signIn({required String email, required String password}) async {

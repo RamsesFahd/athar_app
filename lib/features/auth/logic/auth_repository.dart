@@ -58,7 +58,7 @@ Future<String?> signUp({
           email: email,
           createdAt: DateTime.now(),
           accessibilitySettings: AccessibilitySettings(),
-        
+          verificationStatus: 'unverified',
         );
       } else {
         newUser = TouristModel(
@@ -146,7 +146,9 @@ Future<String?> guestLogin() async {
     try {
       final doc = await _firestore.collection('users').doc(uId).get();
       if (!doc.exists) return null;
-      return UserModel.fromMap(doc.data() as Map<String, dynamic>);
+      final data = doc.data() as Map<String, dynamic>;
+      data['emailVerified'] = _auth.currentUser?.emailVerified ?? false;
+      return UserModel.fromMap(data);
     } catch (e) {
       return null;
     }
