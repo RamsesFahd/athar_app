@@ -71,5 +71,55 @@
   "accessibilityRegular": "عادي",
   "accessibilityHighContrast": "تباين عالي",
   "accessibilityTextReader": "قارئ النصوص",
-  "accessibilityTextReaderHint": "الاستماع إلى محتوى الصفحة بصوت عالٍ"
+  "accessibilityTextReaderHint": "الاستماع إلى محتوى الصفحة بصوت عالٍ",
+
+
+  "profileEdit": "تعديل",
+  "profileTabBooking": "الحجوزات",
+  "profileTabSaved": "المحفوظات",
+  "profileTabSettings": "الإعدادات",
+
+  "profileUpcomingBooking": "الحجوزات القادمة",
+  "profileWithLabel": "مع",
+  "profileDetails": "التفاصيل",
+
+  "profileEditEmail": "تعديل البريد",
+  "profileEditPhone": "إضافة/تعديل الجوال",
+  "profileLanguage": "اللغة",
+  "profileNotifications": "الإشعارات",
+  "profileContributeContent": "المساهمة بالمحتوى",
+  "profileLogout": "تسجيل الخروج",
+
+  "profileClose": "إغلاق",
+  "profileSave": "حفظ",
+  "profileSubmit": "إرسال",
+
+  "profileEditProfileTitle": "تعديل الملف الشخصي",
+  "profileChangePhoto": "تغيير الصورة",
+  "profileNameLabel": "الاسم",
+  "profileNameHint": "اكتب اسمك",
+
+  "profileEditEmailTitle": "تعديل البريد",
+  "profileNewEmailLabel": "البريد الجديد",
+  "profileConfirmEmailLabel": "تأكيد البريد",
+  "profileEmailHint": "اكتب البريد الجديد",
+  "profileConfirmEmailHint": "أعد كتابة البريد",
+
+  "profileEditPhoneTitle": "إضافة/تعديل الجوال",
+  "profileNewPhoneLabel": "رقم الجوال الجديد",
+  "profileConfirmPhoneLabel": "تأكيد رقم الجوال",
+  "profilePhoneHint": "اكتب رقم الجوال",
+  "profileConfirmPhoneHint": "أعد كتابة الرقم",
+
+  "profileLanguageTitle": "اللغة",
+  "profileLanguageEnglish": "English",
+  "profileLanguageArabic": "العربية",
+
+
+  "profileSavedItemsTitle": "العناصر المحفوظة",
+  "profileSettingsTitle": "الإعدادات",
+  "profileAccountTitle": "الحساب",
+  "profileBookingNotifications": "إشعارات الحجوزات",
+  "profileEventReminders": "تذكيرات الفعاليات",
+  "profileMarketingEmails": "البريد التسويقي"
 }

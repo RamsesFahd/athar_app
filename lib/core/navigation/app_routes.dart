@@ -25,7 +25,7 @@ class AppRoutes {
       forgotPassword: (context) => const ForgotPasswordScreen(),
       verifyEmail: (context) => const VerifyEmailScreen(),
       
-      // ✨ التعديل هنا فقط: نربط المسار بملفك اللي تعبت عليه
+      // ✨ the main navigation container that holds the bottom navigation and the main screens of the app, we will navigate to this screen after successful login or if the user is already logged in when opening the app
       home: (context) => const NavigationContainer(),    };
   }
 }

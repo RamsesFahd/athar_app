@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 enum AppFontSize { small, medium, large }
 
-// 1. كلاس الحالة
+// 1. AppSettings class to hold all the settings in one place
 class AppSettings {
   final AppFontSize fontSize;
   final Locale locale;
@@ -32,7 +32,7 @@ class AppSettings {
   }
 }
 
-// 2. كلاس المزوّد
+// 2. Notifier class to manage the state of the settings
 class SettingsNotifier extends StateNotifier<AppSettings> {
   SettingsNotifier() : super(AppSettings(fontSize: AppFontSize.medium, locale: const Locale('ar')));
 
@@ -42,7 +42,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   void toggleTts() => state = state.copyWith(isTtsEnabled: !state.isTtsEnabled);
 }
 
-// 3. تعريف الـ Provider
+// 3.defining the provider that will be used to access the settings state and notifier throughout the app
 final settingsProvider = StateNotifierProvider<SettingsNotifier, AppSettings>((ref) {
   return SettingsNotifier();
 });

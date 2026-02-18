@@ -205,4 +205,121 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accessibilityTextReaderHint => 'Listen to page content read aloud';
+
+  @override
+  String get profileEdit => 'Edit';
+
+  @override
+  String get profileTabBooking => 'Booking';
+
+  @override
+  String get profileTabSaved => 'Saved';
+
+  @override
+  String get profileTabSettings => 'Settings';
+
+  @override
+  String get profileUpcomingBooking => 'Upcoming Booking';
+
+  @override
+  String get profileWithLabel => 'With';
+
+  @override
+  String get profileDetails => 'Details';
+
+  @override
+  String get profileEditEmail => 'Edit Email';
+
+  @override
+  String get profileEditPhone => 'Add / Edit Phone';
+
+  @override
+  String get profileLanguage => 'Language';
+
+  @override
+  String get profileNotifications => 'Notifications';
+
+  @override
+  String get profileContributeContent => 'Contribute Content';
+
+  @override
+  String get profileLogout => 'Logout';
+
+  @override
+  String get profileClose => 'Close';
+
+  @override
+  String get profileSave => 'Save';
+
+  @override
+  String get profileSubmit => 'Submit';
+
+  @override
+  String get profileEditProfileTitle => 'Edit Profile';
+
+  @override
+  String get profileChangePhoto => 'Change photo';
+
+  @override
+  String get profileNameLabel => 'Name';
+
+  @override
+  String get profileNameHint => 'Enter your name';
+
+  @override
+  String get profileEditEmailTitle => 'Edit Email';
+
+  @override
+  String get profileNewEmailLabel => 'New Email';
+
+  @override
+  String get profileConfirmEmailLabel => 'Confirm Email';
+
+  @override
+  String get profileEmailHint => 'Enter new email';
+
+  @override
+  String get profileConfirmEmailHint => 'Re-enter email';
+
+  @override
+  String get profileEditPhoneTitle => 'Add / Edit Phone';
+
+  @override
+  String get profileNewPhoneLabel => 'New Phone';
+
+  @override
+  String get profileConfirmPhoneLabel => 'Confirm Phone';
+
+  @override
+  String get profilePhoneHint => 'Enter new phone';
+
+  @override
+  String get profileConfirmPhoneHint => 'Re-enter phone';
+
+  @override
+  String get profileLanguageTitle => 'Language';
+
+  @override
+  String get profileLanguageEnglish => 'English';
+
+  @override
+  String get profileLanguageArabic => 'Arabic';
+
+  @override
+  String get profileSavedItemsTitle => 'Saved Items';
+
+  @override
+  String get profileSettingsTitle => 'Settings';
+
+  @override
+  String get profileAccountTitle => 'Account';
+
+  @override
+  String get profileBookingNotifications => 'Booking Notifications';
+
+  @override
+  String get profileEventReminders => 'Event Reminders';
+
+  @override
+  String get profileMarketingEmails => 'Marketing Emails';
 }

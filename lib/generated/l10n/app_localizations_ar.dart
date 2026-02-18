@@ -205,4 +205,121 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get accessibilityTextReaderHint =>
       'الاستماع إلى محتوى الصفحة بصوت عالٍ';
+
+  @override
+  String get profileEdit => 'تعديل';
+
+  @override
+  String get profileTabBooking => 'الحجوزات';
+
+  @override
+  String get profileTabSaved => 'المحفوظات';
+
+  @override
+  String get profileTabSettings => 'الإعدادات';
+
+  @override
+  String get profileUpcomingBooking => 'الحجوزات القادمة';
+
+  @override
+  String get profileWithLabel => 'مع';
+
+  @override
+  String get profileDetails => 'التفاصيل';
+
+  @override
+  String get profileEditEmail => 'تعديل البريد';
+
+  @override
+  String get profileEditPhone => 'إضافة/تعديل الجوال';
+
+  @override
+  String get profileLanguage => 'اللغة';
+
+  @override
+  String get profileNotifications => 'الإشعارات';
+
+  @override
+  String get profileContributeContent => 'المساهمة بالمحتوى';
+
+  @override
+  String get profileLogout => 'تسجيل الخروج';
+
+  @override
+  String get profileClose => 'إغلاق';
+
+  @override
+  String get profileSave => 'حفظ';
+
+  @override
+  String get profileSubmit => 'إرسال';
+
+  @override
+  String get profileEditProfileTitle => 'تعديل الملف الشخصي';
+
+  @override
+  String get profileChangePhoto => 'تغيير الصورة';
+
+  @override
+  String get profileNameLabel => 'الاسم';
+
+  @override
+  String get profileNameHint => 'اكتب اسمك';
+
+  @override
+  String get profileEditEmailTitle => 'تعديل البريد';
+
+  @override
+  String get profileNewEmailLabel => 'البريد الجديد';
+
+  @override
+  String get profileConfirmEmailLabel => 'تأكيد البريد';
+
+  @override
+  String get profileEmailHint => 'اكتب البريد الجديد';
+
+  @override
+  String get profileConfirmEmailHint => 'أعد كتابة البريد';
+
+  @override
+  String get profileEditPhoneTitle => 'إضافة/تعديل الجوال';
+
+  @override
+  String get profileNewPhoneLabel => 'رقم الجوال الجديد';
+
+  @override
+  String get profileConfirmPhoneLabel => 'تأكيد رقم الجوال';
+
+  @override
+  String get profilePhoneHint => 'اكتب رقم الجوال';
+
+  @override
+  String get profileConfirmPhoneHint => 'أعد كتابة الرقم';
+
+  @override
+  String get profileLanguageTitle => 'اللغة';
+
+  @override
+  String get profileLanguageEnglish => 'English';
+
+  @override
+  String get profileLanguageArabic => 'العربية';
+
+  @override
+  String get profileSavedItemsTitle => 'العناصر المحفوظة';
+
+  @override
+  String get profileSettingsTitle => 'الإعدادات';
+
+  @override
+  String get profileAccountTitle => 'الحساب';
+
+  @override
+  String get profileBookingNotifications => 'إشعارات الحجوزات';
+
+  @override
+  String get profileEventReminders => 'تذكيرات الفعاليات';
+
+  @override
+  String get profileMarketingEmails => 'البريد التسويقي';
 }

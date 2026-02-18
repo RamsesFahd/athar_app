@@ -19,7 +19,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
 
     return ClipRect(
       child: BackdropFilter(
-        // إعداد تأثير التمويه (Blur) للخلفية
+        // Blur effect for the header background
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: AppBar(
           backgroundColor: colorScheme.surface.withOpacity(0.8),
@@ -27,7 +27,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           centerTitle: true,
           automaticallyImplyLeading: !isHome,
 
-          // تطبيق أنميشن التلاشي والحركة عند تبديل العناوين
+          // Implementing the animated title/logo switch
           title: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             transitionBuilder: (Widget child, Animation<double> animation) {
@@ -65,7 +65,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: colorScheme.primary, // يأخذ اللون الأخضر (أو الأسود في التباين العالي)
+                  color: colorScheme.primary, // Thematic color for accessibility button
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
@@ -90,7 +90,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                         color: Colors.black87),
                     onPressed: () {},
                   ),
-                  // نقطة إشعار مرتبطة بهوية التطبيق البصرية
+                  // Indicator for unread notifications
                   Positioned(
                     top: 15,
                     right: 12,
@@ -109,7 +109,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
             ),
           ],
 
-          // حد سفلي نحيف للفصل بين الهيدر والمحتوى بأسلوب Minimalist
+          // Adding a subtle bottom border to separate the header from content
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
             child: Container(

@@ -481,6 +481,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Listen to page content read aloud'**
   String get accessibilityTextReaderHint;
+
+  /// No description provided for @profileEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get profileEdit;
+
+  /// No description provided for @profileTabBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking'**
+  String get profileTabBooking;
+
+  /// No description provided for @profileTabSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get profileTabSaved;
+
+  /// No description provided for @profileTabSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get profileTabSettings;
+
+  /// No description provided for @profileUpcomingBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Booking'**
+  String get profileUpcomingBooking;
+
+  /// No description provided for @profileWithLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'With'**
+  String get profileWithLabel;
+
+  /// No description provided for @profileDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get profileDetails;
+
+  /// No description provided for @profileEditEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Email'**
+  String get profileEditEmail;
+
+  /// No description provided for @profileEditPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Add / Edit Phone'**
+  String get profileEditPhone;
+
+  /// No description provided for @profileLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguage;
+
+  /// No description provided for @profileNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get profileNotifications;
+
+  /// No description provided for @profileContributeContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribute Content'**
+  String get profileContributeContent;
+
+  /// No description provided for @profileLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get profileLogout;
+
+  /// No description provided for @profileClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get profileClose;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get profileSave;
+
+  /// No description provided for @profileSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get profileSubmit;
+
+  /// No description provided for @profileEditProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get profileEditProfileTitle;
+
+  /// No description provided for @profileChangePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get profileChangePhoto;
+
+  /// No description provided for @profileNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get profileNameLabel;
+
+  /// No description provided for @profileNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name'**
+  String get profileNameHint;
+
+  /// No description provided for @profileEditEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Email'**
+  String get profileEditEmailTitle;
+
+  /// No description provided for @profileNewEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New Email'**
+  String get profileNewEmailLabel;
+
+  /// No description provided for @profileConfirmEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Email'**
+  String get profileConfirmEmailLabel;
+
+  /// No description provided for @profileEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter new email'**
+  String get profileEmailHint;
+
+  /// No description provided for @profileConfirmEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter email'**
+  String get profileConfirmEmailHint;
+
+  /// No description provided for @profileEditPhoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add / Edit Phone'**
+  String get profileEditPhoneTitle;
+
+  /// No description provided for @profileNewPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New Phone'**
+  String get profileNewPhoneLabel;
+
+  /// No description provided for @profileConfirmPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Phone'**
+  String get profileConfirmPhoneLabel;
+
+  /// No description provided for @profilePhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter new phone'**
+  String get profilePhoneHint;
+
+  /// No description provided for @profileConfirmPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter phone'**
+  String get profileConfirmPhoneHint;
+
+  /// No description provided for @profileLanguageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguageTitle;
+
+  /// No description provided for @profileLanguageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get profileLanguageEnglish;
+
+  /// No description provided for @profileLanguageArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get profileLanguageArabic;
+
+  /// No description provided for @profileSavedItemsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Items'**
+  String get profileSavedItemsTitle;
+
+  /// No description provided for @profileSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get profileSettingsTitle;
+
+  /// No description provided for @profileAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get profileAccountTitle;
+
+  /// No description provided for @profileBookingNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Notifications'**
+  String get profileBookingNotifications;
+
+  /// No description provided for @profileEventReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Reminders'**
+  String get profileEventReminders;
+
+  /// No description provided for @profileMarketingEmails.
+  ///
+  /// In en, this message translates to:
+  /// **'Marketing Emails'**
+  String get profileMarketingEmails;
 }
 
 class _AppLocalizationsDelegate

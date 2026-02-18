@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class AtharBottomNavigation extends StatelessWidget {
+  
   final int currentIndex;
-
   final Function(int) onTap;
 
   const AtharBottomNavigation({
@@ -39,20 +38,12 @@ class AtharBottomNavigation extends StatelessWidget {
       child: SafeArea(
         child: BottomNavigationBar(
           currentIndex: currentIndex,
-
           onTap: onTap,
-
           type: BottomNavigationBarType.fixed,
-
           backgroundColor: Colors.transparent,
-
           elevation: 0,
-
           selectedItemColor: theme.colorScheme.primary,
-
           unselectedItemColor: Colors.grey.shade400,
-
-          // تم إزالة const من هنا ليعمل الثيم بشكل ديناميكي
 
           selectedLabelStyle: TextStyle(
             fontSize: 10,
@@ -64,26 +55,31 @@ class AtharBottomNavigation extends StatelessWidget {
           ),
 
           items: [
+            // Home
             BottomNavigationBarItem(
               icon: const Icon(Icons.home_outlined),
               activeIcon: const Icon(Icons.home),
               label: l10n.homeLabel,
             ),
+            // Map
             BottomNavigationBarItem(
               icon: const Icon(Icons.map_outlined),
               activeIcon: const Icon(Icons.map),
               label: l10n.mapLabel,
             ),
+            // AI Chatbot 
             BottomNavigationBarItem(
               icon: const Icon(Icons.message_outlined),
               activeIcon: const Icon(Icons.message),
               label: l10n.assistantLabel,
             ),
+            // Calendar
             BottomNavigationBarItem(
               icon: const Icon(Icons.calendar_today_outlined),
               activeIcon: const Icon(Icons.calendar_today, size: 22),
               label: l10n.calendarLabel,
             ),
+            // Profile
             BottomNavigationBarItem(
               icon: const Icon(Icons.person_outline),
               activeIcon: const Icon(Icons.person),

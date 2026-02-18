@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
-// حولناها إلى ConsumerWidget لأننا ما نحتاج State لفتح وإغلاق الزر بعد الآن
+
 class AccessibilityControls extends ConsumerWidget {
   const AccessibilityControls({super.key});
 
@@ -19,10 +19,10 @@ class AccessibilityControls extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
-          mainAxisSize: MainAxisSize.min, // عشان النافذة تاخذ مساحة العناصر بس
+          mainAxisSize: MainAxisSize.min, // to shrink the dialog to fit content
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // الهيدر حق النافذة مع زر الإغلاق
+            // the header with title and close button
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -32,7 +32,7 @@ class AccessibilityControls extends ConsumerWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.close, color: Colors.grey),
-                  onPressed: () => Navigator.of(context).pop(), // إغلاق النافذة
+                  onPressed: () => Navigator.of(context).pop(), // close the dialog
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -40,7 +40,7 @@ class AccessibilityControls extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
 
-            // -- حجم الخط --
+            // Font Size Section
             _buildSectionHeader(Icons.text_fields, l10n.accessibilityFontSize, sage600),
             Row(
               children: [
@@ -51,7 +51,7 @@ class AccessibilityControls extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
 
-            // -- اللغة --
+            // Language Section
             _buildSectionHeader(Icons.language, l10n.accessibilityLanguage, sage600),
             Row(
               children: [
@@ -61,7 +61,7 @@ class AccessibilityControls extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
 
-            // -- التباين --
+            // Contrast Section
             _buildSectionHeader(Icons.brightness_6, l10n.accessibilityContrast, sage600),
             Row(
               children: [
@@ -72,7 +72,7 @@ class AccessibilityControls extends ConsumerWidget {
             
             const Divider(height: 32),
 
-            // -- قارئ النصوص (TTS) --
+            // Text-to-Speech Section
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -80,7 +80,7 @@ class AccessibilityControls extends ConsumerWidget {
                 Switch(
                   value: settings.isTtsEnabled,
                   onChanged: (_) => notifier.toggleTts(),
-                  activeColor: sage600,
+                  activeColor: sage600, // I need to review this ***** RIMAS
                 ),
               ],
             ),
@@ -90,7 +90,8 @@ class AccessibilityControls extends ConsumerWidget {
     );
   }
 
-  // دوال مساعدة
+  // helper widgets for consistent styling
+  // section header with icon and title
   Widget _buildSectionHeader(IconData icon, String title, Color color, {double padding = 8}) {
     return Padding(
       padding: EdgeInsets.only(bottom: padding),
@@ -103,7 +104,7 @@ class AccessibilityControls extends ConsumerWidget {
       ),
     );
   }
-
+// option button with selected state
   Widget _buildOptionButton(String text, bool isSelected, VoidCallback onTap, Color activeColor) {
     return GestureDetector(
       onTap: onTap,

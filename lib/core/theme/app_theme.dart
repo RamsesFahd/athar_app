@@ -6,7 +6,7 @@ import 'app_colors.dart';
 class AppTheme {
   static ThemeData getTheme(AppSettings settings) {
     
-    // 1. تحديد حجم الخط الأساسي
+    // 1. Dynamic font size based on user settings
     double baseFontSize;
     switch (settings.fontSize) {
       case AppFontSize.small: baseFontSize = 14.0; break;
@@ -14,16 +14,16 @@ class AppTheme {
       case AppFontSize.large: baseFontSize = 20.0; break;
     }
 
-    // 2. تحديد الألوان (عادي أو تباين عالي)
+    // 2. Determine if high contrast mode is enabled and adjust colors accordingly
     final bool isHighContrast = settings.highContrast;
     
-    // ✨ في التباين العالي، نجبر النصوص والأزرار على ألوان شديدة الوضوح (أسود/أبيض)
+    // ✨ in high contrast mode, we switch to a more stark color palette to enhance readability
     final Color primaryColor = isHighContrast ? Colors.black : AppColors.primary;
     final Color surfaceColor = isHighContrast ? Colors.white : AppColors.sand50;
     final Color textColorPrimary = isHighContrast ? Colors.black : AppColors.sage900;
     final Color textColorSecondary = isHighContrast ? Colors.black87 : AppColors.sage800;
 
-    // 3. الخطوط
+    // 3. Using Google Fonts with proper fallbacks for Arabic and English text
     final String? englishFont = GoogleFonts.playfairDisplay().fontFamily;
     final List<String> fallbackArabicFont = [GoogleFonts.ibmPlexSansArabic().fontFamily!];
 
@@ -50,37 +50,37 @@ class AppTheme {
           fontFamilyFallback: fallbackArabicFont,
           fontSize: baseFontSize + 4,
           fontWeight: FontWeight.w600,
-          color: textColorPrimary, // ✨ تم ربطه بالتباين
+          color: textColorPrimary, // ✨ linked for high contrast mode
         ),
         bodyLarge: TextStyle(
           fontFamily: englishFont,
           fontFamilyFallback: fallbackArabicFont,
           fontSize: baseFontSize,
-          color: textColorPrimary, // ✨ تم ربطه بالتباين
+          color: textColorPrimary, // ✨ linked for high contrast mode
         ),
         bodyMedium: TextStyle(
           fontFamily: englishFont,
           fontFamilyFallback: fallbackArabicFont,
           fontSize: baseFontSize - 2,
-          color: textColorSecondary, // ✨ تم ربطه بالتباين
+          color: textColorSecondary, // ✨ linked for high contrast mode
         ),
       ),
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor, // ✨ يتغير للأسود في التباين العالي
+          backgroundColor: primaryColor, // ✨ linked for high contrast mode
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            // ✨ إضافة حدود واضحة للزر في وضع التباين العالي
+            // ✨ adding a border in high contrast mode
             side: isHighContrast ? const BorderSide(color: Colors.black, width: 2) : BorderSide.none,
           ),
           textStyle: TextStyle(
             fontFamily: englishFont,
             fontFamilyFallback: fallbackArabicFont,
             fontWeight: FontWeight.bold,
-            fontSize: baseFontSize, // ✨ ربط حجم خط الزر بالإعدادات أيضاً
+            fontSize: baseFontSize, // ✨ linked for dynamic font size
           ),
         ),
       ),

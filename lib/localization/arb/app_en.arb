@@ -111,5 +111,55 @@
   "accessibilityRegular": "Regular",
   "accessibilityHighContrast": "High Contrast",
   "accessibilityTextReader": "Text Reader",
-  "accessibilityTextReaderHint": "Listen to page content read aloud"
+  "accessibilityTextReaderHint": "Listen to page content read aloud",
+
+
+  "profileEdit": "Edit",
+  "profileTabBooking": "Booking",
+  "profileTabSaved": "Saved",
+  "profileTabSettings": "Settings",
+
+  "profileUpcomingBooking": "Upcoming Booking",
+  "profileWithLabel": "With",
+  "profileDetails": "Details",
+
+  "profileEditEmail": "Edit Email",
+  "profileEditPhone": "Add / Edit Phone",
+  "profileLanguage": "Language",
+  "profileNotifications": "Notifications",
+  "profileContributeContent": "Contribute Content",
+  "profileLogout": "Logout",
+
+  "profileClose": "Close",
+  "profileSave": "Save",
+  "profileSubmit": "Submit",
+
+  "profileEditProfileTitle": "Edit Profile",
+  "profileChangePhoto": "Change photo",
+  "profileNameLabel": "Name",
+  "profileNameHint": "Enter your name",
+
+  "profileEditEmailTitle": "Edit Email",
+  "profileNewEmailLabel": "New Email",
+  "profileConfirmEmailLabel": "Confirm Email",
+  "profileEmailHint": "Enter new email",
+  "profileConfirmEmailHint": "Re-enter email",
+
+  "profileEditPhoneTitle": "Add / Edit Phone",
+  "profileNewPhoneLabel": "New Phone",
+  "profileConfirmPhoneLabel": "Confirm Phone",
+  "profilePhoneHint": "Enter new phone",
+  "profileConfirmPhoneHint": "Re-enter phone",
+
+  "profileLanguageTitle": "Language",
+  "profileLanguageEnglish": "English",
+  "profileLanguageArabic": "Arabic",
+
+
+  "profileSavedItemsTitle": "Saved Items",
+  "profileSettingsTitle": "Settings",
+  "profileAccountTitle": "Account",
+  "profileBookingNotifications": "Booking Notifications",
+  "profileEventReminders": "Event Reminders",
+  "profileMarketingEmails": "Marketing Emails"
 }
