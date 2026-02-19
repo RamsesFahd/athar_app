@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
 class SettingsTile extends StatelessWidget {
+  final String title;
+  final String? subtitle;
+  final IconData? leadingIcon;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+  final bool enabled;
+  final Color? titleColor;
+  final bool showDivider;
+
   const SettingsTile({
     super.key,
     required this.title,
@@ -9,96 +18,82 @@ class SettingsTile extends StatelessWidget {
     this.trailing,
     this.onTap,
     this.enabled = true,
+    this.titleColor,
+    this.showDivider = false, // تم تغيير القيمة الافتراضية إلى false لإزالة الخطوط
   });
-
-  // Tile title
-  final String title;
-
-  // Tile subtitle 
-  final String? subtitle;
-
-  // Leading icon 
-  final IconData? leadingIcon;
-
-  // Trailing widget  زي Switch
-  final Widget? trailing;
-
-  // Tap action
-  final VoidCallback? onTap;
-
-  // Enable / Disable tile
-  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return InkWell(
-      // Disable tapping if not enabled
-      onTap: enabled ? onTap : null,
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        // Tile padding
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+    // استخدام ألوان الثيم الممررة في AppTheme
+    final Color contentColor = enabled
+        ? (titleColor ?? theme.textTheme.bodyLarge?.color ?? theme.colorScheme.onSurface)
+        : theme.disabledColor;
 
-        // Tile style 
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: theme.dividerColor),
-        ),
-        child: Row(
-          children: [
-            // Leading icon
-            if (leadingIcon != null) ...[
-              Icon(
-                leadingIcon,
-                color: enabled
-                    ? theme.colorScheme.onSurface
-                    : theme.colorScheme.onSurface.withOpacity(0.4),
-              ),
-              const SizedBox(width: 12),
-            ],
-
-            // Title + subtitle
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title text
-                  Text(
-                    title,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: enabled
-                          ? theme.colorScheme.onSurface
-                          : theme.colorScheme.onSurface.withOpacity(0.4),
-                      fontWeight: FontWeight.w600,
-                    ),
+    return Column(
+      children: [
+        InkWell(
+          onTap: enabled ? onTap : null,
+          borderRadius: BorderRadius.circular(12), // لإعطاء تأثير ضغط متناسق
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Row(
+              children: [
+                if (leadingIcon != null) ...[
+                  Icon(
+                    leadingIcon,
+                    size: 22,
+                    color: enabled
+                        ? theme.colorScheme.primary // استخدام اللون الرئيسي للثيم
+                        : theme.disabledColor,
                   ),
-
-                  // Subtitle text
-                  if (subtitle != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle!,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
-                      ),
-                    ),
-                  ],
+                  const SizedBox(width: 16),
                 ],
-              ),
-            ),
-
-            // Trailing widget (Switch) OR default arrow
-            trailing ??
-                Icon(
-                  Icons.chevron_right,
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w500,
+                          color: contentColor,
+                        ),
+                      ),
+                      if (subtitle != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          subtitle!,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
-          ],
+                if (trailing != null)
+                  trailing!
+                else if (onTap != null)
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 22,
+                    color: theme.colorScheme.onSurface.withOpacity(0.3),
+                  ),
+              ],
+            ),
+          ),
         ),
-      ),
+        if (showDivider)
+          Divider(
+            height: 1,
+            indent: leadingIcon != null ? 54 : 16,
+            endIndent: 16,
+            color: theme.dividerColor.withOpacity(0.1),
+          ),
+      ],
     );
   }
 }

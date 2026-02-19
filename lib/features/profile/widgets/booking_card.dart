@@ -1,142 +1,134 @@
-
-
 import 'package:flutter/material.dart';
 
 class BookingCard extends StatelessWidget {
+  final String title;
+  final String guide;
+  final String dateText;
+  final String timeText;
+  final String duration;
+  final String detailsLabel;
+  final String? imageUrl;
+  final VoidCallback? onDetails;
+
   const BookingCard({
     super.key,
     required this.title,
     required this.guide,
     required this.dateText,
     required this.timeText,
-    required this.durationText,
-    required this.withLabel,
+    required this.duration,
     required this.detailsLabel,
+    this.imageUrl,
     this.onDetails,
   });
 
-  final String title;
-  final String guide;
-  final String dateText;
-  final String timeText;
-  final String durationText;
-  final String withLabel;
-  final String detailsLabel;
-
-  final VoidCallback? onDetails;
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.dividerColor),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Left side content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Trip title
-                Text(
-                  title,
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+              color: theme.colorScheme.outlineVariant.withOpacity(0.5)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (imageUrl != null)
+                Image.network(
+                  imageUrl!,
+                  height: 140,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: 140,
+                    color: theme.colorScheme.surfaceVariant,
+                    child: Icon(Icons.image_not_supported_outlined,
+                        color: theme.colorScheme.onSurfaceVariant),
                   ),
                 ),
-                const SizedBox(height: 6),
-
-                // With guide text
-                Text(
-                  '$withLabel: $guide',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                  ),
-                ),
-                const SizedBox(height: 10),
-
-                // Date & time chips
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 8,
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _Chip(
-                      icon: Icons.calendar_month_outlined,
-                      text: dateText,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        OutlinedButton(
+                          onPressed: onDetails,
+                          style: OutlinedButton.styleFrom(
+                            visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(detailsLabel,
+                              style: const TextStyle(fontSize: 12)),
+                        ),
+                      ],
                     ),
-                    _Chip(
-                      icon: Icons.access_time_outlined,
-                      text: '$timeText ($durationText)',
+                    const SizedBox(height: 4),
+                    Text(
+                      "Guide: $guide",
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        _buildInfoItem(
+                            theme, Icons.calendar_today_outlined, dateText),
+                        const SizedBox(width: 16),
+                        _buildInfoItem(
+                            theme, Icons.access_time, "$timeText ($duration)"),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
-
-          const SizedBox(width: 10),
-
-          // Details button
-          SizedBox(
-            height: 34,
-            child: OutlinedButton(
-              onPressed: onDetails,
-              child: Text(
-                detailsLabel,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.primary,
-                ),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
-}
 
-class _Chip extends StatelessWidget {
-  const _Chip({
-    required this.icon,
-    required this.text,
-  });
-
-  final IconData icon;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: theme.dividerColor),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            size: 14,
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+  Widget _buildInfoItem(ThemeData theme, IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, size: 14, color: theme.colorScheme.primary.withOpacity(0.8)),
+        const SizedBox(width: 6),
+        Text(
+          text,
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.6),
           ),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: theme.textTheme.bodySmall,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
