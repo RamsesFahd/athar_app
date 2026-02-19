@@ -52,6 +52,7 @@ abstract class UserModel {
   final String uId;
   final String fullName;
   final String email;
+  final String? phoneNumber;
   final UserRole role;
   final DateTime createdAt;
   final String? profileImage;
@@ -62,6 +63,7 @@ abstract class UserModel {
     required this.uId,
     required this.fullName,
     required this.email,
+    this.phoneNumber,
     required this.role,
     required this.createdAt,
     this.profileImage,

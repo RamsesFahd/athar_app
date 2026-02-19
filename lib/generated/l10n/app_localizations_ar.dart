@@ -103,21 +103,31 @@ class AppLocalizationsAr extends AppLocalizations {
   String get verifyEmailTitle => 'تحقق من بريدك الإلكتروني';
 
   @override
-  String get verifyEmailSubtitle => 'أدخل الرمز المرسل إلى بريدك';
+  String get verifyEmailSubtitle =>
+      'لقد أرسلنا رابط التحقق إلى بريدك الإلكتروني.';
 
   @override
-  String get verifyEmailInfoText => 'تم إرسال رمز التحقق إلى:';
+  String get verifyEmailInfoText => 'تم إرسال رابط التحقق إلى:';
 
   @override
   String get verifyButton => 'تحقق';
 
   @override
-  String get resendCode => 'إعادة إرسال الرمز';
+  String get resendCode => 'إعادة إرسال الرابط';
 
   @override
   String resendCodeInSeconds(int seconds) {
-    return 'إعادة إرسال الرمز خلال $seconds ثانية';
+    return 'إعادة إرسال الرابط خلال $seconds ثانية';
   }
+
+  @override
+  String get signUpAsLabel => 'سجل في أثر كـ:';
+
+  @override
+  String get touristRole => 'سائح';
+
+  @override
+  String get tutorRole => 'مرشد سياحي';
 
   @override
   String get errorEmailAlreadyInUse => 'هذا البريد الإلكتروني مستخدم بالفعل.';

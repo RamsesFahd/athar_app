@@ -103,21 +103,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verifyEmailTitle => 'Verify Your Email';
 
   @override
-  String get verifyEmailSubtitle => 'Enter the code sent to your email';
+  String get verifyEmailSubtitle =>
+      'We have sent a verification link to your email.';
 
   @override
-  String get verifyEmailInfoText => 'We have sent a verification code to:';
+  String get verifyEmailInfoText => 'We have sent a verification link to:';
 
   @override
   String get verifyButton => 'Verify';
 
   @override
-  String get resendCode => 'Resend code';
+  String get resendCode => 'Resend Link';
 
   @override
   String resendCodeInSeconds(int seconds) {
-    return 'Resend code in $seconds seconds';
+    return 'Resend link in $seconds seconds';
   }
+
+  @override
+  String get signUpAsLabel => 'Sign up to Athar as:';
+
+  @override
+  String get touristRole => 'Tourist';
+
+  @override
+  String get tutorRole => 'Tutor';
 
   @override
   String get errorEmailAlreadyInUse => 'This email is already in use.';

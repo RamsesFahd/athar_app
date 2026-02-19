@@ -287,13 +287,13 @@ abstract class AppLocalizations {
   /// Subtitle on verify email screen
   ///
   /// In en, this message translates to:
-  /// **'Enter the code sent to your email'**
+  /// **'We have sent a verification link to your email.'**
   String get verifyEmailSubtitle;
 
   /// Info text shown above the email on verify screen
   ///
   /// In en, this message translates to:
-  /// **'We have sent a verification code to:'**
+  /// **'We have sent a verification link to:'**
   String get verifyEmailInfoText;
 
   /// Verify button label
@@ -302,17 +302,35 @@ abstract class AppLocalizations {
   /// **'Verify'**
   String get verifyButton;
 
-  /// Resend code label
+  /// Resend link label
   ///
   /// In en, this message translates to:
-  /// **'Resend code'**
+  /// **'Resend Link'**
   String get resendCode;
 
   /// No description provided for @resendCodeInSeconds.
   ///
   /// In en, this message translates to:
-  /// **'Resend code in {seconds} seconds'**
+  /// **'Resend link in {seconds} seconds'**
   String resendCodeInSeconds(int seconds);
+
+  /// No description provided for @signUpAsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up to Athar as:'**
+  String get signUpAsLabel;
+
+  /// No description provided for @touristRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourist'**
+  String get touristRole;
+
+  /// No description provided for @tutorRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutor'**
+  String get tutorRole;
 
   /// No description provided for @errorEmailAlreadyInUse.
   ///

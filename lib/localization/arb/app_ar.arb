@@ -31,11 +31,11 @@
   "backToSignInButton": "العودة لتسجيل الدخول",
   "backToSignUpButton": "العودة لإنشاء حساب",
   "verifyEmailTitle": "تحقق من بريدك الإلكتروني",
-  "verifyEmailSubtitle": "أدخل الرمز المرسل إلى بريدك",
-  "verifyEmailInfoText": "تم إرسال رمز التحقق إلى:",
+  "verifyEmailSubtitle": "لقد أرسلنا رابط التحقق إلى بريدك الإلكتروني.",
+  "verifyEmailInfoText": "تم إرسال رابط التحقق إلى:",
   "verifyButton": "تحقق",
-  "resendCode": "إعادة إرسال الرمز",
-  "resendCodeInSeconds": "إعادة إرسال الرمز خلال {seconds} ثانية",
+  "resendCode": "إعادة إرسال الرابط",
+  "resendCodeInSeconds": "إعادة إرسال الرابط خلال {seconds} ثانية",
   "@resendCodeInSeconds": {
     "placeholders": {
       "seconds": {
@@ -43,6 +43,12 @@
       }
     }
   },
+
+
+  "signUpAsLabel": "سجل في أثر كـ:",
+  "touristRole": "سائح",
+  "tutorRole": "مرشد سياحي",
+
   "errorEmailAlreadyInUse": "هذا البريد الإلكتروني مستخدم بالفعل.",
   "errorInvalidEmail": "عنوان البريد الإلكتروني غير صحيح.",
   "errorUserNotFound": "لا يوجد مستخدم مسجل بهذا البريد.",

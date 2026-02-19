@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/navigation/app_routes.dart';
-// استيراد ملف الموديل الأساسي للوصول للأدوار
 import '../../../core/models/user/user_model.dart'; 
 import '../widgets/custom_header.dart';
 import '../widgets/custom_button.dart';
@@ -18,7 +17,7 @@ class SignUpScreen extends ConsumerStatefulWidget {
 }
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen> {
-  // 1. إدارة حالة الدور المختار (سائح بشكل افتراضي)
+  // 1. Managing the selected role state (tourist or tutor)
   UserRole _selectedRole = UserRole.tourist; 
 
   final _fullName = TextEditingController();
@@ -43,25 +42,25 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
-    // مراقبة حالة المصادقة للتوجيه بعد النجاح
+    // 2. Listening to auth state changes to show error messages or navigate to home screen on successful registration
     ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
       next.whenOrNull(
         error: (error, stack) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AuthUtils.translateError(error.toString(), l10n)),
-              backgroundColor: AppColors.error, // استخدام لون الخطأ من الثيم
+              backgroundColor: theme.colorScheme.error, 
             ),
           );
         },
         data: (user) {
           if (user != null) {
-            //  التعديل: فحص التفعيل فور التسجيل
+            //  3. Redirecting to email verification screen if the user's email is not verified
             if (!user.emailVerified && user.role != UserRole.guest) {
               Navigator.pushReplacementNamed(
                 context,
                 AppRoutes.verifyEmail,
-                arguments: _email.text, // تمرير الإيميل للشاشة التالية
+                arguments: _email.text, // passing the email to pre-fill the verification screen
               );
             } else {
               Navigator.pushReplacementNamed(context, AppRoutes.home);
@@ -74,7 +73,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(
-      // التعديل: استخدام لون الخلفية من الثيم ليدعم التباين العالي
       backgroundColor: theme.scaffoldBackgroundColor, 
       body: Column(
         children: [
@@ -87,7 +85,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             child: Container(
               transform: Matrix4.translationValues(0, -30, 0),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surface, // التزام بلون السطح
+                color: theme.colorScheme.surface, 
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(35),
                   topRight: Radius.circular(35),
@@ -99,9 +97,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // --- اختيار الدور ---
-                    _buildSectionLabel("سجل في أثر كـ:", theme),
+                    _buildSectionLabel(l10n.signUpAsLabel, theme),
                     const SizedBox(height: 12),
-                    _buildRoleSelector(theme),
+                    _buildRoleSelector(theme, l10n),
                     const SizedBox(height: 25),
 
                     // --- حقول البيانات ---
@@ -122,7 +120,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
                     const SizedBox(height: 30),
 
-                    // زر التسجيل مع تمرير الدور المختار
+                    // register button
                     AtharButton(
                       label: l10n.createAccountButton,
                       isLoading: authState.isLoading,
@@ -145,13 +143,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     );
   }
 
-  // ودجت اختيار الدور (سائح أو مرشد)
-  Widget _buildRoleSelector(ThemeData theme) {
+  // UI for role selection between tourist and tutor with visual feedback on selection
+  Widget _buildRoleSelector(ThemeData theme, AppLocalizations l10n) {
     return Row(
       children: [
-        _roleCard(UserRole.tourist, "سائح", Icons.explore_outlined, theme),
+        _roleCard(UserRole.tourist, l10n.touristRole, Icons.explore_outlined, theme),
         const SizedBox(width: 12),
-        _roleCard(UserRole.tutor, "مرشد (Tutor)", Icons.account_balance_outlined, theme),
+        _roleCard(UserRole.tutor, l10n.tutorRole, Icons.account_balance_outlined, theme),
       ],
     );
   }
@@ -211,7 +209,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       return;
     }
 
-    // استدعاء المنطق مع تمرير الدور المختار
+    // triggering the sign-up process in the auth notifier with the selected role
     ref.read(authNotifierProvider.notifier).signUp(
       email: email,
       password: pass,

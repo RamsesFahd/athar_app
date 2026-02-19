@@ -28,7 +28,7 @@ class AuthRepository {
         _firestore = firestore ?? FirebaseFirestore.instance;
 
   // This getter gives us easy access to the 'users' collection in Firestore
-  CollectionReference get _users => _firestore.collection('users');
+  CollectionReference  get _users => _firestore.collection('users');
 
   // This getter allows us to easily check if there's a currently authenticated user
   User? get currentUser => _auth.currentUser;
@@ -195,4 +195,6 @@ Future<String?> guestLogin() async {
     return false;
   }
 
+  
 }
+

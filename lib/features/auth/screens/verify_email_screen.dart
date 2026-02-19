@@ -25,7 +25,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
   void initState() {
     super.initState();
     _startTimer();
-    // إرسال الرابط تلقائياً عند فتح الصفحة
+    // Sending the verification link when the screen is first loaded
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(authNotifierProvider.notifier).sendVerificationLink();
     });

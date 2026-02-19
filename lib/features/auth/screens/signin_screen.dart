@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/navigation/app_routes.dart';
 import '../../../core/models/user/user_model.dart';
 import '../widgets/custom_header.dart';
@@ -34,13 +33,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AuthUtils.translateError(error.toString(), l10n)),
-              backgroundColor: Colors.red,
+              backgroundColor: theme.colorScheme.error,
             ),
           );
         },
         data: (user) {
           if (user != null) {
-            // 🛡️ توجيه المستخدم غير المفعل لشاشة التحقق
+            // redirecting to email verification screen if the user's email is not verified 
             if (!user.emailVerified && user.role != UserRole.guest) {
               Navigator.pushReplacementNamed(
                 context, 
@@ -78,7 +77,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               ),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(24, 35, 24, 20),
-                //deleted the directionality widget to fix the text direction issue in the text fields
+                // using a column to layout the form fields, buttons, and links vertically with appropriate spacing
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

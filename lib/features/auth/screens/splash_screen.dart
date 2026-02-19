@@ -30,7 +30,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         return; // Check again if the widget is still mounted before navigating
 
       if (user != null) {
-        // ✨ فحص التفعيل قبل الدخول للهوم
+        // before navigating to the home screen, check if the user's email is verified. If not, navigate to the verify email screen instead. This ensures that users who haven't verified their email are prompted to do so before accessing the main features of the app.
         if (!user.emailVerified && user.role != UserRole.guest) {
           Navigator.pushReplacementNamed(
             context, 
@@ -48,23 +48,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context); // for using localization
-    final theme = Theme.of(context); // الوصول للثيم الموحد
+    final l10n = AppLocalizations.of(context); 
+    final theme = Theme.of(context); 
 
     return Scaffold(
-      // استخدام اللون الأسود كخلفية احتياطية أثناء تحميل الصورة
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // 1. الخلفية: صورة رجال ألمع (تغطي كامل الشاشة)
           Positioned.fill(
             child: Image.asset(
-              'assets/images/splash_bg.png', // امتداد .jpg مطابق لملفك
+              'assets/images/splash_bg.png', 
               fit: BoxFit.cover,
             ),
           ),
 
-          // 2. طبقة تظليل (Overlay): تدرج أسود لضمان بروز النصوص والشعار
+
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -79,20 +77,20 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             ),
           ),
 
-          // 3. المحتوى المركزي: الشعار والنصوص
+
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // شعار أثر المرفوع
+                
                 Image.asset(
                   'assets/images/athar_logo_white.png',
-                  width: 280, // حجم مناسب لعرض الشعار بوضوح
+                  width: 280,
                 ),
                 const SizedBox(height: 25),
                 Text(
                   l10n.splashTitle,
-                  // استخدام displayLarge من الثيم لضمان الخط الرسمي مع تعديل اللون للأبيض فقط
+                  // 
                   style: theme.textTheme.displayLarge?.copyWith(
                     color: Colors.white,
                     letterSpacing: 1.5,
@@ -101,10 +99,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 const SizedBox(height: 10),
                 Text(
                   l10n.splashSubtitle,
-                  // استخدام bodyLarge من الثيم لضمان الخط الرسمي
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: Colors.white,
-                    // تم استبدال الحجم الثابت 22 بحجم متناسب مع الثيم (BaseFontSize + 6) ليكون مرناً
                     fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 16) + 6,
                     fontWeight: FontWeight.w500,
                     shadows: [
@@ -119,7 +115,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             ),
           ),
 
-          // 4. مؤشر التحميل في الأسفل (تحريك انسيابي مثل الفيديو)
+
           Positioned(
             bottom: 80,
             left: 0,
