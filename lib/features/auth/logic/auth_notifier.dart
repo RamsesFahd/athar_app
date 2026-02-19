@@ -114,16 +114,22 @@ class AuthNotifier extends _$AuthNotifier {
     state = const AsyncLoading(); // we set the state to loading while we check the verification status
     
     state = await AsyncValue.guard(() async {
-      final repo = ref.read(authRepositoryProvider);
-      final isVerified = await repo.isEmailVerified();
+    final repo = ref.read(authRepositoryProvider);
+    final isVerified = await repo.isEmailVerified();
 
-      if (isVerified) {
-        // if the email is verified, we refresh the user data to reflect any changes
-        return await _checkAuthStatus();
-      } else {
-        // if the email is not verified, we throw an error that can be caught and displayed in the UI
-        throw 'errorEmailNotVerified';
+    if (isVerified) {
+      final uId = repo.currentUser?.uid;
+      
+      if (uId != null) {
+        // Before returning the updated user data, we call the method to update the email verification status in Firestore. This ensures that the user's document in Firestore reflects that their email has been verified, which can be important for controlling access to certain features or content in the app based on email verification status.
+        await repo.updateEmailVerificationInFirestore(uId);
       }
+
+      // 
+      return await _checkAuthStatus();
+    } else {
+      throw 'errorEmailNotVerified';
+    }
     });
   }
 }
