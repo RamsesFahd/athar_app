@@ -36,17 +36,28 @@ class TutorModel extends UserModel {
     'emailVerified': emailVerified,
   };
 
-  factory TutorModel.fromMap(Map<String, dynamic> map) => TutorModel(
-    uId: map['uId'] ?? '',
-    fullName: map['fullName'] ?? '',
-    email: map['email'] ?? '',
-    phoneNumber: map['phoneNumber'],
-    createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-    profileImage: map['profileImage'],
-    accessibilitySettings: AccessibilitySettings.fromMap(map['accessibilitySettings']),
-    bio: map['bio'],
-    licenceNumber: map['licenceNumber'],
-    verificationStatus: map['verificationStatus'],
-    emailVerified: map['emailVerified'] ?? false,
-  );
+  factory TutorModel.fromMap(Map<String, dynamic> map) {
+    
+    final roleString = map['role'] as String? ?? 'tutor';
+    final userRole = UserRole.values.firstWhere(
+      (e) => e.name == roleString,
+      orElse: () => UserRole.tutor,
+    );
+
+    
+    return TutorModel(
+      uId: map['uId'] ?? '',
+      fullName: map['fullName'] ?? '',
+      email: map['email'] ?? '',
+      phoneNumber: map['phoneNumber'],
+      role: userRole, // تمرير الدور هنا
+      createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      profileImage: map['profileImage'],
+      accessibilitySettings: AccessibilitySettings.fromMap(map['accessibilitySettings']),
+      bio: map['bio'],
+      licenceNumber: map['licenceNumber'],
+      verificationStatus: map['verificationStatus'],
+      emailVerified: map['emailVerified'] ?? false,
+    );
+  }
 }

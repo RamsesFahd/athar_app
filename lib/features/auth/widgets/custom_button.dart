@@ -5,14 +5,14 @@ enum ButtonVariant { primary, outline }
 
 class AtharButton extends StatelessWidget {
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final ButtonVariant variant;
   final bool isLoading; // added for loading state
 
   const AtharButton({
     super.key,
     required this.label,
-    required this.onPressed,
+    this.onPressed,
     this.variant = ButtonVariant.primary,
     this.isLoading = false, // default to false
   });

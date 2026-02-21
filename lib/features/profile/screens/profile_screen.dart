@@ -1,9 +1,12 @@
+import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../generated/l10n/app_localizations.dart';
 import '../widgets/booking_card.dart';
 import '../widgets/saved_card.dart';
 import '../widgets/settings_tile.dart';
+import '../widgets/guest_profile_view.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -17,22 +20,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    // Watch the authentication state to conditionally render content or redirect if not authenticated
+    final authState = ref.watch(authNotifierProvider);
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildUserInformationHeader(theme, l10n),
-            _buildNavigationTabs(theme, l10n),
-            Expanded(
-              child: _buildDynamicContentArea(theme, l10n),
+    return authState.when(
+      data: (user) {
+        // if user is null or has guest role, show guest profile view
+        if (user == null || user.role == UserRole.guest) {
+          return const GuestProfileView();
+        }
+        return Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          body: SafeArea(
+            child: Column(
+              children: [
+                _buildUserInformationHeader(theme, l10n),
+                _buildNavigationTabs(theme, l10n),
+                Expanded(
+                  child: _buildDynamicContentArea(theme, l10n),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (e, _) => Scaffold(body: Center(child: Text("Error: $e"))),
     );
   }
 
@@ -59,33 +75,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildAvatarWithEditIcon(ThemeData theme) {
-    return Stack(
-      children: [
-        CircleAvatar(
-          radius: 42,
-          backgroundColor: theme.colorScheme.secondary.withOpacity(0.1),
-          backgroundImage: const NetworkImage(
-            'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150',
-          ),
-        ),
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4)
-              ],
-              border: Border.all(color: theme.dividerColor.withOpacity(0.2), width: 1),
-            ),
-            child: Icon(Icons.camera_alt_outlined,
-                size: 16, color: theme.colorScheme.primary),
-          ),
-        ),
-      ],
+    return CircleAvatar(
+      radius: 42,
+      backgroundColor: theme.colorScheme.secondary.withOpacity(0.1),
+      backgroundImage: const NetworkImage(
+        'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150',
+      ),
     );
   }
 
@@ -120,7 +115,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 12),
           side: BorderSide(color: theme.colorScheme.primary.withOpacity(0.5)),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          textStyle: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+          textStyle:
+              theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -131,9 +127,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       color: theme.colorScheme.surface,
       child: Row(
         children: [
-          _tabItem(l10n.profileTabSaved, 0, theme),
-          _tabItem(l10n.profileTabBooking, 1, theme),
           _tabItem(l10n.profileTabSettings, 2, theme),
+          _tabItem(l10n.profileTabBooking, 1, theme),
+          _tabItem(l10n.profileTabSaved, 0, theme),
         ],
       ),
     );
@@ -180,7 +176,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               title: "Edge of the World",
               location: "Riyadh",
               typeText: "Landmark",
-              image: "https://images.pexels.com/photos/6650442/pexels-photo-6650442.jpeg",
+              image:
+                  "https://images.pexels.com/photos/6650442/pexels-photo-6650442.jpeg",
               isSaved: true,
               onTap: () {},
             ),
@@ -189,7 +186,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               location: "Riyadh",
               typeText: "Event",
               dateText: "Mar 15-25, 2025",
-              image: "https://images.pexels.com/photos/4662950/pexels-photo-4662950.jpeg",
+              image:
+                  "https://images.pexels.com/photos/4662950/pexels-photo-4662950.jpeg",
               isSaved: true,
               onTap: () {},
             ),
@@ -206,7 +204,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               timeText: "10:00 AM",
               duration: "3 hours",
               detailsLabel: l10n.profileDetails,
-              imageUrl: "https://images.pexels.com/photos/4662950/pexels-photo-4662950.jpeg",
+              imageUrl:
+                  "https://images.pexels.com/photos/4662950/pexels-photo-4662950.jpeg",
               onDetails: () {},
             ),
             BookingCard(
@@ -216,7 +215,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               timeText: "9:00 AM",
               duration: "5 hours",
               detailsLabel: l10n.profileDetails,
-              imageUrl: "https://images.pexels.com/photos/6650442/pexels-photo-6650442.jpeg",
+              imageUrl:
+                  "https://images.pexels.com/photos/6650442/pexels-photo-6650442.jpeg",
               onDetails: () {},
             ),
           ],
@@ -241,8 +241,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           showDivider: false,
                         ),
                         SettingsTile(
-                          title: "Change Email",
-                          leadingIcon: Icons.alternate_email_rounded,
+                          title: "Change Password",
+                          leadingIcon: Icons.lock_outline_rounded,
                           onTap: () {},
                           showDivider: false,
                         ),
@@ -295,7 +295,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+                    _buildSettingsGroup(
+                      title: "Support & Legal",
+                      theme: theme,
+                      tiles: [
+                        SettingsTile(
+                          title: "Contact Us",
+                          leadingIcon: Icons.support_agent_rounded,
+                          onTap: () {},
+                        ),
+                        SettingsTile(
+                          title: "Privacy Policy",
+                          leadingIcon: Icons.privacy_tip_outlined,
+                          onTap: () {},
+                        ),
+                        SettingsTile(
+                          title: "About Athar",
+                          leadingIcon: Icons.info_outline_rounded,
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
                     _buildLogoutButton(theme, l10n),
                   ],
                 ),
@@ -308,12 +330,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  Widget _buildSettingsGroup({required String title, required List<Widget> tiles, required ThemeData theme}) {
+  Widget _buildSettingsGroup(
+      {required String title,
+      required List<Widget> tiles,
+      required ThemeData theme}) {
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)
+        ],
         border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
       ),
       child: Column(
@@ -321,7 +348,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
-            child: Text(title, style: theme.textTheme.titleLarge?.copyWith(fontSize: 16)),
+            child: Text(title,
+                style: theme.textTheme.titleLarge?.copyWith(fontSize: 16)),
           ),
           ...tiles,
         ],
@@ -335,16 +363,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)
+        ],
         border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
       ),
       child: TextButton.icon(
         onPressed: () {},
-        style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16)),
+        style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16)),
         icon: const Icon(Icons.logout, color: Colors.red, size: 20),
         label: Text(
           l10n.profileLogout,
-          style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 16),
+          style: const TextStyle(
+              color: Colors.red, fontWeight: FontWeight.bold, fontSize: 16),
         ),
       ),
     );

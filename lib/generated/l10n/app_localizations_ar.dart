@@ -174,7 +174,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get calendarLabel => 'التقويم';
 
   @override
-  String get profileLabel => 'الملف';
+  String get profileLabel => 'الملف الشخصي';
 
   @override
   String get accessibilityOptionsTitle => 'خيارات سهولة الوصول';

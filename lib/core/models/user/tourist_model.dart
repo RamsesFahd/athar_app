@@ -37,17 +37,26 @@ class TouristModel extends UserModel {
 
   };
 
-  factory TouristModel.fromMap(Map<String, dynamic> map) => TouristModel(
-    uId: map['uId'] ?? '',
-    fullName: map['fullName'] ?? '',
-    email: map['email'] ?? '',
-    phoneNumber: map['phoneNumber'],
-    createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
-    profileImage: map['profileImage'],
-    accessibilitySettings: AccessibilitySettings.fromMap(map['accessibilitySettings']),
-    points: map['points'] ?? 0,
-    interests: map['interests'] != null ? List<String>.from(map['interests']) : null,
-    contributionsCount: map['contributionsCount'] ?? 0,
-    emailVerified: map['emailVerified'] ?? false,
-  );
+  factory TouristModel.fromMap(Map<String, dynamic> map) {
+    final roleString = map['role'] as String? ?? 'tourist';
+    final userRole = UserRole.values.firstWhere(
+      (e) => e.name == roleString,
+      orElse: () => UserRole.tourist,
+    );
+
+    return TouristModel(
+      uId: map['uId'] ?? '',
+      fullName: map['fullName'] ?? '',
+      email: map['email'] ?? '',
+      phoneNumber: map['phoneNumber'],
+      role: userRole, 
+      createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      profileImage: map['profileImage'],
+      accessibilitySettings: AccessibilitySettings.fromMap(map['accessibilitySettings']),
+      points: map['points'] ?? 0,
+      interests: map['interests'] != null ? List<String>.from(map['interests']) : null,
+      contributionsCount: map['contributionsCount'] ?? 0,
+      emailVerified: map['emailVerified'] ?? false,
+    );
+  }
 }

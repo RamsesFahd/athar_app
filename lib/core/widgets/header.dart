@@ -25,7 +25,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           backgroundColor: colorScheme.surface.withOpacity(0.8),
           elevation: 0,
           centerTitle: true,
-          automaticallyImplyLeading: !isHome,
+          automaticallyImplyLeading: false, // Hides the default back button on non-home screens
 
           // Implementing the animated title/logo switch
           title: AnimatedSwitcher(

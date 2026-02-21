@@ -24,6 +24,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _confirmPassword = TextEditingController();
+  bool _isSignUpLoading = false;
 
   bool _hidePassword = true;
   bool _hideConfirmPassword = true;
@@ -123,8 +124,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     // register button
                     AtharButton(
                       label: l10n.createAccountButton,
-                      isLoading: authState.isLoading,
-                      onPressed: () => _handleSignUp(l10n),
+                      isLoading: _isSignUpLoading, 
+                      onPressed: authState.isLoading ? null : () { 
+                        _handleSignUp(l10n); 
+                      },
                     ),
 
                     const SizedBox(height: 25),
@@ -193,7 +196,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     );
   }
 
-  void _handleSignUp(AppLocalizations l10n) {
+  void _handleSignUp(AppLocalizations l10n) async {
     final name = _fullName.text.trim();
     final email = _email.text.trim();
     final pass = _password.text;
@@ -208,14 +211,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       _showError(l10n.passwordsDoNotMatchError);
       return;
     }
-
+    setState(() => _isSignUpLoading = true); // Show loading state on the sign-up button
     // triggering the sign-up process in the auth notifier with the selected role
-    ref.read(authNotifierProvider.notifier).signUp(
+    await ref.read(authNotifierProvider.notifier).signUp(
       email: email,
       password: pass,
       fullName: name,
       role: _selectedRole, 
     );
+    if (mounted) setState(() => _isSignUpLoading = false); // Reset loading state after the process completes
   }
 
   void _showError(String message) {

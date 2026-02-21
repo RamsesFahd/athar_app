@@ -20,6 +20,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   final _password = TextEditingController();
   bool _hidePassword = true;
   bool _rememberMe = false;
+  bool _isLoginLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -101,13 +102,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     // Sign in button
                     AtharButton(
                       label: l10n.continueButton,
-                      isLoading:
-                          authState.isLoading, // pass loading state to button
-                      onPressed: () {
-                        ref.read(authNotifierProvider.notifier).signIn(
-                              email: _email.text.trim(),
-                              password: _password.text.trim(),
-                            );
+                      isLoading:_isLoginLoading,
+                      onPressed: authState.isLoading ? null : () async {
+                        setState(() => _isLoginLoading = true);
+                        await ref.read(authNotifierProvider.notifier).signIn(
+                          email: _email.text.trim(),
+                          password: _password.text.trim(),
+                        );
+                        if (mounted) setState(() => _isLoginLoading = false);
                       },
                     ),
                     const SizedBox(height: 25),
@@ -234,14 +236,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         ),
       ]),
       TextButton(
-        onPressed: isLoading
-            ? null
-            : () => ref
-                .read(authNotifierProvider.notifier)
-                .guestLogin(), // guest login method in auth notifier
-        child: Text(l10n.continueAsGuest,
-            style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.primary, fontWeight: FontWeight.bold)),
+        onPressed: isLoading ? null : () => ref.read(authNotifierProvider.notifier).guestLogin(),
+        child: Text(
+          l10n.continueAsGuest,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     ]);
   }
