@@ -18,32 +18,32 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
   Widget build(BuildContext context) {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
-    final loc = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
 
     // خريطة بيانات لربط المعرف بالنصوص والصور الصحيحة من ملفات الـ ARB
     final Map<String, Map<String, dynamic>> itemContent = {
       'coffee': {
-        'title': loc.coffeeTitle,
-        'desc': loc.coffeeDesc,
-        'region': loc.reg_riyadh,
-        'category': loc.cat_food,
+        'title': l10n.coffeeTitle,
+        'desc': l10n.coffeeDesc,
+        'region': l10n.reg_riyadh,
+        'category': l10n.cat_food,
         'image':
             'https://images.pexels.com/photos/1727123/pexels-photo-1727123.jpeg',
       },
       'sadu': {
-        'title': loc.saduTitle,
-        'desc': loc.saduDesc,
-        'region': loc.reg_riyadh, // أو المنطقة المناسبة للسدو
-        'category': loc.cat_craft,
+        'title': l10n.saduTitle,
+        'desc': l10n.saduDesc,
+        'region': l10n.reg_riyadh, // أو المنطقة المناسبة للسدو
+        'category': l10n.cat_craft,
         'image':
             'https://images.pexels.com/photos/5505172/pexels-photo-5505172.jpeg',
       },
       'kleija': {
-        'title': loc.kleijaTitle,
-        'desc': loc.kleijaDesc,
-        'region': loc.reg_qassim,
-        'category': loc.cat_food,
+        'title': l10n.kleijaTitle,
+        'desc': l10n.kleijaDesc,
+        'region': l10n.reg_qassim,
+        'category': l10n.cat_food,
         'image':
             'https://images.pexels.com/photos/15632126/pexels-photo-15632126.jpeg',
       },
@@ -67,7 +67,7 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
                       const BorderRadius.vertical(top: Radius.circular(40)),
                   boxShadow: [
                     BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 20,
                         offset: const Offset(0, -5))
                   ],
@@ -80,11 +80,11 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
                     const SizedBox(height: 8),
                     _buildLocationRow(theme, currentItem['region']),
                     const SizedBox(height: 32),
-                    _sectionTitle(loc.descriptionLabel, theme),
+                    _sectionTitle(l10n.descriptionLabel, theme),
                     _bodyText(currentItem['desc'], theme),
                     const SizedBox(height: 24),
-                    _sectionTitle(loc.servingLabel, theme),
-                    _bodyText(loc.servingDesc, theme),
+                    _sectionTitle(l10n.servingLabel, theme),
+                    _bodyText(l10n.servingDesc, theme),
                     const SizedBox(height: 24),
                     _buildCategoryBadge(theme, currentItem['category']),
                   ],
@@ -167,7 +167,7 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.secondary.withOpacity(0.1),
+        color: AppColors.secondary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

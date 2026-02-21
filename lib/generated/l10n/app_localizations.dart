@@ -500,6 +500,66 @@ abstract class AppLocalizations {
   /// **'Listen to page content read aloud'**
   String get accessibilityTextReaderHint;
 
+  /// No description provided for @welcomeToAthar.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Athar'**
+  String get welcomeToAthar;
+
+  /// No description provided for @startYourJourney.
+  ///
+  /// In en, this message translates to:
+  /// **'Start your journey now in discovering and documenting our cultural treasures and leave your own mark.'**
+  String get startYourJourney;
+
+  /// No description provided for @joinUsNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Us Now'**
+  String get joinUsNow;
+
+  /// No description provided for @leaveYourCulturalImpact.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave your cultural impact'**
+  String get leaveYourCulturalImpact;
+
+  /// No description provided for @contributionTeaserDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Share photos and information with us, and collect points to reach the top contributors list.'**
+  String get contributionTeaserDescription;
+
+  /// No description provided for @points.
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get points;
+
+  /// No description provided for @contributions.
+  ///
+  /// In en, this message translates to:
+  /// **'Contributions'**
+  String get contributions;
+
+  /// No description provided for @myInterests.
+  ///
+  /// In en, this message translates to:
+  /// **'My Interests'**
+  String get myInterests;
+
+  /// No description provided for @manageContributions.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Contributions'**
+  String get manageContributions;
+
+  /// No description provided for @editPicture.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Picture'**
+  String get editPicture;
+
   /// No description provided for @profileEdit.
   ///
   /// In en, this message translates to:
@@ -509,7 +569,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileTabBooking.
   ///
   /// In en, this message translates to:
-  /// **'Booking'**
+  /// **'Bookings'**
   String get profileTabBooking;
 
   /// No description provided for @profileTabSaved.
@@ -527,7 +587,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileUpcomingBooking.
   ///
   /// In en, this message translates to:
-  /// **'Upcoming Booking'**
+  /// **'Upcoming Bookings'**
   String get profileUpcomingBooking;
 
   /// No description provided for @profileWithLabel.
@@ -733,6 +793,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Marketing Emails'**
   String get profileMarketingEmails;
+
+  /// No description provided for @settingsSupportLegal.
+  ///
+  /// In en, this message translates to:
+  /// **'Support & Legal'**
+  String get settingsSupportLegal;
+
+  /// No description provided for @settingsContactUs.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get settingsContactUs;
+
+  /// No description provided for @settingsPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get settingsPrivacyPolicy;
+
+  /// No description provided for @settingsAboutAthar.
+  ///
+  /// In en, this message translates to:
+  /// **'About Athar'**
+  String get settingsAboutAthar;
+
+  /// No description provided for @settingsChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get settingsChangePassword;
+
+  /// No description provided for @tutorVerificationPendingStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Your verification request is currently under review'**
+  String get tutorVerificationPendingStatus;
+
+  /// No description provided for @tutorVerificationRequiredStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Account not verified! Please add your license number'**
+  String get tutorVerificationRequiredStatus;
+
+  /// No description provided for @tutorLicenseNumberTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'License number'**
+  String get tutorLicenseNumberTitle;
+
+  /// No description provided for @tutorCompleteVerificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your license number to verify your account'**
+  String get tutorCompleteVerificationSubtitle;
+
+  /// No description provided for @tutorLicenseNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'License No: {number}'**
+  String tutorLicenseNumberLabel(String number);
+
+  /// No description provided for @statusVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get statusVerified;
+
+  /// No description provided for @statusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get statusPending;
+
+  /// No description provided for @statusUnverified.
+  ///
+  /// In en, this message translates to:
+  /// **'Unverified'**
+  String get statusUnverified;
 
   /// No description provided for @culturalArchiveTitle.
   ///

@@ -11,9 +11,8 @@ class AccessibilityControls extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
-    final l10n = AppLocalizations.of(context)!;
-    final sage600 = const Color(0xFF1A4D32);
-
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -41,32 +40,32 @@ class AccessibilityControls extends ConsumerWidget {
             const SizedBox(height: 20),
 
             // Font Size Section
-            _buildSectionHeader(Icons.text_fields, l10n.accessibilityFontSize, sage600),
+            _buildSectionHeader(Icons.text_fields, l10n.accessibilityFontSize, theme.colorScheme.primary),
             Row(
               children: [
-                Expanded(child: _buildOptionButton(l10n.accessibilitySmall, settings.fontSize == AppFontSize.small, () => notifier.setFontSize(AppFontSize.small), sage600)),
-                Expanded(child: _buildOptionButton(l10n.accessibilityMedium, settings.fontSize == AppFontSize.medium, () => notifier.setFontSize(AppFontSize.medium), sage600)),
-                Expanded(child: _buildOptionButton(l10n.accessibilityLarge, settings.fontSize == AppFontSize.large, () => notifier.setFontSize(AppFontSize.large), sage600)),
+                Expanded(child: _buildOptionButton(l10n.accessibilitySmall, settings.fontSize == AppFontSize.small, () => notifier.setFontSize(AppFontSize.small), theme.colorScheme.primary)),
+                Expanded(child: _buildOptionButton(l10n.accessibilityMedium, settings.fontSize == AppFontSize.medium, () => notifier.setFontSize(AppFontSize.medium), theme.colorScheme.primary)),
+                Expanded(child: _buildOptionButton(l10n.accessibilityLarge, settings.fontSize == AppFontSize.large, () => notifier.setFontSize(AppFontSize.large), theme.colorScheme.primary)),
               ],
             ),
             const SizedBox(height: 16),
 
             // Language Section
-            _buildSectionHeader(Icons.language, l10n.accessibilityLanguage, sage600),
+            _buildSectionHeader(Icons.language, l10n.accessibilityLanguage, theme.colorScheme.primary),
             Row(
               children: [
-                Expanded(child: _buildOptionButton(l10n.accessibilityEnglish, settings.locale.languageCode == 'en', () => notifier.setLocale(const Locale('en')), sage600)),
-                Expanded(child: _buildOptionButton(l10n.accessibilityArabic, settings.locale.languageCode == 'ar', () => notifier.setLocale(const Locale('ar')), sage600)),
+                Expanded(child: _buildOptionButton(l10n.accessibilityEnglish, settings.locale.languageCode == 'en', () => notifier.setLocale(const Locale('en')), theme.colorScheme.primary)),
+                Expanded(child: _buildOptionButton(l10n.accessibilityArabic, settings.locale.languageCode == 'ar', () => notifier.setLocale(const Locale('ar')), theme.colorScheme.primary)),
               ],
             ),
             const SizedBox(height: 16),
 
             // Contrast Section
-            _buildSectionHeader(Icons.brightness_6, l10n.accessibilityContrast, sage600),
+            _buildSectionHeader(Icons.brightness_6, l10n.accessibilityContrast, theme.colorScheme.primary),
             Row(
               children: [
-                Expanded(child: _buildOptionButton(l10n.accessibilityRegular, !settings.highContrast, () { if(settings.highContrast) notifier.toggleContrast(); }, sage600)),
-                Expanded(child: _buildOptionButton(l10n.accessibilityHighContrast, settings.highContrast, () { if(!settings.highContrast) notifier.toggleContrast(); }, sage600)),
+                Expanded(child: _buildOptionButton(l10n.accessibilityRegular, !settings.highContrast, () { if(settings.highContrast) notifier.toggleContrast(); }, theme.colorScheme.primary)),
+                Expanded(child: _buildOptionButton(l10n.accessibilityHighContrast, settings.highContrast, () { if(!settings.highContrast) notifier.toggleContrast(); }, theme.colorScheme.primary)),
               ],
             ),
             
@@ -76,11 +75,11 @@ class AccessibilityControls extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildSectionHeader(Icons.volume_up, l10n.accessibilityTextReader, sage600, padding: 0),
+                _buildSectionHeader(Icons.volume_up, l10n.accessibilityTextReader, theme.colorScheme.primary, padding: 0),
                 Switch(
                   value: settings.isTtsEnabled,
                   onChanged: (_) => notifier.toggleTts(),
-                  activeColor: sage600, // I need to review this ***** RIMAS
+                  activeThumbColor: theme.colorScheme.primary,
                 ),
               ],
             ),

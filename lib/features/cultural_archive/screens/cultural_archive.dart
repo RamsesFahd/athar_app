@@ -45,13 +45,13 @@ class _CulturalArchiveState extends State<CulturalArchive> {
   Widget build(BuildContext context) {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
-    final loc = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final filteredItems = culturalItems.where((item) {
       String itemTitle = '';
-      if (item['id'] == 'coffee') itemTitle = loc.coffeeTitle;
-      if (item['id'] == 'sadu') itemTitle = loc.saduTitle;
-      if (item['id'] == 'kleija') itemTitle = loc.kleijaTitle;
+      if (item['id'] == 'coffee') itemTitle = l10n.coffeeTitle;
+      if (item['id'] == 'sadu') itemTitle = l10n.saduTitle;
+      if (item['id'] == 'kleija') itemTitle = l10n.kleijaTitle;
 
       final matchesSearch = searchQuery.isEmpty ||
           itemTitle.toLowerCase().contains(searchQuery.toLowerCase());
@@ -67,9 +67,9 @@ class _CulturalArchiveState extends State<CulturalArchive> {
       color: theme.scaffoldBackgroundColor,
       child: Column(
         children: [
-          _buildHeader(isAr, theme, loc),
+          _buildHeader(isAr, theme, l10n),
           CustomSearchBar(
-            hintText: loc.searchHint,
+            hintText: l10n.searchHint,
             isGridView: viewMode == CardLayout.vertical,
             onChanged: (val) => setState(() => searchQuery = val),
             onFilterTap: () => setState(() => showFilters = !showFilters),
@@ -79,7 +79,7 @@ class _CulturalArchiveState extends State<CulturalArchive> {
                   : CardLayout.horizontal;
             }),
           ),
-          if (showFilters) _buildFiltersSection(theme, loc),
+          if (showFilters) _buildFiltersSection(theme, l10n),
           Expanded(
             child: filteredItems.isEmpty
                 ? Center(
@@ -114,8 +114,8 @@ class _CulturalArchiveState extends State<CulturalArchive> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.black.withOpacity(0.3),
-              Colors.black.withOpacity(0.8)
+              Colors.black.withValues(alpha: 0.3),
+              Colors.black.withValues(alpha: 0.08)
             ],
           ),
         ),
@@ -137,7 +137,7 @@ class _CulturalArchiveState extends State<CulturalArchive> {
                   ? 'اكتشف الثقافة السعودية الغنية'
                   : 'Discover Saudi heritage',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.08),
                 height: isAr ? 1.4 : 1.1,
               ),
             ),
@@ -169,7 +169,7 @@ class _CulturalArchiveState extends State<CulturalArchive> {
               label: Text(entry.value),
               selected: isSelected,
               onSelected: (_) => setState(() => activeCategory = entry.key),
-              selectedColor: AppColors.secondary.withOpacity(0.2),
+              selectedColor: AppColors.secondary.withValues(alpha: 0.2),
               labelStyle: TextStyle(
                 color: isSelected ? AppColors.primary : AppColors.sage900,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,

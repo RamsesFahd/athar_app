@@ -1,6 +1,6 @@
 // guest_profile_view.dart
 import 'package:flutter/material.dart';
-import 'package:athar_app/features/profile/widgets/settings_tile.dart'; 
+import 'package:athar_app/features/profile/widgets/settings_tile.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
 
 class GuestProfileView extends StatelessWidget {
@@ -59,7 +59,7 @@ class GuestProfileView extends StatelessWidget {
           "ابدأ رحلتك الآن في اكتشاف وتوثيق كنوزنا الثقافية واترك بصمتك الخاصة",
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.7),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
             height: 1.5,
           ),
         ),
@@ -77,7 +77,8 @@ class GuestProfileView extends StatelessWidget {
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: Colors.white,
           elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         child: const Text(
           "انضم إلينا الآن",
@@ -91,9 +92,10 @@ class GuestProfileView extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withOpacity(0.05),
+        color: theme.colorScheme.primary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.colorScheme.primary.withOpacity(0.1)),
+        border:
+            Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
@@ -135,11 +137,13 @@ class GuestProfileView extends StatelessWidget {
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: theme.dividerColor.withOpacity(0.1)),
+            border:
+                Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
           ),
           child: Column(
             children: [
-              SettingsTile( //
+              SettingsTile(
+                //
                 title: "تواصل معنا",
                 leadingIcon: Icons.support_agent_rounded,
                 onTap: () {},

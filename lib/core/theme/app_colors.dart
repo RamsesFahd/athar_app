@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   // Sand - represents the historical and cultural richness of the region (suggested primary color for backgrounds and large surfaces)
   static const Color sand50 = Color(0xFFFBF9F3);
+  static const Color sand10 = Color(0xFFFFF9F1);
   static const Color sand500 = Color(0xFFCC9A53);
   static const Color sand900 = Color(0xFF6D4330);
 
@@ -19,7 +20,7 @@ class AppColors {
   // Main color scheme for the app
   static const Color primary = sage800; 
   static const Color secondary = sand500; 
-  static const Color background = sand50; 
+  static const Color background = sand10; 
   static const Color surface = Colors.white;
   static const Color error = henna700;
 }

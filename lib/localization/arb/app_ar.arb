@@ -79,57 +79,76 @@
   "accessibilityTextReader": "قارئ النصوص",
   "accessibilityTextReaderHint": "الاستماع إلى محتوى الصفحة بصوت عالٍ",
 
-
+  "welcomeToAthar": "أهلاً بك في أثر",
+  "startYourJourney": "ابدأ رحلتك الآن في اكتشاف وتوثيق كنوزنا الثقافية واترك بصمتك الخاصة",
+  "joinUsNow": "انضم إلينا الآن",
+  "leaveYourCulturalImpact": "اترك أثرك الثقافي",
+  "contributionTeaserDescription": "شاركنا بصور ومعلومات واجمع النقاط لتصل إلى قائمة كبار المساهمين",
+  "points": "نقطة",
+  "contributions": "مساهمة",
+  "myInterests": "اهتماماتي",
+  "manageContributions": "إدارة المساهمات",
+  "editPicture": "تعديل الصورة",
   "profileEdit": "تعديل",
   "profileTabBooking": "الحجوزات",
   "profileTabSaved": "المحفوظات",
   "profileTabSettings": "الإعدادات",
-
   "profileUpcomingBooking": "الحجوزات القادمة",
   "profileWithLabel": "مع",
   "profileDetails": "التفاصيل",
-
   "profileEditEmail": "تعديل البريد",
   "profileEditPhone": "إضافة/تعديل الجوال",
   "profileLanguage": "اللغة",
   "profileNotifications": "الإشعارات",
   "profileContributeContent": "المساهمة بالمحتوى",
   "profileLogout": "تسجيل الخروج",
-
   "profileClose": "إغلاق",
   "profileSave": "حفظ",
   "profileSubmit": "إرسال",
-
   "profileEditProfileTitle": "تعديل الملف الشخصي",
   "profileChangePhoto": "تغيير الصورة",
   "profileNameLabel": "الاسم",
   "profileNameHint": "اكتب اسمك",
-
   "profileEditEmailTitle": "تعديل البريد",
   "profileNewEmailLabel": "البريد الجديد",
   "profileConfirmEmailLabel": "تأكيد البريد",
   "profileEmailHint": "اكتب البريد الجديد",
   "profileConfirmEmailHint": "أعد كتابة البريد",
-
   "profileEditPhoneTitle": "إضافة/تعديل الجوال",
   "profileNewPhoneLabel": "رقم الجوال الجديد",
   "profileConfirmPhoneLabel": "تأكيد رقم الجوال",
   "profilePhoneHint": "اكتب رقم الجوال",
   "profileConfirmPhoneHint": "أعد كتابة الرقم",
-
   "profileLanguageTitle": "اللغة",
   "profileLanguageEnglish": "English",
   "profileLanguageArabic": "العربية",
-
-
   "profileSavedItemsTitle": "العناصر المحفوظة",
   "profileSettingsTitle": "الإعدادات",
   "profileAccountTitle": "الحساب",
   "profileBookingNotifications": "إشعارات الحجوزات",
   "profileEventReminders": "تذكيرات الفعاليات",
   "profileMarketingEmails": "البريد التسويقي",
+  "settingsSupportLegal": "الدعم والقانونية",
+  "settingsContactUs": "تواصل معنا",
+  "settingsPrivacyPolicy": "سياسة الخصوصية",
+  "settingsAboutAthar": "عن أثر",
+  "settingsChangePassword": "تغيير كلمة المرور",
 
-
+  "tutorVerificationPendingStatus": "طلب التوثيق قيد المراجعة حالياً",
+  "tutorVerificationRequiredStatus": "حسابك غير موثق! يرجى إضافة رقم الترخيص",
+  "tutorLicenseNumberTitle": "رقم الرخصة",
+  "tutorCompleteVerificationSubtitle": "أضف رقم رخصتك لتوثيق حسابك ومشاركة رحلاتك",
+  "tutorLicenseNumberLabel": "رخصة رقم: {number}",
+  "@tutorLicenseNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "statusVerified": "موثق",
+  "statusPending": "قيد المراجعة",
+  "statusUnverified": "غير موثق",
 
   "culturalArchiveTitle": "الأرشيف الثقافي",
   "searchHint": "ابحث عن التراث، الأماكن...",

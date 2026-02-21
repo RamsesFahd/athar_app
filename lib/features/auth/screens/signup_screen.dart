@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/navigation/app_routes.dart';
-import '../../../core/models/user/user_model.dart'; 
+import '../../../core/models/user/user_model.dart';
 import '../widgets/custom_header.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/auth_utils.dart';
@@ -18,7 +18,7 @@ class SignUpScreen extends ConsumerStatefulWidget {
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   // 1. Managing the selected role state (tourist or tutor)
-  UserRole _selectedRole = UserRole.tourist; 
+  UserRole _selectedRole = UserRole.tourist;
 
   final _fullName = TextEditingController();
   final _email = TextEditingController();
@@ -50,7 +50,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AuthUtils.translateError(error.toString(), l10n)),
-              backgroundColor: theme.colorScheme.error, 
+              backgroundColor: theme.colorScheme.error,
             ),
           );
         },
@@ -61,7 +61,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               Navigator.pushReplacementNamed(
                 context,
                 AppRoutes.verifyEmail,
-                arguments: _email.text, // passing the email to pre-fill the verification screen
+                arguments: _email
+                    .text, // passing the email to pre-fill the verification screen
               );
             } else {
               Navigator.pushReplacementNamed(context, AppRoutes.home);
@@ -74,7 +75,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor, 
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Column(
         children: [
           CustomHeader(
@@ -86,7 +87,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             child: Container(
               transform: Matrix4.translationValues(0, -30, 0),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surface, 
+                color: theme.colorScheme.surface,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(35),
                   topRight: Radius.circular(35),
@@ -117,17 +118,20 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     const SizedBox(height: 18),
 
                     _buildSectionLabel(l10n.confirmPasswordLabel, theme),
-                    _buildTextField(_confirmPassword, l10n.passwordHint, true, isConfirm: true),
+                    _buildTextField(_confirmPassword, l10n.passwordHint, true,
+                        isConfirm: true),
 
                     const SizedBox(height: 30),
 
                     // register button
                     AtharButton(
                       label: l10n.createAccountButton,
-                      isLoading: _isSignUpLoading, 
-                      onPressed: authState.isLoading ? null : () { 
-                        _handleSignUp(l10n); 
-                      },
+                      isLoading: _isSignUpLoading,
+                      onPressed: authState.isLoading
+                          ? null
+                          : () {
+                              _handleSignUp(l10n);
+                            },
                     ),
 
                     const SizedBox(height: 25),
@@ -150,14 +154,17 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   Widget _buildRoleSelector(ThemeData theme, AppLocalizations l10n) {
     return Row(
       children: [
-        _roleCard(UserRole.tourist, l10n.touristRole, Icons.explore_outlined, theme),
+        _roleCard(
+            UserRole.tourist, l10n.touristRole, Icons.explore_outlined, theme),
         const SizedBox(width: 12),
-        _roleCard(UserRole.tutor, l10n.tutorRole, Icons.account_balance_outlined, theme),
+        _roleCard(UserRole.tutor, l10n.tutorRole,
+            Icons.account_balance_outlined, theme),
       ],
     );
   }
 
-  Widget _roleCard(UserRole role, String label, IconData icon, ThemeData theme) {
+  Widget _roleCard(
+      UserRole role, String label, IconData icon, ThemeData theme) {
     final bool isSelected = _selectedRole == role;
     return Expanded(
       child: GestureDetector(
@@ -166,18 +173,27 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(15),
             border: Border.all(
-              color: isSelected ? theme.colorScheme.primary : Colors.grey.shade300,
+              color:
+                  isSelected ? theme.colorScheme.primary : Colors.grey.shade300,
               width: 2,
             ),
-            boxShadow: isSelected ? [BoxShadow(color: theme.colorScheme.primary.withOpacity(0.2), blurRadius: 8)] : null,
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                        blurRadius: 8)
+                  ]
+                : null,
           ),
           child: Column(
             children: [
               Icon(
-                icon, 
+                icon,
                 color: isSelected ? Colors.white : theme.colorScheme.primary,
                 size: 28,
               ),
@@ -211,15 +227,18 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       _showError(l10n.passwordsDoNotMatchError);
       return;
     }
-    setState(() => _isSignUpLoading = true); // Show loading state on the sign-up button
+    setState(() =>
+        _isSignUpLoading = true); // Show loading state on the sign-up button
     // triggering the sign-up process in the auth notifier with the selected role
     await ref.read(authNotifierProvider.notifier).signUp(
-      email: email,
-      password: pass,
-      fullName: name,
-      role: _selectedRole, 
-    );
-    if (mounted) setState(() => _isSignUpLoading = false); // Reset loading state after the process completes
+          email: email,
+          password: pass,
+          fullName: name,
+          role: _selectedRole,
+        );
+    if (mounted)
+      setState(() => _isSignUpLoading =
+          false); // Reset loading state after the process completes
   }
 
   void _showError(String message) {
@@ -244,7 +263,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint, bool isPassword, {bool isConfirm = false}) {
+  Widget _buildTextField(
+      TextEditingController controller, String hint, bool isPassword,
+      {bool isConfirm = false}) {
     final theme = Theme.of(context);
     final bool hide = isConfirm ? _hideConfirmPassword : _hidePassword;
 
@@ -254,7 +275,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         hintText: hint,
         hintStyle: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
         filled: true,
@@ -289,13 +311,16 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   Widget _buildSocialButtons() {
     final theme = Theme.of(context);
     return Row(children: [
-      _socialBtn(Icons.apple, theme.colorScheme.onSurface, theme.colorScheme.surface),
+      _socialBtn(
+          Icons.apple, theme.colorScheme.onSurface, theme.colorScheme.surface),
       const SizedBox(width: 12),
-      _socialBtn(null, theme.colorScheme.surface, theme.colorScheme.onSurface, isGoogle: true),
+      _socialBtn(null, theme.colorScheme.surface, theme.colorScheme.onSurface,
+          isGoogle: true),
     ]);
   }
 
-  Widget _socialBtn(IconData? icon, Color bg, Color fg, {bool isGoogle = false}) {
+  Widget _socialBtn(IconData? icon, Color bg, Color fg,
+      {bool isGoogle = false}) {
     return Expanded(
       child: Container(
         height: 50,
@@ -322,7 +347,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(l10n.alreadyHaveAccount, style: theme.textTheme.bodyMedium),
         TextButton(
-          onPressed: isLoading ? null : () => Navigator.pushNamed(context, AppRoutes.signIn),
+          onPressed: isLoading
+              ? null
+              : () => Navigator.pushNamed(context, AppRoutes.signIn),
           child: Text(
             l10n.signInLink,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -333,7 +360,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         ),
       ]),
       TextButton(
-        onPressed: isLoading ? null : () => ref.read(authNotifierProvider.notifier).guestLogin(),
+        onPressed: isLoading
+            ? null
+            : () => ref.read(authNotifierProvider.notifier).guestLogin(),
         child: Text(
           l10n.continueAsGuest,
           style: theme.textTheme.bodyMedium?.copyWith(

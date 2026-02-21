@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
+import 'package:athar_app/features/profile/logic/profile_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/features/auth/logic/auth_repository.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
@@ -132,4 +136,56 @@ class AuthNotifier extends _$AuthNotifier {
     }
     });
   }
+
+
+  // This method allows a tutor to submit their verification information (specifically their license number) to the system. It updates the user's document in Firestore with the provided license number and sets their verification status to "pending". After updating the Firestore document, it refreshes the authentication status to reflect any changes in the user's data, such as their verification status. This is useful for tutors who need to verify their credentials before gaining access to certain features or being listed as verified tutors in the app.
+  Future<void> submitTutorVerification(String licence) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+
+      final currentUserId = state.value?.uId;
+
+      if (currentUserId != null) {
+        await ref.read(profileRepositoryProvider).updateTutorLicence(
+          uId: currentUserId,
+          licenceNumber: licence,
+        );
+      }
+      return await _checkAuthStatus(); 
+    });
+  }
+
+// This method allows the user to update their profile picture by selecting a new image from their device's gallery. It uses the image_picker package to let the user choose an image, and then uploads that image to Firebase Storage using the ProfileRepository. After successfully uploading the new profile picture and updating the user's document in Firestore with the new profile image URL, it refreshes the authentication status to get the updated user data, which will include the new profile picture URL. This ensures that the UI will reflect the new profile picture immediately after it's uploaded and updated in Firestore.
+//
+Future<void> updateProfilePicture() async {
+  final picker = ImagePicker();
+  File? imageFile;
+
+  // 1. first we check if there's any lost data from a previous image picking operation that might have been interrupted (e.g., the app was killed while the user was picking an image). If there is lost data, we try to retrieve it and use it as the selected image. This helps to prevent losing the user's selected image in case of an interruption.
+  final LostDataResponse response = await picker.retrieveLostData();
+  if (response.file != null) {
+    imageFile = File(response.file!.path);
+  } else {
+    // 2. if there's no lost data, we proceed with the normal image picking process, allowing the user to select a new image from their gallery. We also set the image quality to 50 to reduce the file size and help prevent memory issues that can occur with large images.
+    final XFile? pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 50, 
+    );
+    if (pickedFile != null) {
+      imageFile = File(pickedFile.path);
+    }
+  }
+
+  if (imageFile != null) {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final uId = state.value?.uId;
+      if (uId != null) {
+        // 3. uploaf to Firebase Storage and update Firestore
+        await ref.read(profileRepositoryProvider).uploadProfileImage(uId, imageFile!);
+      }
+      return await _checkAuthStatus();
+    });
+  }
+}
 }

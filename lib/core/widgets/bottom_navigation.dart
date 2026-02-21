@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class AtharBottomNavigation extends StatelessWidget {
-  
   final int currentIndex;
   final Function(int) onTap;
 
@@ -16,21 +15,21 @@ class AtharBottomNavigation extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
         ],
         border: Border(
           top: BorderSide(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             width: 1,
           ),
         ),
@@ -44,16 +43,13 @@ class AtharBottomNavigation extends StatelessWidget {
           elevation: 0,
           selectedItemColor: theme.colorScheme.primary,
           unselectedItemColor: Colors.grey.shade400,
-
           selectedLabelStyle: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.bold,
           ),
-
           unselectedLabelStyle: TextStyle(
             fontSize: 10,
           ),
-
           items: [
             // Home
             BottomNavigationBarItem(
@@ -67,7 +63,7 @@ class AtharBottomNavigation extends StatelessWidget {
               activeIcon: const Icon(Icons.map),
               label: l10n.mapLabel,
             ),
-            // AI Chatbot 
+            // AI Chatbot
             BottomNavigationBarItem(
               icon: const Icon(Icons.message_outlined),
               activeIcon: const Icon(Icons.message),

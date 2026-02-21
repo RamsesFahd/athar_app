@@ -13,7 +13,6 @@ class HomeScreen extends StatelessWidget {
     this.onSeeAllArchive,
   });
 
-
   static const double _pageH = 16;
   static const double _sectionGap = 26; // بين السكاشن
   static const double _headerToContent = 16; // بين العنوان والمحتوى
@@ -46,7 +45,7 @@ class HomeScreen extends StatelessWidget {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          theme.scaffoldBackgroundColor.withOpacity(0.88),
+                          theme.scaffoldBackgroundColor.withValues(alpha: 0.88),
                         ],
                       ),
                     ),
@@ -72,7 +71,7 @@ class HomeScreen extends StatelessWidget {
             // Section: You May Like
             _SectionHeader(
               title: l10n.homeYouMayLikeTitle,
-              onTap: () {}, 
+              onTap: () {},
             ),
 
             const SizedBox(height: _headerToContent),
@@ -140,7 +139,6 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: _sectionGap),
 
-
             // Section: Explore Saudi Heritage
             _SectionHeader(
               title: l10n.homeExploreHeritageTitle,
@@ -185,7 +183,6 @@ class HomeScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: _sectionGap),
-
 
             // Quick Access
             Padding(
@@ -240,7 +237,6 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-
 // Header: Title + See All
 class _SectionHeader extends StatelessWidget {
   final String title;
@@ -254,7 +250,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final isRtl = Directionality.of(context) == TextDirection.rtl;
     final chevron = isRtl ? Icons.chevron_left : Icons.chevron_right;
@@ -314,8 +310,7 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-
-//Quick Access Row Tile 
+//Quick Access Row Tile
 class _QuickAccessRowTile extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -344,12 +339,12 @@ class _QuickAccessRowTile extends StatelessWidget {
             color: theme.cardColor,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: theme.dividerColor.withOpacity(0.6),
+              color: theme.dividerColor.withValues(alpha: 0.6),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: theme.shadowColor.withOpacity(0.06),
+                color: theme.shadowColor.withValues(alpha: 0.06),
                 blurRadius: 12,
                 offset: const Offset(0, 6),
               ),
@@ -365,7 +360,7 @@ class _QuickAccessRowTile extends StatelessWidget {
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
-                    color: theme.dividerColor.withOpacity(0.6),
+                    color: theme.dividerColor.withValues(alpha: 0.6),
                   ),
                 ),
                 child: Icon(
@@ -391,7 +386,8 @@ class _QuickAccessRowTile extends StatelessWidget {
 
               Icon(
                 chevron,
-                color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+                color:
+                    theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               ),
             ],
           ),

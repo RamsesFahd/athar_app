@@ -19,7 +19,8 @@ class SettingsTile extends StatelessWidget {
     this.onTap,
     this.enabled = true,
     this.titleColor,
-    this.showDivider = false, // تم تغيير القيمة الافتراضية إلى false لإزالة الخطوط
+    this.showDivider =
+        false, // تم تغيير القيمة الافتراضية إلى false لإزالة الخطوط
   });
 
   @override
@@ -28,7 +29,9 @@ class SettingsTile extends StatelessWidget {
 
     // استخدام ألوان الثيم الممررة في AppTheme
     final Color contentColor = enabled
-        ? (titleColor ?? theme.textTheme.bodyLarge?.color ?? theme.colorScheme.onSurface)
+        ? (titleColor ??
+            theme.textTheme.bodyLarge?.color ??
+            theme.colorScheme.onSurface)
         : theme.disabledColor;
 
     return Column(
@@ -45,7 +48,8 @@ class SettingsTile extends StatelessWidget {
                     leadingIcon,
                     size: 22,
                     color: enabled
-                        ? theme.colorScheme.primary // استخدام اللون الرئيسي للثيم
+                        ? theme
+                            .colorScheme.primary // استخدام اللون الرئيسي للثيم
                         : theme.disabledColor,
                   ),
                   const SizedBox(width: 16),
@@ -67,7 +71,8 @@ class SettingsTile extends StatelessWidget {
                         Text(
                           subtitle!,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6),
+                            color: theme.textTheme.bodyMedium?.color
+                                ?.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -80,7 +85,7 @@ class SettingsTile extends StatelessWidget {
                   Icon(
                     Icons.chevron_right_rounded,
                     size: 22,
-                    color: theme.colorScheme.onSurface.withOpacity(0.3),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                   ),
               ],
             ),
@@ -91,7 +96,7 @@ class SettingsTile extends StatelessWidget {
             height: 1,
             indent: leadingIcon != null ? 54 : 16,
             endIndent: 16,
-            color: theme.dividerColor.withOpacity(0.1),
+            color: theme.dividerColor.withValues(alpha: 0.1),
           ),
       ],
     );

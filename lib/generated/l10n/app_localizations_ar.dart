@@ -217,6 +217,38 @@ class AppLocalizationsAr extends AppLocalizations {
       'الاستماع إلى محتوى الصفحة بصوت عالٍ';
 
   @override
+  String get welcomeToAthar => 'أهلاً بك في أثر';
+
+  @override
+  String get startYourJourney =>
+      'ابدأ رحلتك الآن في اكتشاف وتوثيق كنوزنا الثقافية واترك بصمتك الخاصة';
+
+  @override
+  String get joinUsNow => 'انضم إلينا الآن';
+
+  @override
+  String get leaveYourCulturalImpact => 'اترك أثرك الثقافي';
+
+  @override
+  String get contributionTeaserDescription =>
+      'شاركنا بصور ومعلومات واجمع النقاط لتصل إلى قائمة كبار المساهمين';
+
+  @override
+  String get points => 'نقطة';
+
+  @override
+  String get contributions => 'مساهمة';
+
+  @override
+  String get myInterests => 'اهتماماتي';
+
+  @override
+  String get manageContributions => 'إدارة المساهمات';
+
+  @override
+  String get editPicture => 'تعديل الصورة';
+
+  @override
   String get profileEdit => 'تعديل';
 
   @override
@@ -332,6 +364,50 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileMarketingEmails => 'البريد التسويقي';
+
+  @override
+  String get settingsSupportLegal => 'الدعم والقانونية';
+
+  @override
+  String get settingsContactUs => 'تواصل معنا';
+
+  @override
+  String get settingsPrivacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String get settingsAboutAthar => 'عن أثر';
+
+  @override
+  String get settingsChangePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get tutorVerificationPendingStatus =>
+      'طلب التوثيق قيد المراجعة حالياً';
+
+  @override
+  String get tutorVerificationRequiredStatus =>
+      'حسابك غير موثق! يرجى إضافة رقم الترخيص';
+
+  @override
+  String get tutorLicenseNumberTitle => 'رقم الرخصة';
+
+  @override
+  String get tutorCompleteVerificationSubtitle =>
+      'أضف رقم رخصتك لتوثيق حسابك ومشاركة رحلاتك';
+
+  @override
+  String tutorLicenseNumberLabel(String number) {
+    return 'رخصة رقم: $number';
+  }
+
+  @override
+  String get statusVerified => 'موثق';
+
+  @override
+  String get statusPending => 'قيد المراجعة';
+
+  @override
+  String get statusUnverified => 'غير موثق';
 
   @override
   String get culturalArchiveTitle => 'الأرشيف الثقافي';

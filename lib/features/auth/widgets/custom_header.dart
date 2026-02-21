@@ -34,8 +34,8 @@ class CustomHeader extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.1),
-                  Colors.black.withOpacity(0.7),
+                  Colors.black.withValues(alpha: 0.1),
+                  Colors.black.withValues(alpha: 0.7),
                 ],
               ),
             ),
@@ -63,7 +63,7 @@ class CustomHeader extends StatelessWidget {
                   subtitle,
                   textAlign: TextAlign.start,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 16,
                   ),
                 ),
@@ -80,11 +80,15 @@ class CustomHeader extends StatelessWidget {
                 shape: BoxShape.circle,
                 // أضفنا ظل خفيف عشان تبرز الأيقونة فوق صورة الخلفية
                 boxShadow: const [
-                  BoxShadow(color: Colors.black45, blurRadius: 8, offset: Offset(0, 2))
+                  BoxShadow(
+                      color: Colors.black45,
+                      blurRadius: 8,
+                      offset: Offset(0, 2))
                 ],
               ),
               child: IconButton(
-                icon: const Icon(Icons.accessibility_new, color: Colors.white, size: 22),
+                icon: const Icon(Icons.accessibility_new,
+                    color: Colors.white, size: 22),
                 tooltip: 'سهولة الوصول',
                 onPressed: () {
                   // فتح النافذة المنبثقة للأداة

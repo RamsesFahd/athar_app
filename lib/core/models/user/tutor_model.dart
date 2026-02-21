@@ -50,7 +50,7 @@ class TutorModel extends UserModel {
       fullName: map['fullName'] ?? '',
       email: map['email'] ?? '',
       phoneNumber: map['phoneNumber'],
-      role: userRole, // تمرير الدور هنا
+      role: userRole, 
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       profileImage: map['profileImage'],
       accessibilitySettings: AccessibilitySettings.fromMap(map['accessibilitySettings']),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
-import '../../../core/theme/app_colors.dart';
 
 enum CardLayout { vertical, horizontal }
 
@@ -24,20 +23,20 @@ class CulturalItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
-    final loc = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final Map<String, Map<String, String>> localizedContent = {
       'coffee': {
-        'title': loc.coffeeTitle,
-        'desc': loc.coffeeDesc,
+        'title': l10n.coffeeTitle,
+        'desc': l10n.coffeeDesc,
       },
       'sadu': {
-        'title': loc.saduTitle,
-        'desc': loc.saduDesc,
+        'title': l10n.saduTitle,
+        'desc': l10n.saduDesc,
       },
       'kleija': {
-        'title': loc.kleijaTitle,
-        'desc': loc.kleijaDesc,
+        'title': l10n.kleijaTitle,
+        'desc': l10n.kleijaDesc,
       },
     };
 
@@ -49,8 +48,8 @@ class CulturalItemCard extends StatelessWidget {
           Navigator.pushNamed(context, '/cultural-details', arguments: id),
       child: layout == CardLayout.horizontal
           ? _buildHorizontalLayout(
-              displayTitle, displayDescription, isArabic, theme, loc)
-          : _buildVerticalLayout(displayTitle, isArabic, theme, loc),
+              displayTitle, displayDescription, isArabic, theme, l10n)
+          : _buildVerticalLayout(displayTitle, isArabic, theme, l10n),
     );
   }
 
@@ -90,7 +89,7 @@ class CulturalItemCard extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)
         ],
       ),
       child: Row(
@@ -132,12 +131,12 @@ class CulturalItemCard extends StatelessWidget {
       children: [
         _badgeTemplate(
           _getTranslatedCategory(category, loc),
-          theme.colorScheme.primary.withOpacity(0.12),
+          theme.colorScheme.primary.withValues(alpha: 0.12),
           theme.colorScheme.primary,
         ),
         _badgeTemplate(
           _getTranslatedRegion(region, loc),
-          theme.colorScheme.secondary.withOpacity(0.12),
+          theme.colorScheme.secondary.withValues(alpha: 0.12),
           theme.colorScheme.secondary,
         ),
       ],

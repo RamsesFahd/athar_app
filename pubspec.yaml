@@ -52,6 +52,8 @@ dependencies:
 
   #Fonts
   google_fonts: ^6.2.1
+  firebase_storage: ^12.4.10
+  image_picker: ^1.2.1
 
 dev_dependencies:
   flutter_test:

@@ -70,13 +70,15 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     final authState = ref.watch(authNotifierProvider);
 
     // مراقبة الحالة للانتقال للهوم
-ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
+    ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
       next.when(
         data: (user) {
           if (user != null) {
             // رسالة نجاح تظهر قبل الانتقال
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("تم تفعيل حسابك بنجاح! أهلاً بك في أثر"), backgroundColor: Colors.green),
+              const SnackBar(
+                  content: Text("تم تفعيل حسابك بنجاح! أهلاً بك في أثر"),
+                  backgroundColor: Colors.green),
             );
             Navigator.pushReplacementNamed(context, AppRoutes.home);
           }
@@ -93,7 +95,6 @@ ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
         loading: () {},
       );
     });
-
 
     return Scaffold(
       appBar: AppBar(
@@ -113,7 +114,7 @@ ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(Icons.email_outlined,
@@ -137,7 +138,8 @@ ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
                 l10n.verifyEmailSubtitle,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                    color: theme.textTheme.bodyMedium?.color
+                        ?.withValues(alpha: 0.7),
                     height: 1.5),
               ),
               const SizedBox(height: 10),
@@ -204,7 +206,8 @@ ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
         : Text(
             l10n.resendCodeInSeconds(_secondsLeft),
             style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodySmall?.color?.withOpacity(0.5)),
+                color:
+                    theme.textTheme.bodySmall?.color?.withValues(alpha: 0.5)),
           );
   }
 

@@ -217,10 +217,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accessibilityTextReaderHint => 'Listen to page content read aloud';
 
   @override
+  String get welcomeToAthar => 'Welcome to Athar';
+
+  @override
+  String get startYourJourney =>
+      'Start your journey now in discovering and documenting our cultural treasures and leave your own mark.';
+
+  @override
+  String get joinUsNow => 'Join Us Now';
+
+  @override
+  String get leaveYourCulturalImpact => 'Leave your cultural impact';
+
+  @override
+  String get contributionTeaserDescription =>
+      'Share photos and information with us, and collect points to reach the top contributors list.';
+
+  @override
+  String get points => 'Points';
+
+  @override
+  String get contributions => 'Contributions';
+
+  @override
+  String get myInterests => 'My Interests';
+
+  @override
+  String get manageContributions => 'Manage Contributions';
+
+  @override
+  String get editPicture => 'Edit Picture';
+
+  @override
   String get profileEdit => 'Edit';
 
   @override
-  String get profileTabBooking => 'Booking';
+  String get profileTabBooking => 'Bookings';
 
   @override
   String get profileTabSaved => 'Saved';
@@ -229,7 +261,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileTabSettings => 'Settings';
 
   @override
-  String get profileUpcomingBooking => 'Upcoming Booking';
+  String get profileUpcomingBooking => 'Upcoming Bookings';
 
   @override
   String get profileWithLabel => 'With';
@@ -332,6 +364,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileMarketingEmails => 'Marketing Emails';
+
+  @override
+  String get settingsSupportLegal => 'Support & Legal';
+
+  @override
+  String get settingsContactUs => 'Contact Us';
+
+  @override
+  String get settingsPrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get settingsAboutAthar => 'About Athar';
+
+  @override
+  String get settingsChangePassword => 'Change Password';
+
+  @override
+  String get tutorVerificationPendingStatus =>
+      'Your verification request is currently under review';
+
+  @override
+  String get tutorVerificationRequiredStatus =>
+      'Account not verified! Please add your license number';
+
+  @override
+  String get tutorLicenseNumberTitle => 'License number';
+
+  @override
+  String get tutorCompleteVerificationSubtitle =>
+      'Add your license number to verify your account';
+
+  @override
+  String tutorLicenseNumberLabel(String number) {
+    return 'License No: $number';
+  }
+
+  @override
+  String get statusVerified => 'Verified';
+
+  @override
+  String get statusPending => 'Pending';
+
+  @override
+  String get statusUnverified => 'Unverified';
 
   @override
   String get culturalArchiveTitle => 'Cultural Archive';

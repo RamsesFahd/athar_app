@@ -22,10 +22,11 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
         // Blur effect for the header background
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: AppBar(
-          backgroundColor: colorScheme.surface.withOpacity(0.8),
+          backgroundColor: colorScheme.surface.withValues(alpha: 0.08),
           elevation: 0,
           centerTitle: true,
-          automaticallyImplyLeading: false, // Hides the default back button on non-home screens
+          automaticallyImplyLeading:
+              false, // Hides the default back button on non-home screens
 
           // Implementing the animated title/logo switch
           title: AnimatedSwitcher(
@@ -60,16 +61,17 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           ),
 
           actions: [
-
-          Padding(
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: colorScheme.primary, // Thematic color for accessibility button
+                  color: colorScheme
+                      .primary, // Thematic color for accessibility button
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
-                  icon: const Icon(Icons.accessibility_new, color: Colors.white, size: 22),
+                  icon: const Icon(Icons.accessibility_new,
+                      color: Colors.white, size: 22),
                   tooltip: 'سهولة الوصول',
                   onPressed: () {
                     showDialog(
@@ -113,7 +115,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
             child: Container(
-              color: colorScheme.onSurface.withOpacity(0.05),
+              color: colorScheme.onSurface.withValues(alpha: 0.05),
               height: 1.0,
             ),
           ),

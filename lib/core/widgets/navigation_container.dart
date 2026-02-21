@@ -8,7 +8,6 @@ import 'package:athar_app/features/cultural_archive/screens/cultural_archive.dar
 import 'package:athar_app/features/profile/screens/profile_screen.dart';
 import 'package:athar_app/features/home/screens/home_screen.dart';
 
-
 class NavigationContainer extends StatefulWidget {
   const NavigationContainer({super.key});
 
@@ -19,7 +18,7 @@ class NavigationContainer extends StatefulWidget {
 class _NavigationContainerState extends State<NavigationContainer> {
   int _currentIndex = 0;
   int _previousIndex = 0;
-  Widget? _subPage; 
+  Widget? _subPage;
 
   // Go to a subpage (like Cultural Archive) from Home
   void _onNavigateToSubPage(Widget page) {
@@ -29,7 +28,7 @@ class _NavigationContainerState extends State<NavigationContainer> {
   }
 
   String _getPageTitle(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     // if there's a subpage, we show its title (for now we only have Cultural Archive as a subpage, but this will extended)
     if (_subPage is CulturalArchive) {
@@ -38,12 +37,18 @@ class _NavigationContainerState extends State<NavigationContainer> {
 
     // otherwise, we show the title based on the current tab
     switch (_currentIndex) {
-      case 0: return l10n.homeLabel;
-      case 1: return l10n.mapLabel;
-      case 2: return l10n.assistantLabel;
-      case 3: return l10n.calendarLabel;
-      case 4: return l10n.profileLabel;
-      default: return l10n.homeLabel;
+      case 0:
+        return l10n.homeLabel;
+      case 1:
+        return l10n.mapLabel;
+      case 2:
+        return l10n.assistantLabel;
+      case 3:
+        return l10n.calendarLabel;
+      case 4:
+        return l10n.profileLabel;
+      default:
+        return l10n.homeLabel;
     }
   }
 
@@ -57,7 +62,7 @@ class _NavigationContainerState extends State<NavigationContainer> {
       const Scaffold(body: Center(child: Text('Map Screen'))),
       const Scaffold(body: Center(child: Text('AI Assistant'))),
       const Scaffold(body: Center(child: Text('Calendar'))),
-      const ProfileScreen(), 
+      const ProfileScreen(),
     ];
 
     return Scaffold(
@@ -95,12 +100,12 @@ class _NavigationContainerState extends State<NavigationContainer> {
             },
             child: Container(
               // The key is important to tell the AnimatedSwitcher when to animate. We use a different key for each tab and for the subpage, so that it knows when to animate between them.
-              key: ValueKey<String>(
-                  _subPage != null ? 'subpage_${_subPage.hashCode}' : 'tab_$_currentIndex'),
+              key: ValueKey<String>(_subPage != null
+                  ? 'subpage_${_subPage.hashCode}'
+                  : 'tab_$_currentIndex'),
               child: _subPage ?? _screens[_currentIndex],
             ),
           ),
-          
         ],
       ),
       bottomNavigationBar: AtharBottomNavigation(
@@ -110,7 +115,8 @@ class _NavigationContainerState extends State<NavigationContainer> {
             setState(() {
               _previousIndex = _currentIndex;
               _currentIndex = index;
-              _subPage = null; // whenever we switch tabs, we want to exit any subpage and go back to the main screen of the new tab
+              _subPage =
+                  null; // whenever we switch tabs, we want to exit any subpage and go back to the main screen of the new tab
             });
           }
         },

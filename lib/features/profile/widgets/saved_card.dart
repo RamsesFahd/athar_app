@@ -35,7 +35,7 @@ class SavedCard extends StatelessWidget {
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-                color: theme.colorScheme.outlineVariant.withOpacity(0.5)),
+                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
           ),
           child: Row(
             children: [
@@ -51,7 +51,8 @@ class SavedCard extends StatelessWidget {
                     width: 100,
                     color: theme.colorScheme.surfaceVariant,
                     child: Icon(Icons.image_outlined,
-                        color: theme.colorScheme.primary.withOpacity(0.4)),
+                        color:
+                            theme.colorScheme.primary.withValues(alpha: 0.4)),
                   ),
                 ),
               ),
@@ -113,8 +114,8 @@ class SavedCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color:
-                                  theme.colorScheme.primary.withOpacity(0.08),
+                              color: theme.colorScheme.primary
+                                  .withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(typeText,

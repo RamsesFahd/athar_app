@@ -19,6 +19,7 @@ class AppTheme {
     
     // ✨ in high contrast mode, we switch to a more stark color palette to enhance readability
     final Color primaryColor = isHighContrast ? Colors.black : AppColors.primary;
+    final Color backgroundColor = isHighContrast ? Colors.white : AppColors.background;
     final Color surfaceColor = isHighContrast ? Colors.white : AppColors.sand50;
     final Color textColorPrimary = isHighContrast ? Colors.black : AppColors.sage900;
     final Color textColorSecondary = isHighContrast ? Colors.black87 : AppColors.sage800;
@@ -29,12 +30,14 @@ class AppTheme {
 
     return ThemeData(
       useMaterial3: true,
-      scaffoldBackgroundColor: surfaceColor,
+      scaffoldBackgroundColor: backgroundColor,
       colorScheme: ColorScheme.light(
         primary: primaryColor,
         secondary: AppColors.secondary,
         surface: surfaceColor,
         onPrimary: Colors.white,
+        tertiary: AppColors.henna500,
+        onSurfaceVariant: AppColors.sage50,
       ),
       
       textTheme: TextTheme(
@@ -62,6 +65,19 @@ class AppTheme {
           fontFamily: englishFont,
           fontFamilyFallback: fallbackArabicFont,
           fontSize: baseFontSize - 2,
+          color: textColorSecondary, // ✨ linked for high contrast mode
+        ),
+        bodySmall: TextStyle(
+          fontFamily: englishFont,
+          fontFamilyFallback: fallbackArabicFont,
+          fontSize: baseFontSize - 4,
+          color: textColorSecondary,
+        ),
+        labelSmall: TextStyle(
+          fontFamily: englishFont,
+          fontFamilyFallback: fallbackArabicFont,
+          fontSize: baseFontSize - 6,
+          fontWeight: FontWeight.w500,
           color: textColorSecondary, // ✨ linked for high contrast mode
         ),
       ),

@@ -33,10 +33,10 @@ class BookingCard extends StatelessWidget {
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-              color: theme.colorScheme.outlineVariant.withOpacity(0.5)),
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -94,7 +94,8 @@ class BookingCard extends StatelessWidget {
                     Text(
                       "Guide: $guide",
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color:
+                            theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -120,12 +121,13 @@ class BookingCard extends StatelessWidget {
   Widget _buildInfoItem(ThemeData theme, IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 14, color: theme.colorScheme.primary.withOpacity(0.8)),
+        Icon(icon,
+            size: 14, color: theme.colorScheme.primary.withValues(alpha: 0.08)),
         const SizedBox(width: 6),
         Text(
           text,
           style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onSurface.withOpacity(0.6),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],

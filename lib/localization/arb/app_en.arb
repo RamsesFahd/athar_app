@@ -118,58 +118,78 @@
   "accessibilityTextReader": "Text Reader",
   "accessibilityTextReaderHint": "Listen to page content read aloud",
 
-
+  "welcomeToAthar": "Welcome to Athar",
+  "startYourJourney": "Start your journey now in discovering and documenting our cultural treasures and leave your own mark.",
+  "joinUsNow": "Join Us Now",
+  "leaveYourCulturalImpact": "Leave your cultural impact",
+  "contributionTeaserDescription": "Share photos and information with us, and collect points to reach the top contributors list.",
+  "points": "Points",
+  "contributions": "Contributions",
+  "myInterests": "My Interests",
+  "manageContributions": "Manage Contributions",
+  "editPicture": "Edit Picture",
   "profileEdit": "Edit",
-  "profileTabBooking": "Booking",
+  "profileTabBooking": "Bookings",
   "profileTabSaved": "Saved",
   "profileTabSettings": "Settings",
-
-  "profileUpcomingBooking": "Upcoming Booking",
+  "profileUpcomingBooking": "Upcoming Bookings",
   "profileWithLabel": "With",
   "profileDetails": "Details",
-
   "profileEditEmail": "Edit Email",
   "profileEditPhone": "Add / Edit Phone",
   "profileLanguage": "Language",
   "profileNotifications": "Notifications",
   "profileContributeContent": "Contribute Content",
   "profileLogout": "Logout",
-
   "profileClose": "Close",
   "profileSave": "Save",
   "profileSubmit": "Submit",
-
   "profileEditProfileTitle": "Edit Profile",
   "profileChangePhoto": "Change photo",
   "profileNameLabel": "Name",
   "profileNameHint": "Enter your name",
-
   "profileEditEmailTitle": "Edit Email",
   "profileNewEmailLabel": "New Email",
   "profileConfirmEmailLabel": "Confirm Email",
   "profileEmailHint": "Enter new email",
   "profileConfirmEmailHint": "Re-enter email",
-
   "profileEditPhoneTitle": "Add / Edit Phone",
   "profileNewPhoneLabel": "New Phone",
   "profileConfirmPhoneLabel": "Confirm Phone",
   "profilePhoneHint": "Enter new phone",
   "profileConfirmPhoneHint": "Re-enter phone",
-
   "profileLanguageTitle": "Language",
   "profileLanguageEnglish": "English",
   "profileLanguageArabic": "Arabic",
-
-
   "profileSavedItemsTitle": "Saved Items",
   "profileSettingsTitle": "Settings",
   "profileAccountTitle": "Account",
   "profileBookingNotifications": "Booking Notifications",
   "profileEventReminders": "Event Reminders",
   "profileMarketingEmails": "Marketing Emails",
+  "settingsSupportLegal": "Support & Legal",
+  "settingsContactUs": "Contact Us",
+  "settingsPrivacyPolicy": "Privacy Policy",
+  "settingsAboutAthar": "About Athar",
+  "settingsChangePassword": "Change Password",
 
+  "tutorVerificationPendingStatus": "Your verification request is currently under review",
+  "tutorVerificationRequiredStatus": "Account not verified! Please add your license number",
+  "tutorLicenseNumberTitle": "License number",
+  "tutorCompleteVerificationSubtitle": "Add your license number to verify your account",
+  "tutorLicenseNumberLabel": "License No: {number}",
+  "@tutorLicenseNumberLabel": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "statusVerified": "Verified",
+  "statusPending": "Pending",
+  "statusUnverified": "Unverified",
 
-   "culturalArchiveTitle": "Cultural Archive",
+  "culturalArchiveTitle" : "Cultural Archive",
   "searchHint": "Search for heritage, places...",
   "descriptionLabel": "Description",
   "servingLabel": "Serving",
