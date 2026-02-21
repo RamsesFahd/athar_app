@@ -414,4 +414,31 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get servingDesc =>
       'Usually served with Saudi coffee, representing a symbol of hospitality.';
+
+  @override
+  String get homeHeroTitle => 'Dive into Saudi Heritage';
+
+  @override
+  String get homeYouMayLikeTitle => 'You May Like';
+
+  @override
+  String get homeExploreHeritageTitle => 'Explore Saudi Heritage';
+
+  @override
+  String get homeQuickAccessTitle => 'Quick Access';
+
+  @override
+  String get seeAllLabel => 'See All';
+
+  @override
+  String get quickCalendar => 'View Event Calendar';
+
+  @override
+  String get quickMap => 'Open Interactive Map';
+
+  @override
+  String get quickAchievements => 'My Cultural Achievements';
+
+  @override
+  String get quickGuides => 'Find a Tour Guide';
 }

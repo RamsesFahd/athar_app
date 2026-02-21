@@ -197,6 +197,16 @@
   "saduDesc": "Sadu is a traditional Bedouin weaving craft, handmade to express desert cultural identity.",
   "kleijaTitle": "Qassim Kleija",
   "kleijaDesc": "Kleija is a traditional Saudi pastry made from spiced dough filled with a sweet mixture of dates and cardamom.",
-  "servingDesc": "Usually served with Saudi coffee, representing a symbol of hospitality."
+  "servingDesc": "Usually served with Saudi coffee, representing a symbol of hospitality.",
+
+  "homeHeroTitle": "Dive into Saudi Heritage",
+  "homeYouMayLikeTitle": "You May Like",
+  "homeExploreHeritageTitle": "Explore Saudi Heritage",
+  "homeQuickAccessTitle": "Quick Access",
+  "seeAllLabel": "See All",
+  "quickCalendar": "View Event Calendar",
+  "quickMap": "Open Interactive Map",
+  "quickAchievements": "My Cultural Achievements",
+  "quickGuides": "Find a Tour Guide"
 
 }

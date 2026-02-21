@@ -889,6 +889,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Usually served with Saudi coffee, representing a symbol of hospitality.'**
   String get servingDesc;
+
+  /// No description provided for @homeHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dive into Saudi Heritage'**
+  String get homeHeroTitle;
+
+  /// No description provided for @homeYouMayLikeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You May Like'**
+  String get homeYouMayLikeTitle;
+
+  /// No description provided for @homeExploreHeritageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore Saudi Heritage'**
+  String get homeExploreHeritageTitle;
+
+  /// No description provided for @homeQuickAccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Access'**
+  String get homeQuickAccessTitle;
+
+  /// No description provided for @seeAllLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get seeAllLabel;
+
+  /// No description provided for @quickCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'View Event Calendar'**
+  String get quickCalendar;
+
+  /// No description provided for @quickMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Interactive Map'**
+  String get quickMap;
+
+  /// No description provided for @quickAchievements.
+  ///
+  /// In en, this message translates to:
+  /// **'My Cultural Achievements'**
+  String get quickAchievements;
+
+  /// No description provided for @quickGuides.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a Tour Guide'**
+  String get quickGuides;
 }
 
 class _AppLocalizationsDelegate

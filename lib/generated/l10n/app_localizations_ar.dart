@@ -414,4 +414,31 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get servingDesc =>
       'تُقدم عادة مع القهوة السعودية، وتعتبر رمزاً ثقافياً للضيافة.';
+
+  @override
+  String get homeHeroTitle => 'اكتشف عمق التراث السعودي';
+
+  @override
+  String get homeYouMayLikeTitle => 'قد يعجبك';
+
+  @override
+  String get homeExploreHeritageTitle => 'استكشف التراث السعودي';
+
+  @override
+  String get homeQuickAccessTitle => 'روابط سريعة';
+
+  @override
+  String get seeAllLabel => 'عرض الكل';
+
+  @override
+  String get quickCalendar => 'عرض تقويم الفعاليات';
+
+  @override
+  String get quickMap => 'فتح الخريطة التفاعلية';
+
+  @override
+  String get quickAchievements => 'إنجازاتي الثقافية';
+
+  @override
+  String get quickGuides => 'العثور على مرشد سياحي';
 }
