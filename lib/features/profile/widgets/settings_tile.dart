@@ -40,7 +40,7 @@ class SettingsTile extends StatelessWidget {
           onTap: enabled ? onTap : null,
           borderRadius: BorderRadius.circular(12), // لإعطاء تأثير ضغط متناسق
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsetsDirectional.symmetric(horizontal: 16, vertical: 16),
             child: Row(
               children: [
                 if (leadingIcon != null) ...[
@@ -82,10 +82,13 @@ class SettingsTile extends StatelessWidget {
                 if (trailing != null)
                   trailing!
                 else if (onTap != null)
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 22,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                  RotatedBox(
+                    quarterTurns: Directionality.of(context) == TextDirection.rtl ? 2 : 0,
+                    child: Icon(
+                      Icons.chevron_right_rounded,
+                      size: 22,
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                    ),
                   ),
               ],
             ),

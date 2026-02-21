@@ -10,6 +10,7 @@ import '../widgets/saved_card.dart';
 import '../widgets/settings_tile.dart';
 import '../widgets/guest_profile_view.dart';
 import '../widgets/tourist_profile.dart';
+import 'package:athar_app/core/providers/settings_provider.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -183,7 +184,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         SettingsTile(
                           title: l10n.profileEditProfileTitle,
                           leadingIcon: Icons.mode_edit,
-                          onTap: () {},
+                          onTap: () => _showNameInputDialog(context, l10n, user.fullName),
                         ),
                         if (user is TutorModel &&
                             user.verificationStatus != 'verified')
@@ -234,7 +235,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               ? l10n.profileLanguageArabic
                               : l10n.profileLanguageEnglish,
                           leadingIcon: Icons.language_rounded,
-                          onTap: () {},
+                          onTap: () => _showLanguageBottomSheet(context, l10n),
                           showDivider: false,
                         ),
                       ],
@@ -325,7 +326,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
+           padding: const EdgeInsetsDirectional.only(start: 16, top: 16, bottom: 8),
             child: Text(title,
                 style: theme.textTheme.titleLarge?.copyWith(fontSize: 16)),
           ),
@@ -391,7 +392,59 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
     ),
   );
 }
-
-
-
+//
+  void _showNameInputDialog(BuildContext context, AppLocalizations l10n, String currentName) {
+    final controller = TextEditingController(text: currentName);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.profileEditProfileTitle),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(hintText: "Enter new name"),
+        ), // TextField
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: Text("cancel")), // 
+          TextButton(
+            onPressed: () async {
+              if (controller.text.isNotEmpty) {
+                await ref.read(profileNotifierProvider.notifier).updateProfileName(controller.text); // 
+                Navigator.pop(context);
+              }
+            },
+            child: Text("save"), // 
+          ), // TextButton
+        ],
+      ), // AlertDialog
+    );
+  }
+  void _showLanguageBottomSheet(BuildContext context, AppLocalizations l10n) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ), // RoundedRectangleBorder
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(l10n.profileLanguageArabic),
+              onTap: () {
+                ref.read(settingsProvider.notifier).setLocale(const Locale('ar')); // تغيير اللغة للعربية
+                Navigator.pop(context);
+              },
+            ), // ListTile
+            ListTile(
+              title: Text(l10n.profileLanguageEnglish),
+              onTap: () {
+                ref.read(settingsProvider.notifier).setLocale(const Locale('en')); // تغيير اللغة للإنجليزية
+                Navigator.pop(context);
+              },
+            ), // ListTile
+          ],
+        ), // Column
+      ), // SafeArea
+    );
+  }
 }
