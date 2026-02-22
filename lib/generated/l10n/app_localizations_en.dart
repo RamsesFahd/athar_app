@@ -419,9 +419,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get descriptionLabel => 'Description';
 
   @override
-  String get servingLabel => 'Serving';
-
-  @override
   String get categoryLabel => 'Category';
 
   @override
@@ -486,10 +483,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get kleijaDesc =>
       'Kleija is a traditional Saudi pastry made from spiced dough filled with a sweet mixture of dates and cardamom.';
-
-  @override
-  String get servingDesc =>
-      'Usually served with Saudi coffee, representing a symbol of hospitality.';
 
   @override
   String get homeHeroTitle => 'Dive into Saudi Heritage';

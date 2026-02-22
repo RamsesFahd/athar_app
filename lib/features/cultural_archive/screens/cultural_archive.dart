@@ -1,67 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
-import '../../auth/widgets/cultural_item_card.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../cultural_archive/widgets/cultural_item_card.dart';
 import '../../../core/widgets/search_bar.dart';
 import '../../../core/theme/app_colors.dart';
+import '../logic/cultural_notifier.dart';
 
-class CulturalArchive extends StatefulWidget {
+class CulturalArchive extends ConsumerWidget {
   const CulturalArchive({super.key});
 
   @override
-  State<CulturalArchive> createState() => _CulturalArchiveState();
-}
-
-class _CulturalArchiveState extends State<CulturalArchive> {
-  String searchQuery = '';
-  bool showFilters = false;
-  CardLayout viewMode = CardLayout.horizontal;
-  String activeCategory = 'all';
-
-  final List<Map<String, dynamic>> culturalItems = [
-    {
-      'id': 'coffee',
-      'image':
-          'https://images.pexels.com/photos/1727123/pexels-photo-1727123.jpeg',
-      'category': 'food',
-      'region': 'riyadh'
-    },
-    {
-      'id': 'sadu',
-      'image':
-          'https://images.pexels.com/photos/5505172/pexels-photo-5505172.jpeg',
-      'category': 'craft',
-      'region': 'riyadh'
-    },
-    {
-      'id': 'kleija',
-      'image':
-          'https://images.pexels.com/photos/15632126/pexels-photo-15632126.jpeg',
-      'category': 'food',
-      'region': 'qassim'
-    }
-  ];
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
-    final filteredItems = culturalItems.where((item) {
-      String itemTitle = '';
-      if (item['id'] == 'coffee') itemTitle = l10n.coffeeTitle;
-      if (item['id'] == 'sadu') itemTitle = l10n.saduTitle;
-      if (item['id'] == 'kleija') itemTitle = l10n.kleijaTitle;
+    final viewMode = ref.watch(viewModeProvider);
+    final showFilters = ref.watch(showFiltersProvider);
 
-      final matchesSearch = searchQuery.isEmpty ||
-          itemTitle.toLowerCase().contains(searchQuery.toLowerCase());
-
-      final matchesCategory = activeCategory == 'all' ||
-          item['category'].toString().toLowerCase() ==
-              activeCategory.toLowerCase();
-
-      return matchesSearch && matchesCategory;
-    }).toList();
+    final filteredItemsAsync = ref.watch(culturalNotifierProvider);
 
     return Container(
       color: theme.scaffoldBackgroundColor,
@@ -71,33 +28,41 @@ class _CulturalArchiveState extends State<CulturalArchive> {
           CustomSearchBar(
             hintText: l10n.searchHint,
             isGridView: viewMode == CardLayout.vertical,
-            onChanged: (val) => setState(() => searchQuery = val),
-            onFilterTap: () => setState(() => showFilters = !showFilters),
-            onToggleView: () => setState(() {
-              viewMode = (viewMode == CardLayout.horizontal)
-                  ? CardLayout.vertical
-                  : CardLayout.horizontal;
-            }),
+            onChanged: (val) =>
+                ref.read(culturalNotifierProvider.notifier).setSearchQuery(val),
+            onFilterTap: () =>
+                ref.read(showFiltersProvider.notifier).state = !showFilters,
+            onToggleView: () =>
+                ref.read(viewModeProvider.notifier).state =
+                viewMode == CardLayout.horizontal
+                    ? CardLayout.vertical
+                    : CardLayout.horizontal,
           ),
-          if (showFilters) _buildFiltersSection(theme, l10n),
+          if (showFilters) _buildFiltersSection(theme, l10n, ref),
           Expanded(
-            child: filteredItems.isEmpty
-                ? Center(
-                    child: Text(
-                      isAr ? 'لم يتم العثور على نتائج' : 'No items found',
-                      style: theme.textTheme.bodyLarge,
-                    ),
-                  )
-                : viewMode == CardLayout.horizontal
-                    ? _buildListView(filteredItems)
-                    : _buildGridView(filteredItems),
+            child: filteredItemsAsync.when(
+              data: (filteredItems) => filteredItems.filteredItems.isEmpty
+                  ? Center(
+                      child: Text(
+                        isAr ? 'لم يتم العثور على نتائج' : 'No items found',
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                    )
+                  : viewMode == CardLayout.horizontal
+                      ? _buildListView(filteredItems.filteredItems)
+                      : _buildGridView(filteredItems.filteredItems),
+              loading: () =>
+                  const Center(child: CircularProgressIndicator()),
+              error: (_, __) =>
+                  const Center(child: Text('Error loading items')),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildHeader(bool isAr, ThemeData theme, AppLocalizations loc) {
+  Widget _buildHeader(bool isAr, ThemeData theme, AppLocalizations l10n) {
     return Container(
       height: 180,
       width: double.infinity,
@@ -114,8 +79,8 @@ class _CulturalArchiveState extends State<CulturalArchive> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.black.withValues(alpha: 0.3),
-              Colors.black.withValues(alpha: 0.08)
+              Colors.black.withValues(alpha:0.3),
+              Colors.black.withValues(alpha:0.8)
             ],
           ),
         ),
@@ -125,7 +90,7 @@ class _CulturalArchiveState extends State<CulturalArchive> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              loc.culturalArchiveTitle,
+              l10n.culturalArchiveTitle,
               style: theme.textTheme.displayLarge?.copyWith(
                 color: Colors.white,
                 height: isAr ? 1.4 : 1.1,
@@ -137,7 +102,7 @@ class _CulturalArchiveState extends State<CulturalArchive> {
                   ? 'اكتشف الثقافة السعودية الغنية'
                   : 'Discover Saudi heritage',
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.white.withValues(alpha: 0.08),
+                color: Colors.white.withValues(alpha:0.8),
                 height: isAr ? 1.4 : 1.1,
               ),
             ),
@@ -147,13 +112,17 @@ class _CulturalArchiveState extends State<CulturalArchive> {
     );
   }
 
-  Widget _buildFiltersSection(ThemeData theme, AppLocalizations loc) {
+  Widget _buildFiltersSection(ThemeData theme, AppLocalizations l10n, WidgetRef ref) {
+    final activeCategory = ref.watch(activeCategoryProvider);
+
     final Map<String, String> categories = {
-      'all': loc.filterAll,
-      'food': loc.cat_food,
-      'craft': loc.cat_craft,
-      'dance': loc.cat_dance,
-      'architecture': loc.cat_architecture,
+      'all': l10n.filterAll,
+      'food': l10n.cat_food,
+      'craft': l10n.cat_craft,
+      'dance': l10n.cat_dance,
+      'architecture': l10n.cat_architecture,
+      'music': l10n.cat_music,
+      'clothing': l10n.cat_clothing,
     };
 
     return SizedBox(
@@ -168,8 +137,11 @@ class _CulturalArchiveState extends State<CulturalArchive> {
             child: ChoiceChip(
               label: Text(entry.value),
               selected: isSelected,
-              onSelected: (_) => setState(() => activeCategory = entry.key),
-              selectedColor: AppColors.secondary.withValues(alpha: 0.2),
+              onSelected: (_) {
+                  ref.read(activeCategoryProvider.notifier).state = entry.key;
+                  ref.read(culturalNotifierProvider.notifier).setCategory(entry.key);
+              },
+              selectedColor: AppColors.secondary.withValues(alpha:0.2),
               labelStyle: TextStyle(
                 color: isSelected ? AppColors.primary : AppColors.sage900,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -187,7 +159,7 @@ class _CulturalArchiveState extends State<CulturalArchive> {
       itemCount: filteredItems.length,
       padding: EdgeInsets.zero,
       itemBuilder: (context, index) =>
-          _buildCard(filteredItems[index], CardLayout.horizontal),
+          _buildCard(context, filteredItems[index], CardLayout.horizontal),
     );
   }
 
@@ -202,16 +174,26 @@ class _CulturalArchiveState extends State<CulturalArchive> {
       ),
       itemCount: filteredItems.length,
       itemBuilder: (context, index) =>
-          _buildCard(filteredItems[index], CardLayout.vertical),
+          _buildCard(context, filteredItems[index], CardLayout.vertical),
     );
   }
 
-  Widget _buildCard(Map<String, dynamic> item, CardLayout layout) {
+  Widget _buildCard(BuildContext context,item, CardLayout layout) {
+    final bool isAr =
+        Localizations.localeOf(context).languageCode == 'ar';
+
     return CulturalItemCard(
-      id: item['id'],
-      image: item['image'],
-      category: item['category'],
-      region: item['region'],
+      id: item.id,
+      item: item,
+      title: isAr ? item.titleAr : item.titleEn,
+      description: isAr
+          ? item.descriptionAr
+          : item.descriptionEn,
+      imageUrl: item.imageUrl,
+      categoryId: item.categoryId,
+      region: isAr
+          ? item.regionAr
+          : item.regionEn,
       layout: layout,
     );
   }

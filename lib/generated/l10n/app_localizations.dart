@@ -890,12 +890,6 @@ abstract class AppLocalizations {
   /// **'Description'**
   String get descriptionLabel;
 
-  /// No description provided for @servingLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Serving'**
-  String get servingLabel;
-
   /// No description provided for @categoryLabel.
   ///
   /// In en, this message translates to:
@@ -1021,12 +1015,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Kleija is a traditional Saudi pastry made from spiced dough filled with a sweet mixture of dates and cardamom.'**
   String get kleijaDesc;
-
-  /// No description provided for @servingDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Usually served with Saudi coffee, representing a symbol of hospitality.'**
-  String get servingDesc;
 
   /// No description provided for @homeHeroTitle.
   ///

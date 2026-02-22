@@ -79,7 +79,7 @@ class AccessibilityControls extends ConsumerWidget {
                 Switch(
                   value: settings.isTtsEnabled,
                   onChanged: (_) => notifier.toggleTts(),
-                  activeThumbColor: theme.colorScheme.primary,
+                  activeTrackColor: theme.colorScheme.primary,
                 ),
               ],
             ),

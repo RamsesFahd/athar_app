@@ -8,6 +8,7 @@ import 'package:athar_app/features/auth/screens/forgot_password_screen.dart';
 import 'package:athar_app/features/auth/screens/splash_screen.dart';
 import 'package:athar_app/features/auth/screens/verify_email_screen.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
+import 'package:athar_app/core/models/user/cultural/cultural_item_model.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -33,9 +34,9 @@ class AppRoutes {
       culturalArchive: (context) => const CulturalArchive(),
 
       culturalDetails: (context) {
-        final String itemId =
-            ModalRoute.of(context)!.settings.arguments as String;
-        return CulturalItemDetails(id: itemId);
+        final CulturalItemModel item =
+            ModalRoute.of(context)!.settings.arguments as CulturalItemModel;
+        return CulturalItemDetails(item: item);
       },
     };
   }

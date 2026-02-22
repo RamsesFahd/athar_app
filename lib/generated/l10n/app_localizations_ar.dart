@@ -419,9 +419,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get descriptionLabel => 'الوصف';
 
   @override
-  String get servingLabel => 'التقديم';
-
-  @override
   String get categoryLabel => 'التصنيف';
 
   @override
@@ -486,10 +483,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get kleijaDesc =>
       'الكليجا هي حلوى سعودية تقليدية محبوبة، تُصنع من عجينة متبلة، ومحشوة بمزيج حلو من التمر والهيل والقرفة.';
-
-  @override
-  String get servingDesc =>
-      'تُقدم عادة مع القهوة السعودية، وتعتبر رمزاً ثقافياً للضيافة.';
 
   @override
   String get homeHeroTitle => 'اكتشف عمق التراث السعودي';

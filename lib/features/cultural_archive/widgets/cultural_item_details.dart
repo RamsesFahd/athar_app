@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
+import 'package:athar_app/core/models/user/cultural/cultural_item_model.dart';
 
 class CulturalItemDetails extends StatefulWidget {
-  final String id;
+  final CulturalItemModel item;
 
-  const CulturalItemDetails({super.key, required this.id});
+  const CulturalItemDetails({super.key, required this.item});
 
   @override
   State<CulturalItemDetails> createState() => _CulturalItemDetailsState();
@@ -18,45 +19,17 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
   Widget build(BuildContext context) {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    // خريطة بيانات لربط المعرف بالنصوص والصور الصحيحة من ملفات الـ ARB
-    final Map<String, Map<String, dynamic>> itemContent = {
-      'coffee': {
-        'title': l10n.coffeeTitle,
-        'desc': l10n.coffeeDesc,
-        'region': l10n.reg_riyadh,
-        'category': l10n.cat_food,
-        'image':
-            'https://images.pexels.com/photos/1727123/pexels-photo-1727123.jpeg',
-      },
-      'sadu': {
-        'title': l10n.saduTitle,
-        'desc': l10n.saduDesc,
-        'region': l10n.reg_riyadh, // أو المنطقة المناسبة للسدو
-        'category': l10n.cat_craft,
-        'image':
-            'https://images.pexels.com/photos/5505172/pexels-photo-5505172.jpeg',
-      },
-      'kleija': {
-        'title': l10n.kleijaTitle,
-        'desc': l10n.kleijaDesc,
-        'region': l10n.reg_qassim,
-        'category': l10n.cat_food,
-        'image':
-            'https://images.pexels.com/photos/15632126/pexels-photo-15632126.jpeg',
-      },
-    };
-
-    final currentItem = itemContent[widget.id] ?? itemContent['coffee']!;
+    final currentItem = widget.item;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildHeroHeader(screenHeight, isAr, currentItem['image']),
+            _buildHeroHeader(screenHeight, isAr, currentItem.imageUrl),
             Transform.translate(
               offset: const Offset(0, -40),
               child: Container(
@@ -67,7 +40,7 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
                       const BorderRadius.vertical(top: Radius.circular(40)),
                   boxShadow: [
                     BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
+                        color: Colors.black.withValues(alpha:0.05),
                         blurRadius: 20,
                         offset: const Offset(0, -5))
                   ],
@@ -76,17 +49,24 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildTitleSection(theme, currentItem['title']),
+                    _buildTitleSection(
+                      theme,
+                      isAr ? currentItem.titleAr : currentItem.titleEn,
+                    ),
                     const SizedBox(height: 8),
-                    _buildLocationRow(theme, currentItem['region']),
+                    _buildLocationRow(theme,
+                    isAr? currentItem.regionAr : currentItem.regionEn,
+                    ),
                     const SizedBox(height: 32),
                     _sectionTitle(l10n.descriptionLabel, theme),
-                    _bodyText(currentItem['desc'], theme),
+                    _bodyText(
+                      isAr
+                          ? currentItem.descriptionAr
+                          : currentItem.descriptionEn,
+                      theme,
+                    ),
                     const SizedBox(height: 24),
-                    _sectionTitle(l10n.servingLabel, theme),
-                    _bodyText(l10n.servingDesc, theme),
-                    const SizedBox(height: 24),
-                    _buildCategoryBadge(theme, currentItem['category']),
+                    _buildCategoryBadge(theme, currentItem.categoryId, l10n)
                   ],
                 ),
               ),
@@ -163,11 +143,11 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
     );
   }
 
-  Widget _buildCategoryBadge(ThemeData theme, String categoryLabel) {
+  Widget _buildCategoryBadge(ThemeData theme, String categoryLabel, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.secondary.withValues(alpha: 0.1),
+        color: AppColors.secondary.withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
