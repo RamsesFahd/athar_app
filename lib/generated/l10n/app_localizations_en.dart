@@ -510,4 +510,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quickGuides => 'Find a Tour Guide';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get historicalChatTitle => 'Historical Figures Chat';
+
+  @override
+  String get historicalChatSubtitle =>
+      'Choose a figure to discover history with';
+
+  @override
+  String get chatInputHint => 'Ask the historical figure...';
+
+  @override
+  String get khwarizmi => 'Al-Khwarizmi';
+
+  @override
+  String get khwarizmiRole => 'Founder of Algebra';
+
+  @override
+  String get khwarizmiEra => '9th Century AD';
+
+  @override
+  String get ibnSina => 'Ibn Sina';
+
+  @override
+  String get ibnSinaRole => 'Father of Modern Medicine';
+
+  @override
+  String get ibnSinaEra => '11th Century';
+
+  @override
+  String get ibnHaytham => 'Ibn al-Haytham';
+
+  @override
+  String get ibnHaythamRole => 'Founder of Optics';
+
+  @override
+  String get ibnHaythamEra => '10th Century AD';
+
+  @override
+  String get firnas => 'Abbas ibn Firnas';
+
+  @override
+  String get firnasRole => 'Pioneer of Flight';
+
+  @override
+  String get firnasEra => '9th Century AD';
 }

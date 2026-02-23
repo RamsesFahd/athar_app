@@ -186,5 +186,24 @@
   "quickCalendar": "عرض تقويم الفعاليات",
   "quickMap": "فتح الخريطة التفاعلية",
   "quickAchievements": "إنجازاتي الثقافية",
-  "quickGuides": "العثور على مرشد سياحي"
+  "quickGuides": "العثور على مرشد سياحي",
+"send": "إرسال",
+"historicalChatTitle": "دردشة مع الشخصيات التاريخية",
+  "historicalChatSubtitle": "اختر شخصية لتكتشف التاريخ من خلالها",
+  "chatInputHint": "اسأل الشخصية التاريخية...",
+  "khwarizmi": "الخوارزمي",
+  "khwarizmiRole": "مؤسس علم الجبر",
+  "khwarizmiEra": "القرن التاسع الميلادي",
+
+  "ibnSina": "ابن سينا",
+  "ibnSinaRole": "أبو الطب الحديث",
+  "ibnSinaEra": "القرن الحادي عشر",
+  "ibnHaytham": "الحسن بن الهيثم",
+
+  "ibnHaythamRole": "مؤسس علم البصريات",
+  "ibnHaythamEra": "القرن العاشر الميلادي",
+  "firnas": "عباس بن فرناس",
+
+  "firnasRole": "رائد محاولات الطيران",
+  "firnasEra": "القرن التاسع الميلادي"
 }

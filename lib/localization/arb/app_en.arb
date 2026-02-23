@@ -225,6 +225,24 @@
   "quickCalendar": "View Event Calendar",
   "quickMap": "Open Interactive Map",
   "quickAchievements": "My Cultural Achievements",
-  "quickGuides": "Find a Tour Guide"
+  "quickGuides": "Find a Tour Guide",
+"send": "Send",
+"historicalChatTitle": "Historical Figures Chat",
+  "historicalChatSubtitle": "Choose a figure to discover history with",
+  "chatInputHint": "Ask the historical figure...",
+  "khwarizmi": "Al-Khwarizmi",
+  "khwarizmiRole": "Founder of Algebra",
+  "khwarizmiEra": "9th Century AD",
 
+  "ibnSina": "Ibn Sina",
+  "ibnSinaRole": "Father of Modern Medicine",
+  "ibnSinaEra": "11th Century",
+
+  "ibnHaytham": "Ibn al-Haytham",
+  "ibnHaythamRole": "Founder of Optics",
+  "ibnHaythamEra": "10th Century AD",
+
+  "firnas": "Abbas ibn Firnas",
+  "firnasRole": "Pioneer of Flight",
+  "firnasEra": "9th Century AD"
 }

@@ -1069,6 +1069,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Find a Tour Guide'**
   String get quickGuides;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// No description provided for @historicalChatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Historical Figures Chat'**
+  String get historicalChatTitle;
+
+  /// No description provided for @historicalChatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a figure to discover history with'**
+  String get historicalChatSubtitle;
+
+  /// No description provided for @chatInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the historical figure...'**
+  String get chatInputHint;
+
+  /// No description provided for @khwarizmi.
+  ///
+  /// In en, this message translates to:
+  /// **'Al-Khwarizmi'**
+  String get khwarizmi;
+
+  /// No description provided for @khwarizmiRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Founder of Algebra'**
+  String get khwarizmiRole;
+
+  /// No description provided for @khwarizmiEra.
+  ///
+  /// In en, this message translates to:
+  /// **'9th Century AD'**
+  String get khwarizmiEra;
+
+  /// No description provided for @ibnSina.
+  ///
+  /// In en, this message translates to:
+  /// **'Ibn Sina'**
+  String get ibnSina;
+
+  /// No description provided for @ibnSinaRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Father of Modern Medicine'**
+  String get ibnSinaRole;
+
+  /// No description provided for @ibnSinaEra.
+  ///
+  /// In en, this message translates to:
+  /// **'11th Century'**
+  String get ibnSinaEra;
+
+  /// No description provided for @ibnHaytham.
+  ///
+  /// In en, this message translates to:
+  /// **'Ibn al-Haytham'**
+  String get ibnHaytham;
+
+  /// No description provided for @ibnHaythamRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Founder of Optics'**
+  String get ibnHaythamRole;
+
+  /// No description provided for @ibnHaythamEra.
+  ///
+  /// In en, this message translates to:
+  /// **'10th Century AD'**
+  String get ibnHaythamEra;
+
+  /// No description provided for @firnas.
+  ///
+  /// In en, this message translates to:
+  /// **'Abbas ibn Firnas'**
+  String get firnas;
+
+  /// No description provided for @firnasRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Pioneer of Flight'**
+  String get firnasRole;
+
+  /// No description provided for @firnasEra.
+  ///
+  /// In en, this message translates to:
+  /// **'9th Century AD'**
+  String get firnasEra;
 }
 
 class _AppLocalizationsDelegate

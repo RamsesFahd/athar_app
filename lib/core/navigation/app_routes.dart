@@ -9,6 +9,8 @@ import 'package:athar_app/features/auth/screens/splash_screen.dart';
 import 'package:athar_app/features/auth/screens/verify_email_screen.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 import 'package:athar_app/core/models/user/cultural/cultural_item_model.dart';
+// ✨ استيراد صفحة الدردشة التاريخية
+import 'package:athar_app/features/historical_chat/screens/historical_chat_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -19,6 +21,7 @@ class AppRoutes {
   static const String verifyEmail = '/verify-email';
   static const String culturalArchive = '/cultural-archive';
   static const String culturalDetails = '/cultural-details';
+  static const String historicalChat = '/historical-chat';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -32,6 +35,8 @@ class AppRoutes {
       home: (context) => const NavigationContainer(),
 
       culturalArchive: (context) => const CulturalArchive(),
+
+      historicalChat: (context) => const HistoricalChatScreen(),
 
       culturalDetails: (context) {
         final CulturalItemModel item =

@@ -510,4 +510,52 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get quickGuides => 'العثور على مرشد سياحي';
+
+  @override
+  String get send => 'إرسال';
+
+  @override
+  String get historicalChatTitle => 'دردشة مع الشخصيات التاريخية';
+
+  @override
+  String get historicalChatSubtitle => 'اختر شخصية لتكتشف التاريخ من خلالها';
+
+  @override
+  String get chatInputHint => 'اسأل الشخصية التاريخية...';
+
+  @override
+  String get khwarizmi => 'الخوارزمي';
+
+  @override
+  String get khwarizmiRole => 'مؤسس علم الجبر';
+
+  @override
+  String get khwarizmiEra => 'القرن التاسع الميلادي';
+
+  @override
+  String get ibnSina => 'ابن سينا';
+
+  @override
+  String get ibnSinaRole => 'أبو الطب الحديث';
+
+  @override
+  String get ibnSinaEra => 'القرن الحادي عشر';
+
+  @override
+  String get ibnHaytham => 'الحسن بن الهيثم';
+
+  @override
+  String get ibnHaythamRole => 'مؤسس علم البصريات';
+
+  @override
+  String get ibnHaythamEra => 'القرن العاشر الميلادي';
+
+  @override
+  String get firnas => 'عباس بن فرناس';
+
+  @override
+  String get firnasRole => 'رائد محاولات الطيران';
+
+  @override
+  String get firnasEra => 'القرن التاسع الميلادي';
 }
