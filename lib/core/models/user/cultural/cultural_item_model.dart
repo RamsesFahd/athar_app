@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class CulturalItemModel {
   final String id;
   final String titleAr;
@@ -8,6 +10,8 @@ class CulturalItemModel {
   final String categoryId;   // رابط للفئة
   final String regionEn;
   final String regionAr;
+  final DateTime? createdAt; 
+  final String? createdBy;
 
 
   CulturalItemModel({
@@ -20,6 +24,8 @@ class CulturalItemModel {
     required this.categoryId,
     required this.regionEn,
     required this.regionAr,
+    this.createdAt,
+    this.createdBy,
   });
 
   Map<String, dynamic> toMap() {
@@ -29,9 +35,11 @@ class CulturalItemModel {
       'descriptionAr': descriptionAr,
       'descriptionEn': descriptionEn,
       'imageUrl': imageUrl,
-      'categoryId': categoryId, // مهم لربط العنصر بالفئة
+      'categoryId': categoryId, 
       'regionEn': regionEn,
       'regionAr': regionAr,
+      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
+      'createdBy': createdBy,
     };
   }
 
@@ -46,6 +54,10 @@ class CulturalItemModel {
       categoryId: map['categoryId'] ?? '',
       regionEn: map['regionEn'] ?? '',
       regionAr: map['regionAr'] ?? '',
+      createdAt: map['createdAt'] != null
+          ? (map['createdAt'] as Timestamp).toDate()
+          : null,
+      createdBy: map['createdBy'] ?? 'Admin',
     );
   }
 }

@@ -43,7 +43,9 @@ class CulturalRepository {
 
   // Fetch all cultural items
   Future<List<CulturalItemModel>> fetchItems() async {
-    final snapshot = await _items.get();
+    final snapshot = await _items
+      .orderBy('createdAt', descending: true) 
+      .get();
 
     return snapshot.docs.map((doc) {
       return CulturalItemModel.fromMap(
@@ -57,8 +59,9 @@ class CulturalRepository {
   Future<List<CulturalItemModel>> fetchItemsByCategory(
       String categoryId) async {
     final snapshot = await _items
-        .where('categoryId', isEqualTo: categoryId)
-        .get();
+      .where('categoryId', isEqualTo: categoryId)
+      .orderBy('createdAt', descending: true) // order by creation date
+      .get();
 
     return snapshot.docs.map((doc) {
       return CulturalItemModel.fromMap(
