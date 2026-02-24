@@ -89,8 +89,17 @@ class CulturalItemCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.network(imageUrl,
-                width: 110, height: 110, fit: BoxFit.cover),
+            child: Image.network(
+              imageUrl,
+              width: 110, 
+              height: 110, 
+              fit: BoxFit.cover,
+              // حل لمشكلة الـ 404 اللي تطلع بالكونسول
+            errorBuilder: (context, error, stackTrace) => Container(
+              width: 110, height: 110, color: Colors.grey[200],
+              child: const Icon(Icons.broken_image, color: Colors.grey),
+            ),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -102,7 +111,10 @@ class CulturalItemCard extends StatelessWidget {
                 Text(
                   title,
                   style: theme.textTheme.titleLarge?.copyWith(fontSize: 16),
+                  maxLines: 1, // يمنع النص من القفز لسطر جديد وتخريب الارتفاع
+                  overflow: TextOverflow.ellipsis, // يضيف نقاط (...) لو النص طويل
                 ),
+
                 const SizedBox(height: 4),
                 Text(
                   desc,

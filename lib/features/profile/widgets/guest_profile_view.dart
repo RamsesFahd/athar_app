@@ -2,12 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/features/profile/widgets/settings_tile.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class GuestProfileView extends StatelessWidget {
   const GuestProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -18,19 +20,19 @@ class GuestProfileView extends StatelessWidget {
           child: Column(
             children: [
               // 1. قسم الترحيب واللوجو
-              _buildHeroSection(theme),
+              _buildHeroSection(theme, l10n),
               const SizedBox(height: 32),
 
               // 2. زر الانضمام
-              _buildJoinButton(context, theme),
+              _buildJoinButton(context, theme, l10n),
               const SizedBox(height: 40),
 
               // 3. بطاقة تشويق المساهمة (Gamification)
-              _buildContributionTeaser(theme),
+              _buildContributionTeaser(theme, l10n),
               const SizedBox(height: 40),
 
               // 4. قسم المساعدة والدعم
-              _buildSupportGroup(theme),
+              _buildSupportGroup(theme, l10n),
             ],
           ),
         ),
@@ -38,7 +40,7 @@ class GuestProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroSection(ThemeData theme) {
+  Widget _buildHeroSection(ThemeData theme, AppLocalizations l10n) {
     return Column(
       children: [
         Image.asset(
@@ -48,7 +50,7 @@ class GuestProfileView extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          "أهلاً بك في أثر",
+          l10n.welcomeToAthar,
           style: theme.textTheme.displayMedium?.copyWith(
             color: theme.colorScheme.primary,
             fontWeight: FontWeight.bold,
@@ -56,7 +58,7 @@ class GuestProfileView extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          "ابدأ رحلتك الآن في اكتشاف وتوثيق كنوزنا الثقافية واترك بصمتك الخاصة",
+          l10n.startYourJourney,
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
@@ -67,7 +69,7 @@ class GuestProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildJoinButton(BuildContext context, ThemeData theme) {
+  Widget _buildJoinButton(BuildContext context, ThemeData theme, AppLocalizations l10n) {
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -80,15 +82,15 @@ class GuestProfileView extends StatelessWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
-        child: const Text(
-          "انضم إلينا الآن",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        child: Text(
+          l10n.joinUsNow,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
-  Widget _buildContributionTeaser(ThemeData theme) {
+  Widget _buildContributionTeaser(ThemeData theme, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -105,13 +107,13 @@ class GuestProfileView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "اترك أثرك الثقافي",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                Text(
+                  l10n.leaveYourCulturalImpact,
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "شاركنا بصور ومعلومات واجمع النقاط لتصل إلى قائمة كبار المساهمين",
+                  l10n.contributionTeaserDescription,
                   style: theme.textTheme.bodySmall?.copyWith(height: 1.4),
                 ),
               ],
@@ -122,15 +124,15 @@ class GuestProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildSupportGroup(ThemeData theme) {
+  Widget _buildSupportGroup(ThemeData theme, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
           child: Text(
-            "المساعدة والقانونية",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            l10n.settingsSupportLegal,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
         ),
         Container(
@@ -144,17 +146,17 @@ class GuestProfileView extends StatelessWidget {
             children: [
               SettingsTile(
                 //
-                title: "تواصل معنا",
+                title: l10n.settingsContactUs,
                 leadingIcon: Icons.support_agent_rounded,
                 onTap: () {},
               ),
               SettingsTile(
-                title: "عن أثر",
+                title: l10n.settingsAboutAthar,
                 leadingIcon: Icons.info_outline_rounded,
                 onTap: () {},
               ),
               SettingsTile(
-                title: "سياسة الخصوصية",
+                title: l10n.settingsPrivacyPolicy,
                 leadingIcon: Icons.privacy_tip_outlined,
                 onTap: () {},
               ),

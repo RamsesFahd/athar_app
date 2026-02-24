@@ -82,4 +82,25 @@ class CulturalRepository {
       doc.id,
     );
   }
+
+  // Method for uploading cultural items
+  Future<void> seedDatabase(List<Map<String, dynamic>> dataList) async {
+
+    final batch = _firestore.batch();
+
+    for (var data in dataList) {
+      // create an empty doc in firestore
+      final docRef = _items.doc(); 
+
+      // adding items with creation info
+      batch.set(docRef, {
+        ...data,
+        'createdAt': FieldValue.serverTimestamp(), // توقيت السيرفر
+        'createdBy': 'Rimas Admin', // لتمييز الإضافة الإدارية
+      });
+    }
+
+    // تنفيذ كل العمليات بضغطة واحدة
+    await batch.commit();
+}
 }

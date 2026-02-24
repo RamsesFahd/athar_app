@@ -25,6 +25,7 @@ class CulturalArchive extends ConsumerWidget {
       child: Column(
         children: [
           _buildHeader(isAr, theme, l10n),
+          
           CustomSearchBar(
             hintText: l10n.searchHint,
             isGridView: viewMode == CardLayout.vertical,
@@ -198,3 +199,5 @@ class CulturalArchive extends ConsumerWidget {
     );
   }
 }
+
+//dart run build_runner build --delete-conflicting-outputs
