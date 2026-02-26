@@ -428,6 +428,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterAll => 'All';
 
   @override
+  String get filter => 'Filter';
+
+  @override
   String get cat_food => 'Traditional Food';
 
   @override

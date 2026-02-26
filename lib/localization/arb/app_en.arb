@@ -195,6 +195,7 @@
   "categoryLabel": "Category",
   "locationLabel": "Location",
   "filterAll": "All",
+  "filter": "Filter",
 
   "cat_food": "Traditional Food",
   "cat_craft": "Handicraft",

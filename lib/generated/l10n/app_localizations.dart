@@ -908,6 +908,12 @@ abstract class AppLocalizations {
   /// **'All'**
   String get filterAll;
 
+  /// No description provided for @filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get filter;
+
   /// No description provided for @cat_food.
   ///
   /// In en, this message translates to:

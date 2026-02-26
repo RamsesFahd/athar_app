@@ -428,6 +428,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get filterAll => 'الكل';
 
   @override
+  String get filter => 'تصفية';
+
+  @override
   String get cat_food => 'طعام تقليدي';
 
   @override

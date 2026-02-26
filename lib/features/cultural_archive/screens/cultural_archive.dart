@@ -25,43 +25,146 @@ class CulturalArchive extends ConsumerWidget {
       child: Column(
         children: [
           _buildHeader(isAr, theme, l10n),
-          
-          CustomSearchBar(
-            hintText: l10n.searchHint,
-            isGridView: viewMode == CardLayout.vertical,
-            onChanged: (val) =>
-                ref.read(culturalNotifierProvider.notifier).setSearchQuery(val),
-            onFilterTap: () =>
-                ref.read(showFiltersProvider.notifier).state = !showFilters,
-            onToggleView: () =>
-                ref.read(viewModeProvider.notifier).state =
-                viewMode == CardLayout.horizontal
-                    ? CardLayout.vertical
-                    : CardLayout.horizontal,
-          ),
-          if (showFilters) _buildFiltersSection(theme, l10n, ref),
-          Expanded(
-            child: filteredItemsAsync.when(
-              data: (filteredItems) => filteredItems.filteredItems.isEmpty
-                  ? Center(
-                      child: Text(
-                        isAr ? 'لم يتم العثور على نتائج' : 'No items found',
-                        style: theme.textTheme.bodyLarge,
+          Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+
+                  // Search
+                  Expanded(
+                    child: SizedBox(
+                      height: 44,
+                      child: TextField(
+                        onChanged: (val) =>
+                            ref.read(culturalNotifierProvider.notifier)
+                              .setSearchQuery(val),
+
+                        decoration: InputDecoration(
+                          hintText: l10n.searchHint,
+
+                          hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.sage800
+                          ),
+                          prefixIcon: Icon(Icons.search,
+                              color: AppColors.primary),
+
+                          filled: true,
+                          fillColor: AppColors.surface,
+
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
                       ),
-                    )
-                  : viewMode == CardLayout.horizontal
-                      ? _buildListView(filteredItems.filteredItems)
-                      : _buildGridView(filteredItems.filteredItems),
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
-              error: (_, __) =>
-                  const Center(child: Text('Error loading items')),
+                    ),
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  // Filter
+                  GestureDetector(
+                    onTap: () =>
+                        ref.read(showFiltersProvider.notifier).state = !showFilters,
+
+                    child: Container(
+                      height: 44, 
+
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+
+                      decoration: BoxDecoration(
+                        color: showFilters
+                            ? AppColors.primary          
+                            : AppColors.background,      
+
+                        borderRadius: BorderRadius.circular(12),
+
+                        border: Border.all(
+                          color: AppColors.primary,
+                          width: 1.5,
+                        ),
+                      ),
+
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.tune,
+                            size: 20,
+                            color: showFilters
+                                ? Colors.white
+                                : AppColors.primary,
+                          ),
+
+                          const SizedBox(width: 6),
+
+                          Text(
+                            l10n.filter,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: showFilters
+                                  ? Colors.white
+                                  : AppColors.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                const SizedBox(width: 8),
+
+                  // display
+                  SizedBox(
+                    height: 44,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+
+                      onPressed: () =>
+                          ref.read(viewModeProvider.notifier).state =
+                              viewMode == CardLayout.horizontal
+                                  ? CardLayout.vertical
+                                  : CardLayout.horizontal,
+
+                      child: Icon(
+                        viewMode == CardLayout.horizontal
+                            ? Icons.grid_view
+                            : Icons.view_list,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+                    if (showFilters) _buildFiltersSection(theme, l10n, ref),
+                    Expanded(
+                      child: filteredItemsAsync.when(
+                        data: (filteredItems) => filteredItems.filteredItems.isEmpty
+                            ? Center(
+                                child: Text(
+                                  isAr ? 'لم يتم العثور على نتائج' : 'No items found',
+                                  style: theme.textTheme.bodyLarge,
+                                ),
+                              )
+                            : viewMode == CardLayout.horizontal
+                                ? _buildListView(filteredItems.filteredItems)
+                                : _buildGridView(filteredItems.filteredItems),
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        error: (_, __) =>
+                            const Center(child: Text('Error loading items')),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
 
   Widget _buildHeader(bool isAr, ThemeData theme, AppLocalizations l10n) {
     return Container(
@@ -113,47 +216,80 @@ class CulturalArchive extends ConsumerWidget {
     );
   }
 
-  Widget _buildFiltersSection(ThemeData theme, AppLocalizations l10n, WidgetRef ref) {
-    final activeCategory = ref.watch(activeCategoryProvider);
+  Widget _buildFiltersSection(
+    ThemeData theme,
+    AppLocalizations l10n,
+    WidgetRef ref) {
+  final activeCategory = ref.watch(activeCategoryProvider);
 
-    final Map<String, String> categories = {
-      'all': l10n.filterAll,
-      'food': l10n.cat_food,
-      'craft': l10n.cat_craft,
-      'dance': l10n.cat_dance,
-      'architecture': l10n.cat_architecture,
-      'music': l10n.cat_music,
-      'clothing': l10n.cat_clothing,
-    };
+  final categories = [
+    ('all', l10n.filterAll),
+    ('food', l10n.cat_food),
+    ('craft', l10n.cat_craft),
+    ('dance', l10n.cat_dance),
+    ('architecture', l10n.cat_architecture),
+    ('music', l10n.cat_music),
+    ('clothing', l10n.cat_clothing),
+  ];
 
-    return SizedBox(
-      height: 50,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: categories.entries.map((entry) {
-          final isSelected = activeCategory == entry.key;
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ChoiceChip(
-              label: Text(entry.value),
-              selected: isSelected,
-              onSelected: (_) {
-                  ref.read(activeCategoryProvider.notifier).state = entry.key;
-                  ref.read(culturalNotifierProvider.notifier).setCategory(entry.key);
-              },
-              selectedColor: AppColors.secondary.withValues(alpha:0.2),
-              labelStyle: TextStyle(
-                color: isSelected ? AppColors.primary : AppColors.sage900,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                height: 1.0,
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: theme.colorScheme.surface,
+      borderRadius: BorderRadius.circular(16),
+    ),
+
+    child: Wrap(
+      spacing: 8,
+      runSpacing: 8,
+
+      children: categories.map((cat) {
+        final id = cat.$1;
+        final label = cat.$2;
+        final isSelected = activeCategory == id;
+
+        return GestureDetector(
+          onTap: () {
+            ref.read(activeCategoryProvider.notifier).state = id;
+            ref.read(culturalNotifierProvider.notifier).setCategory(id);
+          },
+
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.surface,
+
+              borderRadius: BorderRadius.circular(30),
+
+              border: Border.all(
+                color: isSelected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurface.withValues(alpha:0.2),
               ),
             ),
-          );
-        }).toList(),
-      ),
-    );
-  }
+
+            child: Text(
+              label,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: isSelected
+                    ? Colors.white
+                    : theme.colorScheme.onSurface,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    ),
+  );
+}
 
   Widget _buildListView(List filteredItems) {
     return ListView.builder(
