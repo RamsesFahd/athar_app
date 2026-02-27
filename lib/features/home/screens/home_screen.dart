@@ -5,8 +5,11 @@ import 'package:athar_app/features/cultural_archive/screens/cultural_archive.dar
 import 'package:athar_app/features/home/widgets/recommended_item_card.dart';
 import 'package:athar_app/features/home/widgets/recommended_item_details.dart';
 import 'package:athar_app/features/home/widgets/explore_heritage_home_card.dart';
+import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   final VoidCallback? onSeeAllArchive;
 
   const HomeScreen({
@@ -19,10 +22,10 @@ class HomeScreen extends StatelessWidget {
   static const double _headerToContent = 16; // بين العنوان والمحتوى
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-
+    final culturalAsync = ref.watch(culturalNotifierProvider);
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
 
@@ -149,42 +152,61 @@ class HomeScreen extends StatelessWidget {
               _SectionHeader(
                 title: l10n.homeExploreHeritageTitle,
                 onTap: onSeeAllArchive ??
-                    () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const CulturalArchive(),
+                    () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CulturalArchive()),
                         ),
-                      );
-                    },
               ),
 
               const SizedBox(height: _headerToContent),
+              const SizedBox(height: _headerToContent),
 
-              SizedBox(
-                height: 245,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: _pageH),
-                  children: const [
-                    ExploreHeritageHomeCard(
-                      title: 'Najdi Coffee Traditions',
-                      image:
-                          'https://images.pexels.com/photos/2396220/pexels-photo-2396220.jpeg',
-                      categoryLabel: 'Food',
-                      locationLabel: 'Central Region',
-                      onTap: null,
+              //  Heritage Content Stream 
+              // Dynamically rendering cultural items from Firestore
+              culturalAsync.when(
+                data: (state) {
+                  final isAr = Localizations.localeOf(context).languageCode == 'ar';
+                  final items = state.allItems.take(4).toList();
+
+                  if (items.isEmpty) return const SizedBox.shrink();
+
+                  return SizedBox(
+                    height: 245,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: _pageH),
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final item = items[index];
+                        return Padding(
+                          padding: const EdgeInsetsDirectional.only(end: 14),
+                          child: ExploreHeritageHomeCard(
+                            title: isAr ? item.titleAr : item.titleEn,
+                            image: item.imageUrl,
+                            categoryLabel: item.categoryId,
+                            locationLabel: isAr ? item.regionAr : item.regionEn,
+                            onTap: () {
+                              // navigation: passing the 'item' object to details screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => CulturalItemDetails(item: item),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
                     ),
-                    SizedBox(width: 14),
-                    ExploreHeritageHomeCard(
-                      title: 'Traditional Sadu Weaving',
-                      image:
-                          'https://images.pexels.com/photos/6192554/pexels-photo-6192554.jpeg',
-                      categoryLabel: 'Craft',
-                      locationLabel: 'Various Regions',
-                      onTap: null,
-                    ),
-                  ],
+                  );
+                },
+                loading: () => const SizedBox(
+                  height: 245, 
+                  child: Center(child: CircularProgressIndicator.adaptive()),
+                ),
+                error: (err, _) => const SizedBox(
+                  height: 245, 
+                  child: Center(child: Icon(Icons.error_outline)),
                 ),
               ),
 
