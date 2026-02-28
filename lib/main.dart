@@ -6,13 +6,14 @@ import 'firebase_options.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 // استيراد نظام المسارات
 import 'package:athar_app/core/navigation/app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await dotenv.load(fileName: ".env");
   // تهيئة Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
