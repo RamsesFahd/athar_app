@@ -5,32 +5,48 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 final geminiServiceProvider = Provider((ref) => GeminiService());
 
 class GeminiService {
-  final String _apiKey = dotenv.env['GEMINI_API_KEY'] ?? '';
-  late final GenerativeModel _model;
+  final String _apiKey = (dotenv.env['GEMINI_API_KEY'] ?? '').trim();
+  final String _modelName =
+      (dotenv.env['GEMINI_MODEL'] ?? 'gemini-3.1-flash-lite-preview').trim();
 
   GeminiService() {
     // التحقق من وجود المفتاح في التيرمنال
     if (_apiKey.isEmpty) {
       print("❌ Error: GEMINI_API_KEY is missing from .env file!");
     } else {
-      print("✅ Gemini API Key loaded successfully: ${_apiKey.substring(0, 5)}...");
+      print(
+          "✅ Gemini API Key loaded successfully: ${_apiKey.substring(0, 5)}...");
+      print("🤖 Gemini model: $_modelName");
     }
-    
-    // تعريف الموديل الأساسي
-    _model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: _apiKey);
-  }// dart run build_runner watch --delete-conflicting-outputs
+  }
 
   // هذه الدالة يجب أن تكون خارج أقواس الـ Constructor لكي يراها التطبيق
-  Future<String> getResponse({required String prompt, required String systemInstruction}) async {
+  Future<String> getResponse(
+      {required String prompt, required String systemInstruction}) async {
+    if (_apiKey.isEmpty) {
+      throw Exception(
+          'GEMINI_API_KEY is empty. Please check your .env file and restart the app.');
+    }
+
     // إعادة تعريف الموديل مع التعليمات البرمجية لضمان الشخصية واللغة
     final modelWithInstructions = GenerativeModel(
-      model: 'gemini-1.5-flash',
+      model: _modelName,
       apiKey: _apiKey,
       systemInstruction: Content.system(systemInstruction),
     );
 
-    final content = [Content.text(prompt)];
-    final response = await modelWithInstructions.generateContent(content);
-    return response.text ?? "عذراً، لم أفهم ذلك.";
+    try {
+      final content = [Content.text(prompt)];
+      final response = await modelWithInstructions.generateContent(content);
+      return response.text?.trim().isNotEmpty == true
+          ? response.text!.trim()
+          : "عذراً، لم أفهم ذلك.";
+    } on GenerativeAIException catch (e) {
+      print('❌ Gemini API error: ${e.message}');
+      throw Exception('Gemini API error: ${e.message}');
+    } catch (e) {
+      print('❌ Unexpected Gemini error: $e');
+      throw Exception('Unexpected Gemini error: $e');
+    }
   }
 }
