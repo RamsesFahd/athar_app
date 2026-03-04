@@ -7,7 +7,7 @@ import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/features/cultural_archive/screens/cultural_archive.dart';
 import 'package:athar_app/features/profile/screens/profile_screen.dart';
 import 'package:athar_app/features/home/screens/home_screen.dart';
-import 'package:athar_app/features/historical_chat/screens/historical_chat_screen.dart';
+import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
 
 class NavigationContainer extends StatefulWidget {
   const NavigationContainer({super.key});
@@ -61,7 +61,7 @@ class _NavigationContainerState extends State<NavigationContainer> {
         onSeeAllArchive: () => _onNavigateToSubPage(const CulturalArchive()),
       ),
       const Scaffold(body: Center(child: Text('Map Screen'))),
-      const HistoricalChatScreen(),
+      const RawiLandingScreen(),
       const Scaffold(body: Center(child: Text('Calendar'))),
       const ProfileScreen(),
     ];

@@ -4,7 +4,8 @@ class RegionModel {
   final String nameEn;
   final String descriptionAr;
   final String descriptionEn;
-  final String image;
+  final String logoImage;  
+  final String storyImage;
   final String systemPrompt; // التعليمات البرمجية الخاصة بكل منطقة
 
   RegionModel({
@@ -13,7 +14,8 @@ class RegionModel {
     required this.nameEn,
     required this.descriptionAr,
     required this.descriptionEn,
-    required this.image,
+    required this.logoImage,
+    required this.storyImage,
     required this.systemPrompt,
   });
 

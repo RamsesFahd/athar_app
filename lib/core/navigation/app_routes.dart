@@ -9,8 +9,7 @@ import 'package:athar_app/features/auth/screens/splash_screen.dart';
 import 'package:athar_app/features/auth/screens/verify_email_screen.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 import 'package:athar_app/core/models/user/cultural/cultural_item_model.dart';
-// ✨ استيراد صفحة الدردشة التاريخية
-import 'package:athar_app/features/historical_chat/screens/historical_chat_screen.dart';
+import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -36,7 +35,7 @@ class AppRoutes {
 
       culturalArchive: (context) => const CulturalArchive(),
 
-      historicalChat: (context) => const HistoricalChatScreen(),
+      historicalChat: (context) => const RawiLandingScreen(),
 
       culturalDetails: (context) {
         final CulturalItemModel item =
