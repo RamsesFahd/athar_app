@@ -1,3 +1,4 @@
+import 'package:athar_app/core/models/chat/chat_session_model.dart';
 import 'package:athar_app/core/models/chat/region_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../logic/chat_repository.dart';
@@ -6,7 +7,7 @@ import 'package:athar_app/core/models/chat/chat_message_model.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_repository.dart';
 import 'package:athar_app/features/auth/logic/auth_repository.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
-
+import 'dart:typed_data';
 part 'chat_notifier.g.dart';
 
 @riverpod
@@ -19,77 +20,31 @@ class ChatNotifier extends _$ChatNotifier {
     return arabicRegex.hasMatch(value);
   }
 
-  Future<void> sendUserMessage({
-    RegionModel? region,
-    required String text,
+  // Task 4: Greeting Logic
+  Future<void> sendInitialGreeting({
+    required RegionModel region,
+    required String sessionId,
   }) async {
-    state = true; // بدء حالة التحميل (Loading)
-
+    state = true;
     try {
-      final cleanText = text.trim();
-
-      // --- الخطوة 1: جلب البيانات الأساسية (داخل الـ try لضمان الأمان) ---
       final authRepo = ref.read(authRepositoryProvider);
       final userId = authRepo.currentUser?.uid ?? 'guest_user';
-      final settings = ref.read(settingsProvider);
-      final langCode = settings.locale.languageCode;
-      final effectiveLangCode = _containsArabic(cleanText) ? 'ar' : langCode;
       final repository = ref.read(chatRepositoryProvider);
       final gemini = ref.read(geminiServiceProvider);
 
-      final String currentChatId = region?.regionId ?? 'general';
-      String systemInstruction = '';
-
-      // --- الخطوة 2: بناء التعليمات البرمجية ---
-      if (region != null) {
-        final culturalRepo = ref.read(culturalRepositoryProvider);
-        final allItems = await culturalRepo.fetchItems();
-
-        final regionalItems = allItems
-            .where((item) =>
-                item.regionAr == region.nameAr ||
-                item.regionEn == region.nameEn)
-            .toList();
-
-        final itemsTitles = regionalItems
-            .map((e) => effectiveLangCode == 'ar' ? e.titleAr : e.titleEn)
-            .join('، ');
-
-        systemInstruction = '''
-          You are the "Athar Cultural Assistant" for the ${region.nameEn}.
-          Personality: Proud, hospitable, and knowledgeable.
-          DYNAMIC CONTEXT: Items in archive for this region: [$itemsTitles].
-          RULES:
-          1. Language: YOU MUST RESPOND IN ${effectiveLangCode == 'ar' ? 'ARABIC' : 'ENGLISH'}.
-          2. Cultural Greeting: ${region.systemPrompt}
-          3. Smart Navigation: Use #tags# for archive items.
-          4. Suggestions: End with 3 topics starting with *.
-        ''';
-      } else {
-        systemInstruction = '''
-          أنت "راوي"، المساعد الثقافي العام لتطبيق أثر.
-          اللغة: يجب أن تتحدث بـ (${effectiveLangCode == 'ar' ? 'العربية' : 'الإنجليزية'}).
-          مهمتك: الترحيب بالمستخدم ودعوته لاختيار منطقة معينة من القائمة بالأسفل.
-        ''';
-      }
-
-      // --- الخطوة 3: حفظ رسالة المستخدم أولاً ---
-      final userMessage = ChatMessageModel(
-        text: cleanText,
-        senderId: userId,
-        isUser: true,
-        timestamp: DateTime.now(),
+      // Save session metadata
+      final newSession = ChatSessionModel(
+        sessionId: sessionId,
+        regionId: region.regionId,
+        title: "سالفة عن ${region.nameAr}",
+        lastMessageTime: DateTime.now(),
       );
-      await repository.saveMessage(userId, currentChatId, userMessage);
+      await repository.createSession(userId, newSession);
 
-      // --- الخطوة 4: طلب الرد من Gemini ---
-      final promptWithLanguageGuard = effectiveLangCode == 'ar'
-          ? 'أجب باللغة العربية الفصحى فقط، ولا تستخدم الإنجليزية إلا إذا طُلب منك ذلك صراحةً.\n\n$cleanText'
-          : 'Answer in English only unless the user explicitly asks for Arabic.\n\n$cleanText';
-
+      // Initial prompt to Rawi
       final response = await gemini.getResponse(
-        prompt: promptWithLanguageGuard,
-        systemInstruction: systemInstruction,
+        prompt: "ابدأ الترحيب بالمستخدم في منطقة ${region.nameAr} بأسلوبك كراوي قصص.",
+        systemInstruction: region.systemPrompt,
       );
 
       final botMessage = ChatMessageModel(
@@ -98,29 +53,68 @@ class ChatNotifier extends _$ChatNotifier {
         isUser: false,
         timestamp: DateTime.now(),
       );
-
-      // حفظ رد البوت
-      await repository.saveMessage(userId, currentChatId, botMessage);
+      await repository.saveMessage(userId, sessionId, botMessage);
     } catch (e) {
+      print("❌ Error: $e");
+    } finally {
+      state = false;
+    }
+  }
+
+  Future<void> sendUserMessage({
+    RegionModel? region,
+    required String text,
+    required String sessionId,
+    Uint8List? imageBytes,
+  }) async {
+    state = true;
+    try {
+      final cleanText = text.trim();
       final authRepo = ref.read(authRepositoryProvider);
       final userId = authRepo.currentUser?.uid ?? 'guest_user';
+      final settings = ref.read(settingsProvider);
+      final langCode = settings.locale.languageCode;
+      final effectiveLangCode = _containsArabic(cleanText) ? 'ar' : langCode;
       final repository = ref.read(chatRepositoryProvider);
-      final currentChatId = region?.regionId ?? 'general';
+      final gemini = ref.read(geminiServiceProvider);
 
-      final errorMessage = ChatMessageModel(
-        text:
-            'تعذر الاتصال بخدمة Gemini حالياً. تأكد من مفتاح API والاتصال بالإنترنت ثم حاول مرة أخرى.',
-        senderId: 'bot',
-        isUser: false,
-        timestamp: DateTime.now(),
+      String systemInstruction = '';
+      if (region != null) {
+        final culturalRepo = ref.read(culturalRepositoryProvider);
+        final allItems = await culturalRepo.fetchItems();
+        final regionalItems = allItems.where((item) =>
+            item.regionAr == region.nameAr || item.regionEn == region.nameEn).toList();
+        final itemsTitles = regionalItems.map((e) => 
+            effectiveLangCode == 'ar' ? e.titleAr : e.titleEn).join('، ');
+
+        systemInstruction = '''
+          You are the "Athar Cultural Assistant" for the ${region.nameEn}.
+          Personality: Proud, hospitable, and knowledgeable.
+          DYNAMIC CONTEXT: Items in archive for this region: [$itemsTitles].
+          RULES:
+          1. Language: RESPOND IN ${effectiveLangCode == 'ar' ? 'ARABIC' : 'ENGLISH'}.
+          2. Cultural Greeting: ${region.systemPrompt}
+          3. Smart Navigation: Use #tags# for archive items.
+          4. Suggestions: End with 3 topics starting with *.
+        ''';
+      }
+
+      // Save user message
+      await repository.saveMessage(userId, sessionId, 
+          ChatMessageModel(text: cleanText, senderId: userId, isUser: true, timestamp: DateTime.now()));
+
+      // Get Gemini response
+      final response = await gemini.getResponse(
+        prompt: cleanText,
+        systemInstruction: systemInstruction,
+        imageBytes: imageBytes,
       );
 
-      await repository.saveMessage(userId, currentChatId, errorMessage);
-
-      // طباعة الخطأ بوضوح في التيرمنال للتشخيص
-      print("❌ Error in sendUserMessage: $e");
+      // Save bot response
+      await repository.saveMessage(userId, sessionId, 
+          ChatMessageModel(text: response, senderId: 'bot', isUser: false, timestamp: DateTime.now()));
     } finally {
-      state = false; // التأكد دائماً من إغلاق حالة التحميل
+      state = false;
     }
   }
 }

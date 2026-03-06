@@ -1,6 +1,7 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:typed_data';
 
 final geminiServiceProvider = Provider((ref) => GeminiService());
 
@@ -22,7 +23,7 @@ class GeminiService {
 
   // هذه الدالة يجب أن تكون خارج أقواس الـ Constructor لكي يراها التطبيق
   Future<String> getResponse(
-      {required String prompt, required String systemInstruction}) async {
+      {required String prompt, required String systemInstruction, Uint8List? imageBytes}) async {
     if (_apiKey.isEmpty) {
       throw Exception(
           'GEMINI_API_KEY is empty. Please check your .env file and restart the app.');
@@ -36,7 +37,12 @@ class GeminiService {
     );
 
     try {
-      final content = [Content.text(prompt)];
+      final content = [
+        Content.multi([
+          TextPart(prompt),
+          if (imageBytes != null) DataPart('image/jpeg', imageBytes),
+        ])
+      ];
       final response = await modelWithInstructions.generateContent(content);
       return response.text?.trim().isNotEmpty == true
           ? response.text!.trim()

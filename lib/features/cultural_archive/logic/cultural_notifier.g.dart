@@ -6,12 +6,12 @@ part of 'cultural_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$culturalNotifierHash() => r'925bf62e1551f1cf94e1e2474fdc951a9c3c6959';
+String _$culturalNotifierHash() => r'65d2b080504cdfbbd24832d623b1524c1e94866c';
 
 /// See also [CulturalNotifier].
 @ProviderFor(CulturalNotifier)
 final culturalNotifierProvider =
-    AutoDisposeAsyncNotifierProvider<CulturalNotifier, CulturalState>.internal(
+    AsyncNotifierProvider<CulturalNotifier, CulturalState>.internal(
   CulturalNotifier.new,
   name: r'culturalNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -21,6 +21,6 @@ final culturalNotifierProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$CulturalNotifier = AutoDisposeAsyncNotifier<CulturalState>;
+typedef _$CulturalNotifier = AsyncNotifier<CulturalState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

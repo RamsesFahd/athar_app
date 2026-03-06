@@ -8,7 +8,7 @@ import '../../cultural_archive/widgets/cultural_item_card.dart';
 
 part 'cultural_notifier.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class CulturalNotifier extends _$CulturalNotifier {
   @override
   FutureOr<CulturalState> build() async {
@@ -17,7 +17,8 @@ class CulturalNotifier extends _$CulturalNotifier {
 
   /// Load items from Firestore
   Future<CulturalState> _loadItems() async {
-    final repo = ref.read(culturalRepositoryProvider);
+    // reactive reference to the repository to ensure state synchronization.
+    final repo = ref.watch(culturalRepositoryProvider);
     final items = await repo.fetchItems();
 
     return CulturalState(
@@ -28,6 +29,31 @@ class CulturalNotifier extends _$CulturalNotifier {
       isLoading: false,
     );
   }
+
+  CulturalItemModel? findItemByTitle(String title) {
+  final current = state.value;
+  if (current == null) return null;
+
+  // تنظيف النص من المسافات الزائدة وتحويله لـ lowercase
+  final String searchKey = title.trim().toLowerCase();
+
+  try {
+    return current.allItems.firstWhere(
+      (item) {
+        final String titleAr = item.titleAr.trim().toLowerCase();
+        final String titleEn = item.titleEn.trim().toLowerCase();
+        
+        // مقارنة ذكية: هل أحدهما يحتوي على الآخر؟
+        return titleAr.contains(searchKey) || 
+               searchKey.contains(titleAr) || 
+               titleEn.contains(searchKey) || 
+               searchKey.contains(titleEn);
+      },
+    );
+  } catch (_) {
+    return null; 
+  }
+}
 
   // Search
   void setSearchQuery(String query) {
@@ -88,23 +114,24 @@ class CulturalNotifier extends _$CulturalNotifier {
 
 // Providers
   final categoriesProvider = FutureProvider((ref) async {
-    final repo = ref.read(culturalRepositoryProvider);
-    return repo.fetchCategories();
-  });
+  // Using watch to maintain synchronization with the repository's internal state.
+  final repo = ref.watch(culturalRepositoryProvider);
+  return repo.fetchCategories();
+});
 
-  final filteredItemsProvider = Provider((ref) {
-    final stateAsync = ref.watch(culturalNotifierProvider);
-    return stateAsync.value?.filteredItems ?? [];
-  });
+final filteredItemsProvider = Provider((ref) {
+  final stateAsync = ref.watch(culturalNotifierProvider);
+  return stateAsync.value?.filteredItems ?? [];
+});
 
-  final viewModeProvider =
+final viewModeProvider =
     StateProvider<CardLayout>((ref) => CardLayout.horizontal);
 
-  final showFiltersProvider =
-      StateProvider<bool>((ref) => false);
+final showFiltersProvider =
+    StateProvider<bool>((ref) => false);
 
-  final activeCategoryProvider =
-      StateProvider<String>((ref) => 'all');
+final activeCategoryProvider =
+    StateProvider<String>((ref) => 'all');
 
 
 //كود الحالة ممكن اخليه في ملف خارجي
