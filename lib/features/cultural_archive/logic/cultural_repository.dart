@@ -122,4 +122,96 @@ class CulturalRepository {
     // تنفيذ كل العمليات بضغطة واحدة
     await batch.commit();
 }
+Future<void> migrateRegionIds() async {
+  // Mapping from old regionAr/regionEn values to the new regionId
+  final Map<String, String> arToRegionId = {
+    'المنطقة الوسطى': 'central_region',
+    'نجد': 'central_region',
+    'المنطقة الغربية': 'western_region',
+    'الحجاز': 'western_region',
+    'مكة المكرمة': 'western_region',
+    'المدينة المنورة': 'western_region',
+    'جدة': 'western_region',
+    'الطائف': 'western_region',
+    'المنطقة الشمالية': 'northern_region',
+    'المنطقة الشرقية': 'eastern_region',
+    'الأحساء': 'eastern_region',
+    'المنطقة الجنوبية': 'southern_region',
+    'عسير': 'southern_region',
+    'جازان': 'southern_region',
+    'نجران': 'southern_region',
+    'الباحة': 'southern_region',
+    'منطقة الباحة': 'southern_region',
+    'الجوف': 'northern_region',
+    'منطقة عسير': 'southern_region',
+    'حائل': 'northern_region',
+    'منطقة جازان': 'southern_region',
+    'منطقة نجران': 'southern_region',
+    'القصيم': 'central_region',
+    'الرياض': 'central_region',
+    'تبوك': 'northern_region',
+  };
+
+  final Map<String, String> enToRegionId = {
+    'Central Region': 'central_region',
+    'Najd': 'central_region',
+    'Western Region': 'western_region',
+    'Hejaz': 'western_region',
+    'Makkah': 'western_region',
+    'Madinah': 'western_region',
+    'Jeddah': 'western_region',
+    'Taif': 'western_region',
+    'Northern Region': 'northern_region',
+    'Eastern Region': 'eastern_region',
+    'Al-Ahsa': 'eastern_region',
+    'Southern Region': 'southern_region',
+    'Asir': 'southern_region',
+    'Jazan': 'southern_region',
+    'Najran': 'southern_region',
+    'Al Baha': 'southern_region',
+    'Al Baha Region': 'southern_region',
+    'Al-Jouf': 'northern_region',
+    'Asir Region': 'southern_region',
+    'Hail': 'northern_region',
+    'Jazan Region': 'southern_region',
+    'Najran Region': 'southern_region',
+    'Qassim': 'central_region',
+    'Riyadh': 'central_region',
+    'Tabuk': 'northern_region',
+  };
+
+  var _items= FirebaseFirestore.instance.collection('cultural_items');
+  final snapshot = await _items.get();
+  var  _firestore = FirebaseFirestore.instance;
+  final batch = _firestore.batch();
+  int count = 0;
+
+  for (final doc in snapshot.docs) {
+    final data = doc.data() as Map<String, dynamic>;
+
+    // Skip if regionId already exists
+    if (data['regionId'] != null && data['regionId'].toString().isNotEmpty) {
+      continue;
+    }
+
+    final regionAr = data['regionAr']?.toString().trim() ?? '';
+    final regionEn = data['regionEn']?.toString().trim() ?? '';
+
+    // Try to find matching regionId
+    final regionId = arToRegionId[regionAr] ?? enToRegionId[regionEn] ?? '';
+
+    if (regionId.isEmpty) {
+      print('⚠️ No match found for doc: ${doc.id} | regionAr: $regionAr | regionEn: $regionEn');
+      continue;
+    }
+
+    batch.update(doc.reference, {'regionId': regionId});
+    count++;
+    print('✅ Queued: ${doc.id} → $regionId');
+  }
+
+  await batch.commit();
+  print('🎉 Migration done. Updated $count documents.');
 }
+}
+

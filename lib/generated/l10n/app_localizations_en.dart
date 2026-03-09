@@ -562,4 +562,79 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get firnasEra => '9th Century AD';
+
+  @override
+  String get rawiNewChat => 'New Chat';
+
+  @override
+  String get rawiSearchHistoryHint => 'Search your previous chats';
+
+  @override
+  String get rawiEmptyState =>
+      'Rawi\'s council is waiting for your stories...\nChoose a region and start your first journey';
+
+  @override
+  String get rawiNoMatchingChats => 'No chats matched your search';
+
+  @override
+  String get rawiOpenChat => 'Open chat';
+
+  @override
+  String get rawiDeleteChat => 'Delete chat';
+
+  @override
+  String get rawiDeleteAllChats => 'Delete all chats';
+
+  @override
+  String get rawiDeleteChatConfirmTitle => 'Delete this chat?';
+
+  @override
+  String get rawiDeleteChatConfirmBody =>
+      'This chat and all its messages will be permanently deleted.';
+
+  @override
+  String get rawiDeleteAllChatsConfirmTitle => 'Delete all chats?';
+
+  @override
+  String get rawiDeleteAllChatsConfirmBody =>
+      'All chats and their messages will be permanently deleted.';
+
+  @override
+  String get rawiDelete => 'Delete';
+
+  @override
+  String get rawiCancel => 'Cancel';
+
+  @override
+  String get rawiRenameChat => 'Rename chat';
+
+  @override
+  String get rawiRenameChatDialogTitle => 'Rename chat';
+
+  @override
+  String get rawiRenameChatHint => 'Enter a new title';
+
+  @override
+  String get rawiRenameChatSave => 'Save';
+
+  @override
+  String get rawiChatRenamedToast => 'Chat title updated';
+
+  @override
+  String get rawiChatDeletedToast => 'Chat deleted';
+
+  @override
+  String get rawiAllChatsDeletedToast => 'All chats deleted';
+
+  @override
+  String get rawiNoChatsToDelete => 'There are no chats to delete';
+
+  @override
+  String get rawiStoryStartChat => 'Start chatting with Rawi';
+
+  @override
+  String get rawiUntitledArabic => 'New Story';
+
+  @override
+  String get rawiUntitledEnglish => 'New Chat';
 }

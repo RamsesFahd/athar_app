@@ -110,6 +110,14 @@ class CulturalNotifier extends _$CulturalNotifier {
       return matchesSearch && matchesCategory;
     }).toList();
   }
+
+  List<CulturalItemModel> getItemsByRegion(String regionId) {
+    final current = state.valueOrNull;
+    if (current == null) return [];
+    return current.allItems
+        .where((item) => item.regionId == regionId)
+        .toList();
+  }
 }
 
 // Providers
@@ -174,4 +182,6 @@ class CulturalState {
       isLoading: isLoading ?? this.isLoading,
     );
   }
+
+
 }

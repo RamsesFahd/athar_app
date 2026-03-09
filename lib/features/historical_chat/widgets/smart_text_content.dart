@@ -3,18 +3,18 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../cultural_archive/widgets/cultural_item_details.dart'; 
+import '../../cultural_archive/widgets/cultural_item_details.dart';
 import '../../cultural_archive/logic/cultural_notifier.dart';
 import '../../../core/models/user/cultural/cultural_item_model.dart';
 
 class SmartTextContent extends ConsumerWidget {
   final String text;
   final bool isMe;
-  final Function(String)? onTapQuickReply; 
+  final Function(String)? onTapQuickReply;
 
   const SmartTextContent({
-    super.key, 
-    required this.text, 
+    super.key,
+    required this.text,
     required this.isMe,
     this.onTapQuickReply,
   });
@@ -26,15 +26,19 @@ class SmartTextContent extends ConsumerWidget {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
 
     final allLines = text.split('\n');
-    final quickReplyLines = allLines.where((line) => line.trim().startsWith('*')).toList();
-    final mainText = allLines.where((line) => !line.trim().startsWith('*')).join('\n');
+    final quickReplyLines =
+        allLines.where((line) => line.trim().startsWith('*')).toList();
+    final mainText =
+        allLines.where((line) => !line.trim().startsWith('*')).join('\n');
 
     return Column(
-      crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment:
+          isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         //  تمرير البيانات المحملة (إن وجدت) للدالة
-        _buildRichTextWithTags(mainText, context, isAr, culturalState.value?.allItems ?? []),
-        
+        _buildRichTextWithTags(
+            mainText, context, isAr, culturalState.value?.allItems ?? []),
+
         if (quickReplyLines.isNotEmpty && !isMe) ...[
           const SizedBox(height: 16),
           Wrap(
@@ -44,15 +48,16 @@ class SmartTextContent extends ConsumerWidget {
               final cleanText = line.trim().substring(1).trim();
               return ActionChip(
                 elevation: 2,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                backgroundColor: Colors.grey[100], 
-                side: BorderSide(color: AppColors.primary.withOpacity(0.3)), 
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                backgroundColor: Colors.grey[100],
+                side: BorderSide(color: AppColors.primary.withOpacity(0.3)),
                 label: Text(
-                  cleanText, 
+                  cleanText,
                   style: GoogleFonts.cairo(
-                    fontSize: 13, 
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.primary, 
+                    color: AppColors.primary,
                   ),
                 ),
                 onPressed: () {
@@ -68,8 +73,9 @@ class SmartTextContent extends ConsumerWidget {
     );
   }
 
-  Widget _buildRichTextWithTags(String content, BuildContext context, bool isAr, List<CulturalItemModel> allItems) {
-    final RegExp tagExp = RegExp(r"#[أ-يa-zA-Z0-9]+(?:\s[أ-يa-zA-Z0-9]+)*(?=[^\u0621-\u064A\s]|$)"); 
+  Widget _buildRichTextWithTags(String content, BuildContext context, bool isAr,
+      List<CulturalItemModel> allItems) {
+    final RegExp tagExp = RegExp(r"#[^#]+#");
     final Iterable<RegExpMatch> matches = tagExp.allMatches(content);
 
     if (matches.isEmpty) return Text(content, style: _textStyle());
@@ -83,56 +89,46 @@ class SmartTextContent extends ConsumerWidget {
       }
 
       final String fullTag = content.substring(match.start, match.end);
-      final String cleanTagName = fullTag.replaceAll('#', '').trim(); 
+      final String cleanTagName = fullTag.replaceAll('#', '').trim();
 
       spans.add(
-        WidgetSpan(
-          alignment: PlaceholderAlignment.middle,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              //  البحث المباشر في القائمة الممرة 
+        TextSpan(
+          text: cleanTagName,
+          style: GoogleFonts.cairo(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+          ),
+          recognizer: TapGestureRecognizer()
+            ..onTap = () {
               final matchedItem = _searchForItem(allItems, cleanTagName);
 
               if (matchedItem != null) {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CulturalItemDetails(item: matchedItem),
+                    builder: (context) =>
+                        CulturalItemDetails(item: matchedItem),
                   ),
                 );
               } else {
-                // ✨ رسالة ذكية: إذا القائمة فارغة يعني لم تحمل بعد، وإلا يعني فعلاً مفقود
-                String message = allItems.isEmpty 
-                    ? (isAr ? "جاري جلب بيانات الأرشيف..." : "Loading archive...")
-                    : (isAr ? "لم نجد $cleanTagName في الأرشيف" : "No record for $cleanTagName");
+                final String message = allItems.isEmpty
+                    ? (isAr
+                        ? 'جاري جلب بيانات الأرشيف...'
+                        : 'Loading archive...')
+                    : (isAr
+                        ? 'لم نجد $cleanTagName في الأرشيف'
+                        : 'No record for $cleanTagName');
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(message),
-                    backgroundColor: const Color(0xFF1B5E20), // أخضر غامق
+                    backgroundColor: const Color(0xFF1B5E20),
                     duration: const Duration(seconds: 2),
                   ),
                 );
               }
             },
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: isMe ? Colors.white.withOpacity(0.25) : AppColors.primary,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                fullTag,
-                style: GoogleFonts.cairo(
-                  fontSize: 13, 
-                  color: Colors.white, 
-                  fontWeight: FontWeight.bold
-                ),
-              ),
-            ),
-          ),
         ),
       );
       lastIndex = match.end;
@@ -145,11 +141,14 @@ class SmartTextContent extends ConsumerWidget {
     return RichText(text: TextSpan(style: _textStyle(), children: spans));
   }
 
-  CulturalItemModel? _searchForItem(List<CulturalItemModel> items, String query) {
+  CulturalItemModel? _searchForItem(
+      List<CulturalItemModel> items, String query) {
     /// Standardizes Arabic text by removing common variations to ensure consistent matching.
     String normalize(String text) {
-      return text.trim().toLowerCase()
-          .replaceAll(RegExp(r'^(ال)'), '') 
+      return text
+          .trim()
+          .toLowerCase()
+          .replaceAll(RegExp(r'^(ال)'), '')
           .replaceAll(RegExp(r'[أإآ]'), 'ا')
           .replaceAll('ة', 'ه')
           .replaceAll('ى', 'ي')
@@ -165,10 +164,10 @@ class SmartTextContent extends ConsumerWidget {
         final String qEn = query.toLowerCase().trim();
 
         /// Implements bi-directional fuzzy matching to handle descriptive titles and multi-language support.
-        return nameAr.contains(cleanQuery) || 
-               cleanQuery.contains(nameAr) || 
-               nameEn.contains(qEn) || 
-               qEn.contains(nameEn);
+        return nameAr.contains(cleanQuery) ||
+            cleanQuery.contains(nameAr) ||
+            nameEn.contains(qEn) ||
+            qEn.contains(nameEn);
       });
     } catch (_) {
       return null; // Gracefully handle cases where no cultural item matches the tag.
@@ -176,7 +175,7 @@ class SmartTextContent extends ConsumerWidget {
   }
 
   TextStyle _textStyle() => GoogleFonts.cairo(
-        color: isMe ? Colors.white : Colors.black87,
+        color: Colors.white,
         fontSize: 15,
         height: 1.5,
       );

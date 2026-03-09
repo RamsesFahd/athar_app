@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/historical_chat/screens/chat_screen.dart';
 import 'package:athar_app/core/constants/region_data.dart'; //
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class RegionStoryScreen extends StatefulWidget {
   final int initialIndex;
@@ -13,7 +14,8 @@ class RegionStoryScreen extends StatefulWidget {
   State<RegionStoryScreen> createState() => _RegionStoryScreenState();
 }
 
-class _RegionStoryScreenState extends State<RegionStoryScreen> with SingleTickerProviderStateMixin {
+class _RegionStoryScreenState extends State<RegionStoryScreen>
+    with SingleTickerProviderStateMixin {
   late PageController _pageController;
   late AnimationController _animController;
   int _currentIndex = 0;
@@ -23,11 +25,11 @@ class _RegionStoryScreenState extends State<RegionStoryScreen> with SingleTicker
     super.initState();
     _currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: widget.initialIndex);
-    
+
     // إعداد التايمر لمدة 10 ثوانٍ
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10), 
+      duration: const Duration(seconds: 10),
     );
 
     _animController.addListener(() {
@@ -92,7 +94,7 @@ class _RegionStoryScreenState extends State<RegionStoryScreen> with SingleTicker
 
             // (1) شريط تقدم واحد كامل العرض لكل ستوري
             Positioned(
-              top: 60, 
+              top: 60,
               left: 20,
               right: 20,
               child: ClipRRect(
@@ -119,6 +121,7 @@ class _RegionStoryScreenState extends State<RegionStoryScreen> with SingleTicker
   }
 
   Widget _buildGlassButton(dynamic region) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 50),
       child: ClipRRect(
@@ -139,14 +142,18 @@ class _RegionStoryScreenState extends State<RegionStoryScreen> with SingleTicker
                 minimumSize: const Size(double.infinity, 60),
               ),
               onPressed: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => ChatScreen(region: region)),
+                  MaterialPageRoute(
+                      builder: (context) => ChatScreen(region: region)),
                 );
               },
-              child: const Text(
-                "ابدأ السوالف مع راوي",
-                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+              child: Text(
+                l10n.rawiStoryStartChat,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
               ),
             ),
           ),

@@ -561,4 +561,79 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get firnasEra => 'القرن التاسع الميلادي';
+
+  @override
+  String get rawiNewChat => 'محادثة جديدة';
+
+  @override
+  String get rawiSearchHistoryHint => 'ابحث في محادثاتك السابقة';
+
+  @override
+  String get rawiEmptyState =>
+      'مجلس راوي ينتظر سوالفك...\nاختر منطقة وابدأ أول رحلة';
+
+  @override
+  String get rawiNoMatchingChats => 'ما لقينا محادثات تطابق البحث';
+
+  @override
+  String get rawiOpenChat => 'فتح المحادثة';
+
+  @override
+  String get rawiDeleteChat => 'حذف المحادثة';
+
+  @override
+  String get rawiDeleteAllChats => 'حذف كل المحادثات';
+
+  @override
+  String get rawiDeleteChatConfirmTitle => 'حذف هذه المحادثة؟';
+
+  @override
+  String get rawiDeleteChatConfirmBody =>
+      'سيتم حذف المحادثة وجميع رسائلها نهائياً.';
+
+  @override
+  String get rawiDeleteAllChatsConfirmTitle => 'حذف كل المحادثات؟';
+
+  @override
+  String get rawiDeleteAllChatsConfirmBody =>
+      'سيتم حذف جميع المحادثات ورسائلها نهائياً.';
+
+  @override
+  String get rawiDelete => 'حذف';
+
+  @override
+  String get rawiCancel => 'إلغاء';
+
+  @override
+  String get rawiRenameChat => 'إعادة تسمية المحادثة';
+
+  @override
+  String get rawiRenameChatDialogTitle => 'إعادة تسمية المحادثة';
+
+  @override
+  String get rawiRenameChatHint => 'اكتب عنواناً جديداً';
+
+  @override
+  String get rawiRenameChatSave => 'حفظ';
+
+  @override
+  String get rawiChatRenamedToast => 'تم تحديث عنوان المحادثة';
+
+  @override
+  String get rawiChatDeletedToast => 'تم حذف المحادثة';
+
+  @override
+  String get rawiAllChatsDeletedToast => 'تم حذف جميع المحادثات';
+
+  @override
+  String get rawiNoChatsToDelete => 'لا توجد محادثات للحذف';
+
+  @override
+  String get rawiStoryStartChat => 'ابدأ السوالف مع راوي';
+
+  @override
+  String get rawiUntitledArabic => 'سالفة جديدة';
+
+  @override
+  String get rawiUntitledEnglish => 'محادثة جديدة';
 }

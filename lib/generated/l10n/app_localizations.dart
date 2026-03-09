@@ -1171,6 +1171,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'9th Century AD'**
   String get firnasEra;
+
+  /// No description provided for @rawiNewChat.
+  ///
+  /// In en, this message translates to:
+  /// **'New Chat'**
+  String get rawiNewChat;
+
+  /// No description provided for @rawiSearchHistoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search your previous chats'**
+  String get rawiSearchHistoryHint;
+
+  /// No description provided for @rawiEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'Rawi\'s council is waiting for your stories...\nChoose a region and start your first journey'**
+  String get rawiEmptyState;
+
+  /// No description provided for @rawiNoMatchingChats.
+  ///
+  /// In en, this message translates to:
+  /// **'No chats matched your search'**
+  String get rawiNoMatchingChats;
+
+  /// No description provided for @rawiOpenChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Open chat'**
+  String get rawiOpenChat;
+
+  /// No description provided for @rawiDeleteChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete chat'**
+  String get rawiDeleteChat;
+
+  /// No description provided for @rawiDeleteAllChats.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all chats'**
+  String get rawiDeleteAllChats;
+
+  /// No description provided for @rawiDeleteChatConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this chat?'**
+  String get rawiDeleteChatConfirmTitle;
+
+  /// No description provided for @rawiDeleteChatConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This chat and all its messages will be permanently deleted.'**
+  String get rawiDeleteChatConfirmBody;
+
+  /// No description provided for @rawiDeleteAllChatsConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all chats?'**
+  String get rawiDeleteAllChatsConfirmTitle;
+
+  /// No description provided for @rawiDeleteAllChatsConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'All chats and their messages will be permanently deleted.'**
+  String get rawiDeleteAllChatsConfirmBody;
+
+  /// No description provided for @rawiDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get rawiDelete;
+
+  /// No description provided for @rawiCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get rawiCancel;
+
+  /// No description provided for @rawiRenameChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename chat'**
+  String get rawiRenameChat;
+
+  /// No description provided for @rawiRenameChatDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename chat'**
+  String get rawiRenameChatDialogTitle;
+
+  /// No description provided for @rawiRenameChatHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a new title'**
+  String get rawiRenameChatHint;
+
+  /// No description provided for @rawiRenameChatSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get rawiRenameChatSave;
+
+  /// No description provided for @rawiChatRenamedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat title updated'**
+  String get rawiChatRenamedToast;
+
+  /// No description provided for @rawiChatDeletedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat deleted'**
+  String get rawiChatDeletedToast;
+
+  /// No description provided for @rawiAllChatsDeletedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'All chats deleted'**
+  String get rawiAllChatsDeletedToast;
+
+  /// No description provided for @rawiNoChatsToDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no chats to delete'**
+  String get rawiNoChatsToDelete;
+
+  /// No description provided for @rawiStoryStartChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Start chatting with Rawi'**
+  String get rawiStoryStartChat;
+
+  /// No description provided for @rawiUntitledArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'New Story'**
+  String get rawiUntitledArabic;
+
+  /// No description provided for @rawiUntitledEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'New Chat'**
+  String get rawiUntitledEnglish;
 }
 
 class _AppLocalizationsDelegate

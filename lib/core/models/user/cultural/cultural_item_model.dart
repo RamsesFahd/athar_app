@@ -7,7 +7,8 @@ class CulturalItemModel {
   final String descriptionAr;
   final String descriptionEn;
   final String imageUrl;       
-  final String categoryId;   // رابط للفئة
+  final String categoryId;   
+  final String regionId;
   final String regionEn;
   final String regionAr;
   final DateTime? createdAt; 
@@ -22,6 +23,7 @@ class CulturalItemModel {
     required this.descriptionEn,
     required this.imageUrl,
     required this.categoryId,
+    required this.regionId,
     required this.regionEn,
     required this.regionAr,
     this.createdAt,
@@ -36,6 +38,7 @@ class CulturalItemModel {
       'descriptionEn': descriptionEn,
       'imageUrl': imageUrl,
       'categoryId': categoryId, 
+      'regionId': regionId,
       'regionEn': regionEn,
       'regionAr': regionAr,
       'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
@@ -52,6 +55,7 @@ class CulturalItemModel {
       descriptionEn: map['descriptionEn'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
       categoryId: map['categoryId'] ?? '',
+      regionId: map['regionId'] ?? '',
       regionEn: map['regionEn'] ?? '',
       regionAr: map['regionAr'] ?? '',
       createdAt: map['createdAt'] != null
