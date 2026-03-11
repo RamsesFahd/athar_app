@@ -1315,6 +1315,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New Chat'**
   String get rawiUntitledEnglish;
+
+  /// No description provided for @all_trips.
+  ///
+  /// In en, this message translates to:
+  /// **'All Trips'**
+  String get all_trips;
+
+  /// No description provided for @search_trips_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for your trip...'**
+  String get search_trips_hint;
+
+  /// No description provided for @price_low_first.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: Low to High'**
+  String get price_low_first;
+
+  /// No description provided for @price_high_first.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: High to Low'**
+  String get price_high_first;
+
+  /// No description provided for @trips_in.
+  ///
+  /// In en, this message translates to:
+  /// **'Trips in {region}'**
+  String trips_in(Object region);
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// No description provided for @about_trip.
+  ///
+  /// In en, this message translates to:
+  /// **'About the trip:'**
+  String get about_trip;
+
+  /// No description provided for @guide.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide'**
+  String get guide;
+
+  /// No description provided for @company.
+  ///
+  /// In en, this message translates to:
+  /// **'Organizing Company'**
+  String get company;
+
+  /// No description provided for @license.
+  ///
+  /// In en, this message translates to:
+  /// **'License'**
+  String get license;
+
+  /// No description provided for @book_now.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Now'**
+  String get book_now;
+
+  /// No description provided for @booking_details.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Details'**
+  String get booking_details;
+
+  /// No description provided for @people_count.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of People'**
+  String get people_count;
+
+  /// No description provided for @adults.
+  ///
+  /// In en, this message translates to:
+  /// **'Adults'**
+  String get adults;
+
+  /// No description provided for @children.
+  ///
+  /// In en, this message translates to:
+  /// **'Children'**
+  String get children;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @time.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get time;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// No description provided for @select_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Trip Time'**
+  String get select_time;
+
+  /// No description provided for @continue_btn.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continue_btn;
+
+  /// No description provided for @complete_data.
+  ///
+  /// In en, this message translates to:
+  /// **'Please complete the data'**
+  String get complete_data;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
+
+  /// No description provided for @choose_guide.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a Tour Guide'**
+  String get choose_guide;
+
+  /// No description provided for @languages.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages:'**
+  String get languages;
+
+  /// No description provided for @available_days.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Days:'**
+  String get available_days;
+
+  /// No description provided for @skills.
+  ///
+  /// In en, this message translates to:
+  /// **'Skills:'**
+  String get skills;
+
+  /// No description provided for @booking_summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Summary'**
+  String get booking_summary;
+
+  /// No description provided for @total_price.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Price'**
+  String get total_price;
+
+  /// No description provided for @currency.
+  ///
+  /// In en, this message translates to:
+  /// **'SAR'**
+  String get currency;
+
+  /// No description provided for @payment_note.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: Payment is not processed through the app; you will coordinate with the guide directly.'**
+  String get payment_note;
+
+  /// No description provided for @complete_booking.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Booking'**
+  String get complete_booking;
+
+  /// No description provided for @rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get rating;
+
+  /// No description provided for @experience.
+  ///
+  /// In en, this message translates to:
+  /// **'Experience'**
+  String get experience;
+
+  /// No description provided for @trip.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip'**
+  String get trip;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @select_this_guide.
+  ///
+  /// In en, this message translates to:
+  /// **'Select this guide'**
+  String get select_this_guide;
+
+  /// No description provided for @guides.
+  ///
+  /// In en, this message translates to:
+  /// **'Guides'**
+  String get guides;
 }
 
 class _AppLocalizationsDelegate

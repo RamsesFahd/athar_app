@@ -8,6 +8,7 @@ import 'package:athar_app/features/home/widgets/explore_heritage_home_card.dart'
 import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
+import 'package:athar_app/features/guide_market/screens/trips_list_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   final VoidCallback? onSeeAllArchive;
@@ -247,11 +248,17 @@ class HomeScreen extends ConsumerWidget {
                       icon: Icons.emoji_events_outlined,
                       onTap: () {},
                     ),
+                    ////guide
                     const SizedBox(height: 12),
                     _QuickAccessRowTile(
                       title: l10n.quickGuides,
                       icon: Icons.groups_outlined,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const TripsListScreen()),
+                          );
+                      },
                     ),
                   ],
                 ),

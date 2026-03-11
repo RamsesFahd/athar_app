@@ -637,4 +637,118 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rawiUntitledEnglish => 'New Chat';
+
+  @override
+  String get all_trips => 'All Trips';
+
+  @override
+  String get search_trips_hint => 'Search for your trip...';
+
+  @override
+  String get price_low_first => 'Price: Low to High';
+
+  @override
+  String get price_high_first => 'Price: High to Low';
+
+  @override
+  String trips_in(Object region) {
+    return 'Trips in $region';
+  }
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get about_trip => 'About the trip:';
+
+  @override
+  String get guide => 'Guide';
+
+  @override
+  String get company => 'Organizing Company';
+
+  @override
+  String get license => 'License';
+
+  @override
+  String get book_now => 'Book Now';
+
+  @override
+  String get booking_details => 'Booking Details';
+
+  @override
+  String get people_count => 'Number of People';
+
+  @override
+  String get adults => 'Adults';
+
+  @override
+  String get children => 'Children';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get time => 'Time';
+
+  @override
+  String get select => 'Select';
+
+  @override
+  String get select_time => 'Select Trip Time';
+
+  @override
+  String get continue_btn => 'Continue';
+
+  @override
+  String get complete_data => 'Please complete the data';
+
+  @override
+  String get done => 'Done';
+
+  @override
+  String get choose_guide => 'Choose a Tour Guide';
+
+  @override
+  String get languages => 'Languages:';
+
+  @override
+  String get available_days => 'Available Days:';
+
+  @override
+  String get skills => 'Skills:';
+
+  @override
+  String get booking_summary => 'Booking Summary';
+
+  @override
+  String get total_price => 'Total Price';
+
+  @override
+  String get currency => 'SAR';
+
+  @override
+  String get payment_note =>
+      'Note: Payment is not processed through the app; you will coordinate with the guide directly.';
+
+  @override
+  String get complete_booking => 'Complete Booking';
+
+  @override
+  String get rating => 'Rating';
+
+  @override
+  String get experience => 'Experience';
+
+  @override
+  String get trip => 'Trip';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get select_this_guide => 'Select this guide';
+
+  @override
+  String get guides => 'Guides';
 }

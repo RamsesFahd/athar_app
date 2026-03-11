@@ -636,4 +636,118 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get rawiUntitledEnglish => 'محادثة جديدة';
+
+  @override
+  String get all_trips => 'جميع الرحلات';
+
+  @override
+  String get search_trips_hint => 'ابحث عن رحلتك...';
+
+  @override
+  String get price_low_first => 'السعر: الأقل أولاً';
+
+  @override
+  String get price_high_first => 'السعر: الأعلى أولاً';
+
+  @override
+  String trips_in(Object region) {
+    return 'رحلات في $region';
+  }
+
+  @override
+  String get details => 'عرض التفاصيل';
+
+  @override
+  String get about_trip => 'عن الرحلة:';
+
+  @override
+  String get guide => 'المرشد';
+
+  @override
+  String get company => 'الشركة المنظمة';
+
+  @override
+  String get license => 'الترخيص';
+
+  @override
+  String get book_now => 'احجز الآن';
+
+  @override
+  String get booking_details => 'بيانات الحجز';
+
+  @override
+  String get people_count => 'عدد الأشخاص';
+
+  @override
+  String get adults => 'بالغين';
+
+  @override
+  String get children => 'أطفال';
+
+  @override
+  String get date => 'التاريخ';
+
+  @override
+  String get time => 'الوقت';
+
+  @override
+  String get select => 'اختر';
+
+  @override
+  String get select_time => 'اختر توقيت الرحلة';
+
+  @override
+  String get continue_btn => 'متابعة';
+
+  @override
+  String get complete_data => 'الرجاء إكمال البيانات';
+
+  @override
+  String get done => 'تم';
+
+  @override
+  String get choose_guide => 'اختر المرشد السياحي';
+
+  @override
+  String get languages => 'اللغات:';
+
+  @override
+  String get available_days => 'الأيام المتاحة:';
+
+  @override
+  String get skills => 'المهارات:';
+
+  @override
+  String get booking_summary => 'ملخص الحجز';
+
+  @override
+  String get total_price => 'السعر الإجمالي';
+
+  @override
+  String get currency => 'ريال';
+
+  @override
+  String get payment_note =>
+      'تنويه: عملية الدفع لا تتم من خلال التطبيق، سيتم التنسيق مع المرشد مباشرة.';
+
+  @override
+  String get complete_booking => 'إتمام الحجز';
+
+  @override
+  String get rating => 'تقييم';
+
+  @override
+  String get experience => 'خبرة';
+
+  @override
+  String get trip => 'الرحلة';
+
+  @override
+  String get confirm => 'التأكيد';
+
+  @override
+  String get select_this_guide => 'اختيار هذا المرشد';
+
+  @override
+  String get guides => 'مرشدون';
 }
