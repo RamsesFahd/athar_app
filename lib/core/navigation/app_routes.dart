@@ -1,5 +1,6 @@
 // App navigation routes
 import 'package:athar_app/core/widgets/navigation_container.dart';
+import 'package:athar_app/features/admin/screens/admin_navigation_container.dart';
 import 'package:athar_app/features/cultural_archive/screens/cultural_archive.dart';
 import 'package:flutter/material.dart';
 import 'package:athar_app/features/auth/screens/signin_screen.dart';
@@ -17,6 +18,7 @@ class AppRoutes {
   static const String signUp = '/signup';
   static const String forgotPassword = '/forgot-password';
   static const String home = '/home';
+  static const String admin = '/admin';
   static const String verifyEmail = '/verify-email';
   static const String culturalArchive = '/cultural-archive';
   static const String culturalDetails = '/cultural-details';
@@ -30,8 +32,8 @@ class AppRoutes {
       forgotPassword: (context) => const ForgotPasswordScreen(),
       verifyEmail: (context) => const VerifyEmailScreen(),
 
-      // ✨ the main navigation container that holds the bottom navigation and the main screens of the app, we will navigate to this screen after successful login or if the user is already logged in when opening the app
       home: (context) => const NavigationContainer(),
+      admin: (context) => const AdminNavigationContainer(),
 
       culturalArchive: (context) => const CulturalArchive(),
 

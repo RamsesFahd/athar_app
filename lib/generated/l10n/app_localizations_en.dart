@@ -751,4 +751,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guides => 'Guides';
+
+  @override
+  String get add_new_trip => 'Add New Trip';
+
+  @override
+  String get add_trip_subtitle => 'Submit a trip for admin approval';
+
+  @override
+  String get booking_status_pending => 'Pending';
+
+  @override
+  String get booking_status_accepted => 'Accepted';
+
+  @override
+  String get booking_status_rejected => 'Rejected';
+
+  @override
+  String get booking_status_completed => 'Completed';
+
+  @override
+  String get accept_booking => 'Accept';
+
+  @override
+  String get reject_booking => 'Reject';
+
+  @override
+  String get view_details => 'View Details';
+
+  @override
+  String get adult_price => 'Adult Price (SAR)';
+
+  @override
+  String get child_price => 'Child Price (SAR, 0 = free)';
+
+  @override
+  String get pricing => 'Pricing';
+
+  @override
+  String get accessibility => 'Accessibility';
+
+  @override
+  String get accessibility_wheelchair => 'Wheelchair Accessible';
+
+  @override
+  String get accessibility_family => 'Family / Child Friendly';
+
+  @override
+  String get guide_info_autofilled =>
+      'Guide Info (auto-filled from your profile)';
+
+  @override
+  String get description_template_hint =>
+      'Use the template below — fill in each bullet point.';
+
+  @override
+  String get tour_operator => 'Tour Operator';
 }

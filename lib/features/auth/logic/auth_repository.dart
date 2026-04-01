@@ -40,6 +40,7 @@ Future<String?> signUp({
     required String password,
     required String fullName,
     required UserRole role, // so the user can choose if they are a tutor or a tourist during sign up, and we can create the appropriate user document in Firestore based on their role
+    TutorType? tutorType,
   }) async {
     try {
       UserCredential cred = await _auth.createUserWithEmailAndPassword(
@@ -60,6 +61,7 @@ Future<String?> signUp({
           createdAt: DateTime.now(),
           accessibilitySettings: AccessibilitySettings(),
           verificationStatus: 'unverified',
+          tutorType: tutorType ?? TutorType.individual,
         );
       } else {
         newUser = TouristModel(

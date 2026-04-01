@@ -82,6 +82,32 @@ class AppTheme {
         ),
       ),
 
+      inputDecorationTheme: InputDecorationTheme(
+        hintStyle: TextStyle(
+          color: AppColors.sage800,
+        ),
+        labelStyle: TextStyle(
+          color: AppColors.sage800,
+        ),
+        floatingLabelStyle: TextStyle(
+          color: AppColors.sage800,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: AppColors.sage50,
+            width: 1,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: AppColors.primary,
+            width: 2,
+          ),
+        ),
+      ),
+
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor, // ✨ linked for high contrast mode

@@ -40,7 +40,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         },
         data: (user) {
           if (user != null) {
-            // redirecting to email verification screen if the user's email is not verified 
+            if (user is AdminModel) {
+              Navigator.pushReplacementNamed(context, AppRoutes.admin);
+              return;
+            }
+            // redirecting to email verification screen if the user's email is not verified
             if (!user.emailVerified && user.role != UserRole.guest) {
               Navigator.pushReplacementNamed(
                 context, 

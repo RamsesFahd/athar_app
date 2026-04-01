@@ -19,7 +19,7 @@ class SignUpScreen extends ConsumerStatefulWidget {
 class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   // 1. Managing the selected role state (tourist or tutor)
   UserRole _selectedRole = UserRole.tourist;
-
+  TutorType? _selectedTutorType;
   final _fullName = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
@@ -56,6 +56,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         },
         data: (user) {
           if (user != null) {
+            if (user is AdminModel) {
+              Navigator.pushReplacementNamed(context, AppRoutes.admin);
+              return;
+            }
             //  3. Redirecting to email verification screen if the user's email is not verified
             if (!user.emailVerified && user.role != UserRole.guest) {
               Navigator.pushReplacementNamed(
@@ -103,7 +107,17 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     const SizedBox(height: 12),
                     _buildRoleSelector(theme, l10n),
                     const SizedBox(height: 25),
-
+                    // يظهر فقط إذا كان المستخدم اختار "مرشد"
+                    if (_selectedRole == UserRole.tutor) ...[
+                      _buildSectionLabel("نوع الحساب", theme), // يمكنك استبدال النص بـ l10n لاحقاً
+                      Row(
+                        children: [
+                          _tutorTypeOption(TutorType.individual, "فرد مستقل", theme),
+                          const SizedBox(width: 12),
+                          _tutorTypeOption(TutorType.company, "شركة سياحية", theme),
+                        ],
+                      ),
+                    ],
                     // --- حقول البيانات ---
                     _buildSectionLabel(l10n.fullNameLabel, theme),
                     _buildTextField(_fullName, l10n.nameHint, false),
@@ -222,7 +236,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       _showError(l10n.fillAllFieldsError);
       return;
     }
-
+    if (_selectedRole == UserRole.tutor && _selectedTutorType == null) {
+      _showError("يرجى اختيار نوع الحساب (فرد أو شركة)");
+      return;
+}
     if (pass != confirm) {
       _showError(l10n.passwordsDoNotMatchError);
       return;
@@ -235,6 +252,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           password: pass,
           fullName: name,
           role: _selectedRole,
+          tutorType: _selectedTutorType,
         );
     if (mounted)
       setState(() => _isSignUpLoading =
@@ -373,4 +391,18 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       ),
     ]);
   }
+  Widget _tutorTypeOption(TutorType type, String label, ThemeData theme) {
+  final isSelected = _selectedTutorType == type;
+  return Expanded(
+    child: OutlinedButton(
+      style: OutlinedButton.styleFrom(
+        backgroundColor: isSelected ? theme.colorScheme.primary : Colors.transparent,
+        side: BorderSide(color: isSelected ? theme.colorScheme.primary : Colors.grey.shade300),
+        foregroundColor: isSelected ? Colors.white : theme.colorScheme.primary,
+      ),
+      onPressed: () => setState(() => _selectedTutorType = type),
+      child: Text(label),
+    ),
+  );
+}
 }

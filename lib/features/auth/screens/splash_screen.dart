@@ -31,8 +31,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         return; // Check again if the widget is still mounted before navigating
 
       if (user != null) {
-        // before navigating to the home screen, check if the user's email is verified. If not, navigate to the verify email screen instead. This ensures that users who haven't verified their email are prompted to do so before accessing the main features of the app.
-        if (!user.emailVerified && user.role != UserRole.guest) {
+        if (user is AdminModel) {
+          Navigator.pushReplacementNamed(context, AppRoutes.admin);
+        } else if (!user.emailVerified && user.role != UserRole.guest) {
           Navigator.pushReplacementNamed(
             context,
             AppRoutes.verifyEmail,

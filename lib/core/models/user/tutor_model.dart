@@ -1,9 +1,15 @@
 part of 'user_model.dart';
-
+enum TutorType {
+  individual,
+  company,
+}
 class TutorModel extends UserModel {
+  final TutorType? tutorType;
   final String? bio;
   final String? licenceNumber;
   final String? verificationStatus;
+  final String? companyName; // companies only
+  final String? commercialRegistration; // the commercial registration number for companies
 
   TutorModel({
     required super.uId,
@@ -14,9 +20,12 @@ class TutorModel extends UserModel {
     required super.createdAt,
     super.profileImage,
     required super.accessibilitySettings,
+    this.tutorType,
     this.bio,
     this.licenceNumber,
     this.verificationStatus,
+    this.companyName,
+    this.commercialRegistration,  
     super.emailVerified,
   });
 
@@ -31,8 +40,11 @@ class TutorModel extends UserModel {
     'profileImage': profileImage,
     'accessibilitySettings': accessibilitySettings.toMap(),
     'bio': bio,
+    'tutorType': tutorType?.name,
     'licenceNumber': licenceNumber,
     'verificationStatus': verificationStatus,
+    'companyName': companyName,
+    'commercialRegistration': commercialRegistration,
     'emailVerified': emailVerified,
   };
 
@@ -44,7 +56,12 @@ class TutorModel extends UserModel {
       orElse: () => UserRole.tutor,
     );
 
-    
+    final tutorTypeString = map['tutorType'] as String? ?? 'individual';
+    final tutorType = TutorType.values.firstWhere(
+      (e) => e.name == tutorTypeString,
+      orElse: () => TutorType.individual,
+    );
+
     return TutorModel(
       uId: map['uId'] ?? '',
       fullName: map['fullName'] ?? '',
@@ -54,9 +71,12 @@ class TutorModel extends UserModel {
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       profileImage: map['profileImage'],
       accessibilitySettings: AccessibilitySettings.fromMap(map['accessibilitySettings']),
+      tutorType: tutorType,
       bio: map['bio'],
       licenceNumber: map['licenceNumber'],
       verificationStatus: map['verificationStatus'],
+      companyName: map['companyName'],
+      commercialRegistration: map['commercialRegistration'],
       emailVerified: map['emailVerified'] ?? false,
     );
   }

@@ -1537,6 +1537,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Guides'**
   String get guides;
+
+  /// No description provided for @add_new_trip.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Trip'**
+  String get add_new_trip;
+
+  /// No description provided for @add_trip_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit a trip for admin approval'**
+  String get add_trip_subtitle;
+
+  /// No description provided for @booking_status_pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get booking_status_pending;
+
+  /// No description provided for @booking_status_accepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get booking_status_accepted;
+
+  /// No description provided for @booking_status_rejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get booking_status_rejected;
+
+  /// No description provided for @booking_status_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get booking_status_completed;
+
+  /// No description provided for @accept_booking.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept_booking;
+
+  /// No description provided for @reject_booking.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get reject_booking;
+
+  /// No description provided for @view_details.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get view_details;
+
+  /// No description provided for @adult_price.
+  ///
+  /// In en, this message translates to:
+  /// **'Adult Price (SAR)'**
+  String get adult_price;
+
+  /// No description provided for @child_price.
+  ///
+  /// In en, this message translates to:
+  /// **'Child Price (SAR, 0 = free)'**
+  String get child_price;
+
+  /// No description provided for @pricing.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing'**
+  String get pricing;
+
+  /// No description provided for @accessibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessibility'**
+  String get accessibility;
+
+  /// No description provided for @accessibility_wheelchair.
+  ///
+  /// In en, this message translates to:
+  /// **'Wheelchair Accessible'**
+  String get accessibility_wheelchair;
+
+  /// No description provided for @accessibility_family.
+  ///
+  /// In en, this message translates to:
+  /// **'Family / Child Friendly'**
+  String get accessibility_family;
+
+  /// No description provided for @guide_info_autofilled.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide Info (auto-filled from your profile)'**
+  String get guide_info_autofilled;
+
+  /// No description provided for @description_template_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the template below — fill in each bullet point.'**
+  String get description_template_hint;
+
+  /// No description provided for @tour_operator.
+  ///
+  /// In en, this message translates to:
+  /// **'Tour Operator'**
+  String get tour_operator;
 }
 
 class _AppLocalizationsDelegate

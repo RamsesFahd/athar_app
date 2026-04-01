@@ -1,11 +1,14 @@
 import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
+import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
+import 'package:athar_app/features/guide_market/screens/add_trip_screen.dart';
+import 'package:athar_app/features/guide_market/screens/booking_detail_screen.dart';
 import 'package:athar_app/features/profile/logic/profile_notifier.dart';
 import 'package:athar_app/features/profile/widgets/tutor_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../generated/l10n/app_localizations.dart';
-import '../widgets/booking_card.dart';
 import '../widgets/saved_card.dart';
 import '../widgets/settings_tile.dart';
 import '../widgets/guest_profile_view.dart';
@@ -141,32 +144,40 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ],
         );
       case 1:
-        return ListView(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          children: [
-            BookingCard(
-              title: "Old Jeddah Tour with Layla",
-              guide: "Layla Hashim",
-              dateText: "Nov 10, 2025",
-              timeText: "10:00 AM",
-              duration: "3 hours",
-              detailsLabel: l10n.profileDetails,
-              imageUrl:
-                  "https://images.pexels.com/photos/4662950/pexels-photo-4662950.jpeg",
-              onDetails: () {},
-            ),
-            BookingCard(
-              title: "AlUla Archaeological Sites",
-              guide: "Omar Al-Qahtani",
-              dateText: "Dec 5, 2025",
-              timeText: "9:00 AM",
-              duration: "5 hours",
-              detailsLabel: l10n.profileDetails,
-              imageUrl:
-                  "https://images.pexels.com/photos/6650442/pexels-photo-6650442.jpeg",
-              onDetails: () {},
-            ),
-          ],
+        return StreamBuilder<List<BookingModel>>(
+          stream: ref
+              .read(marketplaceRepositoryProvider)
+              .fetchUserBookings(user.uId, user.role),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final bookings = snapshot.data ?? [];
+            if (bookings.isEmpty) {
+              return Center(
+                child: Text(
+                  'No bookings yet',
+                  style: theme.textTheme.bodyLarge
+                      ?.copyWith(color: Colors.grey.shade500),
+                ),
+              );
+            }
+            final isTutor = user is TutorModel;
+            // Sort: pending first for tutors
+            List<BookingModel> sorted = List.from(bookings);
+            if (isTutor) {
+              sorted.sort((a, b) =>
+                  a.status == BookingStatus.pending ? -1 : 1);
+            }
+            return ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              itemCount: sorted.length,
+              itemBuilder: (context, index) {
+                final b = sorted[index];
+                return _buildBookingItem(context, b, theme, l10n, isTutor);
+              },
+            );
+          },
         );
       case 0:
         return ListView(
@@ -186,18 +197,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           leadingIcon: Icons.mode_edit,
                           onTap: () => _showNameInputDialog(context, l10n, user.fullName),
                         ),
-                        if (user is TutorModel &&
-                            user.verificationStatus != 'verified')
+                        if (user is TutorModel) ...[
+                          if (user.verificationStatus != 'verified')
+                            SettingsTile(
+                              title: l10n.tutorLicenseNumberTitle,
+                              subtitle: l10n.tutorCompleteVerificationSubtitle,
+                              leadingIcon: Icons.assignment_ind_outlined,
+                              titleColor: theme.colorScheme.primary,
+                              onTap: () {},
+                            ),
                           SettingsTile(
-                            title: l10n.tutorLicenseNumberTitle,
-                            subtitle: l10n.tutorCompleteVerificationSubtitle,
-                            leadingIcon: Icons.assignment_ind_outlined,
-                            titleColor: theme
-                                .colorScheme.primary, // تمييز الزر بلون التطبيق
-                            onTap: () {
-                              // فتح صفحة التوثيق
-                            },
+                            title: l10n.add_new_trip,
+                            subtitle: l10n.add_trip_subtitle,
+                            leadingIcon: Icons.add_location_alt_outlined,
+                            titleColor: theme.colorScheme.primary,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const AddTripScreen()),
+                            ),
                           ),
+                        ],
                         if (user is TouristModel) ...[
                           SettingsTile(
                             title: l10n.manageContributions,
@@ -214,10 +234,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           title: l10n.settingsChangePassword,
                           leadingIcon: Icons.lock_outline_rounded,
                           onTap: () async {
-                            final email = user.email; 
-                            await ref.read(authNotifierProvider.notifier).resetPassword(email: email); //
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("تم إرسال رابط تغيير كلمة المرور إلى بريدك الإلكتروني")),
+                            final email = user.email;
+                            final messenger = ScaffoldMessenger.of(context);
+                            await ref.read(authNotifierProvider.notifier).resetPassword(email: email);
+                            messenger.showSnackBar(
+                              const SnackBar(content: Text("تم إرسال رابط تغيير كلمة المرور إلى بريدك الإلكتروني")),
                             );
                           },
                           showDivider: false,
@@ -252,7 +273,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           trailing: Switch(
                               value: true,
                               onChanged: (v) {},
-                              activeColor: theme.colorScheme.primary),
+                              activeThumbColor: theme.colorScheme.primary),
                         ),
                         SettingsTile(
                           title: l10n.profileEventReminders,
@@ -261,7 +282,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           trailing: Switch(
                               value: true,
                               onChanged: (v) {},
-                              activeColor: theme.colorScheme.primary),
+                              activeThumbColor: theme.colorScheme.primary),
                         ),
                         SettingsTile(
                           title: l10n.profileMarketingEmails,
@@ -270,7 +291,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           trailing: Switch(
                               value: false,
                               onChanged: (v) {},
-                              activeColor: theme.colorScheme.primary),
+                              activeThumbColor: theme.colorScheme.primary),
                         ),
                       ],
                     ),
@@ -307,6 +328,128 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       default:
         return const SizedBox.shrink();
     }
+  }
+
+  Color _statusColor(BookingStatus status, ThemeData theme) {
+    switch (status) {
+      case BookingStatus.accepted:
+        return Colors.green;
+      case BookingStatus.rejected:
+        return Colors.red;
+      case BookingStatus.completed:
+        return theme.colorScheme.primary;
+      case BookingStatus.pending:
+        return Colors.amber.shade700;
+    }
+  }
+
+  String _statusLabel(BookingStatus status, AppLocalizations l10n) {
+    switch (status) {
+      case BookingStatus.accepted:
+        return l10n.booking_status_accepted;
+      case BookingStatus.rejected:
+        return l10n.booking_status_rejected;
+      case BookingStatus.completed:
+        return l10n.booking_status_completed;
+      case BookingStatus.pending:
+        return l10n.booking_status_pending;
+    }
+  }
+
+  Widget _buildBookingItem(BuildContext context, BookingModel b, ThemeData theme,
+      AppLocalizations l10n, bool isTutor) {
+    final statusColor = _statusColor(b.status, theme);
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                if (b.imageUrl.isNotEmpty)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(b.imageUrl,
+                        width: 56, height: 56, fit: BoxFit.cover),
+                  ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(b.tripTitle,
+                          style: theme.textTheme.titleSmall
+                              ?.copyWith(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 2),
+                      Text('${b.date}  •  ${b.timeSlot}',
+                          style: theme.textTheme.bodySmall),
+                    ],
+                  ),
+                ),
+                Chip(
+                  label: Text(_statusLabel(b.status, l10n),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold)),
+                  backgroundColor: statusColor,
+                  padding: EdgeInsets.zero,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                // Details button
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => BookingDetailScreen(booking: b)),
+                    ),
+                    child: Text(l10n.view_details),
+                  ),
+                ),
+                // Accept / Reject only for tutor on pending bookings
+                if (isTutor && b.status == BookingStatus.pending) ...[
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green),
+                      onPressed: () => ref
+                          .read(marketplaceRepositoryProvider)
+                          .updateBookingStatus(
+                              b.bookingId, BookingStatus.accepted),
+                      child: Text(l10n.accept_booking,
+                          style: const TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.red)),
+                      onPressed: () => ref
+                          .read(marketplaceRepositoryProvider)
+                          .updateBookingStatus(
+                              b.bookingId, BookingStatus.rejected),
+                      child: Text(l10n.reject_booking,
+                          style: const TextStyle(color: Colors.red)),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildSettingsGroup(
@@ -408,11 +551,12 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
           TextButton(
             onPressed: () async {
               if (controller.text.isNotEmpty) {
-                await ref.read(profileNotifierProvider.notifier).updateProfileName(controller.text); // 
-                Navigator.pop(context);
+                final nav = Navigator.of(context);
+                await ref.read(profileNotifierProvider.notifier).updateProfileName(controller.text);
+                nav.pop();
               }
             },
-            child: Text("save"), // 
+            child: Text("save"),
           ), // TextButton
         ],
       ), // AlertDialog

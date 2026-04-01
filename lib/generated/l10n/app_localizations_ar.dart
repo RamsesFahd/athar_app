@@ -750,4 +750,59 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get guides => 'مرشدون';
+
+  @override
+  String get add_new_trip => 'إضافة رحلة جديدة';
+
+  @override
+  String get add_trip_subtitle => 'قدّم رحلة للمراجعة من قبل المشرف';
+
+  @override
+  String get booking_status_pending => 'قيد المراجعة';
+
+  @override
+  String get booking_status_accepted => 'مقبول';
+
+  @override
+  String get booking_status_rejected => 'مرفوض';
+
+  @override
+  String get booking_status_completed => 'مكتمل';
+
+  @override
+  String get accept_booking => 'قبول';
+
+  @override
+  String get reject_booking => 'رفض';
+
+  @override
+  String get view_details => 'عرض التفاصيل';
+
+  @override
+  String get adult_price => 'سعر البالغ (ر.س)';
+
+  @override
+  String get child_price => 'سعر الطفل (ر.س، 0 = مجاناً)';
+
+  @override
+  String get pricing => 'التسعير';
+
+  @override
+  String get accessibility => 'إمكانية الوصول';
+
+  @override
+  String get accessibility_wheelchair => 'مناسب لذوي الإعاقة الحركية';
+
+  @override
+  String get accessibility_family => 'مناسب للعائلات والأطفال';
+
+  @override
+  String get guide_info_autofilled =>
+      'معلومات المرشد (تعبأ تلقائياً من ملفك الشخصي)';
+
+  @override
+  String get description_template_hint => 'استخدم القالب أدناه — املأ كل نقطة.';
+
+  @override
+  String get tour_operator => 'جهة التنظيم';
 }

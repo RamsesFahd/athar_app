@@ -53,6 +53,7 @@ class AuthNotifier extends _$AuthNotifier {
     required String password, 
     required String fullName,
     required UserRole role,
+    TutorType? tutorType,
   }) async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
@@ -64,6 +65,7 @@ class AuthNotifier extends _$AuthNotifier {
         password: password, 
         fullName: fullName,
         role: role, 
+        tutorType: tutorType,
       );
 
       if (error != null) throw error;

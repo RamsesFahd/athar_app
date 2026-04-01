@@ -309,5 +309,24 @@
   "guide": "Guide",
   "confirm": "Confirm",
   "select_this_guide": "Select this guide",
-  "guides": "Guides"
+  "guides": "Guides",
+
+  "add_new_trip": "Add New Trip",
+  "add_trip_subtitle": "Submit a trip for admin approval",
+  "booking_status_pending": "Pending",
+  "booking_status_accepted": "Accepted",
+  "booking_status_rejected": "Rejected",
+  "booking_status_completed": "Completed",
+  "accept_booking": "Accept",
+  "reject_booking": "Reject",
+  "view_details": "View Details",
+  "adult_price": "Adult Price (SAR)",
+  "child_price": "Child Price (SAR, 0 = free)",
+  "pricing": "Pricing",
+  "accessibility": "Accessibility",
+  "accessibility_wheelchair": "Wheelchair Accessible",
+  "accessibility_family": "Family / Child Friendly",
+  "guide_info_autofilled": "Guide Info (auto-filled from your profile)",
+  "description_template_hint": "Use the template below — fill in each bullet point.",
+  "tour_operator": "Tour Operator"
 }

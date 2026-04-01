@@ -271,5 +271,24 @@
   "guide": "المرشد",
   "confirm": "التأكيد",
   "guides": "مرشدون",
-  "select_this_guide": "اختيار هذا المرشد"
+  "select_this_guide": "اختيار هذا المرشد",
+
+  "add_new_trip": "إضافة رحلة جديدة",
+  "add_trip_subtitle": "قدّم رحلة للمراجعة من قبل المشرف",
+  "booking_status_pending": "قيد المراجعة",
+  "booking_status_accepted": "مقبول",
+  "booking_status_rejected": "مرفوض",
+  "booking_status_completed": "مكتمل",
+  "accept_booking": "قبول",
+  "reject_booking": "رفض",
+  "view_details": "عرض التفاصيل",
+  "adult_price": "سعر البالغ (ر.س)",
+  "child_price": "سعر الطفل (ر.س، 0 = مجاناً)",
+  "pricing": "التسعير",
+  "accessibility": "إمكانية الوصول",
+  "accessibility_wheelchair": "مناسب لذوي الإعاقة الحركية",
+  "accessibility_family": "مناسب للعائلات والأطفال",
+  "guide_info_autofilled": "معلومات المرشد (تعبأ تلقائياً من ملفك الشخصي)",
+  "description_template_hint": "استخدم القالب أدناه — املأ كل نقطة.",
+  "tour_operator": "جهة التنظيم"
 }
