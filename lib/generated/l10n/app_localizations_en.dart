@@ -642,7 +642,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get all_trips => 'All Trips';
 
   @override
-  String get search_trips_hint => 'Search for your trip...';
+  String get search_trips_hint => 'Search for a trip...';
 
   @override
   String get price_low_first => 'Price: Low to High';
@@ -807,4 +807,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tour_operator => 'Tour Operator';
+
+  @override
+  String get filterAndSortTitle => 'Filter and Sort Results';
+
+  @override
+  String get sortBy => 'Sort by';
+
+  @override
+  String get priceLowToHigh => 'Price: Low to High';
+
+  @override
+  String get priceHighToLow => 'Price: High to Low';
+
+  @override
+  String get priceRange => 'Price Range';
+
+  @override
+  String get destination => 'Destination';
+
+  @override
+  String get showResults => 'Show Results';
+
+  @override
+  String get currencySAR => 'SAR';
 }

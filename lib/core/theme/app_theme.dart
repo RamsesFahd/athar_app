@@ -52,7 +52,7 @@ class AppTheme {
           fontFamily: englishFont,
           fontFamilyFallback: fallbackArabicFont,
           fontSize: baseFontSize + 8,
-         fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w800,
           color: textColorPrimary, // ✨ linked for high contrast mode
         ),
         bodyLarge: TextStyle(

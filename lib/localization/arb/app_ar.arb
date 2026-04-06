@@ -232,7 +232,7 @@
   "rawiUntitledArabic": "سالفة جديدة",
   "rawiUntitledEnglish": "محادثة جديدة",
   "all_trips": "جميع الرحلات",
-"search_trips_hint": "ابحث عن رحلتك...",
+"search_trips_hint": "ابحث عن رحلة...",
 "price_low_first": "السعر: الأقل أولاً",
 "price_high_first": "السعر: الأعلى أولاً",
 "trips_in": "رحلات في {region}",
@@ -290,5 +290,14 @@
   "accessibility_family": "مناسب للعائلات والأطفال",
   "guide_info_autofilled": "معلومات المرشد (تعبأ تلقائياً من ملفك الشخصي)",
   "description_template_hint": "استخدم القالب أدناه — املأ كل نقطة.",
-  "tour_operator": "جهة التنظيم"
+  "tour_operator": "جهة التنظيم",
+
+  "filterAndSortTitle": "تصفية وترتيب النتائج",
+  "sortBy": "ترتيب حسب",
+  "priceLowToHigh": "الأقل سعراً",
+  "priceHighToLow": "الأعلى سعراً",
+  "priceRange": "نطاق السعر",
+  "destination": "الوجهة",
+  "showResults": "إظهار النتائج",
+  "currencySAR": "ر.س"
 }

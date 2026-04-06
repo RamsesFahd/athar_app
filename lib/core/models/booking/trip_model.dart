@@ -4,7 +4,8 @@ class TripModel {
   final String id;
   final String titleAr;
   final String titleEn;
-  final String city;
+  final String cityAr;
+  final String cityEn;
   final String guide;
   final String company;
   final double adultPrice;
@@ -24,7 +25,8 @@ class TripModel {
     required this.id,
     required this.titleAr,
     required this.titleEn,
-    required this.city,
+    required this.cityAr,
+    required this.cityEn,
     required this.guide,
     required this.company,
     required this.adultPrice,
@@ -62,7 +64,8 @@ class TripModel {
       id: documentId,
       titleAr: map['titleAr'] ?? '',
       titleEn: map['titleEn'] ?? '',
-      city: map['city'] ?? '',
+      cityAr: map['cityAr'] ?? map['city'] ?? '',
+      cityEn: map['cityEn'] ?? map['city'] ?? '',
       guide: map['guide'] ?? '',
       company: map['company'] ?? '',
       adultPrice: parsePrice(map['adultPrice'] ?? map['price']),
@@ -85,7 +88,8 @@ class TripModel {
     return {
       'titleAr': titleAr,
       'titleEn': titleEn,
-      'city': city,
+      'cityAr': cityAr,
+      'cityEn': cityEn,
       'guide': guide,
       'company': company,
       'adultPrice': adultPrice,
@@ -102,4 +106,5 @@ class TripModel {
       'accessibilityFeatures': accessibilityFeatures,
     };
   }
+  String getCity(bool isAr) => isAr ? cityAr : cityEn;
 }

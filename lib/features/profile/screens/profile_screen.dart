@@ -152,6 +152,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
             final bookings = snapshot.data ?? [];
             if (bookings.isEmpty) {
               return Center(

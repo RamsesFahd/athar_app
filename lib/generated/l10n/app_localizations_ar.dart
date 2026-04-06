@@ -641,7 +641,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get all_trips => 'جميع الرحلات';
 
   @override
-  String get search_trips_hint => 'ابحث عن رحلتك...';
+  String get search_trips_hint => 'ابحث عن رحلة...';
 
   @override
   String get price_low_first => 'السعر: الأقل أولاً';
@@ -805,4 +805,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tour_operator => 'جهة التنظيم';
+
+  @override
+  String get filterAndSortTitle => 'تصفية وترتيب النتائج';
+
+  @override
+  String get sortBy => 'ترتيب حسب';
+
+  @override
+  String get priceLowToHigh => 'الأقل سعراً';
+
+  @override
+  String get priceHighToLow => 'الأعلى سعراً';
+
+  @override
+  String get priceRange => 'نطاق السعر';
+
+  @override
+  String get destination => 'الوجهة';
+
+  @override
+  String get showResults => 'إظهار النتائج';
+
+  @override
+  String get currencySAR => 'ر.س';
 }

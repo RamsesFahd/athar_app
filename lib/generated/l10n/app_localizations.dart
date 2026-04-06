@@ -1325,7 +1325,7 @@ abstract class AppLocalizations {
   /// No description provided for @search_trips_hint.
   ///
   /// In en, this message translates to:
-  /// **'Search for your trip...'**
+  /// **'Search for a trip...'**
   String get search_trips_hint;
 
   /// No description provided for @price_low_first.
@@ -1645,6 +1645,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tour Operator'**
   String get tour_operator;
+
+  /// No description provided for @filterAndSortTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter and Sort Results'**
+  String get filterAndSortTitle;
+
+  /// No description provided for @sortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get sortBy;
+
+  /// No description provided for @priceLowToHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: Low to High'**
+  String get priceLowToHigh;
+
+  /// No description provided for @priceHighToLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Price: High to Low'**
+  String get priceHighToLow;
+
+  /// No description provided for @priceRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Price Range'**
+  String get priceRange;
+
+  /// No description provided for @destination.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination'**
+  String get destination;
+
+  /// No description provided for @showResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Results'**
+  String get showResults;
+
+  /// No description provided for @currencySAR.
+  ///
+  /// In en, this message translates to:
+  /// **'SAR'**
+  String get currencySAR;
 }
 
 class _AppLocalizationsDelegate

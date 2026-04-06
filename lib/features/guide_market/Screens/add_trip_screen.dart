@@ -29,7 +29,20 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   final _descEn = TextEditingController(
     text: '## What\'s Included\n- \n\n## Schedule\n- \n\n## What to Bring\n- ',
   );
-  final _city = TextEditingController();
+  Map<String, String>? _selectedCity;
+
+  // قائمة المدن المعتمدة في التطبيق
+  static const List<Map<String, String>> _saudiCities = [
+    {'ar': 'الرياض', 'en': 'Riyadh'},
+    {'ar': 'جدة', 'en': 'Jeddah'},
+    {'ar': 'مكة المكرمة', 'en': 'Makkah'},
+    {'ar': 'المدينة المنورة', 'en': 'Madinah'},
+    {'ar': 'العلا', 'en': 'AlUla'},
+    {'ar': 'الدمام', 'en': 'Dammam'},
+    {'ar': 'أبها', 'en': 'Abha'},
+    {'ar': 'الطائف', 'en': 'Taif'},
+    {'ar': 'تبوك', 'en': 'Tabuk'},
+  ];
   final _adultPrice = TextEditingController();
   final _childPrice = TextEditingController();
 
@@ -50,7 +63,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
     _shortDescEn.dispose();
     _descAr.dispose();
     _descEn.dispose();
-    _city.dispose();
+    
     _adultPrice.dispose();
     _childPrice.dispose();
     super.dispose();
@@ -104,7 +117,8 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
         shortDescriptionEn: _shortDescEn.text.trim(),
         descriptionAr: _descAr.text.trim(),
         descriptionEn: _descEn.text.trim(),
-        city: _city.text.trim(),
+        cityAr: _selectedCity!['ar']!,
+        cityEn: _selectedCity!['en']!,
         adultPrice: adultPrice,
         childPrice: childPrice,
         imageUrl: imageUrl,
@@ -260,7 +274,23 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
             // ── Section: Trip Details ─────────────────────────────────
             _sectionHeader(theme, 'Trip Details'),
             const SizedBox(height: 12),
-            _field(_city, 'City (e.g. أبها)', required: true),
+            DropdownButtonFormField<Map<String, String>>(
+              initialValue: _selectedCity,
+              decoration: InputDecoration(
+                labelText: 'City (المدينة)',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              ),
+              items: _saudiCities.map((city) {
+                final isAr = Localizations.localeOf(context).languageCode == 'ar';
+                return DropdownMenuItem(
+                  value: city,
+                  child: Text(isAr ? city['ar']! : city['en']!),
+                );
+              }).toList(),
+              onChanged: (val) => setState(() => _selectedCity = val),
+              validator: (v) => v == null ? 'Please select a city / الرجاء اختيار المدينة' : null,
+            ),
             const SizedBox(height: 20),
 
             // ── Section: Accessibility ────────────────────────────────

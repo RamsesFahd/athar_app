@@ -11,6 +11,7 @@ part 'booking_notifier.g.dart';
 class BookingNotifier extends _$BookingNotifier {
   @override
   BookingModel? build() {
+    ref.keepAlive(); // prevent auto-disposal across multi-screen booking flow
     return null; // initial state is null, meaning no booking in progress
   }
 
@@ -21,8 +22,8 @@ class BookingNotifier extends _$BookingNotifier {
       touristId: '',
       tutorId: '',
       tripId: trip.id,
-      tripTitle: trip.titleAr,
-      tripCity: trip.city,
+      tripTitle: '${trip.titleAr} - ${trip.titleEn}',
+      tripCity: '${trip.cityAr} - ${trip.cityEn}',
       date: '',
       timeSlot: '',
       adultsCount: 1,
@@ -68,7 +69,7 @@ class BookingNotifier extends _$BookingNotifier {
     if (state == null) return;
 
     // Fetch the current tourist's uId from AuthNotifier
-    final currentUser = ref.read(authNotifierProvider).value;
+    final currentUser = await ref.read(authNotifierProvider.future);
     if (currentUser == null) throw 'User not logged in';
 
     final finalBooking = state!.copyWith(touristId: currentUser.uId);

@@ -105,7 +105,7 @@ class _TripApprovalCard extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        trip.city,
+                        '${trip.cityAr} - ${trip.cityEn}',
                         style: TextStyle(
                             fontSize: 11,
                             color: AppColors.primary,

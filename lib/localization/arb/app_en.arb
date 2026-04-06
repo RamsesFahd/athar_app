@@ -271,7 +271,7 @@
   "rawiUntitledArabic": "New Story",
   "rawiUntitledEnglish": "New Chat",
   "all_trips": "All Trips",
-"search_trips_hint": "Search for your trip...",
+"search_trips_hint": "Search for a trip...",
 "price_low_first": "Price: Low to High",
 "price_high_first": "Price: High to Low",
 "trips_in": "Trips in {region}",
@@ -328,5 +328,14 @@
   "accessibility_family": "Family / Child Friendly",
   "guide_info_autofilled": "Guide Info (auto-filled from your profile)",
   "description_template_hint": "Use the template below — fill in each bullet point.",
-  "tour_operator": "Tour Operator"
+  "tour_operator": "Tour Operator",
+
+  "filterAndSortTitle": "Filter and Sort Results",
+  "sortBy": "Sort by",
+  "priceLowToHigh": "Price: Low to High",
+  "priceHighToLow": "Price: High to Low",
+  "priceRange": "Price Range",
+  "destination": "Destination",
+  "showResults": "Show Results",
+  "currencySAR": "SAR"
 }

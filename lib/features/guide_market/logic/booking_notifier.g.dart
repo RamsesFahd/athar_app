@@ -6,7 +6,7 @@ part of 'booking_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$bookingNotifierHash() => r'c4c09acd602f1b24c6c0e363bc60c30df2381408';
+String _$bookingNotifierHash() => r'769682bb3803dfddf8cd165b94aff92ecebd7c8f';
 
 /// See also [BookingNotifier].
 @ProviderFor(BookingNotifier)

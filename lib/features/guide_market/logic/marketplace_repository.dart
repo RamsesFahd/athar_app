@@ -69,12 +69,15 @@ class MarketplaceRepository {
     String field = (role == UserRole.tutor) ? 'tutorId' : 'touristId';
     return _bookings
         .where(field, isEqualTo: userId)
-        .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) =>
-                BookingModel.fromMap(doc.data() as Map<String, dynamic>))
-            .toList());
+        .map((snapshot) {
+          final list = snapshot.docs
+              .map((doc) =>
+                  BookingModel.fromMap(doc.data() as Map<String, dynamic>))
+              .toList();
+          list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          return list;
+        });
   }
 
   // 7. تحديث حالة الحجز (قبول / رفض / إكمال)
