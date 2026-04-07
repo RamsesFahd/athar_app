@@ -8,6 +8,7 @@ import 'package:athar_app/features/cultural_archive/screens/cultural_archive.dar
 import 'package:athar_app/features/profile/screens/profile_screen.dart';
 import 'package:athar_app/features/home/screens/home_screen.dart';
 import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
+import 'package:athar_app/features/interactive map/screens/map_screen.dart'; // تأكدي من مسار ملف الخريطة عندك
 
 class NavigationContainer extends StatefulWidget {
   const NavigationContainer({super.key});
@@ -60,7 +61,7 @@ class _NavigationContainerState extends State<NavigationContainer> {
       HomeScreen(
         onSeeAllArchive: () => _onNavigateToSubPage(const CulturalArchive()),
       ),
-      const Scaffold(body: Center(child: Text('Map Screen'))),
+      const MapScreen(),
       const RawiLandingScreen(),
       const Scaffold(body: Center(child: Text('Calendar'))),
       const ProfileScreen(),
