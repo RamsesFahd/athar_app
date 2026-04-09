@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:athar_app/core/models/user/cultural/category_model.dart';
-import 'package:athar_app/core/models/user/cultural/cultural_item_model.dart';
+import 'package:athar_app/core/models/cultural/category_model.dart';
+import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 
 
 part 'cultural_repository.g.dart';

@@ -1,4 +1,4 @@
-import 'package:athar_app/core/models/user/cultural/cultural_item_model.dart';
+import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';

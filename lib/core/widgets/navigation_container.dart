@@ -8,7 +8,7 @@ import 'package:athar_app/features/cultural_archive/screens/cultural_archive.dar
 import 'package:athar_app/features/profile/screens/profile_screen.dart';
 import 'package:athar_app/features/home/screens/home_screen.dart';
 import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
-import 'package:athar_app/features/interactive map/screens/map_screen.dart'; // تأكدي من مسار ملف الخريطة عندك
+import 'package:athar_app/features/interactive_map/screens/map_screen.dart';
 
 class NavigationContainer extends StatefulWidget {
   const NavigationContainer({super.key});
@@ -21,6 +21,21 @@ class _NavigationContainerState extends State<NavigationContainer> {
   int _currentIndex = 0;
   int _previousIndex = 0;
   Widget? _subPage;
+  late final List<Widget> screens;
+
+  @override
+  void initState() {
+    super.initState();
+    screens = [
+      HomeScreen(
+        onSeeAllArchive: () => _onNavigateToSubPage(const CulturalArchive()),
+      ),
+      const MapScreen(),
+      const RawiLandingScreen(),
+      const Scaffold(body: Center(child: Text('Calendar'))),
+      const ProfileScreen(),
+    ];
+  }
 
   // Go to a subpage (like Cultural Archive) from Home
   void _onNavigateToSubPage(Widget page) {
@@ -56,17 +71,6 @@ class _NavigationContainerState extends State<NavigationContainer> {
 
   @override
   Widget build(BuildContext context) {
-    // defining the main screens for each tab. The HomeScreen receives a callback to navigate to the Cultural Archive subpage.
-    final List<Widget> _screens = [
-      HomeScreen(
-        onSeeAllArchive: () => _onNavigateToSubPage(const CulturalArchive()),
-      ),
-      const MapScreen(),
-      const RawiLandingScreen(),
-      const Scaffold(body: Center(child: Text('Calendar'))),
-      const ProfileScreen(),
-    ];
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       // the AppBar is only shown when we're not in a subpage. If we are in a subpage, we want to hide the AppBar to give more space for the content (especially for the Cultural Archive which has a lot of content). The Header widget will automatically show the correct title based on the current tab or subpage.
@@ -105,7 +109,7 @@ class _NavigationContainerState extends State<NavigationContainer> {
               key: ValueKey<String>(_subPage != null
                   ? 'subpage_${_subPage.hashCode}'
                   : 'tab_$_currentIndex'),
-              child: _subPage ?? _screens[_currentIndex],
+              child: _subPage ?? screens[_currentIndex],
             ),
           ),
         ],

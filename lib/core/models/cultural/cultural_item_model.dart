@@ -11,8 +11,10 @@ class CulturalItemModel {
   final String regionId;
   final String regionEn;
   final String regionAr;
-  final DateTime? createdAt; 
+  final DateTime? createdAt;
   final String? createdBy;
+  final double? latitude;
+  final double? longitude;
 
 
   CulturalItemModel({
@@ -28,6 +30,8 @@ class CulturalItemModel {
     required this.regionAr,
     this.createdAt,
     this.createdBy,
+    this.latitude,
+    this.longitude,
   });
 
   Map<String, dynamic> toMap() {
@@ -43,6 +47,8 @@ class CulturalItemModel {
       'regionAr': regionAr,
       'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
       'createdBy': createdBy,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
     };
   }
 
@@ -62,6 +68,8 @@ class CulturalItemModel {
           ? (map['createdAt'] as Timestamp).toDate()
           : null,
       createdBy: map['createdBy'] ?? 'Admin',
+      latitude: (map['latitude'] as num?)?.toDouble(),
+      longitude: (map['longitude'] as num?)?.toDouble(),
     );
   }
 }

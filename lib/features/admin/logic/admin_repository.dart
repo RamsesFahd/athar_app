@@ -95,4 +95,16 @@ class AdminRepository {
       'createdBy': 'Admin',
     });
   }
+
+  // ── Events ───────────────────────────────────────────────────────────────────
+
+  CollectionReference get _events => _firestore.collection('events');
+
+  Future<void> addEvent(Map<String, dynamic> data) async {
+    await _events.add({
+      ...data,
+      'createdAt': FieldValue.serverTimestamp(),
+      'createdBy': 'Admin',
+    });
+  }
 }

@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../cultural_archive/widgets/cultural_item_details.dart';
 import '../../cultural_archive/logic/cultural_notifier.dart';
-import '../../../core/models/user/cultural/cultural_item_model.dart';
+import '../../../core/models/cultural/cultural_item_model.dart';
 
 class SmartTextContent extends ConsumerWidget {
   final String text;

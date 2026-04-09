@@ -24,6 +24,8 @@ class _AddCulturalContentScreenState
   final _titleEnController = TextEditingController();
   final _descArController = TextEditingController();
   final _descEnController = TextEditingController();
+  final _latController = TextEditingController();
+  final _lngController = TextEditingController();
 
   String _selectedCategory = 'food';
   String? _selectedRegionId;
@@ -45,6 +47,8 @@ class _AddCulturalContentScreenState
     _titleEnController.dispose();
     _descArController.dispose();
     _descEnController.dispose();
+    _latController.dispose();
+    _lngController.dispose();
     super.dispose();
   }
 
