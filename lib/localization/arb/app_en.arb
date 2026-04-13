@@ -270,7 +270,7 @@
   "rawiStoryStartChat": "Start chatting with Rawi",
   "rawiUntitledArabic": "New Story",
   "rawiUntitledEnglish": "New Chat",
-  "all_trips": "All Trips",
+  "all_trips": "Explore Trips",
 "search_trips_hint": "Search for a trip...",
 "price_low_first": "Price: Low to High",
 "price_high_first": "Price: High to Low",
@@ -337,5 +337,10 @@
   "priceRange": "Price Range",
   "destination": "Destination",
   "showResults": "Show Results",
-  "currencySAR": "SAR"
+  "currencySAR": "SAR",
+  "min_price": "Min Price",
+  "max_price": "Max Price",
+  "arabic": "Arabic",
+  "english": "English",
+  "french": "French"
 }

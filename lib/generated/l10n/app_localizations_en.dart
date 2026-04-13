@@ -639,7 +639,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rawiUntitledEnglish => 'New Chat';
 
   @override
-  String get all_trips => 'All Trips';
+  String get all_trips => 'Explore Trips';
 
   @override
   String get search_trips_hint => 'Search for a trip...';
@@ -831,4 +831,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencySAR => 'SAR';
+
+  @override
+  String get min_price => 'Min Price';
+
+  @override
+  String get max_price => 'Max Price';
+
+  @override
+  String get arabic => 'Arabic';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get french => 'French';
 }

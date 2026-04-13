@@ -147,10 +147,10 @@ class _TripsListScreenState extends ConsumerState<TripsListScreen> {
                           padding: const EdgeInsets.all(16),
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.75,
-                            crossAxisSpacing: 16,
-                            mainAxisSpacing: 16,
+                           crossAxisCount: 2,
+                           crossAxisSpacing: 12,
+                           mainAxisSpacing: 16,
+                           childAspectRatio: 0.6,
                           ),
                           itemCount: displayedTrips.length,
                           itemBuilder: (context, index) => TripCard(

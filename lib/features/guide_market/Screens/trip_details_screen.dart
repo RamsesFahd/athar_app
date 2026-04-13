@@ -72,17 +72,26 @@ class TripDetailsScreen extends ConsumerWidget {
                       const SizedBox(height: 32),
 
                       // ── Tutor / company info ───────────────────────
-                      if (isCompany) ...[
-                        _buildInfoRow(context, Icons.business_outlined,
-                            '${l10n.company}: ${trip.company}'),
-                        _buildInfoRow(context, Icons.verified_outlined,
-                            '${l10n.license}: ${trip.license}'),
-                      ] else ...[
-                        _buildInfoRow(context, Icons.person_outline,
-                            '${l10n.guide}: ${trip.guide}'),
-                        _buildInfoRow(context, Icons.verified_outlined,
-                            '${l10n.license}: ${trip.license}'),
-                      ],
+                      _buildInfoRow(
+                        context,
+                        Icons.person_outline,
+                        '${l10n.guide}: ${trip.guide}',
+                        trailing: GestureDetector(
+                          onTap: () =>
+                              _showGuideDetailsPopUp(context, l10n, isAr),
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Icon(
+                              Icons.info_outline,
+                              size: 18,
+                              color: theme.colorScheme.secondary,
+                            ),
+                          ),
+                        ),
+                      ),
+                      _buildInfoRow(context, Icons.verified_outlined,
+                          '${l10n.license}: ${trip.license}'),
                     ],
                   ),
                 ),
@@ -143,8 +152,7 @@ class TripDetailsScreen extends ConsumerWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            BookingDetailsScreen(trip: trip),
+                        builder: (context) => BookingDetailsScreen(trip: trip),
                       ),
                     );
                   },
@@ -159,38 +167,66 @@ class TripDetailsScreen extends ConsumerWidget {
   }
 
   Widget _buildPriceRow(ThemeData theme, bool isAr) {
-    final adultLabel = isAr
-        ? '${trip.adultPrice.toInt()} ر.س / بالغ'
-        : '${trip.adultPrice.toInt()} SAR / Adult';
-    final childLabel = trip.childPrice == 0
-        ? (isAr ? 'أطفال: مجاناً' : 'Children: Free')
-        : (isAr
-            ? '${trip.childPrice.toInt()} ر.س / طفل'
-            : '${trip.childPrice.toInt()} SAR / Child');
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          // قسم البالغين
+          _buildPriceItem(
+            theme,
+            label: isAr ? 'للبالغين' : 'Adults',
+            price: '${trip.adultPrice.toInt()} ${isAr ? 'ر.س' : 'SAR'}',
+            icon: Icons.person_outline,
+          ),
 
-    return Wrap(
-      spacing: 12,
-      runSpacing: 4,
+          // فاصل عمودي نحيف جداً وأنيق
+          Container(
+            height: 30,
+            width: 1,
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            color: theme.dividerColor.withOpacity(0.2),
+          ),
+
+          // قسم الأطفال
+          _buildPriceItem(
+            theme,
+            label: isAr ? 'للأطفال' : 'Children',
+            price: trip.childPrice == 0
+                ? (isAr ? 'مجاناً' : 'Free')
+                : '${trip.childPrice.toInt()} ${isAr ? 'ر.س' : 'SAR'}',
+            icon: Icons.child_care_outlined,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPriceItem(ThemeData theme,
+      {required String label, required String price, required IconData icon}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Chip(
-          avatar: Icon(Icons.payments_outlined,
-              size: 16, color: theme.colorScheme.primary),
-          label: Text(adultLabel,
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(fontWeight: FontWeight.bold)),
-          backgroundColor:
-              theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
-          side: BorderSide.none,
-        ),
-        Chip(
-          avatar: Icon(Icons.child_care,
-              size: 16, color: theme.colorScheme.secondary),
-          label: Text(childLabel,
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(fontWeight: FontWeight.bold)),
-          backgroundColor:
-              theme.colorScheme.secondaryContainer.withValues(alpha: 0.4),
-          side: BorderSide.none,
+        Icon(icon, size: 20, color: theme.colorScheme.primary.withOpacity(0.7)),
+        const SizedBox(width: 10),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: Colors.grey[500],
+                letterSpacing: 0.5,
+              ),
+            ),
+            Text(
+              price,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -199,40 +235,61 @@ class TripDetailsScreen extends ConsumerWidget {
   Widget _buildAccessibilityBadges(ThemeData theme, bool isAr) {
     const badgeInfo = {
       'wheelchair': (
-        icon: Icons.accessible,
-        labelEn: 'Wheelchair Accessible',
-        labelAr: 'مناسب لذوي الإعاقة الحركية',
+        icon: Icons.accessible_forward_rounded,
+        labelEn: 'Accessible',
+        labelAr: 'صديق للإعاقة',
       ),
       'family': (
-        icon: Icons.family_restroom,
-        labelEn: 'Family Friendly',
-        labelAr: 'مناسب للعائلات والأطفال',
+        icon: Icons.family_restroom_rounded,
+        labelEn: 'مناسب للعائلات',
+        labelAr: 'مناسب للعائلات',
       ),
     };
 
-    final chips = trip.accessibilityFeatures
-        .where(badgeInfo.containsKey)
-        .map((key) {
+    final badges =
+        trip.accessibilityFeatures.where(badgeInfo.containsKey).map((key) {
       final info = badgeInfo[key]!;
-      return Chip(
-        avatar: Icon(info.icon, size: 16, color: theme.colorScheme.tertiary),
-        label: Text(isAr ? info.labelAr : info.labelEn,
-            style: theme.textTheme.bodySmall),
-        backgroundColor:
-            theme.colorScheme.tertiaryContainer.withValues(alpha: 0.4),
-        side: BorderSide.none,
+      return Container(
+        margin: const EdgeInsetsDirectional.only(end: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(info.icon,
+                size: 16,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+            const SizedBox(width: 6),
+            Text(
+              isAr ? info.labelAr : info.labelEn,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
+                fontFamily: 'Tajawal',
+              ),
+            ),
+          ],
+        ),
       );
     }).toList();
 
-    if (chips.isEmpty) return const SizedBox.shrink();
+    if (badges.isEmpty) return const SizedBox.shrink();
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Wrap(spacing: 8, runSpacing: 4, children: chips),
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Wrap(
+        runSpacing: 10,
+        children: badges,
+      ),
     );
   }
 
-  Widget _buildInfoRow(BuildContext context, IconData icon, String text) {
+  Widget _buildInfoRow(BuildContext context, IconData icon, String text,
+      {Widget? trailing}) {
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -241,7 +298,142 @@ class TripDetailsScreen extends ConsumerWidget {
           Icon(icon, size: 20, color: theme.colorScheme.primary),
           const SizedBox(width: 8),
           Text(text, style: theme.textTheme.bodyMedium),
+          if (trailing != null) ...[
+            const SizedBox(width: 8),
+            trailing,
+          ],
         ],
+      ),
+    );
+  }
+
+  void _showGuideDetailsPopUp(
+      BuildContext context, AppLocalizations l10n, bool isAr) {
+    final theme = Theme.of(context);
+
+    // تعريف قائمة اللغات من ملف الترجمة
+    final languages = [
+      l10n.arabic,
+      l10n.english,
+      l10n.french,
+    ];
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        contentPadding: EdgeInsets.zero,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Align(
+              alignment: isAr ? Alignment.topLeft : Alignment.topRight,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.grey),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: Column(
+                children: [
+                  Text(
+                    trip.guide,
+                    style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Tajawal'),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "5.0",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Row(
+                        children: List.generate(
+                            5,
+                            (index) => const Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: 18,
+                                )),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        isAr ? "(39 تقييم)" : "(39 reviews)",
+                        style: TextStyle(color: Colors.grey[500], fontSize: 13),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 25),
+                  Align(
+                    alignment:
+                        isAr ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Text(
+                      isAr
+                          ? "شغوفة بالتراث السعودي وملتزمة بتوثيق كنوزنا الثقافية. أسعى لترك أثر من خلال مشاركة قصص معالمنا التاريخية."
+                          : "Passionate about Saudi heritage and committed to documenting our cultural treasures.",
+                      textAlign: isAr ? TextAlign.right : TextAlign.left,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        height: 1.6,
+                        fontSize: 14,
+                        fontFamily: 'Tajawal',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  Align(
+                    alignment:
+                        isAr ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Text(l10n.languages,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      alignment: WrapAlignment.start,
+                      children: languages
+                          .map((langName) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary
+                                      .withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                      color: theme.colorScheme.primary
+                                          .withValues(alpha: 0.5),
+                                      width: 1.5),
+                                ),
+                                child: Text(
+                                  langName, // النص المترجم
+                                  style: TextStyle(
+                                      color: theme.colorScheme.primary,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Tajawal'),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

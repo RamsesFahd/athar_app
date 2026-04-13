@@ -5,7 +5,7 @@ import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class TripCard extends StatelessWidget {
   final TripModel trip;
-  final bool isGridView; // لنتحكم في شكل العرض
+  final bool isGridView;
 
   const TripCard({
     super.key,
@@ -13,118 +13,355 @@ class TripCard extends StatelessWidget {
     this.isGridView = true,
   });
 
-  // دالة الزر
-  Widget _buildDetailsButton(BuildContext context, AppLocalizations l10n) {
-    return SizedBox(
-      height: 48,
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => TripDetailsScreen(trip: trip)),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+  @override
+ Widget build(BuildContext context) {
+  final isAr = Localizations.localeOf(context).languageCode == 'ar';
+  final l10n = AppLocalizations.of(context)!;
+  final theme = Theme.of(context);
+
+  return Container(
+    margin: const EdgeInsets.all(8), 
+    decoration: BoxDecoration(
+      color: theme.colorScheme.surface,
+      borderRadius: BorderRadius.circular(24), 
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.06),
+          blurRadius: 15,
+          offset: const Offset(0, 8),
         ),
-        child: Text(
-          l10n.details, // قمنا باستخدام مفتاح الترجمة هنا
-          textAlign: TextAlign.center,
+      ],
+    ),
+    clipBehavior: Clip.antiAlias,
+    child: isGridView 
+        ? _buildGridContent(context, isAr, l10n, theme) 
+        : _buildListContent(context, isAr, l10n, theme),
+  );
+}
+Widget _buildGridContent(
+  BuildContext context,
+  bool isAr,
+  AppLocalizations l10n,
+  ThemeData theme,
+) {
+  final textTheme = theme.textTheme;
+  final colorScheme = theme.colorScheme;
+
+  return Stack(
+    children: [
+      // 1. الصورة
+      Positioned.fill(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Image.network(
+            trip.imageUrl,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
-    );
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    // 1. تحديد اللغة الحالية
-    final isAr = Localizations.localeOf(context).languageCode == 'ar';
-    final l10n = AppLocalizations.of(context)!;
+      // 2. Gradient
+      Positioned.fill(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                Colors.black.withValues(alpha: 0.6),
+              ],
+            ),
+          ),
+        ),
+      ),
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      // نمرر isAr و l10n للدوال
-      child: isGridView
-          ? _buildGridContent(context, isAr, l10n)
-          : _buildListContent(context, isAr, l10n),
-    );
-  }
-
-  // 1. شكل الشبكة (صورة بالأعلى)
-  Widget _buildGridContent(
-      BuildContext context, bool isAr, AppLocalizations l10n) {
-    return Column(
-      children: [
-        Expanded(
-            child: Image.network(trip.imageUrl,
-                fit: BoxFit.cover, width: double.infinity)),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
+      // 3. المحتوى
+      Positioned(
+        left: 12,
+        right: 12,
+        bottom: 12,
+        child: SizedBox(
+          height: 110, 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(trip.getTitle(isAr),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 4),
-              Text(trip.getShortDescription(isAr).split('\n').first,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey)),
+              // Location
+              Row(
+                children: [
+                  Icon(
+                    Icons.location_on,
+                    size: 14,
+                    color: colorScheme.onPrimary,
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      isAr ? "مكة  " : "MAKKAH",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.labelSmall?.copyWith(
+                        color: colorScheme.onPrimary.withOpacity(0.8),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
               const SizedBox(height: 6),
-              Text(trip.price,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              SizedBox(
-                  width: double.infinity,
-                  child: _buildDetailsButton(context, l10n)),
+
+              // Title
+              Text(
+                trip.getTitle(isAr),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.bodyLarge?.copyWith(
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.w800,
+                  height: 1.2,
+                ),
+              ),
+
+              const Spacer(), 
+
+              // Price + Button
+              Row(
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          trip.price,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.bodyLarge?.copyWith(
+                            color: colorScheme.onPrimary,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        isAr ? '﷼' : 'SAR',
+                        style: textTheme.labelSmall?.copyWith(
+                          color: colorScheme.onPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const Spacer(),
+
+                  // الزر
+                  GestureDetector(
+  onTap: () => Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => TripDetailsScreen(trip: trip),
+    ),
+  ),
+  child: Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    decoration: BoxDecoration(
+      color: colorScheme.primary,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: Text(
+      isAr ? "التفاصيل" : "Details",
+      style: textTheme.labelSmall?.copyWith(
+        color: colorScheme.onPrimary,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  ),
+),
+                ],
+              ),
             ],
           ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
+ Widget _buildListContent(
+  BuildContext context,
+  bool isAr,
+  AppLocalizations l10n,
+  ThemeData theme,
+) {
+  final textTheme = theme.textTheme;
+  final colorScheme = theme.colorScheme;
 
-  // 2. شكل القائمة (صورة بالجانب)
-  Widget _buildListContent(
-      BuildContext context, bool isAr, AppLocalizations l10n) {
-    return Row(
+  return SizedBox(
+    height: 150,
+    child: Row(
       children: [
-        Image.network(trip.imageUrl,
-            width: 120, height: 120, fit: BoxFit.cover),
+        // الصورة
+        ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Image.network(
+            trip.imageUrl,
+            width: 130,
+            height: 150,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Container(
+              width: 130,
+              height: 150,
+              color: colorScheme.surface,
+              alignment: Alignment.center,
+              child: Icon(
+                Icons.broken_image_outlined,
+                color: colorScheme.primary,
+                size: 28,
+              ),
+            ),
+          ),
+        ),
+
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(trip.getTitle(isAr),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 4),
-                // جزء من الوصف في القائمة
-                Text(trip.getDescription(isAr).split('\n').first,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                // الموقع
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on_outlined,
+                      size: 14,
+                      color: colorScheme.primary,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        isAr ? "مكة المكرمة" : "MAKKAH",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: textTheme.labelSmall?.copyWith(
+                          color: colorScheme.secondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
                 const SizedBox(height: 8),
-                Text(trip.price,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                _buildDetailsButton(context, l10n),
+
+                // العنوان
+                Text(
+                  trip.getTitle(isAr),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    height: 1.25,
+                    color: theme.textTheme.bodyLarge?.color,
+                  ),
+                ),
+
+                const SizedBox(height: 6),
+
+                // التصنيف
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    _buildTag(
+                      isAr ? "مناسب للعائلات" : "Family Friendly",
+                      theme,
+                    ),
+                  ],
+                ),
+
+                const Spacer(),
+
+                // السعر + الزر
+                Row(
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          trip.price,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.titleMedium?.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          isAr ? '﷼' : 'SAR',
+                          style: textTheme.labelSmall?.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const Spacer(),
+
+                    _buildActionButton(context, isAr, theme),
+                  ],
+                ),
               ],
             ),
           ),
         ),
       ],
-    );
-  }
+    ),
+  );
+}
+
+Widget _buildActionButton(BuildContext context, bool isAr, ThemeData theme) {
+  return GestureDetector(
+    onTap: () => Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => TripDetailsScreen(trip: trip)),
+    ),
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        isAr ? "عرض التفاصيل" : "View Details",
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: theme.colorScheme.onPrimary,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _buildTag(String text, ThemeData theme) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    decoration: BoxDecoration(
+      color: theme.colorScheme.primary.withValues(alpha: 0.10),
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(
+        color: theme.colorScheme.primary.withValues(alpha: 0.2),
+      ),
+    ),
+    child: Text(
+      text,
+      style: theme.textTheme.labelSmall?.copyWith(
+        color: theme.colorScheme.primary,
+        fontWeight: FontWeight.w600,
+      ),
+    ),
+  );
+}
 }

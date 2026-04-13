@@ -104,7 +104,7 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
           const SizedBox(height: 24),
 
           // 1. Sorting options
-          Text(l10n.sortBy, style: theme.textTheme.titleMedium),
+          Text(l10n.sortBy, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap( 
             spacing: 8,
@@ -140,7 +140,7 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
           const Divider(height: 32),
 
           // 2. Price range filter (تم تصحيح الأقواس هنا)
-          Text(l10n.priceRange, style: theme.textTheme.titleMedium),
+          Text(l10n.priceRange, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -149,7 +149,7 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
                   controller: _minPriceCtrl,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: "الحد الأدنى",
+                    labelText: l10n.min_price, 
                     suffixText: l10n.currencySAR,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
@@ -165,7 +165,7 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
                   controller: _maxPriceCtrl,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    labelText: "الحد الأقصى",
+                    labelText: l10n.max_price, 
                     suffixText: l10n.currencySAR,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
@@ -195,7 +195,7 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
           const Divider(height: 32),
 
           // 3. Destination filter (Cities)
-          Text(l10n.destination, style: theme.textTheme.titleMedium),
+          Text(l10n.destination, style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,

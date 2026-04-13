@@ -1319,7 +1319,7 @@ abstract class AppLocalizations {
   /// No description provided for @all_trips.
   ///
   /// In en, this message translates to:
-  /// **'All Trips'**
+  /// **'Explore Trips'**
   String get all_trips;
 
   /// No description provided for @search_trips_hint.
@@ -1693,6 +1693,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'SAR'**
   String get currencySAR;
+
+  /// No description provided for @min_price.
+  ///
+  /// In en, this message translates to:
+  /// **'Min Price'**
+  String get min_price;
+
+  /// No description provided for @max_price.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Price'**
+  String get max_price;
+
+  /// No description provided for @arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get arabic;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @french.
+  ///
+  /// In en, this message translates to:
+  /// **'French'**
+  String get french;
 }
 
 class _AppLocalizationsDelegate

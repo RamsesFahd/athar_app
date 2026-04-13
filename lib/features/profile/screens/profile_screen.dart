@@ -359,102 +359,203 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  Widget _buildBookingItem(BuildContext context, BookingModel b, ThemeData theme,
-      AppLocalizations l10n, bool isTutor) {
-    final statusColor = _statusColor(b.status, theme);
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
+Widget _buildBookingItem(
+  BuildContext context,
+  BookingModel b,
+  ThemeData theme,
+  AppLocalizations l10n,
+  bool isTutor,
+) {
+  final statusColor = _statusColor(b.status, theme);
+
+  return Container(
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: theme.colorScheme.surface,
+      borderRadius: BorderRadius.circular(18),
+      border: Border.all(
+        color: theme.colorScheme.primary.withOpacity(0.08),
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.04),
+          blurRadius: 14,
+          offset: const Offset(0, 6),
+        ),
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                if (b.imageUrl.isNotEmpty)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(b.imageUrl,
-                        width: 56, height: 56, fit: BoxFit.cover),
-                  ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(b.tripTitle,
-                          style: theme.textTheme.titleSmall
-                              ?.copyWith(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 2),
-                      Text('${b.date}  •  ${b.timeSlot}',
-                          style: theme.textTheme.bodySmall),
-                    ],
-                  ),
+            // الصورة
+            if (b.imageUrl.isNotEmpty)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  b.imageUrl,
+                  width: 64,
+                  height: 64,
+                  fit: BoxFit.cover,
                 ),
-                Chip(
-                  label: Text(_statusLabel(b.status, l10n),
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold)),
-                  backgroundColor: statusColor,
-                  padding: EdgeInsets.zero,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                // Details button
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => BookingDetailScreen(booking: b)),
-                    ),
-                    child: Text(l10n.view_details),
-                  ),
-                ),
-                // Accept / Reject only for tutor on pending bookings
-                if (isTutor && b.status == BookingStatus.pending) ...[
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green),
-                      onPressed: () => ref
-                          .read(marketplaceRepositoryProvider)
-                          .updateBookingStatus(
-                              b.bookingId, BookingStatus.accepted),
-                      child: Text(l10n.accept_booking,
-                          style: const TextStyle(color: Colors.white)),
+              ),
+
+            const SizedBox(width: 12),
+
+            // النصوص
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    b.tripTitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      height: 1.25,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Colors.red)),
-                      onPressed: () => ref
-                          .read(marketplaceRepositoryProvider)
-                          .updateBookingStatus(
-                              b.bookingId, BookingStatus.rejected),
-                      child: Text(l10n.reject_booking,
-                          style: const TextStyle(color: Colors.red)),
+
+                  if (b.tripCity.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 15,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            b.tripCity,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+
+                  const SizedBox(height: 6),
+
+                  // 🔥 زر التفاصيل الجديد (صغير)
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: TextButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BookingDetailScreen(booking: b),
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            l10n.view_details,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 12,
+                            color: theme.colorScheme.primary,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
-              ],
+              ),
+            ),
+
+            const SizedBox(width: 8),
+
+            // الحالة
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: statusColor.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                _statusLabel(b.status, l10n),
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: statusColor,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
           ],
         ),
-      ),
-    );
-  }
 
+        // أزرار المرشد
+        if (isTutor && b.status == BookingStatus.pending) ...[
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () => ref
+                      .read(marketplaceRepositoryProvider)
+                      .updateBookingStatus(
+                        b.bookingId,
+                        BookingStatus.accepted,
+                      ),
+                  child: Text(l10n.accept_booking),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    side: const BorderSide(color: Colors.red),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () => ref
+                      .read(marketplaceRepositoryProvider)
+                      .updateBookingStatus(
+                        b.bookingId,
+                        BookingStatus.rejected,
+                      ),
+                  child: Text(
+                    l10n.reject_booking,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
+    ),
+  );
+}
   Widget _buildSettingsGroup(
       {required String title,
       required List<Widget> tiles,

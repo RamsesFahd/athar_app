@@ -638,7 +638,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get rawiUntitledEnglish => 'محادثة جديدة';
 
   @override
-  String get all_trips => 'جميع الرحلات';
+  String get all_trips => ' استكشف الرحلات';
 
   @override
   String get search_trips_hint => 'ابحث عن رحلة...';
@@ -829,4 +829,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get currencySAR => 'ر.س';
+
+  @override
+  String get min_price => 'الحد الأدنى';
+
+  @override
+  String get max_price => 'الحد الأقصى';
+
+  @override
+  String get arabic => 'العربية';
+
+  @override
+  String get english => 'الإنجليزية';
+
+  @override
+  String get french => 'الفرنسية';
 }

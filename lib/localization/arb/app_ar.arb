@@ -231,7 +231,7 @@
   "rawiStoryStartChat": "ابدأ السوالف مع راوي",
   "rawiUntitledArabic": "سالفة جديدة",
   "rawiUntitledEnglish": "محادثة جديدة",
-  "all_trips": "جميع الرحلات",
+  "all_trips": " استكشف الرحلات",
 "search_trips_hint": "ابحث عن رحلة...",
 "price_low_first": "السعر: الأقل أولاً",
 "price_high_first": "السعر: الأعلى أولاً",
@@ -299,5 +299,10 @@
   "priceRange": "نطاق السعر",
   "destination": "الوجهة",
   "showResults": "إظهار النتائج",
-  "currencySAR": "ر.س"
+  "currencySAR": "ر.س",
+  "min_price": "الحد الأدنى",
+  "max_price": "الحد الأقصى",
+  "arabic": "العربية",
+  "english": "الإنجليزية",
+  "french": "الفرنسية"
 }
