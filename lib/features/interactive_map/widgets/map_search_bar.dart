@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:athar_app/core/providers/settings_provider.dart';
 
-class MapSearchBar extends StatelessWidget {
+class MapSearchBar extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
   final TextEditingController controller;
 
@@ -11,20 +13,58 @@ class MapSearchBar extends StatelessWidget {
   });
 
   @override
+  ConsumerState<MapSearchBar> createState() => _MapSearchBarState();
+}
+
+class _MapSearchBarState extends ConsumerState<MapSearchBar> {
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onControllerChange);
+  }
+
+  void _onControllerChange() {
+    final has = widget.controller.text.isNotEmpty;
+    if (has != _hasText) setState(() => _hasText = has);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onControllerChange);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isAr = ref.watch(settingsProvider).locale.languageCode == 'ar';
+    final textDir = isAr ? TextDirection.rtl : TextDirection.ltr;
 
     return Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
       child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        textDirection: TextDirection.rtl,
+        controller: widget.controller,
+        onChanged: widget.onChanged,
+        textDirection: textDir,
         decoration: InputDecoration(
-          hintText: 'ابحث عن معالم أو فعاليات...',
-          hintTextDirection: TextDirection.rtl,
+          hintText: isAr
+              ? 'ابحث عن معالم أو فعاليات...'
+              : 'Search landmarks or events...',
+          hintTextDirection: textDir,
           prefixIcon: Icon(Icons.search, color: colorScheme.primary),
+          suffixIcon: _hasText
+              ? IconButton(
+                  icon: Icon(Icons.close,
+                      size: 18, color: colorScheme.onSurfaceVariant),
+                  onPressed: () {
+                    widget.controller.clear();
+                    widget.onChanged('');
+                  },
+                )
+              : null,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide.none,

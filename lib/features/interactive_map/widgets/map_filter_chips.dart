@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/features/interactive_map/logic/map_notifier.dart';
 
-class MapFilterChips extends StatelessWidget {
+class MapFilterChips extends ConsumerWidget {
   final MapFilter activeFilter;
-  final bool showNearMe;
   final ValueChanged<MapFilter> onChanged;
 
   const MapFilterChips({
     super.key,
     required this.activeFilter,
-    required this.showNearMe,
     required this.onChanged,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isAr = ref.watch(settingsProvider).locale.languageCode == 'ar';
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          _chip(context, 'الكل', MapFilter.all),
+          _chip(context, isAr ? 'الكل' : 'All', MapFilter.all),
           const SizedBox(width: 8),
-          _chip(context, 'المعالم الثقافية', MapFilter.landmarks),
+          _chip(context, isAr ? 'المعالم الثقافية' : 'Landmarks', MapFilter.landmarks),
           const SizedBox(width: 8),
-          _chip(context, 'الفعاليات', MapFilter.events),
-          if (showNearMe) ...[
-            const SizedBox(width: 8),
-            _chip(context, 'قريب مني', MapFilter.nearMe),
-          ],
+          _chip(context, isAr ? 'الفعاليات' : 'Events', MapFilter.events),
+          const SizedBox(width: 8),
+          _chip(context, isAr ? 'قريب مني' : 'Near Me', MapFilter.nearMe),
         ],
       ),
     );
