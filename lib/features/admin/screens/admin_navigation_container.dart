@@ -8,6 +8,7 @@ import 'package:athar_app/features/admin/screens/trip_approvals_screen.dart';
 import 'package:athar_app/features/admin/screens/users_management_screen.dart';
 import 'package:athar_app/features/admin/screens/all_bookings_screen.dart';
 import 'package:athar_app/features/admin/screens/add_cultural_content_screen.dart';
+import 'package:athar_app/features/admin/screens/add_event_screen.dart';
 
 class AdminNavigationContainer extends ConsumerStatefulWidget {
   const AdminNavigationContainer({super.key});
@@ -27,6 +28,7 @@ class _AdminNavigationContainerState
     UsersManagementScreen(),
     AllBookingsScreen(),
     AddCulturalContentScreen(),
+    AddEventScreen(),
   ];
 
   final List<({String label, IconData icon})> _tabs = const [
@@ -35,11 +37,11 @@ class _AdminNavigationContainerState
     (label: 'Users', icon: Icons.people_outline),
     (label: 'Bookings', icon: Icons.book_online_outlined),
     (label: 'Archive', icon: Icons.museum_outlined),
+    (label: 'Events', icon: Icons.celebration_outlined),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(

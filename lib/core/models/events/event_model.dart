@@ -83,6 +83,7 @@ class EventModel {
   final EventType eventType;
   final String? ticketUrl;
   final bool isFree;
+  final DateTime? endDate;
   final DateTime? createdAt;
   final String? createdBy;
 
@@ -105,6 +106,7 @@ class EventModel {
     required this.eventType,
     this.ticketUrl,
     required this.isFree,
+    this.endDate,
     this.createdAt,
     this.createdBy,
   });
@@ -133,6 +135,7 @@ class EventModel {
       'eventType': eventType.value,
       'ticketUrl': ticketUrl,
       'isFree': isFree,
+      'endDate': endDate != null ? Timestamp.fromDate(endDate!) : null,
       'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
       'createdBy': createdBy,
     };
@@ -160,6 +163,9 @@ class EventModel {
       eventType: EventTypeExtension.fromString(map['eventType']),
       ticketUrl: map['ticketUrl'],
       isFree: map['isFree'] ?? true,
+      endDate: map['endDate'] != null
+          ? (map['endDate'] as Timestamp).toDate()
+          : null,
       createdAt: map['createdAt'] != null
           ? (map['createdAt'] as Timestamp).toDate()
           : null,

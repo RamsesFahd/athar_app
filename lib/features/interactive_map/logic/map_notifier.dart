@@ -1,9 +1,6 @@
 import 'dart:async';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
-import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/core/models/map/map_pin_model.dart';
 import 'package:athar_app/features/interactive_map/logic/map_repository.dart';
 

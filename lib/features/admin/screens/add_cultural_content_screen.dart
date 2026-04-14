@@ -94,7 +94,7 @@ class _AddCulturalContentScreenState
         (r) => r.regionId == _selectedRegionId,
       );
 
-      await ref.read(adminRepositoryProvider).addCulturalItem({
+      final data = <String, dynamic>{
         'titleAr': _titleArController.text.trim(),
         'titleEn': _titleEnController.text.trim(),
         'descriptionAr': _descArController.text.trim(),
@@ -104,7 +104,16 @@ class _AddCulturalContentScreenState
         'regionAr': region.nameAr,
         'regionEn': region.nameEn,
         'imageUrl': imageUrl,
-      });
+      };
+
+      final latText = _latController.text.trim();
+      final lngText = _lngController.text.trim();
+      if (latText.isNotEmpty && lngText.isNotEmpty) {
+        data['latitude'] = double.parse(latText);
+        data['longitude'] = double.parse(lngText);
+      }
+
+      await ref.read(adminRepositoryProvider).addCulturalItem(data);
 
       // Invalidate the cultural archive so it reloads with the new item
       ref.invalidate(culturalNotifierProvider);
@@ -135,6 +144,8 @@ class _AddCulturalContentScreenState
     _titleEnController.clear();
     _descArController.clear();
     _descEnController.clear();
+    _latController.clear();
+    _lngController.clear();
     setState(() {
       _selectedCategory = 'food';
       _selectedRegionId = null;
@@ -254,7 +265,53 @@ class _AddCulturalContentScreenState
                   v == null ? 'Please select a region' : null,
             ),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
+
+            // Optional map coordinates
+            ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              title: Row(
+                children: [
+                  Icon(Icons.location_on_outlined,
+                      size: 18,
+                      color: AppColors.primary.withValues(alpha: 0.7)),
+                  const SizedBox(width: 6),
+                  Text(
+                    'إحداثيات الخريطة (اختياري)',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ],
+              ),
+              children: [
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _latController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true, signed: true),
+                        decoration: _inputDecoration(hint: 'Latitude (e.g. 24.68)'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _lngController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true, signed: true),
+                        decoration: _inputDecoration(hint: 'Longitude (e.g. 46.72)'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+
+            const SizedBox(height: 16),
 
             // Submit
             SizedBox(
