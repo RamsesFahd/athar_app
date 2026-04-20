@@ -46,3 +46,10 @@ app.*.map.json
 
 # Gemini API Key 
 .env
+
+# Generated files - To avoid conflicts with Razan
+**/GeneratedPluginRegistrant.*
+macos/Flutter/GeneratedPluginRegistrant.swift
+ios/Runner/GeneratedPluginRegistrant.m
+ios/Runner/GeneratedPluginRegistrant.h
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
