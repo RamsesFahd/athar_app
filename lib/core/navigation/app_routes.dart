@@ -11,6 +11,7 @@ import 'package:athar_app/features/auth/screens/verify_email_screen.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
+import 'package:athar_app/features/auth/screens/google_role_selection_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -20,6 +21,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String admin = '/admin';
   static const String verifyEmail = '/verify-email';
+  static const String googleRoleSelection = '/google-role-selection';
   static const String culturalArchive = '/cultural-archive';
   static const String culturalDetails = '/cultural-details';
   static const String historicalChat = '/historical-chat';
@@ -31,6 +33,7 @@ class AppRoutes {
       signUp: (context) => const SignUpScreen(),
       forgotPassword: (context) => const ForgotPasswordScreen(),
       verifyEmail: (context) => const VerifyEmailScreen(),
+      googleRoleSelection: (context) => const GoogleRoleSelectionScreen(),
 
       home: (context) => const NavigationContainer(),
       admin: (context) => const AdminNavigationContainer(),

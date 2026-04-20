@@ -82,6 +82,33 @@ class AuthNotifier extends _$AuthNotifier {
     });
   }
 
+  Future<void> signInWithGoogle() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final repo = ref.read(authRepositoryProvider);
+      final error = await repo.signInWithGoogle();
+      if (error != null) throw error;
+
+      final user = await _checkAuthStatus();
+      // new Google user has no Firestore doc yet
+      if (user == null && repo.currentUser != null) throw 'needsRoleSelection';
+      return user;
+    });
+  }
+
+  Future<void> createGoogleUser({
+    required UserRole role,
+    TutorType? tutorType,
+  }) async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final repo = ref.read(authRepositoryProvider);
+      final error = await repo.createGoogleUser(role: role, tutorType: tutorType);
+      if (error != null) throw error;
+      return await _checkAuthStatus();
+    });
+  }
+
   // Guest login method that allows users to continue without creating an account. It creates a temporary anonymous user in Firebase Authentication and returns their data as a UserModel instance. This is useful for allowing users to explore the app without the friction of signing up, while still providing them with a unique identifier and some level of personalization.
   Future<void> guestLogin() async {
     state = const AsyncLoading();

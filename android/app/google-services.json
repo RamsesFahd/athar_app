@@ -12,7 +12,20 @@
           "package_name": "com.example.athar_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "493787207562-rjkhp4g86r5qhpp7n2ts2sud4oj6bo19.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.athar_app",
+            "certificate_hash": "cd7b0e70ac21fea7947b53511b36c69812a94815"
+          }
+        },
+        {
+          "client_id": "493787207562-vf6n7bsldqq3aasiaio3jc621f0c4ei3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBVaeuGsaOAi3d0Sdg1HPVcc-FBTkaSe5s"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "493787207562-vf6n7bsldqq3aasiaio3jc621f0c4ei3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "493787207562-3br3bkg4do4sun6jrevhv8cfcv7oamk7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.atharApp"
+              }
+            }
+          ]
         }
       }
     }

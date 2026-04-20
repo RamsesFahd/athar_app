@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart'; 
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 
 // This line link this file to the generated file Riverpod will create
@@ -115,6 +116,62 @@ Future<String?> signUp({
       return _mapFirebaseError(e);
     } catch (e) {
       return "Unexpected error: $e";
+    }
+  }
+
+  Future<String?> signInWithGoogle() async {
+    try {
+      final googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) return 'errorGoogleSignInCancelled';
+
+      final googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await _auth.signInWithCredential(credential);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      return _mapFirebaseError(e);
+    } catch (e) {
+      return 'errorUnexpected';
+    }
+  }
+
+  Future<String?> createGoogleUser({
+    required UserRole role,
+    TutorType? tutorType,
+  }) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return 'errorUnexpected';
+
+      UserModel newUser;
+      if (role == UserRole.tutor) {
+        newUser = TutorModel(
+          uId: user.uid,
+          fullName: user.displayName ?? 'User',
+          email: user.email ?? '',
+          createdAt: DateTime.now(),
+          accessibilitySettings: AccessibilitySettings(),
+          verificationStatus: VerificationStatus.unverified,
+          tutorType: tutorType ?? TutorType.individual,
+        );
+      } else {
+        newUser = TouristModel(
+          uId: user.uid,
+          fullName: user.displayName ?? 'User',
+          email: user.email ?? '',
+          createdAt: DateTime.now(),
+          accessibilitySettings: AccessibilitySettings(),
+        );
+      }
+
+      await _users.doc(user.uid).set(newUser.toMap());
+      return null;
+    } catch (e) {
+      return 'errorUnexpected';
     }
   }
 

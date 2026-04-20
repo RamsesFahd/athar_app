@@ -21,6 +21,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   bool _hidePassword = true;
   bool _rememberMe = false;
   bool _isLoginLoading = false;
+  bool _isGoogleLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +32,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
       next.whenOrNull(
         error: (error, stack) {
+          if (error.toString() == 'needsRoleSelection') {
+            Navigator.pushReplacementNamed(context, AppRoutes.googleRoleSelection);
+            return;
+          }
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AuthUtils.translateError(error.toString(), l10n)),
@@ -196,31 +201,46 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   Widget _buildSocialButtons() {
     final theme = Theme.of(context);
+    final authState = ref.watch(authNotifierProvider);
     return Row(children: [
       _socialBtn(
           Icons.apple, theme.colorScheme.onSurface, theme.colorScheme.surface),
       const SizedBox(width: 12),
       _socialBtn(null, theme.colorScheme.surface, theme.colorScheme.onSurface,
-          isGoogle: true),
+          isGoogle: true,
+          onTap: authState.isLoading ? null : () async {
+            setState(() => _isGoogleLoading = true);
+            await ref.read(authNotifierProvider.notifier).signInWithGoogle();
+            if (mounted) setState(() => _isGoogleLoading = false);
+          }),
     ]);
   }
 
   Widget _socialBtn(IconData? icon, Color bg, Color fg,
-      {bool isGoogle = false}) {
+      {bool isGoogle = false, VoidCallback? onTap}) {
     return Expanded(
-      child: Container(
-        height: 50,
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade200),
-        ),
-        child: Center(
-          child: isGoogle
-              ? Image.network(
-                  'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png',
-                  height: 22)
-              : Icon(icon, color: fg, size: 24),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 50,
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: Center(
+            child: isGoogle
+                ? _isGoogleLoading
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Image.network(
+                        'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png',
+                        height: 22)
+                : Icon(icon, color: fg, size: 24),
+          ),
         ),
       ),
     );
