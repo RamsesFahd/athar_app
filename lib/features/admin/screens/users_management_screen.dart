@@ -140,6 +140,7 @@ class _UserTile extends StatelessWidget {
               const SizedBox(height: 4),
               _VerificationBadge(status: tutor.verificationStatus!),
             ],
+
           ],
         ),
       ),
@@ -184,7 +185,7 @@ class _RoleBadge extends StatelessWidget {
 }
 
 class _VerificationBadge extends StatelessWidget {
-  final String status;
+  final VerificationStatus status;
   const _VerificationBadge({required this.status});
 
   @override
@@ -192,22 +193,28 @@ class _VerificationBadge extends StatelessWidget {
     Color color;
     IconData icon;
     switch (status) {
-      case 'verified':
+      case VerificationStatus.verified:
         color = Colors.green;
         icon = Icons.verified;
-      case 'pending':
+      case VerificationStatus.pending:
         color = Colors.orange;
         icon = Icons.hourglass_top_rounded;
-      default:
+      case VerificationStatus.rejected:
         color = Colors.red;
         icon = Icons.cancel_outlined;
+      case VerificationStatus.expired:
+        color = Colors.grey;
+        icon = Icons.timer_off_outlined;
+      default:
+        color = Colors.grey;
+        icon = Icons.help_outline;
     }
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 12, color: color),
         const SizedBox(width: 4),
-        Text(status,
+        Text(status.name,
             style: TextStyle(
                 fontSize: 10, fontWeight: FontWeight.w600, color: color)),
       ],

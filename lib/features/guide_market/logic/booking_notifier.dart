@@ -80,4 +80,11 @@ class BookingNotifier extends _$BookingNotifier {
     // reset the state after successful booking
     state = null;
   }
+
+  // Step 4 (optional): Cancel a pending booking (tourist action)
+  Future<void> cancelBooking(String bookingId) async {
+    await ref
+        .read(marketplaceRepositoryProvider)
+        .updateBookingStatus(bookingId, BookingStatus.rejected);
+  }
 }

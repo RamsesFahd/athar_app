@@ -86,3 +86,12 @@ class MarketplaceRepository {
     await _bookings.doc(bookingId).update({'status': status.name});
   }
 }
+
+/// Reactive stream of all approved trips. Using a [StreamProvider] here
+/// (instead of calling the repository directly inside a [StreamBuilder])
+/// ensures the stream is re-created whenever the underlying provider
+/// rebuilds (e.g. after an auth change) and is shared across all watchers.
+final allTripsStreamProvider =
+    StreamProvider.autoDispose<List<TripModel>>((ref) {
+  return ref.watch(marketplaceRepositoryProvider).fetchAllTrips();
+});

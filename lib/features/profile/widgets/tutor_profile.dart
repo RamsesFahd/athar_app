@@ -18,7 +18,7 @@ class TutorHeader extends ConsumerWidget {
     return Column(
       children: [
         // 1. تنبيه إكمال البيانات (يظهر فقط إذا لم يكن موثقاً)
-        if (user.verificationStatus != 'verified')
+        if (user.verificationStatus != VerificationStatus.verified)
           Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
           child: _buildVerificationAlert(theme, l10n),
@@ -60,7 +60,7 @@ class TutorHeader extends ConsumerWidget {
 
   // ويدجت التنبيه العلوي للمرشد
   Widget _buildVerificationAlert(ThemeData theme, AppLocalizations l10n) {
-  bool isPending = user.verificationStatus == 'pending';
+  bool isPending = user.verificationStatus == VerificationStatus.pending;
   final Color statusColor = isPending ? theme.colorScheme.tertiary : theme.colorScheme.error;
 
   return Container(
@@ -121,10 +121,10 @@ class TutorHeader extends ConsumerWidget {
     Color color;
     IconData icon;
 
-    if (user.verificationStatus == 'verified') {
+    if (user.verificationStatus == VerificationStatus.verified) {
       color = theme.colorScheme.primary;
       icon = Icons.verified;
-    } else if (user.verificationStatus == 'pending') {
+    } else if (user.verificationStatus == VerificationStatus.pending) {
       color = theme.colorScheme.tertiary;
       icon = Icons.history;
     } else {
@@ -176,7 +176,7 @@ class TutorHeader extends ConsumerWidget {
             children: [
               Text(user.fullName, style: theme.textTheme.titleLarge), //
               const SizedBox(width: 8),
-              if (user.verificationStatus == 'verified')
+              if (user.verificationStatus == VerificationStatus.verified)
                 Icon(Icons.verified_rounded,
                     color: theme.colorScheme.primary, size: 18),
             ],

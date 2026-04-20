@@ -3,13 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
-import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
+import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
-class BookingDetailScreen extends ConsumerWidget {
+/// Read-only view of a completed/pending booking.
+/// Formerly booking_detail_screen.dart — renamed for clarity (Issue I).
+class BookingViewScreen extends ConsumerWidget {
   final BookingModel booking;
 
-  const BookingDetailScreen({super.key, required this.booking});
+  const BookingViewScreen({super.key, required this.booking});
 
   Color _statusColor(BookingStatus status, ThemeData theme) {
     switch (status) {
@@ -133,10 +135,11 @@ class BookingDetailScreen extends ConsumerWidget {
                   );
 
                   if (confirmed == true && context.mounted) {
-                    await ref.read(marketplaceRepositoryProvider).updateBookingStatus(
-                          booking.bookingId,
-                          BookingStatus.rejected,
-                        );
+                    // Issue H fix: delegate to BookingNotifier instead of
+                    // calling the repository directly from the screen.
+                    await ref
+                        .read(bookingNotifierProvider.notifier)
+                        .cancelBooking(booking.bookingId);
 
                     if (context.mounted) {
                       Navigator.pop(context);
@@ -228,7 +231,8 @@ class BookingDetailScreen extends ConsumerWidget {
               ),
               const SizedBox(width: 10),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   color: statusColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(999),
@@ -266,20 +270,18 @@ class BookingDetailScreen extends ConsumerWidget {
 
           Text(
             isAr ? 'تفاصيل الرحلة' : 'Trip Details',
-            style: textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.w800,
-            ),
+            style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
           ),
 
           const SizedBox(height: 12),
 
           _modernInfoRow(theme, Icons.calendar_today, l10n.date, booking.date),
           _modernInfoRow(
-           theme,
-           Icons.access_time,
-           l10n.time,
-           _localizedTimeSlot(booking.timeSlot, isAr),
-            ),
+            theme,
+            Icons.access_time,
+            l10n.time,
+            _localizedTimeSlot(booking.timeSlot, isAr),
+          ),
           _modernInfoRow(
             theme,
             Icons.people_outline,
@@ -293,9 +295,7 @@ class BookingDetailScreen extends ConsumerWidget {
 
           Text(
             isAr ? 'ملخص السعر' : 'Price Summary',
-            style: textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.w800,
-            ),
+            style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
           ),
 
           const SizedBox(height: 12),
@@ -336,9 +336,8 @@ class BookingDetailScreen extends ConsumerWidget {
                 Expanded(
                   child: Text(
                     l10n.total_price,
-                    style: textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+                    style: textTheme.bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w800),
                   ),
                 ),
                 Text(
@@ -356,9 +355,7 @@ class BookingDetailScreen extends ConsumerWidget {
             const SizedBox(height: 18),
             Text(
               isAr ? 'معلومات التواصل' : 'Contact Information',
-              style: textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w800,
-              ),
+              style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 12),
             _modernInfoRow(
@@ -387,7 +384,7 @@ class BookingDetailScreen extends ConsumerWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: colorScheme.primary.withOpacity(0.06),
+                color: colorScheme.primary.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Text(
@@ -425,11 +422,7 @@ class BookingDetailScreen extends ConsumerWidget {
               color: theme.colorScheme.primary.withValues(alpha: 0.10),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              size: 18,
-              color: theme.colorScheme.primary,
-            ),
+            child: Icon(icon, size: 18, color: theme.colorScheme.primary),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -438,16 +431,14 @@ class BookingDetailScreen extends ConsumerWidget {
               children: [
                 Text(
                   label,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: theme.textTheme.labelSmall
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
               ],
             ),
@@ -457,11 +448,7 @@ class BookingDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _modernPriceRow(
-    ThemeData theme,
-    String label,
-    String value,
-  ) {
+  Widget _modernPriceRow(ThemeData theme, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
@@ -469,27 +456,25 @@ class BookingDetailScreen extends ConsumerWidget {
           Expanded(
             child: Text(
               label,
-              style: theme.textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
           const SizedBox(width: 12),
           Text(
             value,
-            style: theme.textTheme.bodySmall?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
+            style: theme.textTheme.bodySmall
+                ?.copyWith(fontWeight: FontWeight.w700),
           ),
         ],
       ),
     );
   }
-  String _localizedTimeSlot(String timeSlot, bool isAr) {
-  if (!isAr) return timeSlot;
 
-  return timeSlot
-      .replaceAll(RegExp(r'AM', caseSensitive: false), 'ص')
-      .replaceAll(RegExp(r'PM', caseSensitive: false), 'م');
-}
+  String _localizedTimeSlot(String timeSlot, bool isAr) {
+    if (!isAr) return timeSlot;
+    return timeSlot
+        .replaceAll(RegExp(r'AM', caseSensitive: false), 'ص')
+        .replaceAll(RegExp(r'PM', caseSensitive: false), 'م');
+  }
 }

@@ -26,7 +26,7 @@ class AdminRepository {
   Stream<List<TutorModel>> getPendingTutors() {
     return _users
         .where('role', isEqualTo: UserRole.tutor.name)
-        .where('verificationStatus', isEqualTo: 'pending')
+        .where('verificationStatus', isEqualTo: VerificationStatus.pending.name)
         .snapshots()
         .map((snap) => snap.docs
             .map((doc) =>
@@ -35,11 +35,11 @@ class AdminRepository {
   }
 
   Future<void> approveTutor(String uId) async {
-    await _users.doc(uId).update({'verificationStatus': 'verified'});
+    await _users.doc(uId).update({'verificationStatus': VerificationStatus.verified.name});
   }
 
   Future<void> rejectTutor(String uId) async {
-    await _users.doc(uId).update({'verificationStatus': 'rejected'});
+    await _users.doc(uId).update({'verificationStatus': VerificationStatus.rejected.name});
   }
 
   // ── Trip Approvals ──────────────────────────────────────────────────────────

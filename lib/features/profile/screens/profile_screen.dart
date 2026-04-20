@@ -3,8 +3,9 @@ import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
 import 'package:athar_app/features/guide_market/screens/add_trip_screen.dart';
-import 'package:athar_app/features/guide_market/screens/booking_detail_screen.dart';
+import 'package:athar_app/features/guide_market/screens/booking_view_screen.dart';
 import 'package:athar_app/features/profile/logic/profile_notifier.dart';
+import 'package:athar_app/features/profile/screens/phone_otp_dialog.dart';
 import 'package:athar_app/features/profile/widgets/tutor_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -201,7 +202,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           onTap: () => _showNameInputDialog(context, l10n, user.fullName),
                         ),
                         if (user is TutorModel) ...[
-                          if (user.verificationStatus != 'verified')
+                          if (user.verificationStatus != VerificationStatus.verified)
                             SettingsTile(
                               title: l10n.tutorLicenseNumberTitle,
                               subtitle: l10n.tutorCompleteVerificationSubtitle,
@@ -451,7 +452,7 @@ Widget _buildBookingItem(
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => BookingDetailScreen(booking: b),
+                          builder: (_) => BookingViewScreen(booking: b),
                         ),
                       ),
                       style: TextButton.styleFrom(
@@ -614,29 +615,10 @@ Widget _buildBookingItem(
   //
 // أضيفي هذه الدالة داخل كلاس _ProfileScreenState
 void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? currentPhone) {
-  final controller = TextEditingController(text: currentPhone);
   showDialog(
     context: context,
-    builder: (context) => AlertDialog(
-      title: Text(l10n.profileEditPhone),
-      content: TextField(
-        controller: controller,
-        keyboardType: TextInputType.phone,
-        decoration: InputDecoration(hintText: "05xxxxxxxx"),
-      ),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: Text("cancel")), // تأكدي من وجود مفتاح cancel في l10n
-        TextButton(
-          onPressed: () {
-            if (controller.text.isNotEmpty) {
-              ref.read(profileNotifierProvider.notifier).addPhoneNumber(controller.text); //
-              Navigator.pop(context);
-            }
-          },
-          child: Text("save"), // تأكدي من وجود مفتاح save في l10n
-        ),
-      ],
-    ),
+    barrierDismissible: false,
+    builder: (_) => PhoneOtpDialog(currentPhone: currentPhone),
   );
 }
 //

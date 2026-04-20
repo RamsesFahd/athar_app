@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:athar_app/features/guide_market/screens/booking_details_screen.dart';
+import 'package:athar_app/features/guide_market/screens/booking_form_screen.dart';
 import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
@@ -152,7 +152,7 @@ class TripDetailsScreen extends ConsumerWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => BookingDetailsScreen(trip: trip),
+                        builder: (context) => BookingFormScreen(trip: trip),
                       ),
                     );
                   },

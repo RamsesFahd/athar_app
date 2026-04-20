@@ -60,7 +60,7 @@ Future<String?> signUp({
           email: email,
           createdAt: DateTime.now(),
           accessibilitySettings: AccessibilitySettings(),
-          verificationStatus: 'unverified',
+          verificationStatus: VerificationStatus.unverified,
           tutorType: tutorType ?? TutorType.individual,
         );
       } else {
