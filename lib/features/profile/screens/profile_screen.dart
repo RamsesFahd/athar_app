@@ -15,6 +15,7 @@ import '../widgets/settings_tile.dart';
 import '../widgets/guest_profile_view.dart';
 import '../widgets/tourist_profile.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
+import 'package:athar_app/features/contributions/screens/contributions_achievements_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -226,7 +227,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           SettingsTile(
                             title: l10n.manageContributions,
                             leadingIcon: Icons.edit_note_rounded,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                              builder: (_) => const ContributionsAchievementsScreen(),
+                               ),
+                              );
+
+                            },
                           ),
                           SettingsTile(
                             title: l10n.myInterests,

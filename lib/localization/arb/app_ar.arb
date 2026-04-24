@@ -304,5 +304,97 @@
   "max_price": "الحد الأقصى",
   "arabic": "العربية",
   "english": "الإنجليزية",
-  "french": "الفرنسية"
+  "french": "الفرنسية",
+  "myCulturalAchievements": "إنجازاتي الثقافية",
+  "communityMember": "عضو مجتمعي",
+  "culturalImpactSubtitle": "نحافظ على التراث السعودي من خلال مساهمات ثقافية ذات أثر.",
+
+  "culturalContributorLevel": "مساهم ثقافي",
+  "heritagePreserverLevel": "حافظ التراث",
+
+  "featuredBadgeTitle": "الوسام المميز",
+
+  "communityVoiceBadge": "صوت المجتمع",
+  "communityVoiceBadgeDescription": "يُمنح للأعضاء أصحاب المشاركة الثقافية المستمرة والمؤثرة.",
+
+  "allBadges": "الكل",
+  "earnedBadges": "المكتسبة",
+  "inProgressBadges": "قيد التقدم",
+
+  "firstStepBadge": "الخطوة الأولى",
+  "firstStepBadgeDescription": "يُفتح بعد أول مساهمة يتم قبولها.",
+
+  "activeContributorBadge": "مساهم نشيط",
+  "activeContributorBadgeDescription": "يُفتح بعد إرسال عدة مساهمات معتمدة.",
+
+  "storyKeeperBadge": "حافظ القصص",
+  "storyKeeperBadgeDescription": "شارك المزيد من القصص لفتح هذا الوسام.",
+
+  "traditionGuardianBadge": "حارس التقاليد",
+  "traditionGuardianBadgeDescription": "أضف المزيد من التقاليد من مناطق مختلفة.",
+
+  "visualArchivistBadge": "موثق بصري",
+  "visualArchivistBadgeDescription": "ارفع المزيد من المحتوى المرئي لفتح هذا الإنجاز.",
+
+  "unlockedLabel": "تم فتحه",
+
+  "storyKeeperProgress": "2 من 3 قصص",
+  "traditionGuardianProgress": "1 من 3 تقاليد",
+  "visualArchivistProgress": "3 من 5 ملفات",
+
+  "pointsValue": "{points} نقطة",
+  "@pointsValue": {
+    "placeholders": {
+      "points": {}
+    }
+  },
+
+  "pointsToReachNextLevel": "باقي {points} نقطة للوصول إلى {level}",
+  "@pointsToReachNextLevel": {
+    "placeholders": {
+      "points": {},
+      "level": {}
+    }
+  },
+
+  "addContributionTitle": "إضافة مساهمة",
+
+  "titleLabel": "العنوان",
+  "titleHint": "أدخل عنوان المساهمة",
+
+  "descriptionLabel": "الوصف",
+  "descriptionHint": "اكتب وصف المساهمة",
+
+  "categoryLabel": "التصنيف",
+  "categoryStory": "قصة",
+  "categoryTradition": "تقليد",
+  "categoryEvent": "فعالية",
+  "categoryOther": "أخرى",
+
+  "cityLabel": "المدينة",
+  "cityRiyadh": "الرياض",
+  "cityJeddah": "جدة",
+  "cityMakkah": "مكة",
+  "cityMadinah": "المدينة المنورة",
+
+  "selectCityError": "الرجاء اختيار المدينة",
+
+  "mediaLabel": "الوسائط",
+  "addPhoto": "إضافة صورة",
+  "addVideo": "إضافة فيديو",
+
+  "mediaRequiredHint": "يجب إضافة صورة واحدة على الأقل أو فيديو واحد",
+  "mediaRequiredError": "الوسائط مطلوبة",
+
+  "submitContribution": "إرسال المساهمة",
+  "submissionSuccessMessage": "تم إرسال المساهمة للمراجعة بنجاح",
+
+  "requiredField": "هذا الحقل مطلوب",
+  "addContributionSubtitle": "ساعدنا في حفظ التراث السعودي من خلال مشاركة ما تعرفه!",
+"categoryTraditionalFood": "أكلة شعبية",
+"categoryCulturalTradition": "عادة وتقاليد",
+"categoryTraditionalGame": "لعبة شعبية",
+"categoryTraditionalCraft": "حرفة تقليدية",
+"categoryHistoricalStory": "قصة تاريخية",
+"contentReviewNotice": "سيتم مراجعة المحتوى قبل النشر"
 }

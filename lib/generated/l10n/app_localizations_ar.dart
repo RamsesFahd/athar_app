@@ -844,4 +844,184 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get french => 'الفرنسية';
+
+  @override
+  String get myCulturalAchievements => 'إنجازاتي الثقافية';
+
+  @override
+  String get communityMember => 'عضو مجتمعي';
+
+  @override
+  String get culturalImpactSubtitle =>
+      'نحافظ على التراث السعودي من خلال مساهمات ثقافية ذات أثر.';
+
+  @override
+  String get culturalContributorLevel => 'مساهم ثقافي';
+
+  @override
+  String get heritagePreserverLevel => 'حافظ التراث';
+
+  @override
+  String get featuredBadgeTitle => 'الوسام المميز';
+
+  @override
+  String get communityVoiceBadge => 'صوت المجتمع';
+
+  @override
+  String get communityVoiceBadgeDescription =>
+      'يُمنح للأعضاء أصحاب المشاركة الثقافية المستمرة والمؤثرة.';
+
+  @override
+  String get allBadges => 'الكل';
+
+  @override
+  String get earnedBadges => 'المكتسبة';
+
+  @override
+  String get inProgressBadges => 'قيد التقدم';
+
+  @override
+  String get firstStepBadge => 'الخطوة الأولى';
+
+  @override
+  String get firstStepBadgeDescription => 'يُفتح بعد أول مساهمة يتم قبولها.';
+
+  @override
+  String get activeContributorBadge => 'مساهم نشيط';
+
+  @override
+  String get activeContributorBadgeDescription =>
+      'يُفتح بعد إرسال عدة مساهمات معتمدة.';
+
+  @override
+  String get storyKeeperBadge => 'حافظ القصص';
+
+  @override
+  String get storyKeeperBadgeDescription =>
+      'شارك المزيد من القصص لفتح هذا الوسام.';
+
+  @override
+  String get traditionGuardianBadge => 'حارس التقاليد';
+
+  @override
+  String get traditionGuardianBadgeDescription =>
+      'أضف المزيد من التقاليد من مناطق مختلفة.';
+
+  @override
+  String get visualArchivistBadge => 'موثق بصري';
+
+  @override
+  String get visualArchivistBadgeDescription =>
+      'ارفع المزيد من المحتوى المرئي لفتح هذا الإنجاز.';
+
+  @override
+  String get unlockedLabel => 'تم فتحه';
+
+  @override
+  String get storyKeeperProgress => '2 من 3 قصص';
+
+  @override
+  String get traditionGuardianProgress => '1 من 3 تقاليد';
+
+  @override
+  String get visualArchivistProgress => '3 من 5 ملفات';
+
+  @override
+  String pointsValue(Object points) {
+    return '$points نقطة';
+  }
+
+  @override
+  String pointsToReachNextLevel(Object points, Object level) {
+    return 'باقي $points نقطة للوصول إلى $level';
+  }
+
+  @override
+  String get addContributionTitle => 'إضافة مساهمة';
+
+  @override
+  String get titleLabel => 'العنوان';
+
+  @override
+  String get titleHint => 'أدخل عنوان المساهمة';
+
+  @override
+  String get descriptionHint => 'اكتب وصف المساهمة';
+
+  @override
+  String get categoryStory => 'قصة';
+
+  @override
+  String get categoryTradition => 'تقليد';
+
+  @override
+  String get categoryEvent => 'فعالية';
+
+  @override
+  String get categoryOther => 'أخرى';
+
+  @override
+  String get cityLabel => 'المدينة';
+
+  @override
+  String get cityRiyadh => 'الرياض';
+
+  @override
+  String get cityJeddah => 'جدة';
+
+  @override
+  String get cityMakkah => 'مكة';
+
+  @override
+  String get cityMadinah => 'المدينة المنورة';
+
+  @override
+  String get selectCityError => 'الرجاء اختيار المدينة';
+
+  @override
+  String get mediaLabel => 'الوسائط';
+
+  @override
+  String get addPhoto => 'إضافة صورة';
+
+  @override
+  String get addVideo => 'إضافة فيديو';
+
+  @override
+  String get mediaRequiredHint =>
+      'يجب إضافة صورة واحدة على الأقل أو فيديو واحد';
+
+  @override
+  String get mediaRequiredError => 'الوسائط مطلوبة';
+
+  @override
+  String get submitContribution => 'إرسال المساهمة';
+
+  @override
+  String get submissionSuccessMessage => 'تم إرسال المساهمة للمراجعة بنجاح';
+
+  @override
+  String get requiredField => 'هذا الحقل مطلوب';
+
+  @override
+  String get addContributionSubtitle =>
+      'ساعدنا في حفظ التراث السعودي من خلال مشاركة ما تعرفه!';
+
+  @override
+  String get categoryTraditionalFood => 'أكلة شعبية';
+
+  @override
+  String get categoryCulturalTradition => 'عادة وتقاليد';
+
+  @override
+  String get categoryTraditionalGame => 'لعبة شعبية';
+
+  @override
+  String get categoryTraditionalCraft => 'حرفة تقليدية';
+
+  @override
+  String get categoryHistoricalStory => 'قصة تاريخية';
+
+  @override
+  String get contentReviewNotice => 'سيتم مراجعة المحتوى قبل النشر';
 }
