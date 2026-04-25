@@ -53,21 +53,6 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
           body: SafeArea(
             child: CustomScrollView(
               slivers: [
-                SliverAppBar(
-                  pinned: true,
-                  elevation: 0,
-                  backgroundColor: theme.scaffoldBackgroundColor,
-                  surfaceTintColor: Colors.transparent,
-                  centerTitle: true,
-                  title: Text(
-                    isArabic
-                        ? 'مساهماتي وإنجازاتي'
-                        : 'My Contributions & Achievements',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(
                     _pageHorizontalPadding,

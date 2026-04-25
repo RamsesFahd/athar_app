@@ -13,7 +13,7 @@ import 'package:athar_app/features/home/screens/home_screen.dart';
 import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
 import 'package:athar_app/features/interactive_map/screens/map_screen.dart';
 import 'package:athar_app/features/guide_market/screens/trip_management_screen.dart';
-import 'package:athar_app/features/contribution/screens/contribution_screen.dart';
+import 'package:athar_app/features/contributions/screens/contributions_achievements_screen.dart';
 
 class NavigationContainer extends ConsumerStatefulWidget {
   const NavigationContainer({super.key});
@@ -41,7 +41,7 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
       ),
       const MapScreen(),
       const RawiLandingScreen(),
-      if (_isTutor) const TripManagementScreen() else const ContributionScreen(),
+      if (_isTutor) const TripManagementScreen() else const ContributionsAchievementsScreen(),
       const ProfileScreen(),
     ];
   }

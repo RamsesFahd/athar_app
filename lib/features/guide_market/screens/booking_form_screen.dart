@@ -316,6 +316,8 @@ class BookingFormScreen extends ConsumerWidget {
           time: tripTime,
           adults: form.adults,
           children: form.children,
+          adultPrice: trip.adultPrice,
+          childPrice: trip.childPrice,
           totalPrice: (trip.adultPrice * form.adults) +
               (trip.childPrice * form.children),
           imageUrl: trip.imageUrl,
