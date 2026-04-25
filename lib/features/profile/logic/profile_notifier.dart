@@ -1,3 +1,4 @@
+import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/features/profile/logic/profile_repository.dart';
@@ -23,6 +24,25 @@ class ProfileNotifier extends _$ProfileNotifier {
         user.uId,
         {'fullName': newName},
       );
+      if (error != null) throw Exception(error);
+      ref.invalidate(authNotifierProvider);
+    });
+  }
+
+  Future<void> updateProfileData({
+    required String name,
+    String? bio,
+    List<String>? languages,
+  }) async {
+    final user = ref.read(authNotifierProvider).value;
+    if (user == null) return;
+
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final data = <String, dynamic>{'fullName': name};
+      if (bio != null) data['bio'] = bio;
+      if (languages != null) data['languages'] = languages;
+      final error = await ref.read(profileRepositoryProvider).updateUserData(user.uId, data);
       if (error != null) throw Exception(error);
       ref.invalidate(authNotifierProvider);
     });
@@ -74,6 +94,28 @@ class ProfileNotifier extends _$ProfileNotifier {
   }
 
   // Android auto-verification: uses the credential object directly, not verificationId/smsCode.
+  Future<void> submitCredentials(Map<String, dynamic> credentialData) async {
+    final user = ref.read(authNotifierProvider).value;
+    if (user == null) return;
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      final error = await ref.read(profileRepositoryProvider).submitTutorCredentials(
+        uId: user.uId,
+        credentialData: credentialData,
+      );
+      if (error != null) throw Exception(error);
+      ref.invalidate(authNotifierProvider);
+    });
+  }
+
+  Future<void> checkAndExpireCredentials(TutorModel tutor) async {
+    if (tutor.verificationStatus == VerificationStatus.verified &&
+        tutor.isCredentialExpired) {
+      await ref.read(profileRepositoryProvider).markCredentialExpired(tutor.uId);
+      ref.invalidate(authNotifierProvider);
+    }
+  }
+
   Future<void> _applyCredential(
       PhoneAuthCredential credential, String phoneNumber) async {
     final user = ref.read(authNotifierProvider).value;

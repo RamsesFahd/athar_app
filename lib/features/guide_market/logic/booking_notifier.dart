@@ -20,7 +20,7 @@ class BookingNotifier extends _$BookingNotifier {
     state = BookingModel(
       bookingId: const Uuid().v4(),
       touristId: '',
-      tutorId: '',
+      tutorId: trip.tutorId ?? '',
       tripId: trip.id,
       tripTitle: '${trip.titleAr} - ${trip.titleEn}',
       tripCity: '${trip.cityAr} - ${trip.cityEn}',

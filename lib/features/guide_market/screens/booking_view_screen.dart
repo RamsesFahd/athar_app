@@ -4,6 +4,7 @@ import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
+import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 /// Read-only view of a completed/pending booking.
@@ -99,7 +100,7 @@ class BookingViewScreen extends ConsumerWidget {
 
           const SizedBox(height: 16),
 
-          _buildBookingOverviewCard(theme, isAr, l10n),
+          _buildBookingOverviewCard(theme, isAr, l10n, ref),
 
           const SizedBox(height: 24),
 
@@ -168,6 +169,7 @@ class BookingViewScreen extends ConsumerWidget {
     ThemeData theme,
     bool isAr,
     AppLocalizations l10n,
+    WidgetRef ref,
   ) {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
@@ -358,24 +360,30 @@ class BookingViewScreen extends ConsumerWidget {
               style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 12),
-            _modernInfoRow(
-              theme,
-              Icons.person_outline,
-              isAr ? 'المرشد' : 'Guide',
-              isAr ? 'سيظهر لاحقًا' : 'Available soon',
-            ),
-            _modernInfoRow(
-              theme,
-              Icons.phone_outlined,
-              isAr ? 'رقم التواصل' : 'Phone',
-              isAr ? 'سيظهر بعد التأكيد' : 'Shown after confirmation',
-            ),
-            _modernInfoRow(
-              theme,
-              Icons.place_outlined,
-              isAr ? 'نقطة التجمع' : 'Meeting Point',
-              isAr ? 'سيتم تحديدها لاحقًا' : 'To be shared later',
-            ),
+            // Old bookings accepted before tutorName/tutorPhone were stored:
+            // fall back to a live Firestore fetch using tutorId.
+            if (booking.tutorName != null || booking.tutorPhone != null)
+              _contactRows(
+                theme: theme,
+                isAr: isAr,
+                name: booking.tutorName,
+                phone: booking.tutorPhone,
+              )
+            else
+              FutureBuilder<TutorModel?>(
+                future: ref
+                    .read(marketplaceRepositoryProvider)
+                    .fetchTutorById(booking.tutorId),
+                builder: (context, snap) {
+                  final tutor = snap.data;
+                  return _contactRows(
+                    theme: theme,
+                    isAr: isAr,
+                    name: tutor?.fullName,
+                    phone: tutor?.phoneNumber,
+                  );
+                },
+              ),
           ],
 
           if (booking.status == BookingStatus.rejected) ...[
@@ -397,6 +405,40 @@ class BookingViewScreen extends ConsumerWidget {
           ],
         ],
       ),
+    );
+  }
+
+  Widget _contactRows({
+    required ThemeData theme,
+    required bool isAr,
+    required String? name,
+    required String? phone,
+  }) {
+    return Column(
+      children: [
+        _modernInfoRow(
+          theme,
+          Icons.person_outline,
+          isAr ? 'المرشد' : 'Guide',
+          (name != null && name.isNotEmpty)
+              ? name
+              : (isAr ? 'سيظهر لاحقًا' : 'Available soon'),
+        ),
+        _modernInfoRow(
+          theme,
+          Icons.phone_outlined,
+          isAr ? 'رقم التواصل' : 'Phone',
+          (phone != null && phone.isNotEmpty)
+              ? phone
+              : (isAr ? 'سيظهر بعد التأكيد' : 'Shown after confirmation'),
+        ),
+        _modernInfoRow(
+          theme,
+          Icons.place_outlined,
+          isAr ? 'نقطة التجمع' : 'Meeting Point',
+          isAr ? 'سيتم تحديدها لاحقًا' : 'To be shared later',
+        ),
+      ],
     );
   }
 

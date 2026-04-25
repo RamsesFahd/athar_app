@@ -34,12 +34,33 @@ class AdminRepository {
             .toList());
   }
 
-  Future<void> approveTutor(String uId) async {
-    await _users.doc(uId).update({'verificationStatus': VerificationStatus.verified.name});
+  Future<void> approveTutor(
+    String uId, {
+    required String adminId,
+    required String adminName,
+  }) async {
+    await _users.doc(uId).update({
+      'verificationStatus': VerificationStatus.verified.name,
+      'verifiedByAdminId': adminId,
+      'verifiedByAdminName': adminName,
+      'verificationActionAt': Timestamp.now(),
+      'rejectionReason': null,
+    });
   }
 
-  Future<void> rejectTutor(String uId) async {
-    await _users.doc(uId).update({'verificationStatus': VerificationStatus.rejected.name});
+  Future<void> rejectTutor(
+    String uId, {
+    required String adminId,
+    required String adminName,
+    required String reason,
+  }) async {
+    await _users.doc(uId).update({
+      'verificationStatus': VerificationStatus.rejected.name,
+      'verifiedByAdminId': adminId,
+      'verifiedByAdminName': adminName,
+      'verificationActionAt': Timestamp.now(),
+      'rejectionReason': reason,
+    });
   }
 
   // ── Trip Approvals ──────────────────────────────────────────────────────────

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
+import 'package:athar_app/features/admin/screens/tutor_verification_detail_screen.dart';
 
 class TutorVerificationScreen extends ConsumerWidget {
   const TutorVerificationScreen({super.key});
@@ -29,9 +30,11 @@ class TutorVerificationScreen extends ConsumerWidget {
                     size: 72,
                     color: AppColors.primary.withValues(alpha: 0.15)),
                 const SizedBox(height: 16),
-                Text('No pending verifications',
-                    style: theme.textTheme.bodyLarge
-                        ?.copyWith(color: Colors.grey.shade500)),
+                Text(
+                  'لا توجد طلبات توثيق معلّقة',
+                  style: theme.textTheme.bodyLarge
+                      ?.copyWith(color: Colors.grey.shade500),
+                ),
               ],
             ),
           );
@@ -40,209 +43,105 @@ class TutorVerificationScreen extends ConsumerWidget {
         return ListView.separated(
           padding: const EdgeInsets.all(16),
           itemCount: tutors.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
+          separatorBuilder: (_, __) => const SizedBox(height: 10),
           itemBuilder: (context, index) =>
-              _TutorVerificationCard(tutor: tutors[index]),
+              _PendingTutorCard(tutor: tutors[index]),
         );
       },
     );
   }
 }
 
-class _TutorVerificationCard extends ConsumerWidget {
+class _PendingTutorCard extends StatelessWidget {
   final TutorModel tutor;
-  const _TutorVerificationCard({required this.tutor});
+  const _PendingTutorCard({required this.tutor});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final repo = ref.read(adminRepositoryProvider);
+    final isIndividual = tutor.tutorType == TutorType.individual;
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: Padding(
+    return InkWell(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => TutorVerificationDetailScreen(tutor: tutor),
+        ),
+      ),
+      borderRadius: BorderRadius.circular(14),
+      child: Container(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(14),
+          border:
+              Border.all(color: theme.dividerColor.withValues(alpha: 0.12)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
           children: [
-            // Header row
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor:
-                      AppColors.primary.withValues(alpha: 0.1),
-                  backgroundImage: tutor.profileImage != null
-                      ? NetworkImage(tutor.profileImage!)
-                      : null,
-                  child: tutor.profileImage == null
-                      ? Icon(Icons.person,
-                          color: AppColors.primary, size: 26)
-                      : null,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(tutor.fullName,
-                          style: theme.textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold)),
-                      Text(tutor.email,
-                          style: theme.textTheme.bodySmall
-                              ?.copyWith(color: Colors.grey.shade600)),
-                    ],
-                  ),
-                ),
-                _TypeBadge(type: tutor.tutorType),
-              ],
+            CircleAvatar(
+              radius: 26,
+              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+              backgroundImage: tutor.profileImage != null
+                  ? NetworkImage(tutor.profileImage!)
+                  : null,
+              child: tutor.profileImage == null
+                  ? Icon(Icons.person, color: AppColors.primary, size: 26)
+                  : null,
             ),
-
-            const SizedBox(height: 12),
-            const Divider(height: 1),
-            const SizedBox(height: 12),
-
-            // Details
-            _InfoRow(
-              icon: Icons.badge_outlined,
-              label: 'License',
-              value: tutor.licenceNumber ?? 'Not provided',
-            ),
-            if (tutor.companyName != null)
-              _InfoRow(
-                icon: Icons.business_outlined,
-                label: 'Company',
-                value: tutor.companyName!,
-              ),
-            if (tutor.commercialRegistration != null)
-              _InfoRow(
-                icon: Icons.article_outlined,
-                label: 'Commercial Reg.',
-                value: tutor.commercialRegistration!,
-              ),
-            if (tutor.phoneNumber != null)
-              _InfoRow(
-                icon: Icons.phone_outlined,
-                label: 'Phone',
-                value: tutor.phoneNumber!,
-              ),
-
-            const SizedBox(height: 16),
-
-            // Action buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () async {
-                      await repo.rejectTutor(tutor.uId);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Tutor rejected'),
-                              backgroundColor: Colors.red),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.close, size: 18),
-                    label: const Text('Reject'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red,
-                      side: const BorderSide(color: Colors.red),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    tutor.fullName,
+                    style: theme.textTheme.titleSmall
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () async {
-                      await repo.approveTutor(tutor.uId);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Tutor approved'),
-                              backgroundColor: Colors.green),
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.check, size: 18),
-                    label: const Text('Approve'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                    ),
+                  const SizedBox(height: 2),
+                  Text(
+                    tutor.email,
+                    style: theme.textTheme.bodySmall
+                        ?.copyWith(color: Colors.grey.shade500),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            const SizedBox(width: 8),
+            _typeBadge(isIndividual),
+            const SizedBox(width: 8),
+            const Icon(Icons.chevron_right, color: Colors.grey),
           ],
         ),
       ),
     );
   }
-}
 
-class _TypeBadge extends StatelessWidget {
-  final TutorType? type;
-  const _TypeBadge({this.type});
-
-  @override
-  Widget build(BuildContext context) {
-    final isCompany = type == TutorType.company;
+  Widget _typeBadge(bool isIndividual) {
+    final color = isIndividual ? Colors.orange : Colors.blue;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(
-        color: isCompany
-            ? Colors.blue.withValues(alpha: 0.1)
-            : Colors.orange.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-            color: isCompany
-                ? Colors.blue.withValues(alpha: 0.4)
-                : Colors.orange.withValues(alpha: 0.4)),
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Text(
-        isCompany ? 'Company' : 'Individual',
+        isIndividual ? 'فردي' : 'شركة',
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          color: isCompany ? Colors.blue.shade700 : Colors.orange.shade700,
+          color: isIndividual ? Colors.orange.shade700 : Colors.blue.shade700,
         ),
-      ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  const _InfoRow(
-      {required this.icon, required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        children: [
-          Icon(icon, size: 16, color: AppColors.primary),
-          const SizedBox(width: 8),
-          Text('$label: ',
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(fontWeight: FontWeight.w600)),
-          Expanded(
-            child: Text(value,
-                style: theme.textTheme.bodySmall,
-                overflow: TextOverflow.ellipsis),
-          ),
-        ],
       ),
     );
   }

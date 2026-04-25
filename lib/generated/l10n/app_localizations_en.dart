@@ -172,7 +172,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assistantLabel => 'AI Chat';
 
   @override
-  String get calendarLabel => 'Calendar';
+  String get calendarLabel => 'Trips';
 
   @override
   String get profileLabel => 'Profile';

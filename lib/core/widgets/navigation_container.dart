@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/widgets/bottom_navigation.dart';
 import 'package:athar_app/core/widgets/header.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 
 // Screens
 import 'package:athar_app/features/cultural_archive/screens/cultural_archive.dart';
@@ -9,30 +12,36 @@ import 'package:athar_app/features/profile/screens/profile_screen.dart';
 import 'package:athar_app/features/home/screens/home_screen.dart';
 import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
 import 'package:athar_app/features/interactive_map/screens/map_screen.dart';
+import 'package:athar_app/features/guide_market/screens/trip_management_screen.dart';
+import 'package:athar_app/features/contribution/screens/contribution_screen.dart';
 
-class NavigationContainer extends StatefulWidget {
+class NavigationContainer extends ConsumerStatefulWidget {
   const NavigationContainer({super.key});
 
   @override
-  State<NavigationContainer> createState() => _NavigationContainerState();
+  ConsumerState<NavigationContainer> createState() =>
+      _NavigationContainerState();
 }
 
-class _NavigationContainerState extends State<NavigationContainer> {
+class _NavigationContainerState extends ConsumerState<NavigationContainer> {
   int _currentIndex = 0;
   int _previousIndex = 0;
   Widget? _subPage;
   late final List<Widget> screens;
+  late final bool _isTutor;
 
   @override
   void initState() {
     super.initState();
+    final user = ref.read(authNotifierProvider).value;
+    _isTutor = user?.role == UserRole.tutor;
     screens = [
       HomeScreen(
         onSeeAllArchive: () => _onNavigateToSubPage(const CulturalArchive()),
       ),
       const MapScreen(),
       const RawiLandingScreen(),
-      const Scaffold(body: Center(child: Text('Calendar'))),
+      if (_isTutor) const TripManagementScreen() else const ContributionScreen(),
       const ProfileScreen(),
     ];
   }
@@ -61,7 +70,7 @@ class _NavigationContainerState extends State<NavigationContainer> {
       case 2:
         return l10n.assistantLabel;
       case 3:
-        return l10n.calendarLabel;
+        return _isTutor ? l10n.calendarLabel : l10n.contributions;
       case 4:
         return l10n.profileLabel;
       default:
@@ -116,6 +125,7 @@ class _NavigationContainerState extends State<NavigationContainer> {
       ),
       bottomNavigationBar: AtharBottomNavigation(
         currentIndex: _currentIndex,
+        isTutor: _isTutor,
         onTap: (index) {
           if (index != _currentIndex || _subPage != null) {
             setState(() {

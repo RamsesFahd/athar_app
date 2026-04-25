@@ -17,13 +17,6 @@ class TutorHeader extends ConsumerWidget {
 
     return Column(
       children: [
-        // 1. تنبيه إكمال البيانات (يظهر فقط إذا لم يكن موثقاً)
-        if (user.verificationStatus != VerificationStatus.verified)
-          Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-          child: _buildVerificationAlert(theme, l10n),
-        ),
-
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           decoration: BoxDecoration(
@@ -47,7 +40,7 @@ class TutorHeader extends ConsumerWidget {
                   _buildTutorMainInfo(theme, l10n, ref),
                 ],
               ),
-              if (user.bio != null) ...[
+              if (user.bio != null && user.bio!.trim().isNotEmpty) ...[
                 const SizedBox(height: 12),
                 _buildBioSection(theme),
               ],
@@ -56,34 +49,6 @@ class TutorHeader extends ConsumerWidget {
         ),
       ],
     );
-  }
-
-  // ويدجت التنبيه العلوي للمرشد
-  Widget _buildVerificationAlert(ThemeData theme, AppLocalizations l10n) {
-  bool isPending = user.verificationStatus == VerificationStatus.pending;
-  final Color statusColor = isPending ? theme.colorScheme.tertiary : theme.colorScheme.error;
-
-  return Container(
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: statusColor.withValues(alpha: 0.08),
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: statusColor.withValues(alpha: 0.2)),
-    ),
-    child: Row(
-      children: [
-        Icon(isPending ? Icons.hourglass_top_rounded : Icons.info_outline_rounded, 
-            color: statusColor, size: 20),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            isPending ? l10n.tutorVerificationPendingStatus : l10n.tutorVerificationRequiredStatus,
-            style: theme.textTheme.bodySmall?.copyWith(color: statusColor, fontWeight: FontWeight.w600),
-          ),
-        ),
-      ],
-    ),
-  );
   }
 
   Widget _buildTutorMainInfo(ThemeData theme, AppLocalizations l10n, WidgetRef ref) {

@@ -213,6 +213,18 @@ Future<String?> guestLogin() async {
       return null;
     }
   }
+  Future<String?> deleteAccount(String uId) async {
+    try {
+      await _firestore.collection('users').doc(uId).delete();
+      await _auth.currentUser?.delete();
+      return null;
+    } on FirebaseAuthException catch (e) {
+      return _mapFirebaseError(e);
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
 // This private method maps FirebaseAuthException codes to user-friendly error messages that can be displayed in the UI. It helps to provide better feedback to the user when authentication errors occur.
   String _mapFirebaseError(FirebaseAuthException e) {
     switch (e.code) {

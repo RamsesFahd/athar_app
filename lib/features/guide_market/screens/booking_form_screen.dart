@@ -88,22 +88,7 @@ class BookingFormScreen extends ConsumerWidget {
                             ? l10n.select
                             : form.selectedDate.toString().split(' ')[0],
                         icon: Icons.event_available,
-                        onTap: () => _pickDate(context, formNotifier),
-                        theme: theme,
-                      ),
-                      const SizedBox(height: 16),
-                      _buildModernPickerTile(
-                        label: l10n.time,
-                        value: form.selectedTime == null
-                            ? l10n.select
-                            : (isAr
-                                ? form.selectedTime!
-                                    .replaceAll('AM', 'ص')
-                                    .replaceAll('PM', 'م')
-                                : form.selectedTime!),
-                        icon: Icons.schedule,
-                        onTap: () => _showTimePickerSheet(
-                            context, theme, l10n, form, formNotifier),
+                        onTap: () => _pickDate(context, formNotifier, trip),
                         theme: theme,
                       ),
                     ],
@@ -267,121 +252,19 @@ class BookingFormScreen extends ConsumerWidget {
     );
   }
 
-  static const List<String> _availableTimes = [
-    '8:00 AM - 11:00 AM',
-    '9:00 AM - 1:00 PM',
-    '11:00 AM - 2:00 PM',
-    '1:00 PM - 5:00 PM',
-    '4:00 PM - 8:00 PM',
-    '6:00 PM - 9:00 PM',
-  ];
-
-  void _showTimePickerSheet(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations l10n,
-    BookingFormState form,
-    BookingFormNotifier formNotifier,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: theme.colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-      ),
-      builder: (context) {
-        final isAr = Localizations.localeOf(context).languageCode == 'ar';
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 45,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.outlineVariant,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              const SizedBox(height: 25),
-              Text(
-                l10n.select_time,
-                style: theme.textTheme.titleLarge?.copyWith(fontSize: 22),
-              ),
-              const SizedBox(height: 30),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 14,
-                  mainAxisSpacing: 14,
-                  childAspectRatio: 2.2,
-                ),
-                itemCount: _availableTimes.length,
-                itemBuilder: (context, index) {
-                  final time = _availableTimes[index];
-                  final isSelected = form.selectedTime == time;
-
-                  return InkWell(
-                    onTap: () {
-                      formNotifier.selectTime(time);
-                      Navigator.pop(context);
-                    },
-                    borderRadius: BorderRadius.circular(16),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? theme.colorScheme.primary
-                                .withValues(alpha: 0.1)
-                            : theme.colorScheme.surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: isSelected
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.outlineVariant,
-                          width: isSelected ? 2.5 : 1,
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          isAr
-                              ? time
-                                  .replaceAll('AM', 'ص')
-                                  .replaceAll('PM', 'م')
-                              : time,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: isSelected
-                                ? theme.colorScheme.primary
-                                : null,
-                            fontWeight: isSelected
-                                ? FontWeight.bold
-                                : null,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
   Future<void> _pickDate(
-      BuildContext context, BookingFormNotifier formNotifier) async {
+      BuildContext context, BookingFormNotifier formNotifier, TripModel trip) async {
+    final now = DateTime.now();
+    final first = trip.startDate != null && trip.startDate!.isAfter(now)
+        ? trip.startDate!
+        : now;
+    final last = trip.endDate ?? DateTime(now.year + 3);
     final date = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2027),
+      initialDate: first,
+      firstDate: first,
+      lastDate: last,
       builder: (context, child) => Theme(
         data: Theme.of(context),
         child: child!,
@@ -401,8 +284,8 @@ class BookingFormScreen extends ConsumerWidget {
         SnackBar(
           content: Text(
             isAr
-                ? 'يرجى اختيار التاريخ والوقت للمتابعة'
-                : 'Please select date and time',
+                ? 'يرجى اختيار التاريخ للمتابعة'
+                : 'Please select a date',
           ),
           behavior: SnackBarBehavior.floating,
         ),
@@ -410,9 +293,11 @@ class BookingFormScreen extends ConsumerWidget {
       return;
     }
 
+    final tripTime = trip.timeRange ?? trip.startTime ?? '';
+
     ref.read(bookingNotifierProvider.notifier).updateDetails(
           date: form.selectedDate.toString().split(' ')[0],
-          time: form.selectedTime!,
+          time: tripTime,
           adults: form.adults,
           children: form.children,
           adultPrice: trip.adultPrice,
@@ -426,9 +311,9 @@ class BookingFormScreen extends ConsumerWidget {
       MaterialPageRoute(
         builder: (context) => BookingSummaryScreen(
           tripTitle: trip.getTitle(isAr),
-          guideName: 'أثر - مرشدك السياحي',
+          guideName: trip.guide,
           date: form.selectedDate.toString().split(' ')[0],
-          time: form.selectedTime!,
+          time: tripTime,
           adults: form.adults,
           children: form.children,
           totalPrice: (trip.adultPrice * form.adults) +

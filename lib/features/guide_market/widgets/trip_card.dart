@@ -98,7 +98,7 @@ Widget _buildGridContent(
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      isAr ? "مكة  " : "MAKKAH",
+                      trip.getCity(isAr),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.labelSmall?.copyWith(
@@ -240,7 +240,7 @@ Widget _buildGridContent(
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
-                        isAr ? "مكة المكرمة" : "MAKKAH",
+                        trip.getCity(isAr),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: textTheme.labelSmall?.copyWith(
@@ -269,16 +269,19 @@ Widget _buildGridContent(
                 const SizedBox(height: 6),
 
                 // التصنيف
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: [
-                    _buildTag(
-                      isAr ? "مناسب للعائلات" : "Family Friendly",
-                      theme,
-                    ),
-                  ],
-                ),
+                if (trip.accessibilityFeatures.isNotEmpty)
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: trip.accessibilityFeatures.map((key) {
+                      final label = switch (key) {
+                        'wheelchair' => isAr ? 'صديق للإعاقة' : 'Accessible',
+                        'family' => isAr ? 'مناسب للعائلات' : 'Family Friendly',
+                        _ => key,
+                      };
+                      return _buildTag(label, theme);
+                    }).toList(),
+                  ),
 
                 const Spacer(),
 

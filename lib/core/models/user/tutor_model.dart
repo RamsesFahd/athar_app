@@ -36,6 +36,12 @@ class TutorModel extends UserModel {
   final DateTime? tourismLicenceExpiryDate;
   final int? foundedYear;
 
+  // Admin audit trail
+  final String? verifiedByAdminId;
+  final String? verifiedByAdminName;
+  final DateTime? verificationActionAt;
+  final String? rejectionReason;
+
   TutorModel({
     required super.uId,
     required super.fullName,
@@ -62,6 +68,10 @@ class TutorModel extends UserModel {
     this.tourismLicenceNumber,
     this.tourismLicenceExpiryDate,
     this.foundedYear,
+    this.verifiedByAdminId,
+    this.verifiedByAdminName,
+    this.verificationActionAt,
+    this.rejectionReason,
   });
 
   // ── Credential helpers ────────────────────────────────────────────────────
@@ -163,6 +173,13 @@ class TutorModel extends UserModel {
             ? Timestamp.fromDate(tourismLicenceExpiryDate!)
             : null,
         'foundedYear': foundedYear,
+        // Admin audit
+        'verifiedByAdminId': verifiedByAdminId,
+        'verifiedByAdminName': verifiedByAdminName,
+        'verificationActionAt': verificationActionAt != null
+            ? Timestamp.fromDate(verificationActionAt!)
+            : null,
+        'rejectionReason': rejectionReason,
       };
 
   factory TutorModel.fromMap(Map<String, dynamic> map) {
@@ -220,6 +237,11 @@ class TutorModel extends UserModel {
       tourismLicenceExpiryDate:
           (map['tourismLicenceExpiryDate'] as Timestamp?)?.toDate(),
       foundedYear: map['foundedYear'] as int?,
+      verifiedByAdminId: map['verifiedByAdminId'],
+      verifiedByAdminName: map['verifiedByAdminName'],
+      verificationActionAt:
+          (map['verificationActionAt'] as Timestamp?)?.toDate(),
+      rejectionReason: map['rejectionReason'],
     );
   }
 }

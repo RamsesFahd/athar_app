@@ -85,6 +85,52 @@ class MarketplaceRepository {
       String bookingId, BookingStatus status) async {
     await _bookings.doc(bookingId).update({'status': status.name});
   }
+
+  // 7b. قبول الحجز مع حفظ بيانات المرشد للتواصل
+  Future<void> acceptBooking(
+      String bookingId, String tutorPhone, String tutorName) async {
+    await _bookings.doc(bookingId).update({
+      'status': BookingStatus.accepted.name,
+      'tutorPhone': tutorPhone,
+      'tutorName': tutorName,
+    });
+  }
+
+  // 8. حذف رحلة
+  Future<void> deleteTrip(String tripId) async {
+    await _trips.doc(tripId).delete();
+  }
+
+  // 9. تحديث رحلة موجودة
+  Future<void> updateTrip(TripModel trip) async {
+    await _trips.doc(trip.id).update(trip.toMap());
+  }
+
+  // 10a. جلب بيانات مرشد بمعرّفه — لعرض معلومات التواصل في الحجوزات القديمة
+  Future<TutorModel?> fetchTutorById(String tutorId) async {
+    final doc = await _users.doc(tutorId).get();
+    if (!doc.exists) return null;
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) return null;
+    try {
+      return TutorModel.fromMap(data);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // 10. جلب حجوزات مستخدم مرة واحدة (Future، لا Stream) — يُستخدم لفحوصات الأمان
+  Future<List<BookingModel>> fetchUserBookingsOnce(
+      String userId, UserRole role) async {
+    final String field =
+        (role == UserRole.tutor) ? 'tutorId' : 'touristId';
+    final snapshot =
+        await _bookings.where(field, isEqualTo: userId).get();
+    return snapshot.docs
+        .map((doc) =>
+            BookingModel.fromMap(doc.data() as Map<String, dynamic>))
+        .toList();
+  }
 }
 
 /// Reactive stream of all approved trips. Using a [StreamProvider] here

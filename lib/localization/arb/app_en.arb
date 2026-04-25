@@ -99,8 +99,8 @@
   "@mapLabel": { "description": "Label for Map tab" },
   "assistantLabel": "AI Chat",
   "@assistantLabel": { "description": "Label for Chatbot tab" },
-  "calendarLabel": "Calendar",
-  "@calendarLabel": { "description": "Label for Calendar tab" },
+  "calendarLabel": "Trips",
+  "@calendarLabel": { "description": "Label for Trip Management tab" },
   "profileLabel": "Profile",
   "@profileLabel": { "description": "Label for Profile tab" },
 

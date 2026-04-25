@@ -4,11 +4,13 @@ import 'package:athar_app/generated/l10n/app_localizations.dart';
 class AtharBottomNavigation extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
+  final bool isTutor;
 
   const AtharBottomNavigation({
     super.key,
     required this.currentIndex,
     required this.onTap,
+    this.isTutor = false,
   });
 
   @override
@@ -69,12 +71,19 @@ class AtharBottomNavigation extends StatelessWidget {
               activeIcon: const Icon(Icons.message),
               label: l10n.assistantLabel,
             ),
-            // Calendar
-            BottomNavigationBarItem(
-              icon: const Icon(Icons.calendar_today_outlined),
-              activeIcon: const Icon(Icons.calendar_today, size: 22),
-              label: l10n.calendarLabel,
-            ),
+            // Trips (tutor) / Contribution (tourist)
+            if (isTutor)
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.route_outlined),
+                activeIcon: const Icon(Icons.route),
+                label: l10n.calendarLabel,
+              )
+            else
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.volunteer_activism_outlined),
+                activeIcon: const Icon(Icons.volunteer_activism),
+                label: l10n.contributions,
+              ),
             // Profile
             BottomNavigationBarItem(
               icon: const Icon(Icons.person_outline),

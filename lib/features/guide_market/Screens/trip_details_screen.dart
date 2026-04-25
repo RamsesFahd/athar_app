@@ -310,13 +310,10 @@ class TripDetailsScreen extends ConsumerWidget {
   void _showGuideDetailsPopUp(
       BuildContext context, AppLocalizations l10n, bool isAr) {
     final theme = Theme.of(context);
-
-    // تعريف قائمة اللغات من ملف الترجمة
-    final languages = [
-      l10n.arabic,
-      l10n.english,
-      l10n.french,
-    ];
+    final rating = trip.guideRating;
+    final reviews = trip.guideReviewsCount;
+    final bio = trip.guideBio;
+    final languages = trip.guideLanguages ?? [];
 
     showDialog(
       context: context,
@@ -344,91 +341,102 @@ class TripDetailsScreen extends ConsumerWidget {
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Tajawal'),
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "5.0",
+                  if (rating != null) ...[
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          rating.toStringAsFixed(1),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Row(
+                          children: List.generate(
+                              5,
+                              (i) => Icon(
+                                    i < rating.round()
+                                        ? Icons.star
+                                        : Icons.star_border,
+                                    color: Colors.amber,
+                                    size: 18,
+                                  )),
+                        ),
+                        if (reviews != null) ...[
+                          const SizedBox(width: 8),
+                          Text(
+                            isAr
+                                ? "($reviews تقييم)"
+                                : "($reviews reviews)",
+                            style:
+                                TextStyle(color: Colors.grey[500], fontSize: 13),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                  if (bio != null && bio.isNotEmpty) ...[
+                    const SizedBox(height: 25),
+                    Align(
+                      alignment:
+                          isAr ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Text(
+                        bio,
+                        textAlign: isAr ? TextAlign.right : TextAlign.left,
                         style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: theme.colorScheme.onSurface,
+                          color: Colors.grey[600],
+                          height: 1.6,
+                          fontSize: 14,
+                          fontFamily: 'Tajawal',
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Row(
-                        children: List.generate(
-                            5,
-                            (index) => const Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
-                                  size: 18,
-                                )),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        isAr ? "(39 تقييم)" : "(39 reviews)",
-                        style: TextStyle(color: Colors.grey[500], fontSize: 13),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-                  Align(
-                    alignment:
-                        isAr ? Alignment.centerRight : Alignment.centerLeft,
-                    child: Text(
-                      isAr
-                          ? "شغوفة بالتراث السعودي وملتزمة بتوثيق كنوزنا الثقافية. أسعى لترك أثر من خلال مشاركة قصص معالمنا التاريخية."
-                          : "Passionate about Saudi heritage and committed to documenting our cultural treasures.",
-                      textAlign: isAr ? TextAlign.right : TextAlign.left,
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        height: 1.6,
-                        fontSize: 14,
-                        fontFamily: 'Tajawal',
+                    ),
+                  ],
+                  if (languages.isNotEmpty) ...[
+                    const SizedBox(height: 30),
+                    Align(
+                      alignment:
+                          isAr ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Text(l10n.languages,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        alignment: WrapAlignment.start,
+                        children: languages
+                            .map((lang) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.primary
+                                        .withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                        color: theme.colorScheme.primary
+                                            .withValues(alpha: 0.5),
+                                        width: 1.5),
+                                  ),
+                                  child: Text(
+                                    lang,
+                                    style: TextStyle(
+                                        color: theme.colorScheme.primary,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Tajawal'),
+                                  ),
+                                ))
+                            .toList(),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 30),
-                  Align(
-                    alignment:
-                        isAr ? Alignment.centerRight : Alignment.centerLeft,
-                    child: Text(l10n.languages,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      alignment: WrapAlignment.start,
-                      children: languages
-                          .map((langName) => Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: theme.colorScheme.primary
-                                      .withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                      color: theme.colorScheme.primary
-                                          .withValues(alpha: 0.5),
-                                      width: 1.5),
-                                ),
-                                child: Text(
-                                  langName, // النص المترجم
-                                  style: TextStyle(
-                                      color: theme.colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
-                                      fontFamily: 'Tajawal'),
-                                ),
-                              ))
-                          .toList(),
-                    ),
-                  ),
+                  ],
                 ],
               ),
             ),

@@ -58,15 +58,31 @@ class ProfileRepository {
     }
   }
 
-  Future<void> updateTutorLicence({
-  required String uId,
-  required String licenceNumber,
+  Future<String?> submitTutorCredentials({
+    required String uId,
+    required Map<String, dynamic> credentialData,
   }) async {
+    try {
       await _firestore.collection('users').doc(uId).update({
-        'licenceNumber': licenceNumber,
+        ...credentialData,
         'verificationStatus': VerificationStatus.pending.name,
       });
+      return null;
+    } catch (e) {
+      return e.toString();
     }
+  }
+
+  Future<String?> markCredentialExpired(String uId) async {
+    try {
+      await _firestore.collection('users').doc(uId).update({
+        'verificationStatus': VerificationStatus.expired.name,
+      });
+      return null;
+    } catch (e) {
+      return e.toString();
+    }
+  }
 
   void sendPhoneOtp({
     required String phoneNumber,

@@ -410,10 +410,10 @@ abstract class AppLocalizations {
   /// **'AI Chat'**
   String get assistantLabel;
 
-  /// Label for Calendar tab
+  /// Label for Trip Management tab
   ///
   /// In en, this message translates to:
-  /// **'Calendar'**
+  /// **'Trips'**
   String get calendarLabel;
 
   /// Label for Profile tab

@@ -19,7 +19,37 @@ class TripModel {
   final String? tutorId;
   final String status; // 'pending' | 'approved' | 'rejected'
   final String tutorType; // 'individual' | 'company'
-  final List<String> accessibilityFeatures; // e.g. ['wheelchair', 'family']
+  final List<String> accessibilityFeatures;
+
+  // ── Guide snapshot ────────────────────────────────────────────────────────
+  final String? guideBio;
+  final List<String>? guideLanguages;
+  final double? guideRating;
+  final int? guideReviewsCount;
+
+  // ── Trip languages (company-set per-trip) ─────────────────────────────────
+  final List<String>? tripLanguages;
+
+  // ── Capacity & kids policy ────────────────────────────────────────────────
+  /// Whether child bookings are permitted on this trip.
+  final bool allowsKids;
+
+  /// Maximum adult-equivalent slots per booking window. 2 kids = 1 adult slot.
+  final int? maxCapacity;
+
+  // ── Schedule ──────────────────────────────────────────────────────────────
+  /// Daily start time stored as "HH:mm", e.g. "08:00".
+  final String? startTime;
+
+  /// Daily end time stored as "HH:mm", e.g. "18:00".
+  final String? endTime;
+
+  /// How many consecutive days a single booking spans. null / 1 = same-day.
+  final int? tripDurationDays;
+
+  // ── Legacy availability window (kept for backward compat) ─────────────────
+  final DateTime? startDate;
+  final DateTime? endDate;
 
   TripModel({
     required this.id,
@@ -41,18 +71,54 @@ class TripModel {
     this.status = 'approved',
     this.tutorType = 'individual',
     this.accessibilityFeatures = const [],
+    this.guideBio,
+    this.guideLanguages,
+    this.guideRating,
+    this.guideReviewsCount,
+    this.tripLanguages,
+    this.allowsKids = false,
+    this.maxCapacity,
+    this.startTime,
+    this.endTime,
+    this.tripDurationDays,
+    this.startDate,
+    this.endDate,
   });
 
-  /// Display helper used in TripCard / TripDetailsScreen (shows adult price).
-  String get price => '${adultPrice.toInt()} ر.س';
+  // ── Schedule helpers ──────────────────────────────────────────────────────
 
+  /// Number of days the trip spans (1 = single-day).
+  int get durationDays {
+    if (startDate == null || endDate == null) return 1;
+    final diff = endDate!
+        .toLocal()
+        .difference(startDate!.toLocal())
+        .inDays;
+    return diff + 1;
+  }
+
+  bool get isMultiDay => (tripDurationDays ?? 0) > 1 || durationDays > 1;
+
+  /// Human-readable daily time slot, e.g. "08:00 – 18:00".
+  String? get timeRange {
+    if (startTime == null && endTime == null) return null;
+    final s = startTime ?? '';
+    final e = endTime ?? '';
+    return '$s – $e';
+  }
+
+  // ── Display helpers ───────────────────────────────────────────────────────
+
+  String get price => '${adultPrice.toInt()} ر.س';
   String getTitle(bool isAr) => isAr ? titleAr : titleEn;
   String getDescription(bool isAr) => isAr ? descriptionAr : descriptionEn;
   String getShortDescription(bool isAr) =>
       isAr ? shortDescriptionAr : shortDescriptionEn;
+  String getCity(bool isAr) => isAr ? cityAr : cityEn;
+
+  // ── Serialisation ─────────────────────────────────────────────────────────
 
   factory TripModel.fromMap(Map<String, dynamic> map, String documentId) {
-    // Backward-compat: old docs stored price as a string like "400 ر.س"
     double parsePrice(dynamic raw) {
       if (raw == null) return 0.0;
       if (raw is num) return raw.toDouble();
@@ -81,6 +147,22 @@ class TripModel {
       tutorType: map['tutorType'] ?? 'individual',
       accessibilityFeatures:
           List<String>.from(map['accessibilityFeatures'] ?? []),
+      guideBio: map['guideBio'] as String?,
+      guideLanguages: (map['guideLanguages'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      guideRating: (map['guideRating'] as num?)?.toDouble(),
+      guideReviewsCount: map['guideReviewsCount'] as int?,
+      tripLanguages: (map['tripLanguages'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      allowsKids: map['allowsKids'] as bool? ?? false,
+      maxCapacity: map['maxCapacity'] as int?,
+      startTime: map['startTime'] as String?,
+      endTime: map['endTime'] as String?,
+      tripDurationDays: map['tripDurationDays'] as int?,
+      startDate: (map['startDate'] as Timestamp?)?.toDate(),
+      endDate: (map['endDate'] as Timestamp?)?.toDate(),
     );
   }
 
@@ -104,7 +186,18 @@ class TripModel {
       'status': status,
       'tutorType': tutorType,
       'accessibilityFeatures': accessibilityFeatures,
+      'guideBio': guideBio,
+      'guideLanguages': guideLanguages,
+      'guideRating': guideRating,
+      'guideReviewsCount': guideReviewsCount,
+      'tripLanguages': tripLanguages,
+      'allowsKids': allowsKids,
+      'maxCapacity': maxCapacity,
+      'startTime': startTime,
+      'endTime': endTime,
+      'tripDurationDays': tripDurationDays,
+      'startDate': startDate != null ? Timestamp.fromDate(startDate!) : null,
+      'endDate': endDate != null ? Timestamp.fromDate(endDate!) : null,
     };
   }
-  String getCity(bool isAr) => isAr ? cityAr : cityEn;
 }

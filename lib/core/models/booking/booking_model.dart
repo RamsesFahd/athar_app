@@ -19,6 +19,8 @@ class BookingModel {
   final BookingStatus status;
   final DateTime createdAt;
   final String imageUrl;
+  final String? tutorPhone;
+  final String? tutorName;
 
   BookingModel({
     required this.bookingId,
@@ -37,6 +39,8 @@ class BookingModel {
     this.status = BookingStatus.pending,
     required this.createdAt,
     required this.imageUrl,
+    this.tutorPhone,
+    this.tutorName,
   });
 
   Map<String, dynamic> toMap() {
@@ -57,6 +61,8 @@ class BookingModel {
       'status': status.name,
       'createdAt': Timestamp.fromDate(createdAt),
       'imageUrl': imageUrl,
+      'tutorPhone': tutorPhone,
+      'tutorName': tutorName,
     };
   }
 
@@ -81,6 +87,8 @@ class BookingModel {
       ),
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       imageUrl: map['imageUrl'] ?? '',
+      tutorPhone: map['tutorPhone'] as String?,
+      tutorName: map['tutorName'] as String?,
     );
   }
 
@@ -101,6 +109,8 @@ class BookingModel {
     BookingStatus? status,
     DateTime? createdAt,
     String? imageUrl,
+    String? tutorPhone,
+    String? tutorName,
   }) {
     return BookingModel(
       bookingId: bookingId ?? this.bookingId,
@@ -119,6 +129,8 @@ class BookingModel {
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       imageUrl: imageUrl ?? this.imageUrl,
+      tutorPhone: tutorPhone ?? this.tutorPhone,
+      tutorName: tutorName ?? this.tutorName,
     );
   }
 }

@@ -10,28 +10,24 @@ class BookingFormState {
   final int adults;
   final int children;
   final DateTime? selectedDate;
-  final String? selectedTime;
 
   const BookingFormState({
     this.adults = 1,
     this.children = 0,
     this.selectedDate,
-    this.selectedTime,
   });
 
-  bool get isComplete => selectedDate != null && selectedTime != null;
+  bool get isComplete => selectedDate != null;
 
   BookingFormState copyWith({
     int? adults,
     int? children,
     DateTime? selectedDate,
-    String? selectedTime,
   }) {
     return BookingFormState(
       adults: adults ?? this.adults,
       children: children ?? this.children,
       selectedDate: selectedDate ?? this.selectedDate,
-      selectedTime: selectedTime ?? this.selectedTime,
     );
   }
 }
@@ -57,7 +53,6 @@ class BookingFormNotifier extends AutoDisposeNotifier<BookingFormState> {
 
   void selectDate(DateTime date) => state = state.copyWith(selectedDate: date);
 
-  void selectTime(String time) => state = state.copyWith(selectedTime: time);
 }
 
 final bookingFormProvider =
