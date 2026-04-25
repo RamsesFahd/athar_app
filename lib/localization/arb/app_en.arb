@@ -342,5 +342,84 @@
   "max_price": "Max Price",
   "arabic": "Arabic",
   "english": "English",
-  "french": "French"
+  "french": "French",
+  "myCulturalAchievements": "My Cultural Achievements",
+  "communityMember": "Community Member",
+  "culturalImpactSubtitle": "Preserving Saudi heritage through meaningful cultural contributions.",
+  "culturalContributorLevel": "Cultural Contributor",
+  "heritagePreserverLevel": "Heritage Preserver",
+  "featuredBadgeTitle": "Featured Badge",
+  "communityVoiceBadge": "Community Voice",
+  "communityVoiceBadgeDescription": "Awarded to members with strong and consistent cultural participation.",
+  "allBadges": "All",
+  "earnedBadges": "Earned",
+  "inProgressBadges": "In Progress",
+  "firstStepBadge": "First Step",
+  "firstStepBadgeDescription": "Unlocked after your first approved contribution.",
+  "activeContributorBadge": "Active Contributor",
+  "activeContributorBadgeDescription": "Unlocked after submitting multiple approved contributions.",
+  "storyKeeperBadge": "Story Keeper",
+  "storyKeeperBadgeDescription": "Share more stories to unlock this badge.",
+  "traditionGuardianBadge": "Tradition Guardian",
+  "traditionGuardianBadgeDescription": "Contribute more traditions from different regions.",
+  "visualArchivistBadge": "Visual Archivist",
+  "visualArchivistBadgeDescription": "Upload more visual content to unlock this achievement.",
+  "unlockedLabel": "Unlocked",
+  "storyKeeperProgress": "2 of 3 stories",
+  "traditionGuardianProgress": "1 of 3 traditions",
+  "visualArchivistProgress": "3 of 5 uploads",
+  "pointsValue": "{points} pts",
+  "@pointsValue": {
+    "placeholders": {
+      "points": {}
+    }
+  },
+  "pointsToReachNextLevel": "{points} pts to reach {level}",
+  "@pointsToReachNextLevel": {
+    "placeholders": {
+      "points": {},
+      "level": {}
+    }
+  },
+
+  "addContributionTitle": "Add Contribution",
+
+  "titleLabel": "Title",
+  "titleHint": "Enter contribution title",
+
+  "descriptionLabel": "Description",
+  "descriptionHint": "Describe your contribution",
+
+  "categoryLabel": "Category",
+  "categoryStory": "Story",
+  "categoryTradition": "Tradition",
+  "categoryEvent": "Event",
+  "categoryOther": "Other",
+
+  "cityLabel": "City",
+  "cityRiyadh": "Riyadh",
+  "cityJeddah": "Jeddah",
+  "cityMakkah": "Makkah",
+  "cityMadinah": "Madinah",
+
+  "selectCityError": "Please select a city",
+
+  "mediaLabel": "Media",
+  "addPhoto": "Add Photo",
+  "addVideo": "Add Video",
+
+  "mediaRequiredHint": "You must add at least one photo or one video",
+  "mediaRequiredError": "Media is required",
+
+  "submitContribution": "Submit Contribution",
+  "submissionSuccessMessage": "Submitted successfully for review",
+
+  "requiredField": "This field is required",
+  "addContributionSubtitle": "Help us preserve Saudi heritage by sharing what you know!",
+"categoryTraditionalFood": "Traditional Food",
+"categoryCulturalTradition": "Cultural Tradition",
+"categoryTraditionalGame": "Traditional Game",
+"categoryTraditionalCraft": "Traditional Craft",
+"categoryHistoricalStory": "Historical Story",
+"contentReviewNotice": "Content will be reviewed before publishing"
 }

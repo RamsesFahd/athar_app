@@ -1723,6 +1723,342 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'French'**
   String get french;
+
+  /// No description provided for @myCulturalAchievements.
+  ///
+  /// In en, this message translates to:
+  /// **'My Cultural Achievements'**
+  String get myCulturalAchievements;
+
+  /// No description provided for @communityMember.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Member'**
+  String get communityMember;
+
+  /// No description provided for @culturalImpactSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preserving Saudi heritage through meaningful cultural contributions.'**
+  String get culturalImpactSubtitle;
+
+  /// No description provided for @culturalContributorLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cultural Contributor'**
+  String get culturalContributorLevel;
+
+  /// No description provided for @heritagePreserverLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Heritage Preserver'**
+  String get heritagePreserverLevel;
+
+  /// No description provided for @featuredBadgeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Badge'**
+  String get featuredBadgeTitle;
+
+  /// No description provided for @communityVoiceBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Voice'**
+  String get communityVoiceBadge;
+
+  /// No description provided for @communityVoiceBadgeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Awarded to members with strong and consistent cultural participation.'**
+  String get communityVoiceBadgeDescription;
+
+  /// No description provided for @allBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allBadges;
+
+  /// No description provided for @earnedBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned'**
+  String get earnedBadges;
+
+  /// No description provided for @inProgressBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get inProgressBadges;
+
+  /// No description provided for @firstStepBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'First Step'**
+  String get firstStepBadge;
+
+  /// No description provided for @firstStepBadgeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked after your first approved contribution.'**
+  String get firstStepBadgeDescription;
+
+  /// No description provided for @activeContributorBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Contributor'**
+  String get activeContributorBadge;
+
+  /// No description provided for @activeContributorBadgeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked after submitting multiple approved contributions.'**
+  String get activeContributorBadgeDescription;
+
+  /// No description provided for @storyKeeperBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Story Keeper'**
+  String get storyKeeperBadge;
+
+  /// No description provided for @storyKeeperBadgeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Share more stories to unlock this badge.'**
+  String get storyKeeperBadgeDescription;
+
+  /// No description provided for @traditionGuardianBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Tradition Guardian'**
+  String get traditionGuardianBadge;
+
+  /// No description provided for @traditionGuardianBadgeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribute more traditions from different regions.'**
+  String get traditionGuardianBadgeDescription;
+
+  /// No description provided for @visualArchivistBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Visual Archivist'**
+  String get visualArchivistBadge;
+
+  /// No description provided for @visualArchivistBadgeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload more visual content to unlock this achievement.'**
+  String get visualArchivistBadgeDescription;
+
+  /// No description provided for @unlockedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked'**
+  String get unlockedLabel;
+
+  /// No description provided for @storyKeeperProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'2 of 3 stories'**
+  String get storyKeeperProgress;
+
+  /// No description provided for @traditionGuardianProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'1 of 3 traditions'**
+  String get traditionGuardianProgress;
+
+  /// No description provided for @visualArchivistProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'3 of 5 uploads'**
+  String get visualArchivistProgress;
+
+  /// No description provided for @pointsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} pts'**
+  String pointsValue(Object points);
+
+  /// No description provided for @pointsToReachNextLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'{points} pts to reach {level}'**
+  String pointsToReachNextLevel(Object points, Object level);
+
+  /// No description provided for @addContributionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Contribution'**
+  String get addContributionTitle;
+
+  /// No description provided for @titleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get titleLabel;
+
+  /// No description provided for @titleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter contribution title'**
+  String get titleHint;
+
+  /// No description provided for @descriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe your contribution'**
+  String get descriptionHint;
+
+  /// No description provided for @categoryStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Story'**
+  String get categoryStory;
+
+  /// No description provided for @categoryTradition.
+  ///
+  /// In en, this message translates to:
+  /// **'Tradition'**
+  String get categoryTradition;
+
+  /// No description provided for @categoryEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get categoryEvent;
+
+  /// No description provided for @categoryOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get categoryOther;
+
+  /// No description provided for @cityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get cityLabel;
+
+  /// No description provided for @cityRiyadh.
+  ///
+  /// In en, this message translates to:
+  /// **'Riyadh'**
+  String get cityRiyadh;
+
+  /// No description provided for @cityJeddah.
+  ///
+  /// In en, this message translates to:
+  /// **'Jeddah'**
+  String get cityJeddah;
+
+  /// No description provided for @cityMakkah.
+  ///
+  /// In en, this message translates to:
+  /// **'Makkah'**
+  String get cityMakkah;
+
+  /// No description provided for @cityMadinah.
+  ///
+  /// In en, this message translates to:
+  /// **'Madinah'**
+  String get cityMadinah;
+
+  /// No description provided for @selectCityError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a city'**
+  String get selectCityError;
+
+  /// No description provided for @mediaLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Media'**
+  String get mediaLabel;
+
+  /// No description provided for @addPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Photo'**
+  String get addPhoto;
+
+  /// No description provided for @addVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Video'**
+  String get addVideo;
+
+  /// No description provided for @mediaRequiredHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You must add at least one photo or one video'**
+  String get mediaRequiredHint;
+
+  /// No description provided for @mediaRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Media is required'**
+  String get mediaRequiredError;
+
+  /// No description provided for @submitContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Contribution'**
+  String get submitContribution;
+
+  /// No description provided for @submissionSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted successfully for review'**
+  String get submissionSuccessMessage;
+
+  /// No description provided for @requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get requiredField;
+
+  /// No description provided for @addContributionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help us preserve Saudi heritage by sharing what you know!'**
+  String get addContributionSubtitle;
+
+  /// No description provided for @categoryTraditionalFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Traditional Food'**
+  String get categoryTraditionalFood;
+
+  /// No description provided for @categoryCulturalTradition.
+  ///
+  /// In en, this message translates to:
+  /// **'Cultural Tradition'**
+  String get categoryCulturalTradition;
+
+  /// No description provided for @categoryTraditionalGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Traditional Game'**
+  String get categoryTraditionalGame;
+
+  /// No description provided for @categoryTraditionalCraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Traditional Craft'**
+  String get categoryTraditionalCraft;
+
+  /// No description provided for @categoryHistoricalStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Historical Story'**
+  String get categoryHistoricalStory;
+
+  /// No description provided for @contentReviewNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Content will be reviewed before publishing'**
+  String get contentReviewNotice;
 }
 
 class _AppLocalizationsDelegate

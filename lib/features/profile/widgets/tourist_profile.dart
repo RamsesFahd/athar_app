@@ -6,8 +6,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TouristHeader extends ConsumerWidget {
   final TouristModel user;
-
-  const TouristHeader({super.key, required this.user});
+  final bool showEmail; 
+  final bool isContributionPage;
+  const TouristHeader({
+    super.key, 
+    required this.user, 
+    this.showEmail = true, 
+    this.isContributionPage = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,49 +50,75 @@ class TouristHeader extends ConsumerWidget {
 
 //
 Widget _buildAvatarWithEditIcon(ThemeData theme, AppLocalizations l10n, WidgetRef ref) {
-  return Stack(
-    children: [
-      CircleAvatar(
-        radius: 42,
-        backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.1),
-        backgroundImage: user.profileImage != null && user.profileImage!.isNotEmpty
-            ? NetworkImage(user.profileImage!)
-            : null,
-        child: user.profileImage == null || user.profileImage!.isEmpty
-            ? Icon(Icons.person, size: 40, color: theme.colorScheme.primary)
-            : null,
-      ),
-      Positioned(
-        bottom: 0,
-        right: 0,
-        child: GestureDetector(
-          onTap: () => ref.read(authNotifierProvider.notifier).updateProfilePicture(),
-          child: Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2),
-            ),
-            child: const Icon(Icons.camera_alt, size: 14, color: Colors.white),
-          ),
+    return Stack(
+      children: [
+        CircleAvatar(
+          radius: 42,
+          backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.1),
+          backgroundImage: user.profileImage != null && user.profileImage!.isNotEmpty
+              ? NetworkImage(user.profileImage!)
+              : null,
+          child: user.profileImage == null || user.profileImage!.isEmpty
+              ? Icon(Icons.person, size: 40, color: theme.colorScheme.primary)
+              : null,
         ),
-      ),
-    ],
-  );
-}
+        // هنا التعديل: نختار وش نعرض في الزاوية
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: isContributionPage 
+            ? _buildBadgeIcon(theme) // لو في المساهمات يطلع الوسم
+            : _buildCameraIcon(theme, ref), // لو في البروفايل تطلع الكاميرا
+        ),
+      ],
+    );
+  }
 
-  Widget _buildUserBasicInfo(ThemeData theme) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(user.fullName, style: theme.textTheme.titleLarge),
-          Text(user.email, style: theme.textTheme.bodyMedium),
-        ],
+  // --- ميثود أيقونة الكاميرا ---
+  Widget _buildCameraIcon(ThemeData theme, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () => ref.read(authNotifierProvider.notifier).updateProfilePicture(),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.primary,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white, width: 2),
+        ),
+        child: const Icon(Icons.camera_alt, size: 14, color: Colors.white),
       ),
     );
   }
+
+  // --- ميثود أيقونة الوسم (Badge) ---
+  Widget _buildBadgeIcon(ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+       color: theme.colorScheme.primary,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 2),
+      ),
+      child: const Icon(
+        Icons.verified_rounded, 
+        size: 14, 
+        color: Colors.white
+      ),
+    );
+  }
+
+  Widget _buildUserBasicInfo(ThemeData theme) {
+  return Expanded(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(user.fullName, style: theme.textTheme.titleLarge),
+        if (showEmail) // إذا كان true بيطلع، إذا false بيختفي
+          Text(user.email, style: theme.textTheme.bodyMedium),
+      ],
+    ),
+  );
+}
 
   Widget _buildStatsSection(ThemeData theme, AppLocalizations l10n) {
     return Row(

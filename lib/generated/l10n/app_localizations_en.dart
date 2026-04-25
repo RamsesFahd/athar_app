@@ -846,4 +846,186 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get french => 'French';
+
+  @override
+  String get myCulturalAchievements => 'My Cultural Achievements';
+
+  @override
+  String get communityMember => 'Community Member';
+
+  @override
+  String get culturalImpactSubtitle =>
+      'Preserving Saudi heritage through meaningful cultural contributions.';
+
+  @override
+  String get culturalContributorLevel => 'Cultural Contributor';
+
+  @override
+  String get heritagePreserverLevel => 'Heritage Preserver';
+
+  @override
+  String get featuredBadgeTitle => 'Featured Badge';
+
+  @override
+  String get communityVoiceBadge => 'Community Voice';
+
+  @override
+  String get communityVoiceBadgeDescription =>
+      'Awarded to members with strong and consistent cultural participation.';
+
+  @override
+  String get allBadges => 'All';
+
+  @override
+  String get earnedBadges => 'Earned';
+
+  @override
+  String get inProgressBadges => 'In Progress';
+
+  @override
+  String get firstStepBadge => 'First Step';
+
+  @override
+  String get firstStepBadgeDescription =>
+      'Unlocked after your first approved contribution.';
+
+  @override
+  String get activeContributorBadge => 'Active Contributor';
+
+  @override
+  String get activeContributorBadgeDescription =>
+      'Unlocked after submitting multiple approved contributions.';
+
+  @override
+  String get storyKeeperBadge => 'Story Keeper';
+
+  @override
+  String get storyKeeperBadgeDescription =>
+      'Share more stories to unlock this badge.';
+
+  @override
+  String get traditionGuardianBadge => 'Tradition Guardian';
+
+  @override
+  String get traditionGuardianBadgeDescription =>
+      'Contribute more traditions from different regions.';
+
+  @override
+  String get visualArchivistBadge => 'Visual Archivist';
+
+  @override
+  String get visualArchivistBadgeDescription =>
+      'Upload more visual content to unlock this achievement.';
+
+  @override
+  String get unlockedLabel => 'Unlocked';
+
+  @override
+  String get storyKeeperProgress => '2 of 3 stories';
+
+  @override
+  String get traditionGuardianProgress => '1 of 3 traditions';
+
+  @override
+  String get visualArchivistProgress => '3 of 5 uploads';
+
+  @override
+  String pointsValue(Object points) {
+    return '$points pts';
+  }
+
+  @override
+  String pointsToReachNextLevel(Object points, Object level) {
+    return '$points pts to reach $level';
+  }
+
+  @override
+  String get addContributionTitle => 'Add Contribution';
+
+  @override
+  String get titleLabel => 'Title';
+
+  @override
+  String get titleHint => 'Enter contribution title';
+
+  @override
+  String get descriptionHint => 'Describe your contribution';
+
+  @override
+  String get categoryStory => 'Story';
+
+  @override
+  String get categoryTradition => 'Tradition';
+
+  @override
+  String get categoryEvent => 'Event';
+
+  @override
+  String get categoryOther => 'Other';
+
+  @override
+  String get cityLabel => 'City';
+
+  @override
+  String get cityRiyadh => 'Riyadh';
+
+  @override
+  String get cityJeddah => 'Jeddah';
+
+  @override
+  String get cityMakkah => 'Makkah';
+
+  @override
+  String get cityMadinah => 'Madinah';
+
+  @override
+  String get selectCityError => 'Please select a city';
+
+  @override
+  String get mediaLabel => 'Media';
+
+  @override
+  String get addPhoto => 'Add Photo';
+
+  @override
+  String get addVideo => 'Add Video';
+
+  @override
+  String get mediaRequiredHint =>
+      'You must add at least one photo or one video';
+
+  @override
+  String get mediaRequiredError => 'Media is required';
+
+  @override
+  String get submitContribution => 'Submit Contribution';
+
+  @override
+  String get submissionSuccessMessage => 'Submitted successfully for review';
+
+  @override
+  String get requiredField => 'This field is required';
+
+  @override
+  String get addContributionSubtitle =>
+      'Help us preserve Saudi heritage by sharing what you know!';
+
+  @override
+  String get categoryTraditionalFood => 'Traditional Food';
+
+  @override
+  String get categoryCulturalTradition => 'Cultural Tradition';
+
+  @override
+  String get categoryTraditionalGame => 'Traditional Game';
+
+  @override
+  String get categoryTraditionalCraft => 'Traditional Craft';
+
+  @override
+  String get categoryHistoricalStory => 'Historical Story';
+
+  @override
+  String get contentReviewNotice =>
+      'Content will be reviewed before publishing';
 }
