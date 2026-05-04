@@ -223,6 +223,7 @@ class CulturalArchive extends ConsumerWidget {
       ('architecture', l10n.cat_architecture),
       ('music', l10n.cat_music),
       ('clothing', l10n.cat_clothing),
+      ('heritage_landmark', l10n.cat_heritage_landmark),
     ];
 
     return Container(

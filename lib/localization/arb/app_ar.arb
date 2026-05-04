@@ -164,7 +164,8 @@
   "cat_dance": "رقص",
   "cat_architecture": "عمارة",
   "cat_clothing": "ملابس تقليدية",
-  
+  "cat_heritage_landmark": "معلم تراثي",
+
   "reg_qassim": "منطقة القصيم",
   "reg_riyadh": "الرياض",
   "reg_makkah": "مكة المكرمة",
@@ -396,5 +397,22 @@
 "categoryTraditionalGame": "لعبة شعبية",
 "categoryTraditionalCraft": "حرفة تقليدية",
 "categoryHistoricalStory": "قصة تاريخية",
-"contentReviewNotice": "سيتم مراجعة المحتوى قبل النشر"
+"contentReviewNotice": "سيتم مراجعة المحتوى قبل النشر",
+
+  "privacyPolicyTitle": "سياسة الخصوصية",
+  "privacyPolicyAgreePrefix": "أوافق على ",
+  "privacyPolicyLinkText": "سياسة الخصوصية",
+  "privacyPolicyMustAccept": "يرجى قبول سياسة الخصوصية للمتابعة",
+  "privacyPolicyIntroTitle": "مقدمة",
+  "privacyPolicyIntroBody": "يلتزم تطبيق أثر بحماية خصوصيتك. توضح هذه السياسة كيفية جمع معلوماتك الشخصية واستخدامها وحمايتها.",
+  "privacyPolicyDataTitle": "البيانات التي نجمعها",
+  "privacyPolicyDataBody": "نجمع اسمك وعنوان بريدك الإلكتروني ودورك في الحساب وتفضيلات إمكانية الوصول ووقت قبولك لسياسة الخصوصية.",
+  "privacyPolicyUseTitle": "كيف نستخدم بياناتك",
+  "privacyPolicyUseBody": "تُستخدم بياناتك لتوفير ميزات التطبيق الأساسية وتخصيص تجربتك والامتثال للالتزامات القانونية.",
+  "privacyPolicySharingTitle": "مشاركة البيانات",
+  "privacyPolicySharingBody": "لا نبيع بياناتك الشخصية. قد نشاركها مع مزودي الخدمات الموثوقين (مثل Firebase) لتشغيل التطبيق فحسب.",
+  "privacyPolicyRightsTitle": "حقوقك",
+  "privacyPolicyRightsBody": "يمكنك طلب الوصول إلى بياناتك الشخصية أو تصحيحها أو حذفها في أي وقت عبر التواصل معنا.",
+  "privacyPolicyContactTitle": "تواصل معنا",
+  "privacyPolicyContactBody": "لأي استفسارات تتعلق بالخصوصية يرجى مراسلتنا على: privacy@athar-app.com"
 }

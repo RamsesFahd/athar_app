@@ -23,6 +23,31 @@ class HomeScreen extends ConsumerWidget {
   static const double _sectionGap = 26; // بين السكاشن
   static const double _headerToContent = 16; // بين العنوان والمحتوى
 
+  static String _translateCategory(String id, AppLocalizations l10n) {
+    switch (id.toLowerCase()) {
+      case 'food':
+      case 'traditional_food':
+        return l10n.cat_food;
+      case 'craft':
+      case 'handicraft':
+        return l10n.cat_craft;
+      case 'music':
+        return l10n.cat_music;
+      case 'dance':
+        return l10n.cat_dance;
+      case 'architecture':
+        return l10n.cat_architecture;
+      case 'clothing':
+      case 'traditional_clothing':
+        return l10n.cat_clothing;
+      case 'heritage_landmark':
+      case 'heritage':
+        return l10n.cat_heritage_landmark;
+      default:
+        return id;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -148,7 +173,7 @@ class HomeScreen extends ConsumerWidget {
                           child: ExploreHeritageHomeCard(
                             title: isAr ? item.titleAr : item.titleEn,
                             image: item.imageUrl,
-                            categoryLabel: item.categoryId,
+                            categoryLabel: _translateCategory(item.categoryId, l10n),
                             locationLabel: isAr ? item.regionAr : item.regionEn,
                             onTap: () {
                               // navigation: passing the 'item' object to details screen

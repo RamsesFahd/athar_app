@@ -8,6 +8,7 @@ import 'package:athar_app/features/auth/screens/signup_screen.dart';
 import 'package:athar_app/features/auth/screens/forgot_password_screen.dart';
 import 'package:athar_app/features/auth/screens/splash_screen.dart';
 import 'package:athar_app/features/auth/screens/verify_email_screen.dart';
+import 'package:athar_app/features/auth/screens/privacy_policy_screen.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
@@ -25,6 +26,7 @@ class AppRoutes {
   static const String culturalArchive = '/cultural-archive';
   static const String culturalDetails = '/cultural-details';
   static const String historicalChat = '/historical-chat';
+  static const String privacyPolicy = '/privacy-policy';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -34,6 +36,7 @@ class AppRoutes {
       forgotPassword: (context) => const ForgotPasswordScreen(),
       verifyEmail: (context) => const VerifyEmailScreen(),
       googleRoleSelection: (context) => const GoogleRoleSelectionScreen(),
+      privacyPolicy: (context) => const PrivacyPolicyScreen(),
 
       home: (context) => const NavigationContainer(),
       admin: (context) => const AdminNavigationContainer(),

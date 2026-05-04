@@ -19,6 +19,7 @@ class TouristModel extends UserModel {
     this.interests,
     this.contributionsCount = 0,
     super.emailVerified,
+    super.privacyPolicyAcceptedAt,
   });
 
   @override
@@ -36,7 +37,9 @@ class TouristModel extends UserModel {
     'interests': interests,
     'contributionsCount': contributionsCount,
     'emailVerified': emailVerified,
-
+    'privacyPolicyAcceptedAt': privacyPolicyAcceptedAt != null
+        ? Timestamp.fromDate(privacyPolicyAcceptedAt!)
+        : null,
   };
 
   factory TouristModel.fromMap(Map<String, dynamic> map) {
@@ -60,6 +63,8 @@ class TouristModel extends UserModel {
       interests: map['interests'] != null ? List<String>.from(map['interests']) : null,
       contributionsCount: map['contributionsCount'] ?? 0,
       emailVerified: map['emailVerified'] ?? false,
+      privacyPolicyAcceptedAt:
+          (map['privacyPolicyAcceptedAt'] as Timestamp?)?.toDate(),
     );
   }
 }

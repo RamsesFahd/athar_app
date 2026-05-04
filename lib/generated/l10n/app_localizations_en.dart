@@ -449,6 +449,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cat_clothing => 'Traditional Clothing';
 
   @override
+  String get cat_heritage_landmark => 'Heritage Landmark';
+
+  @override
   String get reg_qassim => 'Qassim Region';
 
   @override
@@ -1028,4 +1031,59 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get contentReviewNotice =>
       'Content will be reviewed before publishing';
+
+  @override
+  String get privacyPolicyTitle => 'Privacy Policy';
+
+  @override
+  String get privacyPolicyAgreePrefix => 'I agree to the ';
+
+  @override
+  String get privacyPolicyLinkText => 'Privacy Policy';
+
+  @override
+  String get privacyPolicyMustAccept =>
+      'Please accept the Privacy Policy to continue';
+
+  @override
+  String get privacyPolicyIntroTitle => 'Introduction';
+
+  @override
+  String get privacyPolicyIntroBody =>
+      'Athar is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your personal information.';
+
+  @override
+  String get privacyPolicyDataTitle => 'Data We Collect';
+
+  @override
+  String get privacyPolicyDataBody =>
+      'We collect your name, email address, account role, accessibility preferences, and the timestamp of your privacy policy consent.';
+
+  @override
+  String get privacyPolicyUseTitle => 'How We Use Your Data';
+
+  @override
+  String get privacyPolicyUseBody =>
+      'Your data is used to provide core app features, personalise your experience, and comply with legal obligations.';
+
+  @override
+  String get privacyPolicySharingTitle => 'Data Sharing';
+
+  @override
+  String get privacyPolicySharingBody =>
+      'We do not sell your personal data. We may share it with trusted service providers (e.g. Firebase) solely to operate the app.';
+
+  @override
+  String get privacyPolicyRightsTitle => 'Your Rights';
+
+  @override
+  String get privacyPolicyRightsBody =>
+      'You may request access to, correction of, or deletion of your personal data at any time by contacting us.';
+
+  @override
+  String get privacyPolicyContactTitle => 'Contact Us';
+
+  @override
+  String get privacyPolicyContactBody =>
+      'For privacy-related enquiries please email: privacy@athar-app.com';
 }

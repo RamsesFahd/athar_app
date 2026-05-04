@@ -53,6 +53,7 @@ class TutorModel extends UserModel {
     super.profileImage,
     required super.accessibilitySettings,
     super.emailVerified,
+    super.privacyPolicyAcceptedAt,
     this.tutorType,
     this.bio,
     this.verificationStatus,
@@ -180,6 +181,9 @@ class TutorModel extends UserModel {
             ? Timestamp.fromDate(verificationActionAt!)
             : null,
         'rejectionReason': rejectionReason,
+        'privacyPolicyAcceptedAt': privacyPolicyAcceptedAt != null
+            ? Timestamp.fromDate(privacyPolicyAcceptedAt!)
+            : null,
       };
 
   factory TutorModel.fromMap(Map<String, dynamic> map) {
@@ -242,6 +246,8 @@ class TutorModel extends UserModel {
       verificationActionAt:
           (map['verificationActionAt'] as Timestamp?)?.toDate(),
       rejectionReason: map['rejectionReason'],
+      privacyPolicyAcceptedAt:
+          (map['privacyPolicyAcceptedAt'] as Timestamp?)?.toDate(),
     );
   }
 }

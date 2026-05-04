@@ -28,6 +28,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   bool _hidePassword = true;
   bool _hideConfirmPassword = true;
+  bool _privacyPolicyAccepted = false;
 
   @override
   void dispose() {
@@ -135,13 +136,44 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     _buildTextField(_confirmPassword, l10n.passwordHint, true,
                         isConfirm: true),
 
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 20),
+
+                    // Privacy Policy consent checkbox
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Checkbox(
+                          value: _privacyPolicyAccepted,
+                          activeColor: theme.colorScheme.primary,
+                          onChanged: (v) =>
+                              setState(() => _privacyPolicyAccepted = v ?? false),
+                        ),
+                        Text(
+                          l10n.privacyPolicyAgreePrefix,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        GestureDetector(
+                          onTap: () => Navigator.pushNamed(
+                              context, AppRoutes.privacyPolicy),
+                          child: Text(
+                            l10n.privacyPolicyLinkText,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
 
                     // register button
                     AtharButton(
                       label: l10n.createAccountButton,
                       isLoading: _isSignUpLoading,
-                      onPressed: authState.isLoading
+                      onPressed: authState.isLoading || !_privacyPolicyAccepted
                           ? null
                           : () {
                               _handleSignUp(l10n);
@@ -232,6 +264,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     final pass = _password.text;
     final confirm = _confirmPassword.text;
 
+    if (!_privacyPolicyAccepted) {
+      _showError(l10n.privacyPolicyMustAccept);
+      return;
+    }
     if (name.isEmpty || email.isEmpty || pass.isEmpty) {
       _showError(l10n.fillAllFieldsError);
       return;

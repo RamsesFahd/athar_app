@@ -59,6 +59,7 @@ abstract class UserModel {
   final String? profileImage;
   final AccessibilitySettings accessibilitySettings;
   final bool emailVerified;
+  final DateTime? privacyPolicyAcceptedAt;
 
   UserModel({
     required this.uId,
@@ -71,6 +72,7 @@ abstract class UserModel {
     this.profileImage,
     required this.accessibilitySettings,
     this.emailVerified = false,
+    this.privacyPolicyAcceptedAt,
   });
 
   // المصنع الذكي الذي يقرر أي ملف فرعي سيتم استدعاؤه

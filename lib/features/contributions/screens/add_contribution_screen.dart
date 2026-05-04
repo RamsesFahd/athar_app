@@ -82,6 +82,14 @@ class _AddContributionScreenState
       videoPoints: 60,
       icon: Icons.checkroom_rounded,
     ),
+    _ContributionTypeUi(
+      id: 'heritage_landmark',
+      titleAr: 'معلم تراثي',
+      titleEn: 'Heritage Landmark',
+      imagePoints: 50,
+      videoPoints: 70,
+      icon: Icons.location_city_rounded,
+    ),
   ];
 
   @override

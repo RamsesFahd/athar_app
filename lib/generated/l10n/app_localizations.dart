@@ -950,6 +950,12 @@ abstract class AppLocalizations {
   /// **'Traditional Clothing'**
   String get cat_clothing;
 
+  /// No description provided for @cat_heritage_landmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Heritage Landmark'**
+  String get cat_heritage_landmark;
+
   /// No description provided for @reg_qassim.
   ///
   /// In en, this message translates to:
@@ -2059,6 +2065,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Content will be reviewed before publishing'**
   String get contentReviewNotice;
+
+  /// Title of the privacy policy screen
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicyTitle;
+
+  /// Text before the privacy policy link in signup
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the '**
+  String get privacyPolicyAgreePrefix;
+
+  /// Clickable privacy policy link text in signup
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicyLinkText;
+
+  /// Error shown if user tries to sign up without accepting policy
+  ///
+  /// In en, this message translates to:
+  /// **'Please accept the Privacy Policy to continue'**
+  String get privacyPolicyMustAccept;
+
+  /// No description provided for @privacyPolicyIntroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Introduction'**
+  String get privacyPolicyIntroTitle;
+
+  /// No description provided for @privacyPolicyIntroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Athar is committed to protecting your privacy. This policy explains how we collect, use, and safeguard your personal information.'**
+  String get privacyPolicyIntroBody;
+
+  /// No description provided for @privacyPolicyDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Data We Collect'**
+  String get privacyPolicyDataTitle;
+
+  /// No description provided for @privacyPolicyDataBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We collect your name, email address, account role, accessibility preferences, and the timestamp of your privacy policy consent.'**
+  String get privacyPolicyDataBody;
+
+  /// No description provided for @privacyPolicyUseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How We Use Your Data'**
+  String get privacyPolicyUseTitle;
+
+  /// No description provided for @privacyPolicyUseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is used to provide core app features, personalise your experience, and comply with legal obligations.'**
+  String get privacyPolicyUseBody;
+
+  /// No description provided for @privacyPolicySharingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Sharing'**
+  String get privacyPolicySharingTitle;
+
+  /// No description provided for @privacyPolicySharingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We do not sell your personal data. We may share it with trusted service providers (e.g. Firebase) solely to operate the app.'**
+  String get privacyPolicySharingBody;
+
+  /// No description provided for @privacyPolicyRightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Rights'**
+  String get privacyPolicyRightsTitle;
+
+  /// No description provided for @privacyPolicyRightsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You may request access to, correction of, or deletion of your personal data at any time by contacting us.'**
+  String get privacyPolicyRightsBody;
+
+  /// No description provided for @privacyPolicyContactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get privacyPolicyContactTitle;
+
+  /// No description provided for @privacyPolicyContactBody.
+  ///
+  /// In en, this message translates to:
+  /// **'For privacy-related enquiries please email: privacy@athar-app.com'**
+  String get privacyPolicyContactBody;
 }
 
 class _AppLocalizationsDelegate

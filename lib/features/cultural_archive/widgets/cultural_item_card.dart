@@ -175,6 +175,8 @@ class CulturalItemCard extends StatelessWidget {
         return l10n.cat_architecture;
       case 'clothing':
         return l10n.cat_clothing;
+      case 'heritage_landmark':
+        return l10n.cat_heritage_landmark;
       default:
         return cat;
     }

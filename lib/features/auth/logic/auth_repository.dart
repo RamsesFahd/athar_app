@@ -54,24 +54,26 @@ Future<String?> signUp({
       
       UserModel newUser;
       // in case the user is a tutor, we create a TutorModel with the provided information, and if they are a tourist, we create a TouristModel. Both models extend UserModel, so we can store them in the same 'users' collection in Firestore.
+      final consentTimestamp = DateTime.now();
       if (role == UserRole.tutor) {
         newUser = TutorModel(
           uId: uId,
           fullName: fullName,
           email: email,
-          createdAt: DateTime.now(),
+          createdAt: consentTimestamp,
           accessibilitySettings: AccessibilitySettings(),
           verificationStatus: VerificationStatus.unverified,
           tutorType: tutorType ?? TutorType.individual,
+          privacyPolicyAcceptedAt: consentTimestamp,
         );
       } else {
         newUser = TouristModel(
           uId: uId,
           fullName: fullName,
           email: email,
-          createdAt: DateTime.now(),
+          createdAt: consentTimestamp,
           accessibilitySettings: AccessibilitySettings(),
-          
+          privacyPolicyAcceptedAt: consentTimestamp,
         );
       }
       
@@ -147,24 +149,27 @@ Future<String?> signUp({
       final user = _auth.currentUser;
       if (user == null) return 'errorUnexpected';
 
+      final consentTimestamp = DateTime.now();
       UserModel newUser;
       if (role == UserRole.tutor) {
         newUser = TutorModel(
           uId: user.uid,
           fullName: user.displayName ?? 'User',
           email: user.email ?? '',
-          createdAt: DateTime.now(),
+          createdAt: consentTimestamp,
           accessibilitySettings: AccessibilitySettings(),
           verificationStatus: VerificationStatus.unverified,
           tutorType: tutorType ?? TutorType.individual,
+          privacyPolicyAcceptedAt: consentTimestamp,
         );
       } else {
         newUser = TouristModel(
           uId: user.uid,
           fullName: user.displayName ?? 'User',
           email: user.email ?? '',
-          createdAt: DateTime.now(),
+          createdAt: consentTimestamp,
           accessibilitySettings: AccessibilitySettings(),
+          privacyPolicyAcceptedAt: consentTimestamp,
         );
       }
 

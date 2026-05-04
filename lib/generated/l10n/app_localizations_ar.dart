@@ -449,6 +449,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get cat_clothing => 'ملابس تقليدية';
 
   @override
+  String get cat_heritage_landmark => 'معلم تراثي';
+
+  @override
   String get reg_qassim => 'منطقة القصيم';
 
   @override
@@ -1024,4 +1027,58 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get contentReviewNotice => 'سيتم مراجعة المحتوى قبل النشر';
+
+  @override
+  String get privacyPolicyTitle => 'سياسة الخصوصية';
+
+  @override
+  String get privacyPolicyAgreePrefix => 'أوافق على ';
+
+  @override
+  String get privacyPolicyLinkText => 'سياسة الخصوصية';
+
+  @override
+  String get privacyPolicyMustAccept => 'يرجى قبول سياسة الخصوصية للمتابعة';
+
+  @override
+  String get privacyPolicyIntroTitle => 'مقدمة';
+
+  @override
+  String get privacyPolicyIntroBody =>
+      'يلتزم تطبيق أثر بحماية خصوصيتك. توضح هذه السياسة كيفية جمع معلوماتك الشخصية واستخدامها وحمايتها.';
+
+  @override
+  String get privacyPolicyDataTitle => 'البيانات التي نجمعها';
+
+  @override
+  String get privacyPolicyDataBody =>
+      'نجمع اسمك وعنوان بريدك الإلكتروني ودورك في الحساب وتفضيلات إمكانية الوصول ووقت قبولك لسياسة الخصوصية.';
+
+  @override
+  String get privacyPolicyUseTitle => 'كيف نستخدم بياناتك';
+
+  @override
+  String get privacyPolicyUseBody =>
+      'تُستخدم بياناتك لتوفير ميزات التطبيق الأساسية وتخصيص تجربتك والامتثال للالتزامات القانونية.';
+
+  @override
+  String get privacyPolicySharingTitle => 'مشاركة البيانات';
+
+  @override
+  String get privacyPolicySharingBody =>
+      'لا نبيع بياناتك الشخصية. قد نشاركها مع مزودي الخدمات الموثوقين (مثل Firebase) لتشغيل التطبيق فحسب.';
+
+  @override
+  String get privacyPolicyRightsTitle => 'حقوقك';
+
+  @override
+  String get privacyPolicyRightsBody =>
+      'يمكنك طلب الوصول إلى بياناتك الشخصية أو تصحيحها أو حذفها في أي وقت عبر التواصل معنا.';
+
+  @override
+  String get privacyPolicyContactTitle => 'تواصل معنا';
+
+  @override
+  String get privacyPolicyContactBody =>
+      'لأي استفسارات تتعلق بالخصوصية يرجى مراسلتنا على: privacy@athar-app.com';
 }

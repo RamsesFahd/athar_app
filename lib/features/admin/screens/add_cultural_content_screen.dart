@@ -44,7 +44,23 @@ class _AddCulturalContentScreenState
     (id: 'architecture', label: 'Architecture'),
     (id: 'music', label: 'Music'),
     (id: 'clothing', label: 'Traditional Clothing'),
+    (id: 'heritage_landmark', label: 'Heritage Landmark'),
   ];
+
+  static const _legacyRegionMap = {
+    'northern': 'northern_region',
+    'central': 'central_region',
+    'western': 'western_region',
+    'eastern': 'eastern_region',
+    'southern': 'southern_region',
+  };
+
+  String? _normalizeRegionId(String? id) {
+    if (id == null) return null;
+    final validIds = regionsData.map((r) => r.regionId).toSet();
+    if (validIds.contains(id)) return id;
+    return _legacyRegionMap[id];
+  }
 
   @override
   void initState() {
@@ -55,8 +71,10 @@ class _AddCulturalContentScreenState
       _titleEnController.text = item.titleEn;
       _descArController.text = item.descriptionAr;
       _descEnController.text = item.descriptionEn;
-      _selectedCategory = item.categoryId;
-      _selectedRegionId = item.regionId;
+      final validCategoryIds = _categories.map((c) => c.id).toSet();
+      _selectedCategory =
+          validCategoryIds.contains(item.categoryId) ? item.categoryId : 'food';
+      _selectedRegionId = _normalizeRegionId(item.regionId);
       if (item.latitude != null) _latController.text = '${item.latitude}';
       if (item.longitude != null) _lngController.text = '${item.longitude}';
     }
@@ -416,19 +434,15 @@ class _AddCulturalContentScreenState
       ),
     );
 
-    if (_isEditMode) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Edit Archive Item'),
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          elevation: 0,
-        ),
-        body: screenContent,
-      );
-    }
-
-    return screenContent;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_isEditMode ? 'Edit Archive Item' : 'Add Archive Item'),
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      body: screenContent,
+    );
   }
 
   InputDecoration _inputDecoration({String? hint}) {
