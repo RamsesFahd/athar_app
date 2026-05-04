@@ -363,30 +363,34 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Color _statusColor(BookingStatus status, ThemeData theme) {
-    switch (status) {
-      case BookingStatus.accepted:
-        return Colors.green;
-      case BookingStatus.rejected:
-        return Colors.red;
-      case BookingStatus.completed:
-        return theme.colorScheme.primary;
-      case BookingStatus.pending:
-        return Colors.amber.shade700;
-    }
+  switch (status) {
+    case BookingStatus.accepted:
+      return Colors.green;
+    case BookingStatus.rejected:
+      return Colors.red;
+    case BookingStatus.cancelled:
+      return Colors.grey;
+    case BookingStatus.completed:
+      return theme.colorScheme.primary;
+    case BookingStatus.pending:
+      return Colors.amber.shade700;
   }
+}
 
-  String _statusLabel(BookingStatus status, AppLocalizations l10n) {
-    switch (status) {
-      case BookingStatus.accepted:
-        return l10n.booking_status_accepted;
-      case BookingStatus.rejected:
-        return l10n.booking_status_rejected;
-      case BookingStatus.completed:
-        return l10n.booking_status_completed;
-      case BookingStatus.pending:
-        return l10n.booking_status_pending;
-    }
+String _statusLabel(BookingStatus status, AppLocalizations l10n) {
+  switch (status) {
+    case BookingStatus.accepted:
+      return l10n.booking_status_accepted;
+    case BookingStatus.rejected:
+      return l10n.booking_status_rejected;
+    case BookingStatus.cancelled:
+      return 'Cancelled';
+    case BookingStatus.completed:
+      return l10n.booking_status_completed;
+    case BookingStatus.pending:
+      return l10n.booking_status_pending;
   }
+}
 
 Widget _buildBookingItem(
   BuildContext context,
@@ -405,11 +409,11 @@ Widget _buildBookingItem(
       color: theme.colorScheme.surface,
       borderRadius: BorderRadius.circular(18),
       border: Border.all(
-        color: theme.colorScheme.primary.withOpacity(0.08),
+        color: theme.colorScheme.primary.withValues(alpha: 0.08),
       ),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.04),
+          color: Colors.black.withValues(alpha: 0.04),
           blurRadius: 14,
           offset: const Offset(0, 6),
         ),
@@ -474,7 +478,7 @@ Widget _buildBookingItem(
 
                   const SizedBox(height: 6),
 
-                  // 🔥 زر التفاصيل الجديد (صغير)
+                  //  زر التفاصيل  
                   Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: TextButton(
@@ -519,7 +523,7 @@ Widget _buildBookingItem(
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: statusColor.withOpacity(0.12),
+                color: statusColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text(

@@ -9,6 +9,7 @@ import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 import 'package:athar_app/features/guide_market/screens/trips_list_screen.dart';
+import 'package:athar_app/features/home/widgets/home_hero_slider.dart';
 
 class HomeScreen extends ConsumerWidget {
   final VoidCallback? onSeeAllArchive;
@@ -38,44 +39,7 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Hero Section
-              Stack(
-                children: [
-                  Image.network(
-                    'https://images.pexels.com/photos/3290068/pexels-photo-3290068.jpeg',
-                    height: 300,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            theme.scaffoldBackgroundColor.withValues(alpha: 0.88),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: _pageH,
-                    right: _pageH,
-                    bottom: 18,
-                    child: Text(
-                      l10n.homeHeroTitle,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
+              const HomeHeroSlider(),
               const SizedBox(height: _sectionGap),
 
               // You May Like

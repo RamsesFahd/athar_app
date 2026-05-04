@@ -85,6 +85,6 @@ class BookingNotifier extends _$BookingNotifier {
   Future<void> cancelBooking(String bookingId) async {
     await ref
         .read(marketplaceRepositoryProvider)
-        .updateBookingStatus(bookingId, BookingStatus.rejected);
+        .updateBookingStatus(bookingId, BookingStatus.cancelled);
   }
 }

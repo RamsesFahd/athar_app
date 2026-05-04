@@ -179,12 +179,12 @@ class TripDetailsScreen extends ConsumerWidget {
             icon: Icons.person_outline,
           ),
 
-          // فاصل عمودي نحيف جداً وأنيق
+        
           Container(
             height: 30,
             width: 1,
             margin: const EdgeInsets.symmetric(horizontal: 24),
-            color: theme.dividerColor.withOpacity(0.2),
+            color: theme.dividerColor.withValues(alpha: 0.2),
           ),
 
           // قسم الأطفال
@@ -237,7 +237,7 @@ class TripDetailsScreen extends ConsumerWidget {
       'wheelchair': (
         icon: Icons.accessible_forward_rounded,
         labelEn: 'Accessible',
-        labelAr: 'صديق للإعاقة',
+        labelAr: ' لذوي الهمم',
       ),
       'family': (
         icon: Icons.family_restroom_rounded,
@@ -297,7 +297,12 @@ class TripDetailsScreen extends ConsumerWidget {
         children: [
           Icon(icon, size: 20, color: theme.colorScheme.primary),
           const SizedBox(width: 8),
-          Text(text, style: theme.textTheme.bodyMedium),
+          Text(
+          text,
+          style: theme.textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.bold,
+  ),
+),
           if (trailing != null) ...[
             const SizedBox(width: 8),
             trailing,

@@ -15,51 +15,59 @@ class BookingViewScreen extends ConsumerWidget {
   const BookingViewScreen({super.key, required this.booking});
 
   Color _statusColor(BookingStatus status, ThemeData theme) {
-    switch (status) {
-      case BookingStatus.accepted:
-        return Colors.green;
-      case BookingStatus.rejected:
-        return Colors.red;
-      case BookingStatus.completed:
-        return theme.colorScheme.primary;
-      case BookingStatus.pending:
-        return Colors.amber.shade700;
-    }
+  switch (status) {
+    case BookingStatus.accepted:
+      return Colors.green;
+    case BookingStatus.rejected:
+      return Colors.red;
+    case BookingStatus.cancelled:
+      return Colors.grey;
+    case BookingStatus.completed:
+      return theme.colorScheme.primary;
+    case BookingStatus.pending:
+      return Colors.amber.shade700;
   }
+}
 
-  String _statusLabel(BookingStatus status, bool isAr) {
-    switch (status) {
-      case BookingStatus.accepted:
-        return isAr ? 'مقبول' : 'Accepted';
-      case BookingStatus.rejected:
-        return isAr ? 'مرفوض' : 'Rejected';
-      case BookingStatus.completed:
-        return isAr ? 'مكتمل' : 'Completed';
-      case BookingStatus.pending:
-        return isAr ? 'قيد المراجعة' : 'Pending';
-    }
+String _statusLabel(BookingStatus status, bool isAr) {
+  switch (status) {
+    case BookingStatus.accepted:
+      return isAr ? 'مقبول' : 'Accepted';
+    case BookingStatus.rejected:
+      return isAr ? 'مرفوض' : 'Rejected';
+    case BookingStatus.cancelled:
+      return isAr ? 'ملغي' : 'Cancelled';
+    case BookingStatus.completed:
+      return isAr ? 'مكتمل' : 'Completed';
+    case BookingStatus.pending:
+      return isAr ? 'قيد المراجعة' : 'Pending';
   }
+}
 
-  String _statusMessage(BookingStatus status, bool isAr) {
-    switch (status) {
-      case BookingStatus.accepted:
-        return isAr
-            ? 'تم قبول الحجز. يمكنك الآن مراجعة التفاصيل والمتابعة مع مزود الرحلة.'
-            : 'Your booking has been accepted. You can now review the details and follow up with the trip provider.';
-      case BookingStatus.rejected:
-        return isAr
-            ? 'نعتذر، تم رفض هذا الحجز. يمكنك تجربة موعد آخر أو رحلة مختلفة.'
-            : 'Sorry, this booking was rejected. You can try another date or a different trip.';
-      case BookingStatus.completed:
-        return isAr
-            ? 'تمت هذه الرحلة بنجاح.'
-            : 'This trip has been completed successfully.';
-      case BookingStatus.pending:
-        return isAr
-            ? 'طلبك قيد المراجعة حاليًا. سيتم إشعارك عند تحديث الحالة.'
-            : 'Your booking is currently under review. You will be notified once the status changes.';
-    }
+String _statusMessage(BookingStatus status, bool isAr) {
+  switch (status) {
+    case BookingStatus.accepted:
+      return isAr
+          ? 'تم قبول الحجز. يمكنك الآن مراجعة التفاصيل والمتابعة مع مزود الرحلة.'
+          : 'Your booking has been accepted. You can now review the details and follow up with the trip provider.';
+    case BookingStatus.rejected:
+      return isAr
+          ? 'نعتذر، تم رفض هذا الحجز. يمكنك تجربة موعد آخر أو رحلة مختلفة.'
+          : 'Sorry, this booking was rejected. You can try another date or a different trip.';
+    case BookingStatus.cancelled:
+      return isAr
+          ? 'تم إلغاء هذا الحجز.'
+          : 'This booking has been cancelled.';
+    case BookingStatus.completed:
+      return isAr
+          ? 'تمت هذه الرحلة بنجاح.'
+          : 'This trip has been completed successfully.';
+    case BookingStatus.pending:
+      return isAr
+          ? 'طلبك قيد المراجعة حاليًا. سيتم إشعارك عند تحديث الحالة.'
+          : 'Your booking is currently under review. You will be notified once the status changes.';
   }
+}
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -87,7 +87,21 @@ Widget _buildGridContent(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Location
+              // Title
+              Text(
+                trip.getTitle(isAr),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.bodyLarge?.copyWith(
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.w800,
+                  height: 1.2,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+               // Location
               Row(
                 children: [
                   Icon(
@@ -110,20 +124,6 @@ Widget _buildGridContent(
                 ],
               ),
 
-              const SizedBox(height: 6),
-
-              // Title
-              Text(
-                trip.getTitle(isAr),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.onPrimary,
-                  fontWeight: FontWeight.w800,
-                  height: 1.2,
-                ),
-              ),
-
               const Spacer(), 
 
               // Price + Button
@@ -141,14 +141,6 @@ Widget _buildGridContent(
                             color: colorScheme.onPrimary,
                             fontWeight: FontWeight.w900,
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        isAr ? '﷼' : 'SAR',
-                        style: textTheme.labelSmall?.copyWith(
-                          color: colorScheme.onPrimary,
-                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
