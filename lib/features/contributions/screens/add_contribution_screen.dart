@@ -1,28 +1,39 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:athar_app/core/constants/region_city_constants.dart';
+import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/features/auth/logic/auth_notifier.dart';
+import 'package:athar_app/features/contributions/logic/contribution_repository.dart';
 import '../../../../generated/l10n/app_localizations.dart';
 
-class AddContributionScreen extends StatefulWidget {
+class AddContributionScreen extends ConsumerStatefulWidget {
   const AddContributionScreen({super.key});
 
   @override
-  State<AddContributionScreen> createState() => _AddContributionScreenState();
+  ConsumerState<AddContributionScreen> createState() =>
+      _AddContributionScreenState();
 }
 
-class _AddContributionScreenState extends State<AddContributionScreen> {
+class _AddContributionScreenState
+    extends ConsumerState<AddContributionScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
   _ContributionTypeUi? _selectedCategory;
-  String? _selectedRegion;
-  String? _selectedCity;
+  String? _selectedRegionId;
+  String? _selectedCityId;
 
-  bool _hasImage = false;
-  bool _hasVideo = false;
+  File? _mediaFile;
+  String? _mediaType; // 'image' or 'video'
+
   bool _showValidation = false;
+  bool _isLoading = false;
 
-  final List<_ContributionTypeUi> _categories = const [
+  static const List<_ContributionTypeUi> _categories = [
     _ContributionTypeUi(
       id: 'traditional_food',
       titleAr: 'أكل شعبي',
@@ -72,6 +83,7 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
       icon: Icons.checkroom_rounded,
     ),
   ];
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -81,93 +93,237 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
 
   bool get _isArabic => Directionality.of(context) == TextDirection.rtl;
 
+  // ── Media picking ────────────────────────────────────────────────────────────
+
+  Future<void> _pickImage() async {
+    final xFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 85);
+    if (xFile == null) return;
+    setState(() {
+      _mediaFile = File(xFile.path);
+      _mediaType = 'image';
+    });
+  }
+
+  Future<void> _pickVideo() async {
+    final xFile = await ImagePicker().pickVideo(source: ImageSource.gallery);
+    if (xFile == null) return;
+    setState(() {
+      _mediaFile = File(xFile.path);
+      _mediaType = 'video';
+    });
+  }
+
+  // ── Submit ──────────────────────────────────���────────────────────────────────
+
+  Future<void> _submit(TouristModel tourist) async {
+    setState(() => _showValidation = true);
+
+    final isFormValid = _formKey.currentState?.validate() ?? false;
+    final isCategoryValid = _selectedCategory != null;
+    final isRegionValid = _selectedRegionId != null;
+    final isCityValid = _selectedCityId != null;
+    final isMediaValid = _mediaFile != null;
+
+    if (!isFormValid || !isCategoryValid || !isRegionValid ||
+        !isCityValid || !isMediaValid) {
+      return;
+    }
+
+    setState(() => _isLoading = true);
+    final l10n = AppLocalizations.of(context);
+
+    try {
+      await ref.read(contributionRepositoryProvider).submitContribution(
+            tourist: tourist,
+            categoryId: _selectedCategory!.id,
+            titleContent: _titleController.text.trim(),
+            descriptionContent: _descriptionController.text.trim(),
+            submissionLanguage: _isArabic ? 'ar' : 'en',
+            regionId: _selectedRegionId!,
+            cityId: _selectedCityId!,
+            mediaFile: _mediaFile!,
+            mediaType: _mediaType!,
+          );
+      if (!mounted) return;
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.submissionSuccessMessage)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${_isArabic ? 'حدث خطأ:' : 'Error:'} $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  // ── Build ────────────────────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final isArabic = _isArabic;
+    final authState = ref.watch(authNotifierProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.addContributionTitle),
-        centerTitle: true,
-        backgroundColor: theme.scaffoldBackgroundColor,
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
+    return authState.when(
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
       ),
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-            children: [
-              Text(
-                l10n.addContributionSubtitle,
-                style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
+      error: (_, __) => const Scaffold(
+        body: Center(child: Text('Authentication error')),
+      ),
+      data: (user) {
+        if (user == null || user is! TouristModel) {
+          return const Scaffold(
+            body: Center(child: Text('User not available')),
+          );
+        }
+
+        // Phone guard — tourist must have verified phone
+        if (!user.phoneVerified) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(l10n.addContributionTitle),
+              centerTitle: true,
+              backgroundColor: theme.scaffoldBackgroundColor,
+              elevation: 0,
+              surfaceTintColor: Colors.transparent,
+            ),
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.phone_locked_outlined,
+                        size: 72,
+                        color: theme.colorScheme.primary.withValues(alpha: 0.6)),
+                    const SizedBox(height: 20),
+                    Text(
+                      isArabic
+                          ? 'التحقق من رقم الجوال مطلوب'
+                          : 'Phone Verification Required',
+                      style: theme.textTheme.titleLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      isArabic
+                          ? 'يجب التحقق من رقم جوالك أولاً لإضافة مساهمة. توجّه إلى صفحة الملف الشخصي لإكمال التحقق.'
+                          : 'You must verify your phone number before adding a contribution. Go to your profile to complete verification.',
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(height: 1.6),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 28),
+                    FilledButton.icon(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.arrow_back),
+                      label: Text(isArabic ? 'العودة للملف الشخصي' : 'Go to Profile'),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 22),
-              _buildSectionLabel(
-                context,
-                isArabic ? 'نوع المساهمة' : 'Contribution Type',
-              ),
-              const SizedBox(height: 8),
-              _buildCategorySelector(theme, isArabic),
-              if (_selectedCategory != null) ...[
-                const SizedBox(height: 10),
-                _buildSelectedCategoryPoints(theme, isArabic),
-              ],
-              const SizedBox(height: 18),
-              _buildSectionLabel(context, l10n.titleLabel),
-              const SizedBox(height: 8),
-              _buildTitleField(l10n),
-              const SizedBox(height: 18),
-              _buildSectionLabel(context, l10n.descriptionLabel),
-              const SizedBox(height: 8),
-              _buildDescriptionField(l10n),
-              const SizedBox(height: 18),
-              _buildSectionLabel(
-                context,
-                isArabic ? 'المنطقة' : 'Region',
-              ),
-              const SizedBox(height: 8),
-              _buildRegionDropdown(theme, isArabic),
-              const SizedBox(height: 18),
-              _buildSectionLabel(context, l10n.cityLabel),
-              const SizedBox(height: 8),
-              _buildCityDropdown(theme, l10n, isArabic),
-              const SizedBox(height: 18),
-              _buildSectionLabel(context, l10n.mediaLabel),
-              const SizedBox(height: 8),
-              _buildMediaSection(theme, l10n),
-              const SizedBox(height: 24),
-              _buildSubmitButton(l10n),
-              const SizedBox(height: 12),
-              Text(
-                l10n.contentReviewNotice,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodySmall,
-              ),
-            ],
+            ),
+          );
+        }
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(l10n.addContributionTitle),
+            centerTitle: true,
+            backgroundColor: theme.scaffoldBackgroundColor,
+            elevation: 0,
+            surfaceTintColor: Colors.transparent,
           ),
-        ),
-      ),
+          body: SafeArea(
+            child: Stack(
+              children: [
+                Form(
+                  key: _formKey,
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                    children: [
+                      Text(
+                        l10n.addContributionSubtitle,
+                        style:
+                            theme.textTheme.bodyMedium?.copyWith(height: 1.5),
+                      ),
+                      const SizedBox(height: 22),
+                      _buildSectionLabel(
+                          context,
+                          isArabic ? 'نوع المساهمة' : 'Contribution Type'),
+                      const SizedBox(height: 8),
+                      _buildCategorySelector(theme, isArabic),
+                      if (_selectedCategory != null) ...[
+                        const SizedBox(height: 10),
+                        _buildSelectedCategoryPoints(theme, isArabic),
+                      ],
+                      const SizedBox(height: 18),
+                      _buildSectionLabel(context, l10n.titleLabel),
+                      const SizedBox(height: 8),
+                      _buildTitleField(l10n),
+                      const SizedBox(height: 18),
+                      _buildSectionLabel(context, l10n.descriptionLabel),
+                      const SizedBox(height: 8),
+                      _buildDescriptionField(l10n),
+                      const SizedBox(height: 18),
+                      _buildSectionLabel(
+                          context,
+                          isArabic ? 'المنطقة' : 'Region'),
+                      const SizedBox(height: 8),
+                      _buildRegionDropdown(theme, isArabic),
+                      const SizedBox(height: 18),
+                      _buildSectionLabel(context, l10n.cityLabel),
+                      const SizedBox(height: 8),
+                      _buildCityDropdown(theme, l10n, isArabic),
+                      const SizedBox(height: 18),
+                      _buildSectionLabel(context, l10n.mediaLabel),
+                      const SizedBox(height: 8),
+                      _buildMediaSection(theme, l10n),
+                      const SizedBox(height: 24),
+                      _buildSubmitButton(l10n, user),
+                      const SizedBox(height: 12),
+                      Text(
+                        l10n.contentReviewNotice,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+                if (_isLoading)
+                  Container(
+                    color: Colors.black.withValues(alpha: 0.3),
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
   Widget _buildSectionLabel(BuildContext context, String label) {
-    final theme = Theme.of(context);
-
     return Text(
       label,
-      style: theme.textTheme.bodyMedium?.copyWith(
-        fontWeight: FontWeight.w700,
-      ),
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
     );
   }
 
   Widget _buildTitleField(AppLocalizations l10n) {
-    final isArabic = Directionality.of(context) == TextDirection.rtl;
-
+    final isArabic = _isArabic;
     return TextFormField(
       controller: _titleController,
       textInputAction: TextInputAction.next,
@@ -176,28 +332,19 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
             ? 'مثال: رقصة الخطوة – عسير'
             : 'Example: Al-Khatwa Dance – Asir',
         prefixIcon: const Icon(Icons.title_rounded),
-
-        // ✨ تحسين الشكل
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return l10n.requiredField;
-        }
+        if (value == null || value.trim().isEmpty) return l10n.requiredField;
         return null;
       },
     );
   }
 
   Widget _buildDescriptionField(AppLocalizations l10n) {
-    final isArabic = Directionality.of(context) == TextDirection.rtl;
-
+    final isArabic = _isArabic;
     return TextFormField(
       controller: _descriptionController,
       maxLines: 5,
@@ -206,27 +353,17 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
         hintText: isArabic
             ? 'اكتب وصفًا واضحًا: ما هو؟ أين يُستخدم؟ ولماذا مهم؟'
             : 'Write a clear description: what is it, where is it used, and why is it important?',
-
         helperText: isArabic
             ? 'نصيحة: اذكر (التاريخ • الاستخدام • الموقع)'
             : 'Tip: include (history • usage • location)',
-
         prefixIcon: const Icon(Icons.notes_rounded),
         alignLabelWithHint: true,
-
-        // ✨ تحسين الشكل
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return l10n.requiredField;
-        }
+        if (value == null || value.trim().isEmpty) return l10n.requiredField;
         return null;
       },
     );
@@ -234,7 +371,6 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
 
   Widget _buildCategorySelector(ThemeData theme, bool isArabic) {
     final showCategoryError = _showValidation && _selectedCategory == null;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -243,13 +379,8 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
           runSpacing: 8,
           children: _categories.map((category) {
             final isSelected = _selectedCategory?.id == category.id;
-
             return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedCategory = category;
-                });
-              },
+              onTap: () => setState(() => _selectedCategory = category),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
                 padding:
@@ -269,13 +400,11 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      category.icon,
-                      size: 16,
-                      color: isSelected
-                          ? theme.colorScheme.onPrimary
-                          : theme.colorScheme.primary,
-                    ),
+                    Icon(category.icon,
+                        size: 16,
+                        color: isSelected
+                            ? theme.colorScheme.onPrimary
+                            : theme.colorScheme.primary),
                     const SizedBox(width: 6),
                     Text(
                       isArabic ? category.titleAr : category.titleEn,
@@ -298,9 +427,8 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
             isArabic
                 ? 'الرجاء اختيار نوع المساهمة'
                 : 'Please select a contribution type',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.error,
-            ),
+            style: theme.textTheme.bodySmall
+                ?.copyWith(color: theme.colorScheme.error),
           ),
         ],
       ],
@@ -310,19 +438,13 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
   Widget _buildSelectedCategoryPoints(ThemeData theme, bool isArabic) {
     final category = _selectedCategory!;
     final primary = theme.colorScheme.primary;
-    final backgroundColor = theme.colorScheme.surface;
-    final borderColor = theme.dividerColor.withValues(alpha: 0.10);
-    final iconBackgroundColor = primary.withValues(alpha: 0.08);
-
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: borderColor,
-        ),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.10)),
       ),
       child: Row(
         children: [
@@ -330,14 +452,10 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: iconBackgroundColor,
+              color: primary.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              Icons.stars_rounded,
-              color: primary,
-              size: 20,
-            ),
+            child: Icon(Icons.stars_rounded, color: primary, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -349,20 +467,15 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
                       ? 'نقاط ${category.titleAr}'
                       : '${category.titleEn} Points',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: theme.textTheme.bodyLarge?.color,
-                  ),
+                      fontWeight: FontWeight.w800,
+                      color: theme.textTheme.bodyLarge?.color),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   isArabic
                       ? 'الصورة: ${category.imagePoints} نقطة • الفيديو: ${category.videoPoints} نقطة'
                       : 'Image: ${category.imagePoints} pts • Video: ${category.videoPoints} pts',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    height: 1.5,
-                    color: theme.textTheme.bodySmall?.color
-                        ?.withValues(alpha: 0.82),
-                  ),
+                  style: theme.textTheme.bodySmall?.copyWith(height: 1.5),
                 ),
               ],
             ),
@@ -373,43 +486,32 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
   }
 
   Widget _buildRegionDropdown(ThemeData theme, bool isArabic) {
-    final regions = isArabic
-        ? const [
-            'المنطقة الوسطى',
-            'المنطقة الغربية',
-            'المنطقة الشمالية',
-            'المنطقة الشرقية',
-            'المنطقة الجنوبية',
-          ]
-        : const [
-            'Central Region',
-            'Western Region',
-            'Northern Region',
-            'Eastern Region',
-            'Southern Region',
-          ];
-
     return DropdownButtonFormField<String>(
-      value: _selectedRegion,
+      value: _selectedRegionId,
       decoration: InputDecoration(
         hintText: isArabic ? 'اختر المنطقة' : 'Select region',
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       dropdownColor: theme.colorScheme.surface,
-      items: regions.map((region) {
+      items: regionMap.keys.map((id) {
         return DropdownMenuItem<String>(
-          value: region,
-          child: Text(region),
+          value: id,
+          child: Text(regionMap[id]![isArabic ? 'ar' : 'en']!),
         );
       }).toList(),
       onChanged: (value) {
         setState(() {
-          _selectedRegion = value;
-          _selectedCity = null;
+          _selectedRegionId = value;
+          _selectedCityId = null;
         });
       },
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return isArabic ? 'الرجاء اختيار المنطقة' : 'Please select a region';
+          return isArabic
+              ? 'الرجاء اختيار المنطقة'
+              : 'Please select a region';
         }
         return null;
       },
@@ -417,66 +519,44 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
   }
 
   Widget _buildCityDropdown(
-    ThemeData theme,
-    AppLocalizations l10n,
-    bool isArabic,
-  ) {
-    final citiesByRegion = {
-      'المنطقة الوسطى': ['الرياض', 'القصيم', 'حائل'],
-      'المنطقة الغربية': ['جدة', 'مكة', 'المدينة', 'الطائف'],
-      'المنطقة الشمالية': ['تبوك', 'عرعر', 'سكاكا'],
-      'المنطقة الشرقية': ['الدمام', 'الخبر', 'الأحساء', 'الجبيل'],
-      'المنطقة الجنوبية': ['أبها', 'خميس مشيط', 'جازان', 'نجران', 'الباحة'],
-      'Central Region': ['Riyadh', 'Qassim', 'Hail'],
-      'Western Region': ['Jeddah', 'Makkah', 'Madinah', 'Taif'],
-      'Northern Region': ['Tabuk', 'Arar', 'Sakaka'],
-      'Eastern Region': ['Dammam', 'Khobar', 'Al Ahsa', 'Jubail'],
-      'Southern Region': [
-        'Abha',
-        'Khamis Mushait',
-        'Jazan',
-        'Najran',
-        'Al Baha'
-      ],
-    };
-
-    final cities = _selectedRegion == null
+      ThemeData theme, AppLocalizations l10n, bool isArabic) {
+    final cityIds = _selectedRegionId == null
         ? <String>[]
-        : (citiesByRegion[_selectedRegion] ?? []);
+        : (regionCities[_selectedRegionId] ?? <String>[]);
 
     return DropdownButtonFormField<String>(
-      value: cities.contains(_selectedCity) ? _selectedCity : null,
+      value: cityIds.contains(_selectedCityId) ? _selectedCityId : null,
       decoration: InputDecoration(
-        hintText: _selectedRegion == null
+        hintText: _selectedRegionId == null
             ? (isArabic ? 'اختر المنطقة أولاً' : 'Select region first')
             : l10n.cityLabel,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       dropdownColor: theme.colorScheme.surface,
-      items: cities.map((city) {
+      items: cityIds.map((id) {
         return DropdownMenuItem<String>(
-          value: city,
+          value: id,
           child: Text(
-            city,
+            cityMap[id]![isArabic ? 'ar' : 'en']!,
             style: theme.textTheme.bodyMedium,
           ),
         );
       }).toList(),
-      onChanged: _selectedRegion == null
+      onChanged: _selectedRegionId == null
           ? null
-          : (value) {
-              setState(() => _selectedCity = value);
-            },
+          : (value) => setState(() => _selectedCityId = value),
       validator: (value) {
-        if (value == null || value.isEmpty) {
-          return l10n.selectCityError;
-        }
+        if (value == null || value.isEmpty) return l10n.selectCityError;
         return null;
       },
     );
   }
 
   Widget _buildMediaSection(ThemeData theme, AppLocalizations l10n) {
-    final showMediaError = _showValidation && !_hasImage && !_hasVideo;
+    final showMediaError = _showValidation && _mediaFile == null;
+    final isArabic = _isArabic;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -488,13 +568,8 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
                 theme: theme,
                 icon: Icons.photo_camera_outlined,
                 label: l10n.addPhoto,
-                isSelected: _hasImage,
-                onTap: () {
-                  setState(() {
-                    _hasImage = true;
-                    _hasVideo = false;
-                  });
-                },
+                isSelected: _mediaType == 'image',
+                onTap: _pickImage,
               ),
             ),
             const SizedBox(width: 12),
@@ -503,29 +578,37 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
                 theme: theme,
                 icon: Icons.videocam_outlined,
                 label: l10n.addVideo,
-                isSelected: _hasVideo,
-                onTap: () {
-                  setState(() {
-                    _hasVideo = true;
-                    _hasImage = false;
-                  });
-                },
+                isSelected: _mediaType == 'video',
+                onTap: _pickVideo,
               ),
             ),
           ],
         ),
+        if (_mediaFile != null) ...[
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.check_circle_outline,
+                  size: 16, color: theme.colorScheme.primary),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  isArabic ? 'تم اختيار الملف' : 'File selected',
+                  style: theme.textTheme.bodySmall
+                      ?.copyWith(color: theme.colorScheme.primary),
+                ),
+              ),
+            ],
+          ),
+        ],
         const SizedBox(height: 10),
-        Text(
-          l10n.mediaRequiredHint,
-          style: theme.textTheme.bodySmall,
-        ),
+        Text(l10n.mediaRequiredHint, style: theme.textTheme.bodySmall),
         if (showMediaError) ...[
           const SizedBox(height: 8),
           Text(
             l10n.mediaRequiredError,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.error,
-            ),
+            style: theme.textTheme.bodySmall
+                ?.copyWith(color: theme.colorScheme.error),
           ),
         ],
       ],
@@ -542,14 +625,11 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
     final borderColor = isSelected
         ? theme.colorScheme.primary
         : theme.dividerColor.withValues(alpha: 0.35);
-
     final backgroundColor = isSelected
         ? theme.colorScheme.primary.withValues(alpha: 0.06)
         : theme.colorScheme.surface;
-
-    final foregroundColor = isSelected
-        ? theme.colorScheme.primary
-        : theme.textTheme.bodyMedium?.color;
+    final foregroundColor =
+        isSelected ? theme.colorScheme.primary : theme.textTheme.bodyMedium?.color;
 
     return Material(
       color: Colors.transparent,
@@ -561,26 +641,17 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: borderColor,
-              width: 1.2,
-            ),
+            border: Border.all(color: borderColor, width: 1.2),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 30,
-                color: foregroundColor,
-              ),
+              Icon(icon, size: 30, color: foregroundColor),
               const SizedBox(height: 10),
               Text(
                 label,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: foregroundColor,
-                ),
+                    fontWeight: FontWeight.w700, color: foregroundColor),
               ),
             ],
           ),
@@ -589,37 +660,12 @@ class _AddContributionScreenState extends State<AddContributionScreen> {
     );
   }
 
-  Widget _buildSubmitButton(AppLocalizations l10n) {
+  Widget _buildSubmitButton(AppLocalizations l10n, TouristModel tourist) {
     return ElevatedButton.icon(
-      onPressed: _submit,
+      onPressed: _isLoading ? null : () => _submit(tourist),
       icon: const Icon(Icons.send),
       label: Text(l10n.submitContribution),
     );
-  }
-
-  void _submit() {
-    setState(() {
-      _showValidation = true;
-    });
-
-    final isFormValid = _formKey.currentState?.validate() ?? false;
-    final isCategoryValid = _selectedCategory != null;
-    final isRegionValid = _selectedRegion != null;
-    final isMediaValid = _hasImage || _hasVideo;
-
-    if (!isFormValid || !isCategoryValid || !isRegionValid || !isMediaValid) {
-      return;
-    }
-
-    final l10n = AppLocalizations.of(context);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.submissionSuccessMessage),
-      ),
-    );
-
-    Navigator.pop(context);
   }
 }
 

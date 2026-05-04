@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
+import 'package:athar_app/core/models/favorites/favorite_item_model.dart';
+import 'package:athar_app/core/utils/share_utils.dart';
+import 'package:athar_app/features/profile/logic/favorites_notifier.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:athar_app/features/guide_market/screens/booking_form_screen.dart';
 import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
@@ -114,12 +117,44 @@ class TripDetailsScreen extends ConsumerWidget {
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
-                CircleAvatar(
-                  backgroundColor: Colors.black54,
-                  child: IconButton(
-                    icon: const Icon(Icons.share, color: Colors.white),
-                    onPressed: () {},
-                  ),
+                Row(
+                  children: [
+                    Consumer(
+                      builder: (ctx, consumerRef, _) {
+                        final isFavAsync =
+                            consumerRef.watch(isFavoriteProvider(trip.id));
+                        final isFav = isFavAsync.value ?? false;
+                        return CircleAvatar(
+                          backgroundColor: Colors.black54,
+                          child: IconButton(
+                            icon: Icon(
+                              isFav ? Icons.favorite : Icons.favorite_border,
+                              color: isFav ? Colors.red : Colors.white,
+                            ),
+                            onPressed: () => consumerRef
+                                .read(favoritesNotifierProvider.notifier)
+                                .toggle(FavoriteItemModel.fromTrip(trip)),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    CircleAvatar(
+                      backgroundColor: Colors.black54,
+                      child: IconButton(
+                        icon: const Icon(Icons.share, color: Colors.white),
+                        onPressed: () => ShareUtils.shareTrip(
+                          context: context,
+                          titleAr: trip.titleAr,
+                          titleEn: trip.titleEn,
+                          cityAr: trip.cityAr,
+                          cityEn: trip.cityEn,
+                          adultPrice: trip.adultPrice,
+                          isAr: isAr,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
