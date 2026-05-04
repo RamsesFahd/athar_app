@@ -153,6 +153,28 @@ class AdminRepository {
             .toList());
   }
 
+  // ── Attractions ──────────────────────────────────────────────────────────────
+
+  CollectionReference get _attractions => _firestore.collection('attractions');
+
+  Future<void> addAttraction(Map<String, dynamic> data) async {
+    await _attractions.add({
+      ...data,
+      'tags': [],
+      'createdAt': FieldValue.serverTimestamp(),
+      'createdBy': 'Admin',
+    });
+  }
+
+  Future<void> updateAttraction(
+      String attractionId, Map<String, dynamic> data) async {
+    await _attractions.doc(attractionId).update(data);
+  }
+
+  Future<void> deleteAttraction(String attractionId) async {
+    await _attractions.doc(attractionId).delete();
+  }
+
   // ── Events ───────────────────────────────────────────────────────────────────
 
   CollectionReference get _events => _firestore.collection('events');

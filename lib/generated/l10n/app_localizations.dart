@@ -884,18 +884,6 @@ abstract class AppLocalizations {
   /// **'Search for heritage, places...'**
   String get searchHint;
 
-  /// No description provided for @descriptionLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Description'**
-  String get descriptionLabel;
-
-  /// No description provided for @categoryLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Category'**
-  String get categoryLabel;
-
   /// No description provided for @locationLabel.
   ///
   /// In en, this message translates to:
@@ -949,12 +937,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Traditional Clothing'**
   String get cat_clothing;
-
-  /// No description provided for @cat_heritage_landmark.
-  ///
-  /// In en, this message translates to:
-  /// **'Heritage Landmark'**
-  String get cat_heritage_landmark;
 
   /// No description provided for @reg_qassim.
   ///
@@ -1350,25 +1332,13 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Trips in {region}'**
-  String trips_in(Object region);
-
-  /// No description provided for @details.
-  ///
-  /// In en, this message translates to:
-  /// **'Details'**
-  String get details;
+  String trips_in(String region);
 
   /// No description provided for @about_trip.
   ///
   /// In en, this message translates to:
   /// **'About the trip:'**
   String get about_trip;
-
-  /// No description provided for @guide.
-  ///
-  /// In en, this message translates to:
-  /// **'Guide'**
-  String get guide;
 
   /// No description provided for @company.
   ///
@@ -1525,6 +1495,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Trip'**
   String get trip;
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// No description provided for @guide.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide'**
+  String get guide;
 
   /// No description provided for @confirm.
   ///
@@ -1910,11 +1892,23 @@ abstract class AppLocalizations {
   /// **'Enter contribution title'**
   String get titleHint;
 
+  /// No description provided for @descriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get descriptionLabel;
+
   /// No description provided for @descriptionHint.
   ///
   /// In en, this message translates to:
   /// **'Describe your contribution'**
   String get descriptionHint;
+
+  /// No description provided for @categoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get categoryLabel;
 
   /// No description provided for @categoryStory.
   ///

@@ -416,12 +416,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchHint => 'Search for heritage, places...';
 
   @override
-  String get descriptionLabel => 'Description';
-
-  @override
-  String get categoryLabel => 'Category';
-
-  @override
   String get locationLabel => 'Location';
 
   @override
@@ -447,9 +441,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cat_clothing => 'Traditional Clothing';
-
-  @override
-  String get cat_heritage_landmark => 'Heritage Landmark';
 
   @override
   String get reg_qassim => 'Qassim Region';
@@ -654,18 +645,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get price_high_first => 'Price: High to Low';
 
   @override
-  String trips_in(Object region) {
+  String trips_in(String region) {
     return 'Trips in $region';
   }
 
   @override
-  String get details => 'Details';
-
-  @override
   String get about_trip => 'About the trip:';
-
-  @override
-  String get guide => 'Guide';
 
   @override
   String get company => 'Organizing Company';
@@ -745,6 +730,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get trip => 'Trip';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get guide => 'Guide';
 
   @override
   String get confirm => 'Confirm';
@@ -952,7 +943,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get titleHint => 'Enter contribution title';
 
   @override
+  String get descriptionLabel => 'Description';
+
+  @override
   String get descriptionHint => 'Describe your contribution';
+
+  @override
+  String get categoryLabel => 'Category';
 
   @override
   String get categoryStory => 'Story';

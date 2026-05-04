@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:athar_app/core/models/attractions/attraction_model.dart';
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/core/models/map/map_pin_model.dart';
@@ -121,13 +122,10 @@ class _SheetContent extends StatelessWidget {
       ),
       child: selectedPin != null
           ? _PinDetail(pin: selectedPin!, scrollController: scrollController)
-          : _ResultsList(
-              pins: visiblePins, scrollController: scrollController),
+          : _ResultsList(pins: visiblePins, scrollController: scrollController),
     );
   }
 }
-
-
 
 class _PinDetail extends ConsumerWidget {
   final MapPinModel pin;
@@ -141,11 +139,18 @@ class _PinDetail extends ConsumerWidget {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
     final isEvent = pin.type == MapPinType.event;
+    final isAttraction = pin.type == MapPinType.attraction;
     final event = isEvent ? pin.sourceModel as EventModel : null;
-    final landmark = !isEvent ? pin.sourceModel as CulturalItemModel : null;
+    final attraction = isAttraction ? pin.sourceModel as AttractionModel : null;
+    final landmark =
+        !isEvent && !isAttraction ? pin.sourceModel as CulturalItemModel : null;
     final description = isEvent
         ? event!.getDescription(isAr)
-        : (isAr ? landmark!.descriptionAr : landmark!.descriptionEn);
+        : isAttraction
+            ? (isAr
+                ? attraction!.description['ar'] ?? ''
+                : attraction!.description['en'] ?? '')
+            : (isAr ? landmark!.descriptionAr : landmark!.descriptionEn);
 
     return SingleChildScrollView(
       controller: scrollController,
@@ -153,8 +158,6 @@ class _PinDetail extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _DragHandle(),
-
-        
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 4, 16, 8),
             child: Row(
@@ -166,7 +169,10 @@ class _PinDetail extends ConsumerWidget {
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: const Icon(Icons.close, color: Color.fromARGB(255, 64, 64, 64),),
+                    icon: const Icon(
+                      Icons.close,
+                      color: Color.fromARGB(255, 64, 64, 64),
+                    ),
                     tooltip: isAr ? 'إغلاق' : 'Close',
                     onPressed: () =>
                         ref.read(mapNotifierProvider.notifier).selectPin(null),
@@ -177,21 +183,22 @@ class _PinDetail extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
                       pin.getTitle(isAr),
-                      style: tt.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style:
+                          tt.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.share_outlined,
-                  color: Color.fromARGB(255, 64, 64, 64),),
+                  icon: const Icon(
+                    Icons.share_outlined,
+                    color: Color.fromARGB(255, 64, 64, 64),
+                  ),
                   tooltip: isAr ? 'مشاركة' : 'Share',
                   onPressed: () => _share(context, isAr),
                 ),
               ],
             ),
           ),
-
-          
           if (pin.imageUrl.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -223,8 +230,6 @@ class _PinDetail extends ConsumerWidget {
                 ),
               ),
             ),
-
-        
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
             child: Column(
@@ -242,26 +247,34 @@ class _PinDetail extends ConsumerWidget {
                   _FreeOrPaidBadge(isFree: event.isFree, isAr: isAr),
                 ],
 
-                
                 const SizedBox(height: 20),
                 Text(
                   isAr
-                      ? (isEvent ? 'عن الفعالية' : 'عن المعلم')
-                      : (isEvent ? 'About the Event' : 'About'),
+                      ? (isEvent
+                          ? 'عن الفعالية'
+                          : isAttraction
+                              ? 'عن المعلم السياحي'
+                              : 'عن المعلم')
+                      : (isEvent
+                          ? 'About the Event'
+                          : isAttraction
+                              ? 'About the Attraction'
+                              : 'About'),
                   style: tt.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   description.isNotEmpty
                       ? description
-                      : (isAr ? 'لا يوجد وصف متاح' : 'No description available'),
+                      : (isAr
+                          ? 'لا يوجد وصف متاح'
+                          : 'No description available'),
                   style: tt.bodyMedium?.copyWith(
                     color: cs.onSurface.withValues(alpha: 0.75),
                     height: 1.6,
                   ),
                 ),
 
-                
                 if (isEvent && event!.ticketUrl != null && !event.isFree) ...[
                   const SizedBox(height: 20),
                   SizedBox(
@@ -281,7 +294,6 @@ class _PinDetail extends ConsumerWidget {
                   ),
                 ],
 
-                
                 const SizedBox(height: 16),
                 if (isEvent)
                   Row(
@@ -340,8 +352,7 @@ class _PinDetail extends ConsumerWidget {
   }
 
   void _share(BuildContext context, bool isAr) {
-    final url =
-        'https://maps.google.com/?q=${pin.latitude},${pin.longitude}';
+    final url = 'https://maps.google.com/?q=${pin.latitude},${pin.longitude}';
     Clipboard.setData(ClipboardData(text: url));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -366,8 +377,6 @@ class _PinDetail extends ConsumerWidget {
     }
   }
 }
-
-
 
 class _ResultsList extends ConsumerWidget {
   final List<MapPinModel> pins;
@@ -450,14 +459,13 @@ class _PinListCard extends ConsumerWidget {
                       width: 80,
                       height: 80,
                       fit: BoxFit.cover,
-                      loadingBuilder: (_, child, progress) =>
-                          progress == null
-                              ? child
-                              : Container(
-                                  width: 80,
-                                  height: 80,
-                                  color: cs.surfaceContainerHighest,
-                                ),
+                      loadingBuilder: (_, child, progress) => progress == null
+                          ? child
+                          : Container(
+                              width: 80,
+                              height: 80,
+                              color: cs.surfaceContainerHighest,
+                            ),
                       errorBuilder: (_, __, ___) => _placeholder(cs),
                     )
                   : _placeholder(cs),
@@ -509,14 +517,14 @@ class _PinListCard extends ConsumerWidget {
       child: Icon(
         pin.type == MapPinType.landmark
             ? Icons.account_balance
-            : Icons.celebration,
+            : pin.type == MapPinType.attraction
+                ? Icons.place_outlined
+                : Icons.celebration,
         color: cs.onSurface.withValues(alpha: 0.3),
       ),
     );
   }
 }
-
-
 
 class _DragHandle extends StatelessWidget {
   const _DragHandle();
@@ -537,6 +545,11 @@ class _DragHandle extends StatelessWidget {
   }
 }
 
+Color _hexToColor(String hex) {
+  final n = hex.replaceAll('#', '').padLeft(6, '0');
+  return Color(int.parse('FF$n', radix: 16));
+}
+
 class _TypeBadge extends StatelessWidget {
   final MapPinModel pin;
   final bool isAr;
@@ -549,7 +562,11 @@ class _TypeBadge extends StatelessWidget {
     final String label;
     final Color color;
 
-    if (pin.type == MapPinType.landmark) {
+    if (pin.type == MapPinType.attraction) {
+      label = isAr ? 'معلم سياحي' : 'Attraction';
+      final hex = pin.categoryColorCode;
+      color = hex != null ? _hexToColor(hex) : const Color(0xFF3A6EA5);
+    } else if (pin.type == MapPinType.landmark) {
       label = isAr ? 'معلم ثقافي' : 'Landmark';
       color = cs.primary;
     } else {
@@ -567,8 +584,8 @@ class _TypeBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
-            fontSize: 10, fontWeight: FontWeight.w600, color: color),
+        style:
+            TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: color),
       ),
     );
   }
@@ -583,9 +600,8 @@ class _FreeOrPaidBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isFree ? Colors.green : Colors.orange;
-    final label = isFree
-        ? (isAr ? 'مجاني' : 'Free')
-        : (isAr ? 'مدفوع' : 'Paid');
+    final label =
+        isFree ? (isAr ? 'مجاني' : 'Free') : (isAr ? 'مدفوع' : 'Paid');
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

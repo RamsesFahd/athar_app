@@ -10,6 +10,7 @@ import 'package:athar_app/features/admin/screens/all_bookings_screen.dart';
 import 'package:athar_app/features/admin/screens/cultural_archive_admin_screen.dart';
 import 'package:athar_app/features/admin/screens/add_event_screen.dart';
 import 'package:athar_app/features/admin/screens/contributions_review_screen.dart';
+import 'package:athar_app/features/admin/screens/add_attraction_screen.dart';
 
 class AdminNavigationContainer extends ConsumerStatefulWidget {
   const AdminNavigationContainer({super.key});
@@ -31,6 +32,7 @@ class _AdminNavigationContainerState
     CulturalArchiveAdminScreen(),
     AddEventScreen(),
     ContributionsReviewScreen(),
+    AddAttractionScreen(),
   ];
 
   final List<({String label, IconData icon})> _tabs = const [
@@ -41,6 +43,7 @@ class _AdminNavigationContainerState
     (label: 'Archive', icon: Icons.museum_outlined),
     (label: 'Events', icon: Icons.celebration_outlined),
     (label: 'Contributions', icon: Icons.volunteer_activism_outlined),
+    (label: 'Attractions', icon: Icons.place_outlined),
   ];
 
   @override

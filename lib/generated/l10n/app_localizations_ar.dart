@@ -416,12 +416,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchHint => 'ابحث عن التراث، الأماكن...';
 
   @override
-  String get descriptionLabel => 'الوصف';
-
-  @override
-  String get categoryLabel => 'التصنيف';
-
-  @override
   String get locationLabel => 'الموقع';
 
   @override
@@ -447,9 +441,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cat_clothing => 'ملابس تقليدية';
-
-  @override
-  String get cat_heritage_landmark => 'معلم تراثي';
 
   @override
   String get reg_qassim => 'منطقة القصيم';
@@ -653,18 +644,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get price_high_first => 'السعر: الأعلى أولاً';
 
   @override
-  String trips_in(Object region) {
+  String trips_in(String region) {
     return 'رحلات في $region';
   }
 
   @override
-  String get details => 'عرض التفاصيل';
-
-  @override
   String get about_trip => 'عن الرحلة:';
-
-  @override
-  String get guide => 'المرشد';
 
   @override
   String get company => 'الشركة المنظمة';
@@ -744,6 +729,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get trip => 'الرحلة';
+
+  @override
+  String get details => 'عرض التفاصيل';
+
+  @override
+  String get guide => 'المرشد';
 
   @override
   String get confirm => 'التأكيد';
@@ -949,7 +940,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get titleHint => 'أدخل عنوان المساهمة';
 
   @override
+  String get descriptionLabel => 'الوصف';
+
+  @override
   String get descriptionHint => 'اكتب وصف المساهمة';
+
+  @override
+  String get categoryLabel => 'التصنيف';
 
   @override
   String get categoryStory => 'قصة';

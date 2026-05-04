@@ -191,8 +191,6 @@
 
   "culturalArchiveTitle" : "Cultural Archive",
   "searchHint": "Search for heritage, places...",
-  "descriptionLabel": "Description",
-  "categoryLabel": "Category",
   "locationLabel": "Location",
   "filterAll": "All",
   "filter": "Filter",
@@ -203,7 +201,6 @@
   "cat_dance": "Dance",
   "cat_architecture": "Architecture",
   "cat_clothing": "Traditional Clothing",
-  "cat_heritage_landmark": "Heritage Landmark",
 
   "reg_qassim": "Qassim Region",
   "reg_riyadh": "Riyadh",
@@ -275,10 +272,16 @@
 "search_trips_hint": "Search for a trip...",
 "price_low_first": "Price: Low to High",
 "price_high_first": "Price: High to Low",
-"trips_in": "Trips in {region}",
-  "details": "View Details",
+  "trips_in": "Trips in {region}",
+  "@trips_in": {
+    "placeholders": {
+      "region": {
+        "type": "String"
+      }
+    }
+  },
+
   "about_trip": "About the trip:",
-  "guide": "Guide",
   "company": "Organizing Company",
   "license": "License",
   "book_now": "Book Now",
@@ -298,7 +301,6 @@
   "available_days": "Available Days:",
   "skills": "Skills:",
   "booking_summary": "Booking Summary",
-  "guide": "Guide",
   "total_price": "Total Price",
   "currency": "SAR",
   "payment_note": "Note: Payment is not processed through the app; you will coordinate with the guide directly.",

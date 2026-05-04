@@ -24,17 +24,25 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   final ValueNotifier<double> _sheetExtent = ValueNotifier(0.30);
   LatLngBounds? _visibleBounds;
 
-  // Normal variants
+  // Landmark and event icons (static colors)
   BitmapDescriptor _landmarkIcon =
+      BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+  BitmapDescriptor _landmarkIconSelected =
       BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
   BitmapDescriptor _eventIcon =
       BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
-
-  // Selected variants (inverted: white fill, colored border + icon)
-  BitmapDescriptor _landmarkIconSelected =
-      BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
   BitmapDescriptor _eventIconSelected =
       BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
+
+  // Per-attraction-color icon cache: hex → BitmapDescriptor
+  final Map<String, BitmapDescriptor> _attractionColorIcons = {};
+  final Map<String, BitmapDescriptor> _attractionColorIconsSelected = {};
+
+  // Fallback used before the async per-color icon is built
+  BitmapDescriptor _attractionFallback =
+      BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
+  BitmapDescriptor _attractionFallbackSelected =
+      BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
 
   static const _saudiCenter = CameraPosition(
     target: LatLng(24.7, 46.7),
@@ -55,6 +63,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final results = await Future.wait([
       _buildPinMarker(_sage, Icons.account_balance),
       _buildPinMarker(_sage, Icons.account_balance, selected: true),
+      // Default fallback for attraction pins before per-color icons are ready
+      _buildPinMarker(const Color(0xFF3A6EA5), Icons.place_outlined),
+      _buildPinMarker(const Color(0xFF3A6EA5), Icons.place_outlined, selected: true),
       _buildPinMarker(_sand, Icons.celebration),
       _buildPinMarker(_sand, Icons.celebration, selected: true),
     ]);
@@ -62,10 +73,48 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       setState(() {
         _landmarkIcon = results[0];
         _landmarkIconSelected = results[1];
-        _eventIcon = results[2];
-        _eventIconSelected = results[3];
+        _attractionFallback = results[2];
+        _attractionFallbackSelected = results[3];
+        _eventIcon = results[4];
+        _eventIconSelected = results[5];
       });
     }
+  }
+
+  Color _hexToColor(String hex) {
+    final n = hex.replaceAll('#', '').padLeft(6, '0');
+    return Color(int.parse('FF$n', radix: 16));
+  }
+
+  Future<void> _preloadAttractionIcons(List<MapPinModel> pins) async {
+    final newHexCodes = pins
+        .where((p) =>
+            p.type == MapPinType.attraction &&
+            p.categoryColorCode != null &&
+            !_attractionColorIcons.containsKey(p.categoryColorCode))
+        .map((p) => p.categoryColorCode!)
+        .toSet();
+
+    if (newHexCodes.isEmpty) return;
+
+    final entries = await Future.wait(
+      newHexCodes.map((hex) async {
+        final color = _hexToColor(hex);
+        final normal =
+            await _buildPinMarker(color, Icons.place_outlined);
+        final selected =
+            await _buildPinMarker(color, Icons.place_outlined, selected: true);
+        return (hex, normal, selected);
+      }),
+    );
+
+    if (!mounted) return;
+    setState(() {
+      for (final entry in entries) {
+        _attractionColorIcons[entry.$1] = entry.$2;
+        _attractionColorIconsSelected[entry.$1] = entry.$3;
+      }
+    });
   }
 
   /// Builds a teardrop-shaped map pin marker.
@@ -171,6 +220,15 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       final BitmapDescriptor markerIcon;
       if (pin.type == MapPinType.landmark) {
         markerIcon = isSelected ? _landmarkIconSelected : _landmarkIcon;
+      } else if (pin.type == MapPinType.attraction) {
+        final hex = pin.categoryColorCode;
+        if (hex != null) {
+          markerIcon = isSelected
+              ? (_attractionColorIconsSelected[hex] ?? _attractionFallbackSelected)
+              : (_attractionColorIcons[hex] ?? _attractionFallback);
+        } else {
+          markerIcon = isSelected ? _attractionFallbackSelected : _attractionFallback;
+        }
       } else {
         markerIcon = isSelected ? _eventIconSelected : _eventIcon;
       }
@@ -229,6 +287,11 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final activeFilter = ref.watch(activeMapFilterProvider);
     final locationGranted = ref.watch(locationGrantedProvider);
     final selectedPin = ref.watch(selectedMapPinProvider);
+
+    // Preload per-color attraction icons whenever the pin list changes
+    ref.listen<List<MapPinModel>>(filteredMapPinsProvider, (_, pins) {
+      _preloadAttractionIcons(pins);
+    });
 
     // Animate camera to newly selected pin
     ref.listen<MapPinModel?>(selectedMapPinProvider, (_, next) {

@@ -44,7 +44,6 @@ class _AddCulturalContentScreenState
     (id: 'architecture', label: 'Architecture'),
     (id: 'music', label: 'Music'),
     (id: 'clothing', label: 'Traditional Clothing'),
-    (id: 'heritage_landmark', label: 'Heritage Landmark'),
   ];
 
   static const _legacyRegionMap = {

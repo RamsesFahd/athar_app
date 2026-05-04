@@ -6,7 +6,7 @@ import 'package:athar_app/features/interactive_map/logic/map_repository.dart';
 
 part 'map_notifier.g.dart';
 
-enum MapFilter { all, landmarks, events, nearMe }
+enum MapFilter { all, landmarks, attractions, events, nearMe }
 
 class MapState {
   final List<MapPinModel> allPins;
@@ -73,6 +73,7 @@ class MapNotifier extends _$MapNotifier {
     final repo = ref.read(mapRepositoryProvider);
 
     final landmarks = await repo.fetchLandmarksWithCoordinates();
+    final attractions = await repo.fetchAttractionsWithCoordinates();
     final events = await repo.fetchUpcomingEvents();
 
     final landmarkPins = landmarks.map((l) => MapPinModel(
@@ -99,7 +100,20 @@ class MapNotifier extends _$MapNotifier {
           sourceModel: e,
         ));
 
-    final allPins = [...landmarkPins, ...eventPins];
+    final attractionPins = attractions.map((a) => MapPinModel(
+          id: a.id,
+          type: MapPinType.attraction,
+          titleAr: a.name['ar'] ?? '',
+          titleEn: a.name['en'] ?? '',
+          imageUrl: a.mainImage,
+          latitude: a.coordinates.latitude,
+          longitude: a.coordinates.longitude,
+          regionId: a.region,
+          sourceModel: a,
+          categoryColorCode: a.categoryColorCode,
+        ));
+
+    final allPins = [...landmarkPins, ...attractionPins, ...eventPins];
 
     return MapState(
       allPins: allPins,
@@ -199,6 +213,7 @@ class MapNotifier extends _$MapNotifier {
     return pins.where((pin) {
       final matchesFilter = filter == MapFilter.all ||
           (filter == MapFilter.landmarks && pin.type == MapPinType.landmark) ||
+          (filter == MapFilter.attractions && pin.type == MapPinType.attraction) ||
           (filter == MapFilter.events && pin.type == MapPinType.event);
 
       final matchesSearch = search.isEmpty ||

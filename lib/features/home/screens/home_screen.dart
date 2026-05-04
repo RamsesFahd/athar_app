@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/features/cultural_archive/screens/cultural_archive.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 import 'package:athar_app/features/guide_market/screens/trips_list_screen.dart';
 import 'package:athar_app/features/home/widgets/home_hero_slider.dart';
+import 'package:athar_app/features/attractions/screens/attractions_list_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   final VoidCallback? onSeeAllArchive;
@@ -40,9 +40,6 @@ class HomeScreen extends ConsumerWidget {
       case 'clothing':
       case 'traditional_clothing':
         return l10n.cat_clothing;
-      case 'heritage_landmark':
-      case 'heritage':
-        return l10n.cat_heritage_landmark;
       default:
         return id;
     }
@@ -144,18 +141,20 @@ class HomeScreen extends ConsumerWidget {
                 onTap: onSeeAllArchive ??
                     () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const CulturalArchive()),
+                          MaterialPageRoute(
+                              builder: (_) => const CulturalArchive()),
                         ),
               ),
 
               const SizedBox(height: _headerToContent),
               const SizedBox(height: _headerToContent),
 
-              //  Heritage Content Stream 
+              //  Heritage Content Stream
               // Dynamically rendering cultural items from Firestore
               culturalAsync.when(
                 data: (state) {
-                  final isAr = Localizations.localeOf(context).languageCode == 'ar';
+                  final isAr =
+                      Localizations.localeOf(context).languageCode == 'ar';
                   final items = state.allItems.take(4).toList();
 
                   if (items.isEmpty) return const SizedBox.shrink();
@@ -173,14 +172,16 @@ class HomeScreen extends ConsumerWidget {
                           child: ExploreHeritageHomeCard(
                             title: isAr ? item.titleAr : item.titleEn,
                             image: item.imageUrl,
-                            categoryLabel: _translateCategory(item.categoryId, l10n),
+                            categoryLabel:
+                                _translateCategory(item.categoryId, l10n),
                             locationLabel: isAr ? item.regionAr : item.regionEn,
                             onTap: () {
                               // navigation: passing the 'item' object to details screen
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => CulturalItemDetails(item: item),
+                                  builder: (_) =>
+                                      CulturalItemDetails(item: item),
                                 ),
                               );
                             },
@@ -191,11 +192,11 @@ class HomeScreen extends ConsumerWidget {
                   );
                 },
                 loading: () => const SizedBox(
-                  height: 245, 
+                  height: 245,
                   child: Center(child: CircularProgressIndicator.adaptive()),
                 ),
                 error: (err, _) => const SizedBox(
-                  height: 245, 
+                  height: 245,
                   child: Center(child: Icon(Icons.error_outline)),
                 ),
               ),
@@ -233,6 +234,22 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     const SizedBox(height: 12),
                     _QuickAccessRowTile(
+                      title:
+                          Localizations.localeOf(context).languageCode == 'ar'
+                              ? 'المعالم السياحية'
+                              : 'Attractions',
+                      icon: Icons.place_outlined,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AttractionsListScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    _QuickAccessRowTile(
                       title: l10n.quickAchievements,
                       icon: Icons.emoji_events_outlined,
                       onTap: () {},
@@ -245,8 +262,9 @@ class HomeScreen extends ConsumerWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const TripsListScreen()),
-                          );
+                          MaterialPageRoute(
+                              builder: (context) => const TripsListScreen()),
+                        );
                       },
                     ),
                   ],
@@ -261,6 +279,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
+
 // Header: Title + See All
 class _SectionHeader extends StatelessWidget {
   final String title;
@@ -288,7 +307,6 @@ class _SectionHeader extends StatelessWidget {
               color: theme.colorScheme.onSurface,
             ),
           ),
-
           if (onTap != null)
             InkWell(
               onTap: onTap,
@@ -299,15 +317,13 @@ class _SectionHeader extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      l10n.seeAllLabel, 
+                      l10n.seeAllLabel,
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(width: 6),
-
-                    
                     Icon(
                       Icons.chevron_right,
                       size: 18,
@@ -397,7 +413,8 @@ class _QuickAccessRowTile extends StatelessWidget {
 
               Icon(
                 Icons.chevron_right,
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                color:
+                    theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               ),
             ],
           ),

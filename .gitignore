@@ -53,3 +53,7 @@ macos/Flutter/GeneratedPluginRegistrant.swift
 ios/Runner/GeneratedPluginRegistrant.m
 ios/Runner/GeneratedPluginRegistrant.h
 android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+
+functions/node_modules/
+functions/lib/
+functions/.runtimeconfig.json

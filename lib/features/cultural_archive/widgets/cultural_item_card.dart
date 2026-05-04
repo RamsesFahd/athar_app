@@ -17,7 +17,7 @@ class CulturalItemCard extends StatelessWidget {
 
   const CulturalItemCard({
     super.key,
-    required this.id,    
+    required this.id,
     required this.item,
     required this.imageUrl,
     required this.categoryId,
@@ -82,7 +82,7 @@ class CulturalItemCard extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha:0.05), blurRadius: 10)
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)
         ],
       ),
       child: Row(
@@ -91,14 +91,16 @@ class CulturalItemCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             child: Image.network(
               imageUrl,
-              width: 110, 
-              height: 110, 
+              width: 110,
+              height: 110,
               fit: BoxFit.cover,
               // حل لمشكلة الـ 404 اللي تطلع بالكونسول
-            errorBuilder: (context, error, stackTrace) => Container(
-              width: 110, height: 110, color: Colors.grey[200],
-              child: const Icon(Icons.broken_image, color: Colors.grey),
-            ),
+              errorBuilder: (context, error, stackTrace) => Container(
+                width: 110,
+                height: 110,
+                color: Colors.grey[200],
+                child: const Icon(Icons.broken_image, color: Colors.grey),
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -112,9 +114,9 @@ class CulturalItemCard extends StatelessWidget {
                   title,
                   style: theme.textTheme.titleLarge?.copyWith(fontSize: 16),
                   maxLines: 1, // يمنع النص من القفز لسطر جديد وتخريب الارتفاع
-                  overflow: TextOverflow.ellipsis, // يضيف نقاط (...) لو النص طويل
+                  overflow:
+                      TextOverflow.ellipsis, // يضيف نقاط (...) لو النص طويل
                 ),
-
                 const SizedBox(height: 4),
                 Text(
                   desc,
@@ -136,12 +138,12 @@ class CulturalItemCard extends StatelessWidget {
       children: [
         _badgeTemplate(
           _getTranslatedCategory(categoryId, l10n),
-          theme.colorScheme.primary.withValues(alpha:0.12),
+          theme.colorScheme.primary.withValues(alpha: 0.12),
           theme.colorScheme.primary,
         ),
         _badgeTemplate(
           _getTranslatedRegion(region, l10n),
-          theme.colorScheme.secondary.withValues(alpha:0.12),
+          theme.colorScheme.secondary.withValues(alpha: 0.12),
           theme.colorScheme.secondary,
         ),
       ],
@@ -175,8 +177,6 @@ class CulturalItemCard extends StatelessWidget {
         return l10n.cat_architecture;
       case 'clothing':
         return l10n.cat_clothing;
-      case 'heritage_landmark':
-        return l10n.cat_heritage_landmark;
       default:
         return cat;
     }
