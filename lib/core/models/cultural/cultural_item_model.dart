@@ -15,7 +15,9 @@ class CulturalItemModel {
   final String? createdBy;
   final double? latitude;
   final double? longitude;
-
+  final bool isContribution;
+  final String? contributorId;
+  final String? contributorName;
 
   CulturalItemModel({
     required this.id,
@@ -32,6 +34,9 @@ class CulturalItemModel {
     this.createdBy,
     this.latitude,
     this.longitude,
+    this.isContribution = false,
+    this.contributorId,
+    this.contributorName,
   });
 
   Map<String, dynamic> toMap() {
@@ -49,6 +54,9 @@ class CulturalItemModel {
       'createdBy': createdBy,
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
+      'isContribution': isContribution,
+      if (contributorId != null) 'contributorId': contributorId,
+      if (contributorName != null) 'contributorName': contributorName,
     };
   }
 
@@ -70,6 +78,9 @@ class CulturalItemModel {
       createdBy: map['createdBy'] ?? 'Admin',
       latitude: (map['latitude'] as num?)?.toDouble(),
       longitude: (map['longitude'] as num?)?.toDouble(),
+      isContribution: map['isContribution'] as bool? ?? false,
+      contributorId: map['contributorId'] as String?,
+      contributorName: map['contributorName'] as String?,
     );
   }
 }

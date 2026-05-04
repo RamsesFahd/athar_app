@@ -119,6 +119,12 @@ class MarketplaceRepository {
     }
   }
 
+  Future<TripModel?> fetchTripById(String tripId) async {
+    final doc = await _trips.doc(tripId).get();
+    if (!doc.exists) return null;
+    return TripModel.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+  }
+
   // 10. جلب حجوزات مستخدم مرة واحدة (Future، لا Stream) — يُستخدم لفحوصات الأمان
   Future<List<BookingModel>> fetchUserBookingsOnce(
       String userId, UserRole role) async {

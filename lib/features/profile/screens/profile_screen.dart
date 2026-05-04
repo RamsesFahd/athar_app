@@ -18,6 +18,11 @@ import '../widgets/guest_profile_view.dart';
 import '../widgets/tourist_profile.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/features/contributions/screens/contributions_achievements_screen.dart';
+import 'package:athar_app/core/models/favorites/favorite_item_model.dart';
+import 'package:athar_app/features/profile/logic/favorites_notifier.dart';
+import 'package:athar_app/features/cultural_archive/logic/cultural_repository.dart';
+import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
+import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -134,29 +139,42 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
     switch (_activeTabIndex) {
       case 2:
-        return ListView(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          children: [
-            SavedCard(
-              title: "Edge of the World",
-              location: "Riyadh",
-              typeText: "Landmark",
-              image:
-                  "https://images.pexels.com/photos/6650442/pexels-photo-6650442.jpeg",
-              isSaved: true,
-              onTap: () {},
-            ),
-            SavedCard(
-              title: "Janadriyah Festival",
-              location: "Riyadh",
-              typeText: "Event",
-              dateText: "Mar 15-25, 2025",
-              image:
-                  "https://images.pexels.com/photos/4662950/pexels-photo-4662950.jpeg",
-              isSaved: true,
-              onTap: () {},
-            ),
-          ],
+        final favAsync = ref.watch(favoritesStreamProvider);
+        return favAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Center(child: Text('Error: $e')),
+          data: (favorites) {
+            if (favorites.isEmpty) {
+              return Center(
+                child: Text(
+                  isAr ? 'لا توجد عناصر محفوظة' : 'No saved items yet',
+                  style: theme.textTheme.bodyLarge
+                      ?.copyWith(color: Colors.grey.shade500),
+                ),
+              );
+            }
+            return ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              itemCount: favorites.length,
+              itemBuilder: (context, index) {
+                final item = favorites[index];
+                final typeText = item.itemType == FavoriteItemType.cultural
+                    ? (isAr ? 'تراث ثقافي' : 'Cultural')
+                    : (isAr ? 'رحلة' : 'Trip');
+                return SavedCard(
+                  title: isAr ? item.titleAr : item.titleEn,
+                  location: isAr ? item.locationAr : item.locationEn,
+                  typeText: typeText,
+                  image: item.imageUrl,
+                  isSaved: true,
+                  onToggleSave: () => ref
+                      .read(favoritesNotifierProvider.notifier)
+                      .toggle(item),
+                  onTap: () => _openFavoriteItem(context, item),
+                );
+              },
+            );
+          },
         );
       case 1:
         return StreamBuilder<List<BookingModel>>(
@@ -1257,6 +1275,28 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
         );
       }).toList(),
     );
+  }
+
+  Future<void> _openFavoriteItem(BuildContext context, FavoriteItemModel item) async {
+    if (item.itemType == FavoriteItemType.cultural) {
+      final cultural = await ref
+          .read(culturalRepositoryProvider)
+          .fetchItemDetails(item.itemId);
+      if (cultural == null || !context.mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => CulturalItemDetails(item: cultural)),
+      );
+    } else {
+      final trip = await ref
+          .read(marketplaceRepositoryProvider)
+          .fetchTripById(item.itemId);
+      if (trip == null || !context.mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => TripDetailsScreen(trip: trip)),
+      );
+    }
   }
 
   void _showLanguageBottomSheet(BuildContext context, AppLocalizations l10n) {

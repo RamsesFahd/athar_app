@@ -4,12 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:athar_app/core/constants/region_data.dart';
+import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
 
 class AddCulturalContentScreen extends ConsumerStatefulWidget {
-  const AddCulturalContentScreen({super.key});
+  final CulturalItemModel? editItem;
+
+  const AddCulturalContentScreen({super.key, this.editItem});
 
   @override
   ConsumerState<AddCulturalContentScreen> createState() =>
@@ -32,6 +35,8 @@ class _AddCulturalContentScreenState
   File? _pickedImage;
   bool _isSubmitting = false;
 
+  bool get _isEditMode => widget.editItem != null;
+
   static const List<({String id, String label})> _categories = [
     (id: 'food', label: 'Traditional Food'),
     (id: 'craft', label: 'Handicraft'),
@@ -40,6 +45,22 @@ class _AddCulturalContentScreenState
     (id: 'music', label: 'Music'),
     (id: 'clothing', label: 'Traditional Clothing'),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (_isEditMode) {
+      final item = widget.editItem!;
+      _titleArController.text = item.titleAr;
+      _titleEnController.text = item.titleEn;
+      _descArController.text = item.descriptionAr;
+      _descEnController.text = item.descriptionEn;
+      _selectedCategory = item.categoryId;
+      _selectedRegionId = item.regionId;
+      if (item.latitude != null) _latController.text = '${item.latitude}';
+      if (item.longitude != null) _lngController.text = '${item.longitude}';
+    }
+  }
 
   @override
   void dispose() {
@@ -76,7 +97,7 @@ class _AddCulturalContentScreenState
       );
       return;
     }
-    if (_pickedImage == null) {
+    if (!_isEditMode && _pickedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please pick an image')),
       );
@@ -86,46 +107,72 @@ class _AddCulturalContentScreenState
     setState(() => _isSubmitting = true);
 
     try {
-      final imageUrl = await _uploadImage(_pickedImage!);
-      if (imageUrl == null) throw Exception('Image upload failed');
-
-      // Resolve region names from the selected regionId
       final region = regionsData.firstWhere(
         (r) => r.regionId == _selectedRegionId,
       );
 
-      final data = <String, dynamic>{
-        'titleAr': _titleArController.text.trim(),
-        'titleEn': _titleEnController.text.trim(),
-        'descriptionAr': _descArController.text.trim(),
-        'descriptionEn': _descEnController.text.trim(),
-        'categoryId': _selectedCategory,
-        'regionId': _selectedRegionId,
-        'regionAr': region.nameAr,
-        'regionEn': region.nameEn,
-        'imageUrl': imageUrl,
-      };
-
       final latText = _latController.text.trim();
       final lngText = _lngController.text.trim();
-      if (latText.isNotEmpty && lngText.isNotEmpty) {
-        data['latitude'] = double.parse(latText);
-        data['longitude'] = double.parse(lngText);
+
+      if (_isEditMode) {
+        final data = <String, dynamic>{
+          'titleAr': _titleArController.text.trim(),
+          'titleEn': _titleEnController.text.trim(),
+          'descriptionAr': _descArController.text.trim(),
+          'descriptionEn': _descEnController.text.trim(),
+          'categoryId': _selectedCategory,
+          'regionId': _selectedRegionId,
+          'regionAr': region.nameAr,
+          'regionEn': region.nameEn,
+        };
+        if (latText.isNotEmpty && lngText.isNotEmpty) {
+          data['latitude'] = double.parse(latText);
+          data['longitude'] = double.parse(lngText);
+        }
+        if (_pickedImage != null) {
+          final imageUrl = await _uploadImage(_pickedImage!);
+          if (imageUrl != null) data['imageUrl'] = imageUrl;
+        }
+        await ref
+            .read(adminRepositoryProvider)
+            .updateCulturalItem(widget.editItem!.id, data);
+      } else {
+        final imageUrl = await _uploadImage(_pickedImage!);
+        if (imageUrl == null) throw Exception('Image upload failed');
+        final data = <String, dynamic>{
+          'titleAr': _titleArController.text.trim(),
+          'titleEn': _titleEnController.text.trim(),
+          'descriptionAr': _descArController.text.trim(),
+          'descriptionEn': _descEnController.text.trim(),
+          'categoryId': _selectedCategory,
+          'regionId': _selectedRegionId,
+          'regionAr': region.nameAr,
+          'regionEn': region.nameEn,
+          'imageUrl': imageUrl,
+        };
+        if (latText.isNotEmpty && lngText.isNotEmpty) {
+          data['latitude'] = double.parse(latText);
+          data['longitude'] = double.parse(lngText);
+        }
+        await ref.read(adminRepositoryProvider).addCulturalItem(data);
       }
 
-      await ref.read(adminRepositoryProvider).addCulturalItem(data);
-
-      // Invalidate the cultural archive so it reloads with the new item
       ref.invalidate(culturalNotifierProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Cultural item added successfully'),
+          SnackBar(
+            content: Text(_isEditMode
+                ? 'Item updated successfully'
+                : 'Cultural item added successfully'),
             backgroundColor: Colors.green,
           ),
         );
-        _resetForm();
+        if (_isEditMode) {
+          Navigator.pop(context);
+        } else {
+          _resetForm();
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -156,8 +203,7 @@ class _AddCulturalContentScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    return SingleChildScrollView(
+    final screenContent = SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Form(
         key: _formKey,
@@ -184,25 +230,52 @@ class _AddCulturalContentScreenState
                         borderRadius: BorderRadius.circular(13),
                         child: Image.file(_pickedImage!, fit: BoxFit.cover),
                       )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.add_photo_alternate_outlined,
-                              size: 40,
-                              color: AppColors.primary.withValues(alpha: 0.5)),
-                          const SizedBox(height: 8),
-                          Text('Tap to pick image',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                  color: AppColors.primary
-                                      .withValues(alpha: 0.6))),
-                        ],
-                      ),
+                    : _isEditMode && widget.editItem!.imageUrl.isNotEmpty
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(13),
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                Image.network(widget.editItem!.imageUrl,
+                                    fit: BoxFit.cover),
+                                Positioned(
+                                  bottom: 8,
+                                  right: 8,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.black54,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Text('Tap to change',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 11)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_photo_alternate_outlined,
+                                  size: 40,
+                                  color:
+                                      AppColors.primary.withValues(alpha: 0.5)),
+                              const SizedBox(height: 8),
+                              Text('Tap to pick image',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                      color: AppColors.primary
+                                          .withValues(alpha: 0.6))),
+                            ],
+                          ),
               ),
             ),
 
             const SizedBox(height: 24),
 
-            // Titles
             _SectionLabel('Title (Arabic)'),
             _FormField(
               controller: _titleArController,
@@ -218,7 +291,6 @@ class _AddCulturalContentScreenState
             ),
             const SizedBox(height: 16),
 
-            // Descriptions
             _SectionLabel('Description (Arabic)'),
             _FormField(
               controller: _descArController,
@@ -236,14 +308,13 @@ class _AddCulturalContentScreenState
             ),
             const SizedBox(height: 24),
 
-            // Category
             _SectionLabel('Category'),
             DropdownButtonFormField<String>(
               value: _selectedCategory,
               decoration: _inputDecoration(),
               items: _categories
-                  .map((c) => DropdownMenuItem(
-                      value: c.id, child: Text(c.label)))
+                  .map((c) =>
+                      DropdownMenuItem(value: c.id, child: Text(c.label)))
                   .toList(),
               onChanged: (v) =>
                   setState(() => _selectedCategory = v ?? 'food'),
@@ -251,7 +322,6 @@ class _AddCulturalContentScreenState
 
             const SizedBox(height: 16),
 
-            // Region
             _SectionLabel('Region'),
             DropdownButtonFormField<String>(
               value: _selectedRegionId,
@@ -267,7 +337,6 @@ class _AddCulturalContentScreenState
 
             const SizedBox(height: 16),
 
-            // Optional map coordinates
             ExpansionTile(
               tilePadding: EdgeInsets.zero,
               title: Row(
@@ -293,7 +362,8 @@ class _AddCulturalContentScreenState
                         controller: _latController,
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true, signed: true),
-                        decoration: _inputDecoration(hint: 'Latitude (e.g. 24.68)'),
+                        decoration:
+                            _inputDecoration(hint: 'Latitude (e.g. 24.68)'),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -302,7 +372,8 @@ class _AddCulturalContentScreenState
                         controller: _lngController,
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true, signed: true),
-                        decoration: _inputDecoration(hint: 'Longitude (e.g. 46.72)'),
+                        decoration:
+                            _inputDecoration(hint: 'Longitude (e.g. 46.72)'),
                       ),
                     ),
                   ],
@@ -313,7 +384,6 @@ class _AddCulturalContentScreenState
 
             const SizedBox(height: 16),
 
-            // Submit
             SizedBox(
               width: double.infinity,
               height: 54,
@@ -332,9 +402,11 @@ class _AddCulturalContentScreenState
                         child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2.5),
                       )
-                    : const Text('Add to Archive',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    : Text(
+                        _isEditMode ? 'Update Item' : 'Add to Archive',
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
               ),
             ),
 
@@ -343,6 +415,20 @@ class _AddCulturalContentScreenState
         ),
       ),
     );
+
+    if (_isEditMode) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Edit Archive Item'),
+          backgroundColor: AppColors.primary,
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+        body: screenContent,
+      );
+    }
+
+    return screenContent;
   }
 
   InputDecoration _inputDecoration({String? hint}) {

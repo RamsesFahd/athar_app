@@ -8,6 +8,7 @@ class SavedCard extends StatelessWidget {
   final bool isSaved;
   final String? dateText;
   final VoidCallback? onTap;
+  final VoidCallback? onToggleSave;
 
   const SavedCard({
     super.key,
@@ -18,6 +19,7 @@ class SavedCard extends StatelessWidget {
     required this.isSaved,
     this.dateText,
     this.onTap,
+    this.onToggleSave,
   });
 
   @override
@@ -72,11 +74,16 @@ class SavedCard extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis),
                           ),
-                          Icon(isSaved ? Icons.favorite : Icons.favorite_border,
+                          GestureDetector(
+                            onTap: onToggleSave,
+                            child: Icon(
+                              isSaved ? Icons.favorite : Icons.favorite_border,
                               size: 18,
                               color: isSaved
                                   ? theme.colorScheme.primary
-                                  : theme.disabledColor),
+                                  : theme.disabledColor,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 4),

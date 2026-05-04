@@ -90,6 +90,11 @@ class CulturalRepository {
     return filtered;
   }
 
+  void clearCache() {
+    _cachedItems = null;
+    _cachedCategories = null;
+  }
+
   //  Fetch single item details
   Future<CulturalItemModel?> fetchItemDetails(String itemId) async {
     final doc = await _items.doc(itemId).get();

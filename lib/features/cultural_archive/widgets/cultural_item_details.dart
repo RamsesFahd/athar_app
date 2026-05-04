@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
+import 'package:athar_app/core/models/favorites/favorite_item_model.dart';
+import 'package:athar_app/core/utils/share_utils.dart';
+import 'package:athar_app/features/profile/logic/favorites_notifier.dart';
 
-class CulturalItemDetails extends StatefulWidget {
+class CulturalItemDetails extends ConsumerStatefulWidget {
   final CulturalItemModel item;
 
   const CulturalItemDetails({super.key, required this.item});
 
   @override
-  State<CulturalItemDetails> createState() => _CulturalItemDetailsState();
+  ConsumerState<CulturalItemDetails> createState() =>
+      _CulturalItemDetailsState();
 }
 
-class _CulturalItemDetailsState extends State<CulturalItemDetails> {
-  bool isFavorite = false;
-
+class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
   @override
   Widget build(BuildContext context) {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
 
     final currentItem = widget.item;
@@ -40,7 +43,7 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
                       const BorderRadius.vertical(top: Radius.circular(40)),
                   boxShadow: [
                     BoxShadow(
-                        color: Colors.black.withValues(alpha:0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 20,
                         offset: const Offset(0, -5))
                   ],
@@ -49,13 +52,17 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildTitleSection(
-                      theme,
-                      isAr ? currentItem.titleAr : currentItem.titleEn,
-                    ),
+                    _buildTitleSection(theme, isAr,
+                        isAr ? currentItem.titleAr : currentItem.titleEn),
+                    if (currentItem.isContribution) ...[
+                      const SizedBox(height: 10),
+                      _buildCommunityBadge(
+                          theme, isAr, currentItem.contributorName),
+                    ],
                     const SizedBox(height: 8),
-                    _buildLocationRow(theme,
-                    isAr? currentItem.regionAr : currentItem.regionEn,
+                    _buildLocationRow(
+                      theme,
+                      isAr ? currentItem.regionAr : currentItem.regionEn,
                     ),
                     const SizedBox(height: 32),
                     _sectionTitle(l10n.descriptionLabel, theme),
@@ -66,7 +73,14 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
                       theme,
                     ),
                     const SizedBox(height: 24),
-                    _buildCategoryBadge(theme, currentItem.categoryId, l10n)
+                    _buildCategoryBadge(theme, currentItem.categoryId, l10n),
+                    if (currentItem.isContribution &&
+                        currentItem.contributorName != null &&
+                        currentItem.contributorName!.isNotEmpty) ...[
+                      const SizedBox(height: 20),
+                      _buildContributorLine(
+                          theme, isAr, currentItem.contributorName!),
+                    ],
                   ],
                 ),
               ),
@@ -103,7 +117,10 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
     );
   }
 
-  Widget _buildTitleSection(ThemeData theme, String title) {
+  Widget _buildTitleSection(ThemeData theme, bool isAr, String title) {
+    final isFavAsync = ref.watch(isFavoriteProvider(widget.item.id));
+    final isFav = isFavAsync.value ?? false;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -118,13 +135,27 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
         Row(
           children: [
             IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.share_outlined,
-                    color: theme.colorScheme.primary)),
+              onPressed: () => ShareUtils.shareCulturalItem(
+                context: context,
+                titleAr: widget.item.titleAr,
+                titleEn: widget.item.titleEn,
+                regionAr: widget.item.regionAr,
+                regionEn: widget.item.regionEn,
+                descriptionAr: widget.item.descriptionAr,
+                descriptionEn: widget.item.descriptionEn,
+                isAr: isAr,
+              ),
+              icon: Icon(Icons.share_outlined,
+                  color: theme.colorScheme.primary),
+            ),
             IconButton(
-              onPressed: () => setState(() => isFavorite = !isFavorite),
-              icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: isFavorite ? Colors.red : theme.colorScheme.primary),
+              onPressed: () => ref
+                  .read(favoritesNotifierProvider.notifier)
+                  .toggle(FavoriteItemModel.fromCultural(widget.item)),
+              icon: Icon(
+                isFav ? Icons.favorite : Icons.favorite_border,
+                color: isFav ? Colors.red : theme.colorScheme.primary,
+              ),
             ),
           ],
         ),
@@ -143,11 +174,46 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
     );
   }
 
-  Widget _buildCategoryBadge(ThemeData theme, String categoryLabel, AppLocalizations l10n) {
+  Widget _buildCommunityBadge(
+      ThemeData theme, bool isAr, String? contributorName) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 6,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.tertiary.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+                color: theme.colorScheme.tertiary.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.people_alt_outlined,
+                  size: 14, color: theme.colorScheme.tertiary),
+              const SizedBox(width: 6),
+              Text(
+                isAr ? 'مساهمة المجتمع' : 'Community Contribution',
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.tertiary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategoryBadge(
+      ThemeData theme, String categoryLabel, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.secondary.withValues(alpha:0.1),
+        color: AppColors.secondary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -157,6 +223,22 @@ class _CulturalItemDetailsState extends State<CulturalItemDetails> {
           fontWeight: FontWeight.bold,
         ),
       ),
+    );
+  }
+
+  Widget _buildContributorLine(ThemeData theme, bool isAr, String name) {
+    return Row(
+      children: [
+        Icon(Icons.person_outline, size: 14, color: theme.colorScheme.tertiary),
+        const SizedBox(width: 6),
+        Text(
+          isAr ? 'بقلم: $name' : 'By: $name',
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.tertiary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 

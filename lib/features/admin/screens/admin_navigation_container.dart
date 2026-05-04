@@ -7,8 +7,9 @@ import 'package:athar_app/features/admin/screens/tutor_verification_screen.dart'
 import 'package:athar_app/features/admin/screens/trip_approvals_screen.dart';
 import 'package:athar_app/features/admin/screens/users_management_screen.dart';
 import 'package:athar_app/features/admin/screens/all_bookings_screen.dart';
-import 'package:athar_app/features/admin/screens/add_cultural_content_screen.dart';
+import 'package:athar_app/features/admin/screens/cultural_archive_admin_screen.dart';
 import 'package:athar_app/features/admin/screens/add_event_screen.dart';
+import 'package:athar_app/features/admin/screens/contributions_review_screen.dart';
 
 class AdminNavigationContainer extends ConsumerStatefulWidget {
   const AdminNavigationContainer({super.key});
@@ -27,8 +28,9 @@ class _AdminNavigationContainerState
     TripApprovalsScreen(),
     UsersManagementScreen(),
     AllBookingsScreen(),
-    AddCulturalContentScreen(),
+    CulturalArchiveAdminScreen(),
     AddEventScreen(),
+    ContributionsReviewScreen(),
   ];
 
   final List<({String label, IconData icon})> _tabs = const [
@@ -38,6 +40,7 @@ class _AdminNavigationContainerState
     (label: 'Bookings', icon: Icons.book_online_outlined),
     (label: 'Archive', icon: Icons.museum_outlined),
     (label: 'Events', icon: Icons.celebration_outlined),
+    (label: 'Contributions', icon: Icons.volunteer_activism_outlined),
   ];
 
   @override

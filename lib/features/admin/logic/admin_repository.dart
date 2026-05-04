@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:athar_app/core/constants/region_city_constants.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
+import 'package:athar_app/core/models/contribution/contribution_model.dart';
 
 part 'admin_repository.g.dart';
 
@@ -109,12 +112,45 @@ class AdminRepository {
 
   // ── Cultural Content ─────────────────────────────────────────────────────────
 
+  // Contribution category IDs → cultural archive category IDs
+  static const Map<String, String> _categoryMap = {
+    'traditional_food': 'food',
+    'handicraft': 'craft',
+    'dance': 'dance',
+    'architecture': 'architecture',
+    'music': 'music',
+    'traditional_clothing': 'clothing',
+  };
+
   Future<void> addCulturalItem(Map<String, dynamic> data) async {
     await _culturalItems.add({
       ...data,
       'createdAt': FieldValue.serverTimestamp(),
       'createdBy': 'Admin',
     });
+  }
+
+  Future<void> updateCulturalItem(
+      String itemId, Map<String, dynamic> data) async {
+    await _culturalItems.doc(itemId).update(data);
+  }
+
+  Future<void> deleteCulturalItem(String itemId, String imageUrl) async {
+    await _culturalItems.doc(itemId).delete();
+    try {
+      await FirebaseStorage.instance.refFromURL(imageUrl).delete();
+    } catch (_) {
+      // Image may already be gone or was a contribution URL — ignore
+    }
+  }
+
+  Stream<List<Map<String, dynamic>>> getAllCulturalItems() {
+    return _culturalItems
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((doc) => {'id': doc.id, ...doc.data() as Map<String, dynamic>})
+            .toList());
   }
 
   // ── Events ───────────────────────────────────────────────────────────────────
@@ -126,6 +162,97 @@ class AdminRepository {
       ...data,
       'createdAt': FieldValue.serverTimestamp(),
       'createdBy': 'Admin',
+    });
+  }
+
+  // ── Contributions Review ─────────────────────────────────────────────────────
+
+  CollectionReference get _contributions =>
+      _firestore.collection('contributions');
+
+  Stream<List<ContributionModel>> getContributions() {
+    return _contributions
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((doc) => ContributionModel.fromMap(
+                doc.data() as Map<String, dynamic>, doc.id))
+            .toList());
+  }
+
+  Future<void> approveContribution(
+    String contributionId, {
+    required String touristId,
+    required String touristName,
+    required int points,
+    required String titleAr,
+    required String titleEn,
+    required String descriptionAr,
+    required String descriptionEn,
+    required String mediaUrl,
+    required String category,
+    required String regionId,
+    required String adminId,
+    required String adminName,
+  }) async {
+    final batch = _firestore.batch();
+
+    final archiveRef = _culturalItems.doc();
+
+    final regionEn = regionLabel(regionId, isArabic: false);
+    final regionAr = regionLabel(regionId, isArabic: true);
+    final categoryId = _categoryMap[category] ?? category;
+
+    batch.set(archiveRef, {
+      'titleAr': titleAr,
+      'titleEn': titleEn,
+      'descriptionAr': descriptionAr,
+      'descriptionEn': descriptionEn,
+      'imageUrl': mediaUrl,
+      'categoryId': categoryId,
+      'regionId': regionId,
+      'regionEn': regionEn,
+      'regionAr': regionAr,
+      'isContribution': true,
+      'contributorId': touristId,
+      'contributorName': touristName,
+      'createdAt': FieldValue.serverTimestamp(),
+      'createdBy': adminId,
+    });
+
+    batch.update(_contributions.doc(contributionId), {
+      'status': ContributionStatus.approved.name,
+      'points': points,
+      'titleAr': titleAr,
+      'titleEn': titleEn,
+      'descriptionAr': descriptionAr,
+      'descriptionEn': descriptionEn,
+      'adminId': adminId,
+      'adminName': adminName,
+      'reviewedAt': Timestamp.now(),
+      'archiveItemId': archiveRef.id,
+    });
+
+    batch.update(_users.doc(touristId), {
+      'points': FieldValue.increment(points),
+      'contributionsCount': FieldValue.increment(1),
+    });
+
+    await batch.commit();
+  }
+
+  Future<void> rejectContribution(
+    String contributionId, {
+    required String adminId,
+    required String adminName,
+    required String reason,
+  }) async {
+    await _contributions.doc(contributionId).update({
+      'status': ContributionStatus.rejected.name,
+      'rejectionReason': reason,
+      'adminId': adminId,
+      'adminName': adminName,
+      'reviewedAt': Timestamp.now(),
     });
   }
 }
