@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -173,6 +174,12 @@ class AdminRepository {
 
   Future<void> deleteAttraction(String attractionId) async {
     await _attractions.doc(attractionId).delete();
+  }
+
+  Future<int> backfillAttractionTags() async {
+    final callable = FirebaseFunctions.instance.httpsCallable('backfillAttractionTags');
+    final result = await callable.call<Map<String, dynamic>>();
+    return (result.data['processed'] as int?) ?? 0;
   }
 
   // ── Events ───────────────────────────────────────────────────────────────────

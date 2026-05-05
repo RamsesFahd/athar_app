@@ -40,7 +40,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             arguments: user.email,
           );
         } else {
-          Navigator.pushReplacementNamed(context, AppRoutes.home);
+          final tourist = user is TouristModel ? user : null;
+          final hasInterests = tourist?.interests?.isNotEmpty ?? false;
+          if (tourist != null && !hasInterests) {
+            Navigator.pushReplacementNamed(context, AppRoutes.userPreferences);
+          } else {
+            Navigator.pushReplacementNamed(context, AppRoutes.home);
+          }
         }
       } else {
         Navigator.pushReplacementNamed(context, AppRoutes.signIn);

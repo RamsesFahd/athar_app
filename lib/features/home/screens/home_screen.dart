@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:athar_app/generated/l10n/app_localizations.dart';
-import 'package:athar_app/features/cultural_archive/screens/cultural_archive.dart';
-import 'package:athar_app/features/home/widgets/recommended_item_card.dart';
-import 'package:athar_app/features/home/widgets/recommended_item_details.dart';
-import 'package:athar_app/features/home/widgets/explore_heritage_home_card.dart';
-import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/features/auth/logic/auth_notifier.dart';
+import 'package:athar_app/features/cultural_archive/screens/cultural_archive.dart';
+import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
-import 'package:athar_app/features/guide_market/screens/trips_list_screen.dart';
+import 'package:athar_app/features/home/widgets/explore_heritage_home_card.dart';
 import 'package:athar_app/features/home/widgets/home_hero_slider.dart';
+import 'package:athar_app/core/models/attractions/attraction_model.dart';
+import 'package:athar_app/features/attractions/logic/attractions_repository.dart';
 import 'package:athar_app/features/attractions/screens/attractions_list_screen.dart';
+import 'package:athar_app/features/attractions/screens/attraction_details_screen.dart';
+import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
+import 'package:athar_app/features/guide_market/screens/trips_list_screen.dart';
+import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
+import 'package:athar_app/features/events/logic/events_repository.dart';
+import 'package:athar_app/core/models/events/event_model.dart';
 
 class HomeScreen extends ConsumerWidget {
   final VoidCallback? onSeeAllArchive;
+  final void Function(EventModel event)? onEventTap;
 
   const HomeScreen({
     super.key,
     this.onSeeAllArchive,
+    this.onEventTap,
   });
 
   static const double _pageH = 16;
-  static const double _sectionGap = 26; // بين السكاشن
-  static const double _headerToContent = 16; // بين العنوان والمحتوى
+  static const double _sectionGap = 26;
+  static const double _headerToContent = 16;
 
   static String _translateCategory(String id, AppLocalizations l10n) {
     switch (id.toLowerCase()) {
@@ -49,11 +58,21 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
+    final userAsync = ref.watch(authNotifierProvider);
     final culturalAsync = ref.watch(culturalNotifierProvider);
+    final attractionsAsync = ref.watch(attractionsStreamProvider);
+    final tripsAsync = ref.watch(allTripsStreamProvider);
+    final eventsAsync = ref.watch(upcomingEventsStreamProvider);
+
+    final tourist = userAsync.valueOrNull is TouristModel
+        ? userAsync.valueOrNull as TouristModel
+        : null;
+    final interests = tourist?.interests ?? [];
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-
-      //  يمنع الهيرو يروح تحت الهيدر
       body: SafeArea(
         top: true,
         bottom: false,
@@ -64,98 +83,22 @@ class HomeScreen extends ConsumerWidget {
               const HomeHeroSlider(),
               const SizedBox(height: _sectionGap),
 
-              // You May Like
-              _SectionHeader(
-                title: l10n.homeYouMayLikeTitle,
-                onTap: () {},
-              ),
-
+              // ── You May Like ──────────────────────────────────────────────
+              _SectionHeader(title: l10n.homeYouMayLikeTitle, onTap: null),
               const SizedBox(height: _headerToContent),
 
-              SizedBox(
-                height: 245,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: _pageH),
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const RecommendedItemDetails(
-                              title: 'Al-Balad Historic District',
-                              titleArabic: 'البلد التاريخي',
-                              image:
-                                  'https://images.pexels.com/photos/3225531/pexels-photo-3225531.jpeg',
-                              category: 'Landmark',
-                              location: 'Jeddah',
-                            ),
-                          ),
-                        );
-                      },
-                      child: const RecommendedItemCard(
-                        title: 'Al-Balad Historic District',
-                        titleArabic: 'البلد التاريخي',
-                        image:
-                            'https://images.pexels.com/photos/3225531/pexels-photo-3225531.jpeg',
-                        category: 'Landmark',
-                        location: 'Jeddah',
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const RecommendedItemDetails(
-                              title: 'Najdi Architecture Tour',
-                              titleArabic: 'جولة العمارة النجدية',
-                              image:
-                                  'https://images.pexels.com/photos/13126875/pexels-photo-13126875.jpeg',
-                              category: 'Tour',
-                              location: 'Riyadh',
-                            ),
-                          ),
-                        );
-                      },
-                      child: const RecommendedItemCard(
-                        title: 'Najdi Architecture Tour',
-                        titleArabic: 'جولة العمارة النجدية',
-                        image:
-                            'https://images.pexels.com/photos/13126875/pexels-photo-13126875.jpeg',
-                        category: 'Tour',
-                        location: 'Riyadh',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: _sectionGap),
-
-              // Explore Saudi Heritage
-              _SectionHeader(
-                title: l10n.homeExploreHeritageTitle,
-                onTap: onSeeAllArchive ??
-                    () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const CulturalArchive()),
-                        ),
-              ),
-
-              const SizedBox(height: _headerToContent),
-              const SizedBox(height: _headerToContent),
-
-              //  Heritage Content Stream
-              // Dynamically rendering cultural items from Firestore
-              culturalAsync.when(
-                data: (state) {
-                  final isAr =
-                      Localizations.localeOf(context).languageCode == 'ar';
-                  final items = state.allItems.take(4).toList();
+              attractionsAsync.when(
+                data: (all) {
+                  final recommended = interests.isNotEmpty
+                      ? all
+                          .where((a) =>
+                              a.tags.any((t) => interests.contains(t)))
+                          .take(4)
+                          .toList()
+                      : <AttractionModel>[];
+                  final items = recommended.isNotEmpty
+                      ? recommended
+                      : all.take(4).toList();
 
                   if (items.isEmpty) return const SizedBox.shrink();
 
@@ -163,28 +106,26 @@ class HomeScreen extends ConsumerWidget {
                     height: 245,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: _pageH),
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: _pageH),
                       itemCount: items.length,
                       itemBuilder: (context, index) {
-                        final item = items[index];
+                        final a = items[index];
                         return Padding(
-                          padding: const EdgeInsetsDirectional.only(end: 14),
+                          padding:
+                              const EdgeInsetsDirectional.only(end: 14),
                           child: ExploreHeritageHomeCard(
-                            title: isAr ? item.titleAr : item.titleEn,
-                            image: item.imageUrl,
-                            categoryLabel:
-                                _translateCategory(item.categoryId, l10n),
-                            locationLabel: isAr ? item.regionAr : item.regionEn,
-                            onTap: () {
-                              // navigation: passing the 'item' object to details screen
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      CulturalItemDetails(item: item),
-                                ),
-                              );
-                            },
+                            title: a.getName(isAr),
+                            image: a.mainImage,
+                            categoryLabel: a.category,
+                            locationLabel: a.getCity(isAr),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    AttractionDetailsScreen(attraction: a),
+                              ),
+                            ),
                           ),
                         );
                       },
@@ -195,7 +136,65 @@ class HomeScreen extends ConsumerWidget {
                   height: 245,
                   child: Center(child: CircularProgressIndicator.adaptive()),
                 ),
-                error: (err, _) => const SizedBox(
+                error: (_, __) => const SizedBox.shrink(),
+              ),
+
+              const SizedBox(height: _sectionGap),
+
+              // ── Explore Saudi Heritage ────────────────────────────────────
+              _SectionHeader(
+                title: l10n.homeExploreHeritageTitle,
+                onTap: onSeeAllArchive ??
+                    () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const CulturalArchive()),
+                        ),
+              ),
+              const SizedBox(height: _headerToContent),
+
+              culturalAsync.when(
+                data: (state) {
+                  final items = state.allItems.take(4).toList();
+                  if (items.isEmpty) return const SizedBox.shrink();
+
+                  return SizedBox(
+                    height: 245,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: _pageH),
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final item = items[index];
+                        return Padding(
+                          padding:
+                              const EdgeInsetsDirectional.only(end: 14),
+                          child: ExploreHeritageHomeCard(
+                            title: isAr ? item.titleAr : item.titleEn,
+                            image: item.imageUrl,
+                            categoryLabel:
+                                _translateCategory(item.categoryId, l10n),
+                            locationLabel:
+                                isAr ? item.regionAr : item.regionEn,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    CulturalItemDetails(item: item),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+                loading: () => const SizedBox(
+                  height: 245,
+                  child: Center(child: CircularProgressIndicator.adaptive()),
+                ),
+                error: (_, __) => const SizedBox(
                   height: 245,
                   child: Center(child: Icon(Icons.error_outline)),
                 ),
@@ -203,72 +202,159 @@ class HomeScreen extends ConsumerWidget {
 
               const SizedBox(height: _sectionGap),
 
-              // Quick Access
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: _pageH),
-                child: Text(
-                  l10n.homeQuickAccessTitle,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: theme.colorScheme.onSurface,
-                  ),
+              // ── Attractions ───────────────────────────────────────────────
+              _SectionHeader(
+                title: isAr ? 'المعالم السياحية' : 'Attractions',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const AttractionsListScreen()),
                 ),
               ),
-
               const SizedBox(height: _headerToContent),
 
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: _pageH),
-                child: Column(
-                  children: [
-                    _QuickAccessRowTile(
-                      title: l10n.quickCalendar,
-                      icon: Icons.calendar_today_outlined,
-                      onTap: () {},
-                    ),
-                    const SizedBox(height: 12),
-                    _QuickAccessRowTile(
-                      title: l10n.quickMap,
-                      icon: Icons.explore_outlined,
-                      onTap: () {},
-                    ),
-                    const SizedBox(height: 12),
-                    _QuickAccessRowTile(
-                      title:
-                          Localizations.localeOf(context).languageCode == 'ar'
-                              ? 'المعالم السياحية'
-                              : 'Attractions',
-                      icon: Icons.place_outlined,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const AttractionsListScreen(),
+              attractionsAsync.when(
+                data: (items) {
+                  final shown = items.take(4).toList();
+                  if (shown.isEmpty) return const SizedBox.shrink();
+
+                  return SizedBox(
+                    height: 245,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: _pageH),
+                      itemCount: shown.length,
+                      itemBuilder: (context, index) {
+                        final a = shown[index];
+                        return Padding(
+                          padding:
+                              const EdgeInsetsDirectional.only(end: 14),
+                          child: ExploreHeritageHomeCard(
+                            title: a.getName(isAr),
+                            image: a.mainImage,
+                            categoryLabel: a.category,
+                            locationLabel: a.getCity(isAr),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    AttractionDetailsScreen(attraction: a),
+                              ),
+                            ),
                           ),
                         );
                       },
                     ),
-                    const SizedBox(height: 12),
-                    _QuickAccessRowTile(
-                      title: l10n.quickAchievements,
-                      icon: Icons.emoji_events_outlined,
-                      onTap: () {},
-                    ),
-                    ////guide
-                    const SizedBox(height: 12),
-                    _QuickAccessRowTile(
-                      title: l10n.quickGuides,
-                      icon: Icons.groups_outlined,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const TripsListScreen()),
+                  );
+                },
+                loading: () => const SizedBox(
+                  height: 245,
+                  child: Center(child: CircularProgressIndicator.adaptive()),
+                ),
+                error: (_, __) => const SizedBox.shrink(),
+              ),
+
+              const SizedBox(height: _sectionGap),
+
+              // ── Trips ─────────────────────────────────────────────────────
+              _SectionHeader(
+                title: isAr ? 'الرحلات' : 'Trips',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const TripsListScreen()),
+                ),
+              ),
+              const SizedBox(height: _headerToContent),
+
+              tripsAsync.when(
+                data: (trips) {
+                  final shown = trips.take(4).toList();
+                  if (shown.isEmpty) return const SizedBox.shrink();
+
+                  return SizedBox(
+                    height: 245,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: _pageH),
+                      itemCount: shown.length,
+                      itemBuilder: (context, index) {
+                        final trip = shown[index];
+                        return Padding(
+                          padding:
+                              const EdgeInsetsDirectional.only(end: 14),
+                          child: ExploreHeritageHomeCard(
+                            title: trip.getTitle(isAr),
+                            image: trip.imageUrl,
+                            categoryLabel: trip.price,
+                            locationLabel: trip.getCity(isAr),
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    TripDetailsScreen(trip: trip),
+                              ),
+                            ),
+                          ),
                         );
                       },
                     ),
-                  ],
+                  );
+                },
+                loading: () => const SizedBox(
+                  height: 245,
+                  child: Center(child: CircularProgressIndicator.adaptive()),
                 ),
+                error: (_, __) => const SizedBox.shrink(),
+              ),
+
+              const SizedBox(height: _sectionGap),
+
+              // ── Events ────────────────────────────────────────────────────
+              _SectionHeader(
+                title: isAr ? 'الفعاليات' : 'Events',
+                onTap: null,
+              ),
+              const SizedBox(height: _headerToContent),
+
+              eventsAsync.when(
+                data: (events) {
+                  final shown = events.take(4).toList();
+                  if (shown.isEmpty) return const SizedBox.shrink();
+
+                  return SizedBox(
+                    height: 245,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: _pageH),
+                      itemCount: shown.length,
+                      itemBuilder: (context, index) {
+                        final event = shown[index];
+                        return Padding(
+                          padding:
+                              const EdgeInsetsDirectional.only(end: 14),
+                          child: ExploreHeritageHomeCard(
+                            title: event.getTitle(isAr),
+                            image: event.imageUrl,
+                            categoryLabel: isAr
+                                ? event.eventType.labelAr
+                                : event.eventType.labelEn,
+                            locationLabel: event.getRegion(isAr),
+                            onTap: () => onEventTap?.call(event),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+                loading: () => const SizedBox(
+                  height: 245,
+                  child: Center(child: CircularProgressIndicator.adaptive()),
+                ),
+                error: (_, __) => const SizedBox.shrink(),
               ),
 
               const SizedBox(height: _sectionGap),
@@ -280,20 +366,16 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-// Header: Title + See All
 class _SectionHeader extends StatelessWidget {
   final String title;
   final VoidCallback? onTap;
 
-  const _SectionHeader({
-    required this.title,
-    this.onTap,
-  });
+  const _SectionHeader({required this.title, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: HomeScreen._pageH),
@@ -312,7 +394,8 @@ class _SectionHeader extends StatelessWidget {
               onTap: onTap,
               borderRadius: BorderRadius.circular(10),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -324,101 +407,13 @@ class _SectionHeader extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 6),
-                    Icon(
-                      Icons.chevron_right,
-                      size: 18,
-                      color: theme.colorScheme.primary,
-                    ),
+                    Icon(Icons.chevron_right,
+                        size: 18, color: theme.colorScheme.primary),
                   ],
                 ),
               ),
             ),
         ],
-      ),
-    );
-  }
-}
-
-// Quick Access Row Tile
-class _QuickAccessRowTile extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final VoidCallback? onTap;
-
-  const _QuickAccessRowTile({
-    required this.title,
-    required this.icon,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-          decoration: BoxDecoration(
-            color: theme.cardColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: theme.dividerColor.withValues(alpha: 0.6),
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: theme.shadowColor.withValues(alpha: 0.06),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              // Icon Box
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: theme.dividerColor.withValues(alpha: 0.6),
-                  ),
-                ),
-                child: Icon(
-                  icon,
-                  color: theme.colorScheme.primary,
-                  size: 22,
-                ),
-              ),
-
-              const SizedBox(width: 16),
-
-              Expanded(
-                child: Text(
-                  title,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-
-              Icon(
-                Icons.chevron_right,
-                color:
-                    theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

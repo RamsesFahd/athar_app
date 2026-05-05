@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
-import { onDocumentCreated } from 'firebase-functions/v2/firestore';
+import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
+import { onCall } from 'firebase-functions/v2/https';
 import { logger } from 'firebase-functions';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
@@ -17,19 +18,16 @@ const allowedTagsByCategory: Record<string, string[]> = {
   Modern: ['أبراج', 'معالم معمارية', 'وجهات ترفيهية'],
 };
 
-export const tagNewAttraction = onDocumentCreated('attractions/{attractionId}', async (event) => {
-  const snap = event.data;
-  if (!snap) {
-    return;
-  }
-
-  const data = snap.data() as Record<string, unknown>;
+async function runGeminiTagging(
+  attractionId: string,
+  data: Record<string, unknown>
+): Promise<void> {
   const category = String(data.category ?? '');
   const allowedTags = allowedTagsByCategory[category];
 
   if (!allowedTags || !geminiKey) {
     logger.warn('Skipping attraction tagging because category or Gemini key is missing', {
-      attractionId: event.params.attractionId,
+      attractionId,
       category,
       hasGeminiKey: Boolean(geminiKey),
     });
@@ -56,23 +54,54 @@ export const tagNewAttraction = onDocumentCreated('attractions/{attractionId}', 
     const parsed = parseTags(rawText, allowedTags);
 
     if (parsed.length === 0) {
-      logger.warn('Gemini returned no valid attraction tags', {
-        attractionId: event.params.attractionId,
-        rawText,
-      });
+      logger.warn('Gemini returned no valid attraction tags', { attractionId, rawText });
       return;
     }
 
-    await db.collection('attractions').doc(event.params.attractionId).update({
+    await db.collection('attractions').doc(attractionId).update({
       tags: parsed,
       tagsUpdatedAt: FieldValue.serverTimestamp(),
     });
   } catch (error) {
-    logger.error('Failed to auto-tag attraction document', {
-      attractionId: event.params.attractionId,
-      error,
-    });
+    logger.error('Failed to auto-tag attraction document', { attractionId, error });
   }
+}
+
+export const tagNewAttraction = onDocumentCreated(
+  'attractions/{attractionId}',
+  async (event) => {
+    const snap = event.data;
+    if (!snap) return;
+    await runGeminiTagging(event.params.attractionId, snap.data() as Record<string, unknown>);
+  }
+);
+
+export const retagUpdatedAttraction = onDocumentUpdated(
+  'attractions/{attractionId}',
+  async (event) => {
+    const before = event.data?.before.data() as Record<string, unknown> | undefined;
+    const after = event.data?.after.data() as Record<string, unknown> | undefined;
+    if (!before || !after) return;
+
+    const changed = (k: string) => JSON.stringify(before[k]) !== JSON.stringify(after[k]);
+    if (!changed('name') && !changed('description') && !changed('category')) return;
+
+    await runGeminiTagging(event.params.attractionId, after);
+  }
+);
+
+export const backfillAttractionTags = onCall({ enforceAppCheck: false }, async () => {
+  const snap = await db.collection('attractions').get();
+  const untagged = snap.docs.filter((d) => {
+    const tags = d.data().tags;
+    return !Array.isArray(tags) || tags.length === 0;
+  });
+
+  for (const doc of untagged) {
+    await runGeminiTagging(doc.id, doc.data() as Record<string, unknown>);
+  }
+
+  return { processed: untagged.length };
 });
 
 function parseTags(rawText: string, allowedTags: string[]): string[] {

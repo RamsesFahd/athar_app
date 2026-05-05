@@ -4,7 +4,9 @@ import 'package:athar_app/core/widgets/bottom_navigation.dart';
 import 'package:athar_app/core/widgets/header.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
+import 'package:athar_app/features/interactive_map/logic/map_notifier.dart';
 
 // Screens
 import 'package:athar_app/features/cultural_archive/screens/cultural_archive.dart';
@@ -38,6 +40,14 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
     screens = [
       HomeScreen(
         onSeeAllArchive: () => _onNavigateToSubPage(const CulturalArchive()),
+        onEventTap: (EventModel event) {
+          ref.read(pendingMapPinIdProvider.notifier).state = event.id;
+          setState(() {
+            _previousIndex = _currentIndex;
+            _currentIndex = 1;
+            _subPage = null;
+          });
+        },
       ),
       const MapScreen(),
       const RawiLandingScreen(),

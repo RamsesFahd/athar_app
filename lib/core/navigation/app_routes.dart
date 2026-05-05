@@ -13,6 +13,7 @@ import 'package:athar_app/features/cultural_archive/widgets/cultural_item_detail
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
 import 'package:athar_app/features/auth/screens/google_role_selection_screen.dart';
+import 'package:athar_app/features/onboarding/screens/user_preferences_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -27,6 +28,7 @@ class AppRoutes {
   static const String culturalDetails = '/cultural-details';
   static const String historicalChat = '/historical-chat';
   static const String privacyPolicy = '/privacy-policy';
+  static const String userPreferences = '/user-preferences';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -44,6 +46,7 @@ class AppRoutes {
       culturalArchive: (context) => const CulturalArchive(),
 
       historicalChat: (context) => const RawiLandingScreen(),
+      userPreferences: (context) => const UserPreferencesScreen(),
 
       culturalDetails: (context) {
         final CulturalItemModel item =

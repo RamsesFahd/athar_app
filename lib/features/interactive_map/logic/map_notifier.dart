@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/map/map_pin_model.dart';
@@ -161,6 +162,19 @@ class MapNotifier extends _$MapNotifier {
     state = AsyncData(current.copyWith(selectedPin: pin));
   }
 
+  void selectPinById(String id) {
+    final current = state.value;
+    if (current == null) return;
+    MapPinModel? match;
+    for (final pin in current.allPins) {
+      if (pin.id == id) {
+        match = pin;
+        break;
+      }
+    }
+    if (match != null) selectPin(match);
+  }
+
   void setLocationGranted(bool granted) {
     final current = state.value;
     if (current == null) return;
@@ -224,6 +238,9 @@ class MapNotifier extends _$MapNotifier {
     }).toList();
   }
 }
+
+// Holds an event pin id to select when the map next loads (used for home→map navigation)
+final pendingMapPinIdProvider = StateProvider<String?>((ref) => null);
 
 // Derived providers
 final filteredMapPinsProvider = Provider<List<MapPinModel>>((ref) {

@@ -57,6 +57,14 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   void initState() {
     super.initState();
     _initMarkerIcons();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _applyPendingPin());
+  }
+
+  void _applyPendingPin() {
+    final pendingId = ref.read(pendingMapPinIdProvider);
+    if (pendingId == null) return;
+    ref.read(mapNotifierProvider.notifier).selectPinById(pendingId);
+    ref.read(pendingMapPinIdProvider.notifier).state = null;
   }
 
   Future<void> _initMarkerIcons() async {
@@ -287,6 +295,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     final activeFilter = ref.watch(activeMapFilterProvider);
     final locationGranted = ref.watch(locationGrantedProvider);
     final selectedPin = ref.watch(selectedMapPinProvider);
+
+    // Apply pending pin selection once map data finishes loading
+    ref.listen<AsyncValue<MapState>>(mapNotifierProvider, (prev, next) {
+      if (next is AsyncData && (prev == null || prev is AsyncLoading)) {
+        _applyPendingPin();
+      }
+    });
 
     // Preload per-color attraction icons whenever the pin list changes
     ref.listen<List<MapPinModel>>(filteredMapPinsProvider, (_, pins) {

@@ -74,13 +74,18 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
       next.when(
         data: (user) {
           if (user != null) {
-            // رسالة نجاح تظهر قبل الانتقال
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                   content: Text("تم تفعيل حسابك بنجاح! أهلاً بك في أثر"),
                   backgroundColor: Colors.green),
             );
-            Navigator.pushReplacementNamed(context, AppRoutes.home);
+            final tourist = user is TouristModel ? user : null;
+            final hasInterests = tourist?.interests?.isNotEmpty ?? false;
+            if (tourist != null && !hasInterests) {
+              Navigator.pushReplacementNamed(context, AppRoutes.userPreferences);
+            } else {
+              Navigator.pushReplacementNamed(context, AppRoutes.home);
+            }
           }
         },
         error: (error, stack) {
