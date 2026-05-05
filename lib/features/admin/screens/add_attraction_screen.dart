@@ -104,7 +104,8 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
     _selectedCategory = a.category;
     _categoryColorCode = a.categoryColorCode;
     _selectedRegionId = a.region;
-    _selectedCityId = _findCityId(a.city);
+    _selectedCityId =
+        _findCityId(a.getCity(false)) ?? _findCityId(a.getCity(true));
     _addressController.text = a.address;
     _latController.text = a.coordinates.latitude.toString();
     _lngController.text = a.coordinates.longitude.toString();
@@ -229,8 +230,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
         videoUrl = await _uploadVideo(_videoFile!);
       }
 
-      final cityName = cityMap[_selectedCityId!]?['en'] ?? _selectedCityId!;
-
       final data = <String, dynamic>{
         'name': {
           'ar': _nameArController.text.trim(),
@@ -243,7 +242,10 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
         'category': _selectedCategory,
         'categoryColorCode': _categoryColorCode,
         'region': _selectedRegionId,
-        'city': cityName,
+        'city': {
+          'ar': cityMap[_selectedCityId!]?['ar'] ?? _selectedCityId!,
+          'en': cityMap[_selectedCityId!]?['en'] ?? _selectedCityId!,
+        },
         'address': _addressController.text.trim(),
         'coordinates': GeoPoint(
           double.parse(latText),

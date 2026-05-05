@@ -156,28 +156,25 @@ class AttractionDetailsScreen extends StatelessWidget {
 
 
                       // ── Location ─────────────────────────────────────
-                      if (attraction.address.isNotEmpty) ...[
-                        const SizedBox(height: 24),
-                        Text(
-                          isAr ? 'الموقع' : 'Location',
-                          style: _sectionTitleStyle(isAr, theme),
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(Icons.place_outlined,
-                                color: accent, size: 20),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                attraction.address,
-                                style: _bodyStyle(isAr, theme),
-                              ),
+                      const SizedBox(height: 24),
+                      Text(
+                        isAr ? 'الموقع' : 'Location',
+                        style: _sectionTitleStyle(isAr, theme),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.place_outlined, color: accent, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              attraction.getCity(isAr),
+                              style: _bodyStyle(isAr, theme),
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
 
                       // ── Ticket link ───────────────────────────────────
                       if (attraction.ticketBookingUrl != null) ...[

@@ -103,7 +103,7 @@ class _AttractionAdminTile extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${attraction.category} • ${attraction.city}',
+                  '${attraction.category} • ${attraction.getCity(false)}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(

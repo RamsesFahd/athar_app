@@ -85,96 +85,61 @@ class AttractionCard extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withValues(alpha: 0.72),
+                  Colors.black.withValues(alpha: 0.75),
                 ],
               ),
             ),
           ),
         ),
 
-        // 3. Content overlay
+        // 3. Content overlay — name, city
         Positioned(
           left: 12,
           right: 12,
           bottom: 12,
-          child: SizedBox(
-            height: 110,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Name
-                Text(
-                  attraction.getName(isAr),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: isAr
-                      ? GoogleFonts.ibmPlexSansArabic(
-                          textStyle: theme.textTheme.bodyLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                            height: 1.2,
-                          ),
-                        )
-                      : GoogleFonts.playfairDisplay(
-                          textStyle: theme.textTheme.bodyLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                            height: 1.2,
-                          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                attraction.getName(isAr),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: isAr
+                    ? GoogleFonts.ibmPlexSansArabic(
+                        textStyle: theme.textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          height: 1.2,
                         ),
-                ),
-
-                const SizedBox(height: 6),
-
-                // City + location icon
-                Row(
-                  children: [
-                    Icon(Icons.location_on,
-                        size: 14, color: Colors.white70),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        attraction.city,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: Colors.white70,
-                          fontWeight: FontWeight.w600,
+                      )
+                    : GoogleFonts.playfairDisplay(
+                        textStyle: theme.textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          height: 1.2,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-
-                const Spacer(),
-
-                // Entry fee + details button
-                Row(
-                  children: [
-                    _FeeBadge(attraction: attraction, isAr: isAr, accent: accent),
-                    const Spacer(),
-                    GestureDetector(
-                      onTap: () => _openDetails(context),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          isAr ? 'التفاصيل' : 'Details',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+              ),
+              const SizedBox(height: 5),
+              Row(
+                children: [
+                  const Icon(Icons.location_on, size: 13, color: Colors.white70),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      attraction.getCity(isAr),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
 
@@ -192,12 +157,12 @@ class AttractionCard extends StatelessWidget {
   Widget _buildList(
       BuildContext context, bool isAr, ThemeData theme, Color accent) {
     return SizedBox(
-      height: 150,
+      height: 130,
       child: InkWell(
         onTap: () => _openDetails(context),
         child: Row(
           children: [
-            // Thumbnail with hero animation
+            // Thumbnail
             Hero(
               tag: 'attraction-${attraction.id}-hero',
               child: ClipRRect(
@@ -207,12 +172,12 @@ class AttractionCard extends StatelessWidget {
                 ),
                 child: Image.network(
                   attraction.mainImage,
-                  width: 130,
-                  height: 150,
+                  width: 120,
+                  height: 130,
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => Container(
-                    width: 130,
-                    height: 150,
+                    width: 120,
+                    height: 130,
                     color: theme.colorScheme.surfaceContainerHighest,
                     child: Icon(
                       Icons.image_not_supported_outlined,
@@ -231,15 +196,34 @@ class AttractionCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Region label
+                    // Title
+                    Text(
+                      attraction.getName(isAr),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: isAr
+                          ? GoogleFonts.ibmPlexSansArabic(
+                              textStyle: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                height: 1.25,
+                              ),
+                            )
+                          : GoogleFonts.playfairDisplay(
+                              textStyle: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                height: 1.25,
+                              ),
+                            ),
+                    ),
+                    const SizedBox(height: 4),
+                    // City
                     Row(
                       children: [
-                        Icon(Icons.location_on_outlined,
-                            size: 13, color: accent),
+                        Icon(Icons.location_on, size: 13, color: accent),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            attraction.region,
+                            attraction.getCity(isAr),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.labelSmall?.copyWith(
@@ -250,31 +234,7 @@ class AttractionCard extends StatelessWidget {
                         ),
                       ],
                     ),
-
-                    const SizedBox(height: 6),
-
-                    // Attraction name
-                    Text(
-                      attraction.getName(isAr),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: isAr
-                          ? GoogleFonts.ibmPlexSansArabic(
-                              textStyle: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                height: 1.25,
-                              ),
-                            )
-                          : GoogleFonts.playfairDisplay(
-                              textStyle: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                height: 1.25,
-                              ),
-                            ),
-                    ),
-
                     const SizedBox(height: 4),
-
                     // Category
                     Text(
                       attraction.category,
@@ -286,75 +246,12 @@ class AttractionCard extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-
-                    const Spacer(),
-
-                    Row(
-                      children: [
-                        _FeeBadge(
-                            attraction: attraction, isAr: isAr, accent: accent),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () => _openDetails(context),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primary,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              isAr ? 'عرض التفاصيل' : 'View Details',
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _FeeBadge extends StatelessWidget {
-  final AttractionModel attraction;
-  final bool isAr;
-  final Color accent;
-
-  const _FeeBadge({
-    required this.attraction,
-    required this.isAr,
-    required this.accent,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final label = attraction.entryFee == 0
-        ? (isAr ? 'مجاني' : 'Free')
-        : '${attraction.entryFee.toStringAsFixed(0)} SAR';
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: accent.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: accent.withValues(alpha: 0.4)),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: accent,
-              fontWeight: FontWeight.w700,
-            ),
       ),
     );
   }

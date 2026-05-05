@@ -19,7 +19,7 @@ class AttractionModel {
   final String? videoUrl;
   final GeoPoint coordinates;
   final String region;
-  final String city;
+  final Map<String, String> city;
   final String address;
   final Map<String, String> openingHours;
   final bool isAlwaysOpen;
@@ -62,6 +62,8 @@ class AttractionModel {
   String getName(bool isAr) => localizedText(name, isAr);
 
   String getDescription(bool isAr) => localizedText(description, isAr);
+
+  String getCity(bool isAr) => localizedText(city, isAr);
 
   String getOpeningHours(bool isAr) => localizedText(openingHours, isAr);
 
@@ -115,7 +117,7 @@ class AttractionModel {
       videoUrl: map['videoUrl']?.toString(),
       coordinates: geoPoint,
       region: (map['region'] ?? '').toString(),
-      city: (map['city'] ?? '').toString(),
+      city: _cityMap(map['city']),
       address: (map['address'] ?? '').toString(),
       openingHours: _stringMap(map['openingHours']),
       isAlwaysOpen: map['isAlwaysOpen'] as bool? ?? false,
@@ -132,5 +134,18 @@ class AttractionModel {
           ));
     }
     return const <String, String>{};
+  }
+
+  // Handles legacy String values (old docs) and new nested Map values
+  static Map<String, String> _cityMap(dynamic raw) {
+    if (raw is Map) {
+      return raw.map((key, value) => MapEntry(
+            key.toString(),
+            value?.toString() ?? '',
+          ));
+    }
+    // Legacy: single string stored as-is — keep it for both languages
+    final s = raw?.toString() ?? '';
+    return {'ar': s, 'en': s};
   }
 }
