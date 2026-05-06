@@ -27,10 +27,12 @@ class HomeScreen extends ConsumerWidget {
     this.onSeeAllArchive,
     this.onEventTap,
   });
-
+//test card
   static const double _pageH = 16;
-  static const double _sectionGap = 26;
-  static const double _headerToContent = 16;
+static const double _sectionGap = 26;
+static const double _headerToContent = 16;
+static const double _homeCardListHeight = 285;
+  
 
   static String _translateCategory(String id, AppLocalizations l10n) {
     switch (id.toLowerCase()) {
@@ -103,7 +105,7 @@ class HomeScreen extends ConsumerWidget {
                   if (items.isEmpty) return const SizedBox.shrink();
 
                   return SizedBox(
-                    height: 245,
+                    height: _homeCardListHeight,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding:
@@ -133,7 +135,7 @@ class HomeScreen extends ConsumerWidget {
                   );
                 },
                 loading: () => const SizedBox(
-                  height: 245,
+                 height: _homeCardListHeight,
                   child: Center(child: CircularProgressIndicator.adaptive()),
                 ),
                 error: (_, __) => const SizedBox.shrink(),
@@ -159,7 +161,7 @@ class HomeScreen extends ConsumerWidget {
                   if (items.isEmpty) return const SizedBox.shrink();
 
                   return SizedBox(
-                    height: 245,
+                    height: _homeCardListHeight,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding:
@@ -191,7 +193,7 @@ class HomeScreen extends ConsumerWidget {
                   );
                 },
                 loading: () => const SizedBox(
-                  height: 245,
+height: _homeCardListHeight,
                   child: Center(child: CircularProgressIndicator.adaptive()),
                 ),
                 error: (_, __) => const SizedBox(
@@ -219,7 +221,7 @@ class HomeScreen extends ConsumerWidget {
                   if (shown.isEmpty) return const SizedBox.shrink();
 
                   return SizedBox(
-                    height: 245,
+                   height: _homeCardListHeight,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding:
@@ -249,7 +251,7 @@ class HomeScreen extends ConsumerWidget {
                   );
                 },
                 loading: () => const SizedBox(
-                  height: 245,
+                height: _homeCardListHeight,
                   child: Center(child: CircularProgressIndicator.adaptive()),
                 ),
                 error: (_, __) => const SizedBox.shrink(),
@@ -274,7 +276,7 @@ class HomeScreen extends ConsumerWidget {
                   if (shown.isEmpty) return const SizedBox.shrink();
 
                   return SizedBox(
-                    height: 245,
+                   height: _homeCardListHeight,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding:
@@ -304,7 +306,7 @@ class HomeScreen extends ConsumerWidget {
                   );
                 },
                 loading: () => const SizedBox(
-                  height: 245,
+                 height: _homeCardListHeight,
                   child: Center(child: CircularProgressIndicator.adaptive()),
                 ),
                 error: (_, __) => const SizedBox.shrink(),
@@ -325,7 +327,7 @@ class HomeScreen extends ConsumerWidget {
                   if (shown.isEmpty) return const SizedBox.shrink();
 
                   return SizedBox(
-                    height: 245,
+                   height: _homeCardListHeight,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       padding:
@@ -351,7 +353,7 @@ class HomeScreen extends ConsumerWidget {
                   );
                 },
                 loading: () => const SizedBox(
-                  height: 245,
+                 height: _homeCardListHeight,
                   child: Center(child: CircularProgressIndicator.adaptive()),
                 ),
                 error: (_, __) => const SizedBox.shrink(),

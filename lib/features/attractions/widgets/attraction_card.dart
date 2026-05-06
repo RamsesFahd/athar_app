@@ -53,18 +53,24 @@ class AttractionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildGrid(
-      BuildContext context, bool isAr, ThemeData theme, Color accent) {
-    return Stack(
+Widget _buildGrid(
+    BuildContext context, bool isAr, ThemeData theme, Color accent) {
+  return InkWell(
+    onTap: () => _openDetails(context),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 1. Full-cover hero image
-        Positioned.fill(
+        Expanded(
+          flex: 5, // ✨ خلينا الصورة تاخذ أغلب مساحة الكارد
           child: Hero(
             tag: 'attraction-${attraction.id}-hero',
             child: Image.network(
               attraction.mainImage,
+              width: double.infinity,
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => Container(
+                width: double.infinity,
                 color: theme.colorScheme.surfaceContainerHighest,
                 child: Icon(
                   Icons.image_not_supported_outlined,
@@ -77,83 +83,84 @@ class AttractionCard extends StatelessWidget {
         ),
 
         // 2. Bottom gradient
-        Positioned.fill(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  Colors.black.withValues(alpha: 0.75),
-                ],
-              ),
+        // ✨ حذفنا الـ gradient لأن النص صار تحت الصورة
+
+        // 3. Content overlay — name, city
+        Expanded(
+          flex: 2, // ✨ مساحة النص أصغر بكثير من الصورة
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 6,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  attraction.getName(isAr),
+
+                  // ✨ اسم المعلم صار أصغر
+                  maxLines: 1,
+
+                  overflow: TextOverflow.ellipsis,
+                  style: isAr
+                      ? GoogleFonts.ibmPlexSansArabic(
+                          textStyle:
+                              theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            height: 1.1,
+                          ),
+                        )
+                      : GoogleFonts.playfairDisplay(
+                          textStyle:
+                              theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            height: 1.1,
+                          ),
+                        ),
+                ),
+
+                const SizedBox(height: 3),
+
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.location_on,
+                      size: 11, // ✨ تصغير الايقونة
+                    ),
+
+                    const SizedBox(width: 3),
+
+                    Expanded(
+                      child: Text(
+                        attraction.getCity(isAr),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.55),
+
+                          // ✨ تصغير الموقع
+                          fontSize: 10,
+
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
 
-        // 3. Content overlay — name, city
-        Positioned(
-          left: 12,
-          right: 12,
-          bottom: 12,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                attraction.getName(isAr),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: isAr
-                    ? GoogleFonts.ibmPlexSansArabic(
-                        textStyle: theme.textTheme.titleLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          height: 1.2,
-                        ),
-                      )
-                    : GoogleFonts.playfairDisplay(
-                        textStyle: theme.textTheme.titleLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          height: 1.2,
-                        ),
-                      ),
-              ),
-              const SizedBox(height: 5),
-              Row(
-                children: [
-                  const Icon(Icons.location_on, size: 13, color: Colors.white70),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      attraction.getCity(isAr),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: Colors.white70,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-
         // 4. Invisible full-area tap
-        Positioned.fill(
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(onTap: () => _openDetails(context)),
-          ),
-        ),
+        // ✨ صار الـ InkWell فوق بدل Positioned.fill
       ],
-    );
-  }
-
+    ),
+  );
+}
   Widget _buildList(
       BuildContext context, bool isAr, ThemeData theme, Color accent) {
     return SizedBox(

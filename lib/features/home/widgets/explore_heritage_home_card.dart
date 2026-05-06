@@ -24,7 +24,7 @@ class ExploreHeritageHomeCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 240, 
+      width: 270,
         margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
           color: theme.cardColor,
@@ -32,16 +32,16 @@ class ExploreHeritageHomeCard extends StatelessWidget {
 
 
           border: Border.all(
-            color: theme.dividerColor.withOpacity(0.55),
+            color: theme.dividerColor.withValues(alpha: 0.55),
             width: 1,
           ),
           boxShadow: [
-            BoxShadow(
-              color: theme.shadowColor.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
+  BoxShadow(
+    color: theme.shadowColor.withValues(alpha: 0.10),
+    blurRadius: 18,
+    offset: const Offset(0, 8),
+  ),
+],
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -52,7 +52,7 @@ class ExploreHeritageHomeCard extends StatelessWidget {
               children: [
                 Image.network(
                   image,
-                  height: 140, 
+                  height: 195,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
@@ -64,7 +64,7 @@ class ExploreHeritageHomeCard extends StatelessWidget {
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
                     ),
                     child: Text(
                       categoryLabel,
@@ -81,7 +81,7 @@ class ExploreHeritageHomeCard extends StatelessWidget {
 
             // Title + Location
             Padding(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
