@@ -386,7 +386,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         child: Center(
           child: isGoogle
               ? Image.network(
-                  'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png',
+                  'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
                   height: 22,
                 )
               : Icon(icon, color: fg, size: 24),

@@ -237,7 +237,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : Image.network(
-                        'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png',
+                        'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
                         height: 28)
                 : Icon(icon, color: fg, size: 24),
           ),

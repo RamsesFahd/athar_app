@@ -12,19 +12,58 @@ class _Interest {
 }
 
 const _interests = [
-  _Interest('قصور', 'https://images.pexels.com/photos/3889742/pexels-photo-3889742.jpeg'),
-  _Interest('أحياء تاريخية', 'https://images.pexels.com/photos/3225531/pexels-photo-3225531.jpeg'),
-  _Interest('مدائن', 'https://images.pexels.com/photos/5007432/pexels-photo-5007432.jpeg'),
-  _Interest('بحر', 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg'),
-  _Interest('جبال', 'https://images.pexels.com/photos/1001435/pexels-photo-1001435.jpeg'),
-  _Interest('صحراء', 'https://images.pexels.com/photos/1270184/pexels-photo-1270184.jpeg'),
-  _Interest('غابة', 'https://images.pexels.com/photos/158251/forest-the-dark-woods-tree-158251.jpeg'),
-  _Interest('أودية', 'https://images.pexels.com/photos/1166209/pexels-photo-1166209.jpeg'),
-  _Interest('متاحف', 'https://images.pexels.com/photos/2034335/pexels-photo-2034335.jpeg'),
-  _Interest('معارض', 'https://images.pexels.com/photos/1839919/pexels-photo-1839919.jpeg'),
-  _Interest('أبراج', 'https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg'),
-  _Interest('معالم معمارية', 'https://images.pexels.com/photos/1209978/pexels-photo-1209978.jpeg'),
-  _Interest('وجهات ترفيهية', 'https://images.pexels.com/photos/3184419/pexels-photo-3184419.jpeg'),
+  _Interest(
+    'قصور',
+    'https://images.pexels.com/photos/2161467/pexels-photo-2161467.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
+  _Interest(
+    'أحياء تاريخية',
+    'https://images.pexels.com/photos/356830/pexels-photo-356830.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
+  _Interest(
+    'مدائن',
+    'https://images.pexels.com/photos/337909/pexels-photo-337909.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
+  _Interest(
+    'بحر',
+    'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
+  _Interest(
+    'جبال',
+    'https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
+  _Interest(
+    'صحراء',
+    'https://images.pexels.com/photos/847402/pexels-photo-847402.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
+  _Interest(
+    'غابة',
+    'https://images.pexels.com/photos/4827/nature-forest-trees-fog.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
+  _Interest(
+    'أودية',
+    'https://images.pexels.com/photos/210186/pexels-photo-210186.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
+  _Interest(
+    'متاحف',
+    'https://images.pexels.com/photos/2372978/pexels-photo-2372978.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
+  _Interest(
+    'معارض',
+    'https://images.pexels.com/photos/1839919/pexels-photo-1839919.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
+  _Interest(
+    'أبراج',
+    'https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
+  _Interest(
+    'معالم معمارية',
+    'https://images.pexels.com/photos/2082103/pexels-photo-2082103.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
+  _Interest(
+    'وجهات ترفيهية',
+    'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800',
+  ),
 ];
 
 class UserPreferencesScreen extends ConsumerStatefulWidget {
@@ -43,9 +82,10 @@ class _UserPreferencesScreenState extends ConsumerState<UserPreferencesScreen> {
     if (_selected.isEmpty || _isSaving) return;
 
     setState(() => _isSaving = true);
+
     try {
-      // .future waits for the provider to finish loading instead of returning null
       final user = await ref.read(authNotifierProvider.future);
+
       if (user == null) {
         if (mounted) setState(() => _isSaving = false);
         return;
@@ -54,7 +94,6 @@ class _UserPreferencesScreenState extends ConsumerState<UserPreferencesScreen> {
       await saveUserInterests(user.uId, _selected.toList());
 
       if (mounted) {
-        // Navigate first, then refresh auth so home gets updated interests
         Navigator.pushReplacementNamed(context, AppRoutes.home);
         ref.invalidate(authNotifierProvider);
       }
@@ -62,7 +101,10 @@ class _UserPreferencesScreenState extends ConsumerState<UserPreferencesScreen> {
       if (mounted) {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('حدث خطأ: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('حدث خطأ: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -70,96 +112,58 @@ class _UserPreferencesScreenState extends ConsumerState<UserPreferencesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final canContinue = _selected.isNotEmpty && !_isSaving;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 32, 24, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'ما هي اهتماماتك؟',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: theme.colorScheme.onSurface,
+            Column(
+              children: [
+                _Header(selectedCount: _selected.length),
+
+                Expanded(
+                  child: GridView.builder(
+                    padding: const EdgeInsets.fromLTRB(18, 10, 18, 112),
+                    itemCount: _interests.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 13,
+                      mainAxisSpacing: 18,
+                      childAspectRatio: 0.70,
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'اختر ما يثير اهتمامك لنقترح لك أفضل الوجهات',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 0.78,
-                ),
-                itemCount: _interests.length,
-                itemBuilder: (context, index) {
-                  final item = _interests[index];
-                  final isSelected = _selected.contains(item.tag);
-                  return _InterestCard(
-                    interest: item,
-                    isSelected: isSelected,
-                    onTap: () {
-                      setState(() {
-                        if (isSelected) {
-                          _selected.remove(item.tag);
-                        } else {
-                          _selected.add(item.tag);
-                        }
-                      });
+                    itemBuilder: (context, index) {
+                      final item = _interests[index];
+                      final isSelected = _selected.contains(item.tag);
+
+                      return _InterestTile(
+                        interest: item,
+                        isSelected: isSelected,
+                        onTap: () {
+                          setState(() {
+                            isSelected
+                                ? _selected.remove(item.tag)
+                                : _selected.add(item.tag);
+                          });
+                        },
+                      );
                     },
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-              child: SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: FilledButton(
-                  onPressed: canContinue ? _save : null,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    disabledBackgroundColor:
-                        AppColors.primary.withValues(alpha: 0.4),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
                   ),
-                  child: _isSaving
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2.5, color: Colors.white),
-                        )
-                      : const Text(
-                          'متابعة',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
                 ),
+              ],
+            ),
+
+            Positioned(
+              left: 22,
+              right: 22,
+              bottom: 20,
+              child: _ContinueButton(
+                canContinue: canContinue,
+                isSaving: _isSaving,
+                selectedCount: _selected.length,
+                onPressed: _save,
               ),
             ),
           ],
@@ -169,12 +173,63 @@ class _UserPreferencesScreenState extends ConsumerState<UserPreferencesScreen> {
   }
 }
 
-class _InterestCard extends StatelessWidget {
+class _Header extends StatelessWidget {
+  final int selectedCount;
+  const _Header({required this.selectedCount});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(22, 24, 22, 10),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Icon(Icons.interests, color: Colors.white),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'اختيار الاهتمامات',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+            ),
+            Text(
+              '$selectedCount',
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InterestTile extends StatelessWidget {
   final _Interest interest;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _InterestCard({
+  const _InterestTile({
     required this.interest,
     required this.isSelected,
     required this.onTap,
@@ -182,90 +237,89 @@ class _InterestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : Colors.transparent,
-            width: 3,
+      child: Column(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : Colors.grey.shade300,
+                  width: isSelected ? 2 : 1,
+                ),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: Stack(
+                children: [
+                  Image.network(
+                    interest.imageUrl,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  ),
+                  if (isSelected)
+                    Container(
+                      color:
+                          theme.colorScheme.primary.withValues(alpha: 0.2),
+                    ),
+                ],
+              ),
+            ),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+          const SizedBox(height: 6),
+          Text(
+            interest.tag,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w700,
             ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ContinueButton extends StatelessWidget {
+  final bool canContinue;
+  final bool isSaving;
+  final int selectedCount;
+  final VoidCallback onPressed;
+
+  const _ContinueButton({
+    required this.canContinue,
+    required this.isSaving,
+    required this.selectedCount,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return SizedBox(
+      height: 55,
+      child: ElevatedButton(
+        onPressed: canContinue ? onPressed : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: theme.colorScheme.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
         ),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.network(
-              interest.imageUrl,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
-                color: Colors.grey.shade200,
-                child: const Icon(Icons.image_not_supported_outlined,
-                    color: Colors.grey),
-              ),
-            ),
-            // bottom gradient + label
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withValues(alpha: 0.65),
-                    ],
-                    stops: const [0.4, 1.0],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 12,
-              left: 12,
-              right: 12,
-              child: Text(
-                interest.tag,
-                textAlign: TextAlign.center,
+        child: isSaving
+            ? const CircularProgressIndicator(color: Colors.white)
+            : Text(
+                selectedCount == 0 ? 'اختر اهتمام' : 'متابعة',
                 style: const TextStyle(
+                  fontWeight: FontWeight.bold,
                   color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  shadows: [
-                    Shadow(blurRadius: 4, color: Colors.black54),
-                  ],
                 ),
               ),
-            ),
-            // selected checkmark
-            if (isSelected)
-              Positioned(
-                top: 10,
-                right: 10,
-                child: Container(
-                  width: 26,
-                  height: 26,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                    border:
-                        Border.all(color: Colors.white, width: 2),
-                  ),
-                  child: const Icon(Icons.check,
-                      size: 14, color: Colors.white),
-                ),
-              ),
-          ],
-        ),
       ),
     );
   }

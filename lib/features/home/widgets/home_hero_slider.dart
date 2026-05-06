@@ -39,16 +39,13 @@ class _HomeHeroSliderState extends State<HomeHeroSlider> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
 
     final images = [
-      isAr
-          ? 'assets/images/saudi_heritage_journey_ar.png'
-          : 'assets/images/saudi_heritage_journey_en.png',
-      isAr
-          ? 'assets/images/legacy_of_the_past_ar.png'
-          : 'assets/images/legacy_of_the_past_en.png',
-      isAr
-          ? 'assets/images/journey_to_saudi_heritage_ar.png'
-          : 'assets/images/journey_to_saudi_heritage_en.png',
-    ];
+  isAr
+      ? 'assets/images/leap1_ar.jpeg'
+      : 'assets/images/leap2_en.jpeg',
+  isAr
+      ? 'assets/images/archive_ar.jpeg'
+      : 'assets/images/archive_en.jpeg',
+];
 
     return SizedBox(
       height: 420, // كبرنا السلايدر
