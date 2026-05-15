@@ -6,6 +6,8 @@ import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/core/models/favorites/favorite_item_model.dart';
 import 'package:athar_app/core/utils/share_utils.dart';
 import 'package:athar_app/features/profile/logic/favorites_notifier.dart';
+import 'package:athar_app/core/providers/settings_provider.dart';
+import 'package:athar_app/services/tts_service.dart';
 
 class CulturalItemDetails extends ConsumerStatefulWidget {
   final CulturalItemModel item;
@@ -26,6 +28,15 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     final currentItem = widget.item;
+    //acc
+    final settings = ref.watch(settingsProvider);
+    final ttsService = ref.read(ttsServiceProvider);
+
+    final titleText =
+    isAr ? currentItem.titleAr : currentItem.titleEn;
+
+    final descriptionText =
+    isAr ? currentItem.descriptionAr : currentItem.descriptionEn;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -52,8 +63,16 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildTitleSection(theme, isAr,
-                        isAr ? currentItem.titleAr : currentItem.titleEn),
+                    _buildTitleSection(
+                    theme,
+                    isAr,
+                    titleText,
+                    settings.isTtsEnabled
+                    ? () => ttsService.speak(
+                    '$titleText. $descriptionText'
+                     )
+                      : null,
+                    ),
                     if (currentItem.isContribution) ...[
                       const SizedBox(height: 10),
                       _buildCommunityBadge(
@@ -117,7 +136,7 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
     );
   }
 
-  Widget _buildTitleSection(ThemeData theme, bool isAr, String title) {
+  Widget _buildTitleSection(ThemeData theme, bool isAr, String title,VoidCallback? onSpeak) {
     final isFavAsync = ref.watch(isFavoriteProvider(widget.item.id));
     final isFav = isFavAsync.value ?? false;
 
@@ -134,6 +153,14 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
         ),
         Row(
           children: [
+            if (onSpeak != null)
+            IconButton(
+            onPressed: onSpeak,
+            icon: Icon(
+            Icons.volume_up_rounded,
+            color: theme.colorScheme.primary,
+            ),
+          ),
             IconButton(
               onPressed: () => ShareUtils.shareCulturalItem(
                 context: context,
