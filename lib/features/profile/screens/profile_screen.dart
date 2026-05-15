@@ -576,6 +576,7 @@ Widget _buildBookingItem(
                         b.bookingId,
                         user.phoneNumber ?? '',
                         user.fullName,
+                        b.touristId,
                       ),
                   child: Text(l10n.accept_booking),
                 ),
@@ -595,6 +596,7 @@ Widget _buildBookingItem(
                       .updateBookingStatus(
                         b.bookingId,
                         BookingStatus.rejected,
+                        b.touristId
                       ),
                   child: Text(
                     l10n.reject_booking,

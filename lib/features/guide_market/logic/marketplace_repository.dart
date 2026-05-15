@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
-
+import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
 part 'marketplace_repository.g.dart';
 
 @riverpod
@@ -81,20 +81,42 @@ class MarketplaceRepository {
   }
 
   // 7. تحديث حالة الحجز (قبول / رفض / إكمال)
-  Future<void> updateBookingStatus(
-      String bookingId, BookingStatus status) async {
-    await _bookings.doc(bookingId).update({'status': status.name});
-  }
+Future<void> updateBookingStatus(
+  String bookingId,
+  BookingStatus status,
+  String touristId,
+) async {
+  await _bookings.doc(bookingId).update({
+    'status': status.name,
+  });
 
-  // 7b. قبول الحجز مع حفظ بيانات المرشد للتواصل
-  Future<void> acceptBooking(
-      String bookingId, String tutorPhone, String tutorName) async {
-    await _bookings.doc(bookingId).update({
-      'status': BookingStatus.accepted.name,
-      'tutorPhone': tutorPhone,
-      'tutorName': tutorName,
-    });
+  if (status == BookingStatus.cancelled ||
+      status == BookingStatus.rejected) {
+    await NotificationsRepository().addNotification(
+  userId: touristId,
+  type: 'booking_cancelled',
+);
   }
+}
+
+  /// 7b. قبول الحجز مع حفظ بيانات المرشد للتواصل
+Future<void> acceptBooking(
+  String bookingId,
+  String tutorPhone,
+  String tutorName,
+  String touristId,
+) async {
+  await _bookings.doc(bookingId).update({
+    'status': BookingStatus.accepted.name,
+    'tutorPhone': tutorPhone,
+    'tutorName': tutorName,
+  });
+
+  await NotificationsRepository().addNotification(
+  userId: touristId,
+  type: 'booking_approved',
+);
+}
 
   // 8. حذف رحلة
   Future<void> deleteTrip(String tripId) async {

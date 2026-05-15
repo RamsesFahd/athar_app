@@ -83,8 +83,18 @@ class BookingNotifier extends _$BookingNotifier {
 
   // Step 4 (optional): Cancel a pending booking (tourist action)
   Future<void> cancelBooking(String bookingId) async {
-    await ref
-        .read(marketplaceRepositoryProvider)
-        .updateBookingStatus(bookingId, BookingStatus.cancelled);
+  final currentUser = await ref.read(authNotifierProvider.future);
+
+  if (currentUser == null) {
+    throw 'User not logged in';
   }
+
+  await ref
+      .read(marketplaceRepositoryProvider)
+      .updateBookingStatus(
+        bookingId,
+        BookingStatus.cancelled,
+        currentUser.uId,
+      );
+}
 }
