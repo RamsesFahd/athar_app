@@ -4,10 +4,12 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 
 class TtsService {
-  final FlutterTts _flutterTts = FlutterTts();
+  final FlutterTts _flutterTts;
   final Ref ref;
 
-  TtsService(this.ref) {
+  // [test injection] The optional `tts` parameter allows unit tests to inject a
+  // mock FlutterTts without hitting the platform plugin.
+  TtsService(this.ref, {FlutterTts? tts}) : _flutterTts = tts ?? FlutterTts() {
     _initTts();
   }
 

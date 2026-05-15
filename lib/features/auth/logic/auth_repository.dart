@@ -231,7 +231,10 @@ Future<String?> guestLogin() async {
   }
 
 // This private method maps FirebaseAuthException codes to user-friendly error messages that can be displayed in the UI. It helps to provide better feedback to the user when authentication errors occur.
-  String _mapFirebaseError(FirebaseAuthException e) {
+  String _mapFirebaseError(FirebaseAuthException e) => mapFirebaseError(e);
+
+  @visibleForTesting
+  String mapFirebaseError(FirebaseAuthException e) {
     switch (e.code) {
       case 'email-already-in-use':
         return "errorEmailAlreadyInUse";
