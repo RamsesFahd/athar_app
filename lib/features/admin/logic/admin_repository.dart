@@ -8,7 +8,7 @@ import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/models/contribution/contribution_model.dart';
-
+import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
 part 'admin_repository.g.dart';
 
 @riverpod
@@ -268,10 +268,15 @@ class AdminRepository {
     });
 
     await batch.commit();
+    await NotificationsRepository().addNotification(
+  userId: touristId,
+  type: 'contribution_approved',
+);
   }
 
   Future<void> rejectContribution(
     String contributionId, {
+    required String touristId,
     required String adminId,
     required String adminName,
     required String reason,
@@ -283,5 +288,10 @@ class AdminRepository {
       'adminName': adminName,
       'reviewedAt': Timestamp.now(),
     });
+   await NotificationsRepository().addNotification(
+  userId: touristId,
+  type: 'contribution_rejected',
+  body: reason,
+);
   }
 }

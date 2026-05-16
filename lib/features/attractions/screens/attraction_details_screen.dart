@@ -4,8 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:athar_app/core/models/attractions/attraction_model.dart';
+import 'package:athar_app/core/providers/settings_provider.dart';
+import 'package:athar_app/services/tts_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AttractionDetailsScreen extends StatelessWidget {
+class AttractionDetailsScreen extends ConsumerWidget {
   final AttractionModel attraction;
 
   const AttractionDetailsScreen({super.key, required this.attraction});
@@ -72,11 +75,17 @@ class AttractionDetailsScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final accent = _hexColor(attraction.categoryColorCode);
     final gallery = attraction.gallery;
+
+    final settings = ref.watch(settingsProvider);
+    final ttsService = ref.read(ttsServiceProvider);
+
+    final titleText = attraction.getName(isAr);
+    final descriptionText = attraction.getDescription(isAr);
 
     return Scaffold(
       body: Stack(
@@ -217,18 +226,36 @@ class AttractionDetailsScreen extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _CircleNavButton(
-                      icon: Icons.arrow_back,
-                      onTap: () => Navigator.pop(context),
-                    ),
-                    _CircleNavButton(
-                      icon: Icons.share_outlined,
-                      onTap: () => _share(context, isAr),
-                    ),
-                  ],
-                ),
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    _CircleNavButton(
+      icon: Icons.arrow_back,
+      onTap: () => Navigator.pop(context),
+    ),
+
+    Row(
+      children: [
+        if (settings.isTtsEnabled)
+          _CircleNavButton(
+            icon: Icons.volume_up_rounded,
+            onTap: () {
+              ttsService.speak(
+                '$titleText. $descriptionText',
+              );
+            },
+          ),
+
+        if (settings.isTtsEnabled)
+          const SizedBox(width: 8),
+
+        _CircleNavButton(
+          icon: Icons.share_outlined,
+          onTap: () => _share(context, isAr),
+        ),
+      ],
+    ),
+  ],
+),
               ),
             ),
           ),

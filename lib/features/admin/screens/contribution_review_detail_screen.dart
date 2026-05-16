@@ -259,6 +259,7 @@ class _ContributionReviewDetailScreenState
     try {
       await ref.read(adminRepositoryProvider).rejectContribution(
             c.id,
+            touristId: c.touristId,
             adminId: admin.uId,
             adminName: admin.fullName,
             reason: reason,

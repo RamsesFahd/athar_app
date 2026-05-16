@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:athar_app/core/widgets/accessibility_controls.dart';
 import 'package:flutter/material.dart';
+import 'package:athar_app/features/notifications/screens/notifications_screen.dart';
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
@@ -90,7 +91,14 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                   IconButton(
                     icon: const Icon(Icons.notifications_none_rounded,
                         color: Colors.black87),
-                    onPressed: () {},
+                    onPressed: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const NotificationsScreen(),
+    ),
+  );
+},
                   ),
                   // Indicator for unread notifications
                   Positioned(

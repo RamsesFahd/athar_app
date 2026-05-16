@@ -8,6 +8,8 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:athar_app/features/guide_market/screens/booking_form_screen.dart';
 import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:athar_app/core/providers/settings_provider.dart';
+import 'package:athar_app/services/tts_service.dart';
 
 class TripDetailsScreen extends ConsumerWidget {
   final TripModel trip;
@@ -20,6 +22,13 @@ class TripDetailsScreen extends ConsumerWidget {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final l10n = AppLocalizations.of(context)!;
     final isCompany = trip.tutorType == 'company';
+
+    //acc
+    final settings = ref.watch(settingsProvider);
+    final ttsService = ref.read(ttsServiceProvider);
+
+    final titleText = trip.getTitle(isAr);
+    final descriptionText = trip.getDescription(isAr);
 
     return Scaffold(
       body: Stack(
@@ -119,6 +128,18 @@ class TripDetailsScreen extends ConsumerWidget {
                 ),
                 Row(
                   children: [
+                     if (settings.isTtsEnabled)
+                     CircleAvatar(
+                     backgroundColor: Colors.black54,
+                     child: IconButton(
+                     icon: const Icon(Icons.volume_up_rounded, color: Colors.white),
+                     onPressed: () {
+                     ttsService.speak('$titleText. $descriptionText');
+                     },
+                 ),
+             ),
+            if (settings.isTtsEnabled)
+            const SizedBox(width: 8),
                     Consumer(
                       builder: (ctx, consumerRef, _) {
                         final isFavAsync =
