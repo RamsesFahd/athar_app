@@ -18,19 +18,20 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    _initApp();
+  }
 
-    // wait for 3 seconds before navigating to the next screen then check the authentication state
-    Future.delayed(const Duration(seconds: 3), () async {
-      // Ensure the widget is still mounted before navigating
-      if (!mounted) return;
+  Future<void> _initApp() async {
+    final results = await Future.wait([
+      ref.read(authNotifierProvider.future),
+      Future.delayed(const Duration(seconds: 2)),
+    ]);
 
-      // Check the authentication state using Riverpod
-      final user = await ref.read(authNotifierProvider.future);
+    if (!mounted) return;
 
-      if (!mounted)
-        return; // Check again if the widget is still mounted before navigating
+    final user = results[0];
 
-      if (user != null) {
+    if (user != null) {
         if (user is AdminModel) {
           Navigator.pushReplacementNamed(context, AppRoutes.admin);
         } else if (!user.emailVerified && user.role != UserRole.guest) {
@@ -48,10 +49,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             Navigator.pushReplacementNamed(context, AppRoutes.home);
           }
         }
-      } else {
-        Navigator.pushReplacementNamed(context, AppRoutes.signIn);
-      }
-    });
+    } else {
+      Navigator.pushReplacementNamed(context, AppRoutes.signIn);
+    }
   }
 
   @override
