@@ -109,7 +109,11 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
                       theme,
                     ),
                     const SizedBox(height: 24),
-                    _buildCategoryBadge(theme, currentItem.categoryId, l10n),
+                    _buildCategoryBadge(
+                     theme,
+                     _localizedCategory(currentItem.categoryId, l10n, isAr),
+                      l10n,
+                      ),
                     if (currentItem.isContribution &&
                         currentItem.contributorName != null &&
                         currentItem.contributorName!.isNotEmpty) ...[
@@ -305,4 +309,35 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
   Widget _bodyText(String text, ThemeData theme) {
     return Text(text, style: theme.textTheme.bodyLarge?.copyWith(height: 1.6));
   }
+  String _localizedCategory(
+  String category,
+  AppLocalizations l10n,
+  bool isAr,
+) {
+  switch (category.toLowerCase()) {
+    case 'architecture':
+      return isAr ? 'عمارة' : 'Architecture';
+
+    case 'clothing':
+      return isAr ? 'ملابس تقليدية' : 'Traditional Clothing';
+
+    case 'food':
+    case 'traditional_food':
+      return isAr ? ' طعام تقليدي' : 'Traditional Food';
+
+    case 'craft':
+    case 'handicraft':
+    case 'crafts':
+      return isAr ? 'حرفة يدوية' : 'Handicrafts';
+
+    case 'music':
+      return isAr ? 'موسيقى' : 'Music';
+
+    case 'dance':
+      return isAr ? 'رقص' : 'Traditional Dance';
+
+    default:
+      return category;
+  }
+}
 }
