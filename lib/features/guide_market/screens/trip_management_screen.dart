@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
@@ -283,10 +284,14 @@ class _TripCard extends StatelessWidget {
                   const BorderRadius.vertical(top: Radius.circular(18)),
               child: AspectRatio(
                 aspectRatio: 16 / 7,
-                child: Image.network(
-                  trip.imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: trip.imageUrl,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  memCacheWidth: 600,
+                  fadeInDuration: const Duration(milliseconds: 150),
+                  placeholder: (_, __) =>
+                      const ColoredBox(color: Color(0xFFEEEEEE)),
+                  errorWidget: (_, __, ___) => Container(
                     color: theme.colorScheme.surfaceContainerHighest,
                     child: Icon(
                       Icons.image_not_supported_outlined,
