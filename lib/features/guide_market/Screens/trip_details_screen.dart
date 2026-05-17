@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
@@ -39,11 +40,15 @@ class TripDetailsScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ── Hero image ────────────────────────────────────────
-                Image.network(
-                  trip.imageUrl,
+                CachedNetworkImage(
+                  imageUrl: trip.imageUrl,
                   width: double.infinity,
                   height: 300,
                   fit: BoxFit.cover,
+                  memCacheWidth: 1080,
+                  fadeInDuration: const Duration(milliseconds: 150),
+                  placeholder: (_, __) =>
+                      const ColoredBox(color: Color(0xFFEEEEEE)),
                 ),
 
                 Padding(
