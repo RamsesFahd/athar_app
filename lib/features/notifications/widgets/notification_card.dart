@@ -14,6 +14,7 @@ class NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isHighContrast = theme.colorScheme.primary == Colors.black;
 
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
 
@@ -33,18 +34,23 @@ class NotificationCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(22),
-            border: Border.all(
-              color: notification.isRead
-                  ? theme.dividerColor.withValues(alpha: 0.08)
-                  : theme.colorScheme.primary.withValues(alpha: 0.18),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
-              ),
-            ],
+           border: Border.all(
+  color: isHighContrast
+      ? Colors.black
+      : notification.isRead
+          ? theme.dividerColor.withValues(alpha: 0.08)
+          : theme.colorScheme.primary.withValues(alpha: 0.18),
+  width: isHighContrast ? 2 : 1,
+),
+            boxShadow: isHighContrast
+    ? []
+    : [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.04),
+          blurRadius: 18,
+          offset: const Offset(0, 8),
+        ),
+      ],
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -53,9 +59,14 @@ class NotificationCard extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: theme.colorScheme.primary.withValues(alpha: 0.12),
-                ),
+  shape: BoxShape.circle,
+  color: isHighContrast
+      ? Colors.white
+      : theme.colorScheme.primary.withValues(alpha: 0.12),
+  border: isHighContrast
+      ? Border.all(color: Colors.black, width: 2)
+      : null,
+),
                 child: Icon(
                   notification.isRead
                       ? Icons.notifications_none_rounded
@@ -84,8 +95,9 @@ class NotificationCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.5,
-                        color: theme.textTheme.bodyMedium?.color
-                            ?.withValues(alpha: 0.72),
+                        color: isHighContrast
+    ? theme.colorScheme.onSurface
+    : theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.72),
                       ),
                     ),
                   ],

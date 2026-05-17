@@ -22,6 +22,7 @@ class RecommendedItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isHighContrast = theme.colorScheme.primary == Colors.black;
 
     return GestureDetector(
       onTap: () {
@@ -42,22 +43,26 @@ class RecommendedItemCard extends StatelessWidget {
         width: 240,
         margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
-          color: theme.cardColor,
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
 
           border: Border.all(
-            color: theme.dividerColor.withOpacity(0.55),
-            width: 1,
+           color: isHighContrast
+           ? Colors.black
+           : theme.dividerColor.withValues(alpha: 0.55),
+           width: isHighContrast ? 2 : 1,
           ),
 
 
-          boxShadow: [
-            BoxShadow(
-              color: theme.shadowColor.withOpacity(0.06),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
+         boxShadow: isHighContrast
+         ? []
+         : [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.06),
+          blurRadius: 12,
+          offset: const Offset(0, 6),
+        ),
+      ],
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -80,13 +85,13 @@ class RecommendedItemCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppColors.primary,
+                      color: theme.colorScheme.primary,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       category,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white,
+                        color: theme.colorScheme.onPrimary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -117,12 +122,14 @@ class RecommendedItemCard extends StatelessWidget {
                       Icon(
                         Icons.location_on,
                         size: 16,
-                        color: theme.iconTheme.color,
+                        color: isHighContrast ? Colors.black : theme.colorScheme.primary,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         location,
-                        style: theme.textTheme.bodyMedium,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                       ),
                       ),
                     ],
                   ),

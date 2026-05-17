@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
 
 class ExploreHeritageHomeCard extends StatelessWidget {
   final String title;
@@ -21,6 +20,18 @@ class ExploreHeritageHomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isHighContrast = theme.colorScheme.primary == Colors.black;
+
+    final cardColor = theme.colorScheme.surface;
+    final borderColor = isHighContrast
+        ? Colors.black
+        : theme.dividerColor.withValues(alpha: 0.55);
+
+    final placeholderColor =
+        isHighContrast ? Colors.white : Colors.grey.shade200;
+
+    final iconColor =
+        isHighContrast ? Colors.black : theme.colorScheme.primary;
 
     return GestureDetector(
       onTap: onTap == null
@@ -32,30 +43,29 @@ class ExploreHeritageHomeCard extends StatelessWidget {
               onTap!();
             },
       child: Container(
-      width: 270,
+        width: 270,
         margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
-          color: theme.cardColor,
+          color: cardColor,
           borderRadius: BorderRadius.circular(16),
-
-
           border: Border.all(
-            color: theme.dividerColor.withValues(alpha: 0.55),
-            width: 1,
+            color: borderColor,
+            width: isHighContrast ? 2 : 1,
           ),
-          boxShadow: [
-  BoxShadow(
-    color: theme.shadowColor.withValues(alpha: 0.10),
-    blurRadius: 18,
-    offset: const Offset(0, 8),
-  ),
-],
+          boxShadow: isHighContrast
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.10),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image + Badge
             Stack(
               children: [
                 CachedNetworkImage(
@@ -67,29 +77,39 @@ class ExploreHeritageHomeCard extends StatelessWidget {
                   fadeInDuration: const Duration(milliseconds: 200),
                   placeholder: (_, __) => Container(
                     height: 195,
-                    color: Colors.grey.shade200,
+                    color: placeholderColor,
                   ),
                   errorWidget: (_, __, ___) => Container(
                     height: 195,
-                    color: Colors.grey.shade300,
-                    child: const Icon(Icons.broken_image, size: 40),
+                    color: placeholderColor,
+                    child: Icon(
+                      Icons.broken_image,
+                      size: 40,
+                      color: iconColor,
+                    ),
                   ),
                 ),
+
                 Positioned(
                   top: 8,
                   left: 8,
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(24),
+                      color: theme.colorScheme.primary,
+                      borderRadius: BorderRadius.circular(24),
+                      border: isHighContrast
+                          ? Border.all(color: Colors.black, width: 1.5)
+                          : null,
                     ),
                     child: Text(
                       categoryLabel,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   ),
@@ -97,8 +117,6 @@ class ExploreHeritageHomeCard extends StatelessWidget {
               ],
             ),
 
-
-            // Title + Location
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
               child: Column(
@@ -108,11 +126,10 @@ class ExploreHeritageHomeCard extends StatelessWidget {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-
-                    
                     style: theme.textTheme.titleLarge?.copyWith(
-                      fontSize: (theme.textTheme.titleLarge?.fontSize ?? 18) - 2,
-                      fontWeight: FontWeight.w600,
+                      fontSize:
+                          (theme.textTheme.titleLarge?.fontSize ?? 18) - 2,
+                      fontWeight: FontWeight.w700,
                       color: theme.colorScheme.onSurface,
                     ),
                   ),
@@ -122,14 +139,21 @@ class ExploreHeritageHomeCard extends StatelessWidget {
                       Icon(
                         Icons.location_on,
                         size: 16,
-                        color: theme.iconTheme.color,
+                        color: iconColor,
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        locationLabel,
-
-                        
-                        style: theme.textTheme.bodyMedium,
+                      Expanded(
+                        child: Text(
+                          locationLabel,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface,
+                            fontWeight: isHighContrast
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                          ),
+                        ),
                       ),
                     ],
                   ),

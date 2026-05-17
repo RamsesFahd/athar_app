@@ -50,6 +50,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+
+    final isHighContrast =
+    theme.colorScheme.primary == Colors.black;
+    
     // Watch the authentication state to conditionally render content or redirect if not authenticated
     final authState = ref.watch(authNotifierProvider);
 
@@ -105,6 +109,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _tabItem(String title, int index, ThemeData theme) {
     final bool isSelected = _activeTabIndex == index;
+    final isHighContrast = theme.colorScheme.primary == Colors.black;
     return Expanded(
       child: InkWell(
         onTap: () => setState(() => _activeTabIndex = index),
@@ -116,10 +121,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 title,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                  color: isSelected
-                      ? theme.colorScheme.primary
-                      : theme.textTheme.bodyMedium?.color
-                          ?.withValues(alpha: 0.5),
+                 color: isSelected
+    ? theme.colorScheme.primary
+    : isHighContrast
+        ? Colors.black87
+        : theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -150,7 +156,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 child: Text(
                   isAr ? 'لا توجد عناصر محفوظة' : 'No saved items yet',
                   style: theme.textTheme.bodyLarge
-                      ?.copyWith(color: Colors.grey.shade500),
+                      ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
               );
             }
@@ -195,7 +201,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 child: Text(
                   'No bookings yet',
                   style: theme.textTheme.bodyLarge
-                      ?.copyWith(color: Colors.grey.shade500),
+                      ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
               );
             }
@@ -388,7 +394,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     case BookingStatus.rejected:
       return Colors.red;
     case BookingStatus.cancelled:
-      return Colors.grey;
+      return theme.colorScheme.onSurfaceVariant;
     case BookingStatus.completed:
       return theme.colorScheme.primary;
     case BookingStatus.pending:
@@ -421,6 +427,9 @@ Widget _buildBookingItem(
   final isTutor = user is TutorModel;
   final statusColor = _statusColor(b.status, theme);
 
+  final isHighContrast =
+  theme.colorScheme.primary == Colors.black;
+
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     padding: const EdgeInsets.all(12),
@@ -428,9 +437,13 @@ Widget _buildBookingItem(
       color: theme.colorScheme.surface,
       borderRadius: BorderRadius.circular(18),
       border: Border.all(
-        color: theme.colorScheme.primary.withValues(alpha: 0.08),
+        color: isHighContrast
+        ? Colors.black
+        : theme.colorScheme.primary.withValues(alpha: 0.08),
       ),
-      boxShadow: [
+      boxShadow: isHighContrast
+    ? []
+    : [
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.04),
           blurRadius: 14,
@@ -577,7 +590,9 @@ Widget _buildBookingItem(
               Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: isHighContrast
+                    ? Colors.black
+                    : Colors.green,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
@@ -600,7 +615,11 @@ Widget _buildBookingItem(
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    side: const BorderSide(color: Colors.red),
+                    side: BorderSide(
+                    color: isHighContrast
+                    ? Colors.black
+                    : Colors.red,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -614,7 +633,11 @@ Widget _buildBookingItem(
                       ),
                   child: Text(
                     l10n.reject_booking,
-                    style: const TextStyle(color: Colors.red),
+                    style: TextStyle(
+                    color: isHighContrast
+                    ? Colors.black
+                    : Colors.red,
+                    ),
                   ),
                 ),
               ),
@@ -702,6 +725,7 @@ Widget _buildBookingItem(
     final isPending = tutor.verificationStatus == VerificationStatus.pending;
     final isRejected = tutor.verificationStatus == VerificationStatus.rejected;
     final isVerified = tutor.verificationStatus == VerificationStatus.verified;
+    final isHighContrast = theme.colorScheme.primary == Colors.black;
 
     String headline;
     String? subtext;
@@ -730,7 +754,9 @@ Widget _buildBookingItem(
       subtext = isAr
           ? 'سنُعلمك حالما يتم اعتماد طلبك'
           : "We'll notify you once your request is approved";
-      color = Colors.orange;
+      color = isHighContrast
+      ? Colors.black
+      : Colors.orange;
       icon = Icons.hourglass_top_outlined;
     } else if (verificationMissing.isNotEmpty) {
       // Not yet submitted for verification
@@ -753,7 +779,9 @@ Widget _buildBookingItem(
       headline = isAr
           ? 'في انتظار التوثيق من الإدارة'
           : 'Awaiting admin verification';
-      color = Colors.orange;
+      color = isHighContrast
+    ? Colors.black
+    : Colors.orange;
       icon = Icons.pending_outlined;
     }
 
@@ -885,15 +913,28 @@ Widget _buildBookingItem(
   Widget _buildSettingsGroup(
       {required String title,
       required List<Widget> tiles,
-      required ThemeData theme}) {
+       required ThemeData theme,
+}) {
+  final isHighContrast = theme.colorScheme.primary == Colors.black;
+
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)
-        ],
-        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+       boxShadow: isHighContrast
+       ? []
+       : [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 10,
+        ),
+      ],
+        border: Border.all(
+  color: isHighContrast
+      ? Colors.black
+      : theme.dividerColor.withValues(alpha: 0.1),
+  width: isHighContrast ? 2 : 1,
+),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -911,18 +952,29 @@ Widget _buildBookingItem(
 
   Widget _buildAccountSection(
       ThemeData theme, AppLocalizations l10n, UserModel user) {
-    final isAr = Localizations.localeOf(context).languageCode == 'ar';
-    final showDelete = user is TutorModel || user is TouristModel;
+        final isHighContrast = theme.colorScheme.primary == Colors.black;
+        final isAr = Localizations.localeOf(context).languageCode == 'ar';
+        final showDelete = user is TutorModel || user is TouristModel;
 
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
-        ],
-        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+        boxShadow: isHighContrast
+    ? []
+    : [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.05),
+          blurRadius: 10,
+        ),
+      ],
+
+border: Border.all(
+  color: isHighContrast
+      ? Colors.black
+      : theme.dividerColor.withValues(alpha: 0.1),
+  width: isHighContrast ? 2 : 1,
+),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1029,6 +1081,7 @@ Widget _buildBookingItem(
         SnackBar(
             content: Text(msg),
             backgroundColor: Colors.red,
+            
             duration: const Duration(seconds: 5)),
       );
       return;
@@ -1120,7 +1173,7 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
+                        color: theme.colorScheme.onSurfaceVariant,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -1341,7 +1394,7 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                     color: theme.colorScheme.onSurfaceVariant,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),

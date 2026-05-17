@@ -127,6 +127,7 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isHighContrast = theme.colorScheme.primary == Colors.black;
     final isLoading =
         ref.watch(profileNotifierProvider) is AsyncLoading;
 
@@ -142,8 +143,8 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
         content: SizedBox(
           width: double.maxFinite,
           child: _otpStep
-              ? _buildOtpStep(theme, isLoading)
-              : _buildPhoneStep(theme, isLoading),
+              ? _buildOtpStep(theme, isLoading, isHighContrast)
+              : _buildPhoneStep(theme, isLoading, isHighContrast),
         ),
         actions: _otpStep
             ? _otpActions(theme, isLoading)
@@ -153,7 +154,7 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
   }
 
   // ── phone step UI ─────────────────────────────────────────────────────────
-  Widget _buildPhoneStep(ThemeData theme, bool isLoading) {
+  Widget _buildPhoneStep(ThemeData theme, bool isLoading, bool isHighContrast,) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,7 +162,9 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
         Text(
           'سيُرسل إليك رمز تحقق عبر SMS',
           style: theme.textTheme.bodySmall
-              ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+              ?.copyWith(color: isHighContrast
+    ? theme.colorScheme.onSurface
+    : theme.colorScheme.onSurface.withValues(alpha: 0.6)),
         ),
         const SizedBox(height: 16),
         TextField(
@@ -199,7 +202,7 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
   ];
 
   // ── OTP step UI ───────────────────────────────────────────────────────────
-  Widget _buildOtpStep(ThemeData theme, bool isLoading) {
+  Widget _buildOtpStep(ThemeData theme, bool isLoading, bool isHighContrast,) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -207,7 +210,9 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
           'أُرسل رمز التحقق إلى\n$_phoneNumber',
           textAlign: TextAlign.center,
           style: theme.textTheme.bodySmall
-              ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+              ?.copyWith(color: isHighContrast
+    ? theme.colorScheme.onSurface
+    : theme.colorScheme.onSurface.withValues(alpha: 0.6)),
         ),
         const SizedBox(height: 20),
         _buildOtpBoxes(theme, isLoading),
@@ -271,7 +276,7 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
       return Text(
         'إعادة الإرسال خلال $_countdown ثانية',
         style: theme.textTheme.bodySmall
-            ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+            ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
       );
     }
     return TextButton(
