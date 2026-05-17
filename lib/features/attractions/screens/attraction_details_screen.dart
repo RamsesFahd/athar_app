@@ -408,6 +408,13 @@ class _HeroCarouselState extends State<_HeroCarousel> {
     super.initState();
     _controller = PageController();
     _startTimer();
+    if (widget.images.length > 1) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        for (var i = 1; i < widget.images.length; i++) {
+          precacheImage(CachedNetworkImageProvider(widget.images[i]), context);
+        }
+      });
+    }
   }
 
   void _startTimer() {
