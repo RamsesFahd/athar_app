@@ -73,9 +73,13 @@ class MapNotifier extends _$MapNotifier {
   Future<MapState> _loadPins() async {
     final repo = ref.read(mapRepositoryProvider);
 
-    final landmarks = await repo.fetchLandmarksWithCoordinates();
-    final attractions = await repo.fetchAttractionsWithCoordinates();
-    final events = await repo.fetchUpcomingEvents();
+    // Start all three fetches concurrently; await results together.
+    final fetchLandmarks = repo.fetchLandmarksWithCoordinates();
+    final fetchAttractions = repo.fetchAttractionsWithCoordinates();
+    final fetchEvents = repo.fetchUpcomingEvents();
+    final landmarks = await fetchLandmarks;
+    final attractions = await fetchAttractions;
+    final events = await fetchEvents;
 
     final landmarkPins = landmarks.map((l) => MapPinModel(
           id: l.id,

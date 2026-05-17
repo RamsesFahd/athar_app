@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -204,21 +205,16 @@ class _PinDetail extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Image.network(
-                  pin.imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: pin.imageUrl,
                   height: 200,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  loadingBuilder: (_, child, progress) => progress == null
-                      ? child
-                      : Container(
-                          height: 200,
-                          decoration: BoxDecoration(
-                            color: cs.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                  errorBuilder: (_, __, ___) => Container(
+                  memCacheWidth: 720,
+                  fadeInDuration: const Duration(milliseconds: 150),
+                  placeholder: (_, __) =>
+                      const SizedBox(height: 200, child: ColoredBox(color: Color(0xFFEEEEEE))),
+                  errorWidget: (_, __, ___) => Container(
                     height: 200,
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
@@ -454,19 +450,19 @@ class _PinListCard extends ConsumerWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: pin.imageUrl.isNotEmpty
-                  ? Image.network(
-                      pin.imageUrl,
+                  ? CachedNetworkImage(
+                      imageUrl: pin.imageUrl,
                       width: 80,
                       height: 80,
                       fit: BoxFit.cover,
-                      loadingBuilder: (_, child, progress) => progress == null
-                          ? child
-                          : Container(
-                              width: 80,
-                              height: 80,
-                              color: cs.surfaceContainerHighest,
-                            ),
-                      errorBuilder: (_, __, ___) => _placeholder(cs),
+                      memCacheWidth: 260,
+                      fadeInDuration: const Duration(milliseconds: 200),
+                      placeholder: (_, __) => Container(
+                        width: 80,
+                        height: 80,
+                        color: cs.surfaceContainerHighest,
+                      ),
+                      errorWidget: (_, __, ___) => _placeholder(cs),
                     )
                   : _placeholder(cs),
             ),

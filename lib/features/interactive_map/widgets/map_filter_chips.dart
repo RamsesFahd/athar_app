@@ -26,6 +26,8 @@ class MapFilterChips extends ConsumerWidget {
           const SizedBox(width: 8),
           _chip(context, isAr ? 'المعالم الثقافية' : 'Landmarks', MapFilter.landmarks),
           const SizedBox(width: 8),
+          _chip(context, isAr ? 'المعالم السياحية' : 'Attractions', MapFilter.attractions),
+          const SizedBox(width: 8),
           _chip(context, isAr ? 'الفعاليات' : 'Events', MapFilter.events),
           const SizedBox(width: 8),
           _chip(context, isAr ? 'قريب مني' : 'Near Me', MapFilter.nearMe),

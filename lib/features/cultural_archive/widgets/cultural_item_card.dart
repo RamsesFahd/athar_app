@@ -1,7 +1,7 @@
-import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
-import '../../../core/theme/app_colors.dart';
 
 enum CardLayout { vertical, horizontal }
 
@@ -37,8 +37,12 @@ class CulturalItemCard extends StatelessWidget {
     final String displayDescription = description;
 
     return InkWell(
-      onTap: () =>
-          Navigator.pushNamed(context, '/cultural-details', arguments: item),
+      onTap: () {
+        try {
+          precacheImage(CachedNetworkImageProvider(imageUrl), context);
+        } catch (_) {}
+        Navigator.pushNamed(context, '/cultural-details', arguments: item);
+      },
       child: layout == CardLayout.horizontal
           ? _buildHorizontalLayout(
               displayTitle, displayDescription, isArabic, theme, l10n)
@@ -56,8 +60,25 @@ class CulturalItemCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(15),
-            child: Image.network(imageUrl,
-                height: 120, width: 180, fit: BoxFit.cover),
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
+              height: 120,
+              width: 180,
+              fit: BoxFit.cover,
+              memCacheWidth: 400,
+              fadeInDuration: const Duration(milliseconds: 200),
+              placeholder: (_, __) => Container(
+                height: 120,
+                width: 180,
+                color: Colors.grey.shade200,
+              ),
+              errorWidget: (_, __, ___) => Container(
+                height: 120,
+                width: 180,
+                color: Colors.grey.shade200,
+                child: const Icon(Icons.broken_image, color: Colors.grey),
+              ),
+            ),
           ),
           const SizedBox(height: 8),
           _buildBadges(theme, l10n),
@@ -89,13 +110,19 @@ class CulturalItemCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              imageUrl,
+            child: CachedNetworkImage(
+              imageUrl: imageUrl,
               width: 110,
               height: 110,
               fit: BoxFit.cover,
-              // حل لمشكلة الـ 404 اللي تطلع بالكونسول
-              errorBuilder: (context, error, stackTrace) => Container(
+              memCacheWidth: 300,
+              fadeInDuration: const Duration(milliseconds: 200),
+              placeholder: (_, __) => Container(
+                width: 110,
+                height: 110,
+                color: Colors.grey[200],
+              ),
+              errorWidget: (_, __, ___) => Container(
                 width: 110,
                 height: 110,
                 color: Colors.grey[200],

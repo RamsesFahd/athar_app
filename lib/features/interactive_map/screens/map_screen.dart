@@ -57,7 +57,13 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   void initState() {
     super.initState();
     _initMarkerIcons();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _applyPendingPin());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _applyPendingPin();
+      // ref.listen in build() fires only on *changes*; seed per-color icons
+      // from the already-loaded pin list so the first render uses real colors.
+      final pins = ref.read(filteredMapPinsProvider);
+      if (pins.isNotEmpty) _preloadAttractionIcons(pins);
+    });
   }
 
   void _applyPendingPin() {

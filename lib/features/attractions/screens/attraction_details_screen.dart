@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -452,10 +453,13 @@ class _HeroCarouselState extends State<_HeroCarousel> {
                 setState(() => _currentPage = i);
                 _resetTimer();
               },
-              itemBuilder: (context, index) => Image.network(
-                widget.images[index],
+              itemBuilder: (context, index) => CachedNetworkImage(
+                imageUrl: widget.images[index],
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
+                memCacheWidth: 1080,
+                fadeInDuration: const Duration(milliseconds: 150),
+                placeholder: (_, __) => const ColoredBox(color: Color(0xFFEEEEEE)),
+                errorWidget: (_, __, ___) => Container(
                   color: theme.colorScheme.surfaceContainerHighest,
                   child: Icon(
                     Icons.image_not_supported_outlined,

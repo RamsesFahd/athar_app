@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
+import 'package:athar_app/core/models/attractions/attraction_model.dart';
 import 'package:athar_app/features/attractions/logic/attractions_repository.dart';
 import 'package:athar_app/features/attractions/widgets/attraction_card.dart';
 
@@ -20,9 +21,41 @@ class _AttractionsListScreenState
   String _selectedCategory = 'All';
   String _searchQuery = '';
 
+  // PERFORMANCE OPTIMIZATION: Cached derivations from stream data.
+  // Updated via ref.listen only when Firestore emits a new snapshot,
+  // not on every setState (search keystrokes, filter toggles, grid toggle).
+  List<AttractionModel> _allItems = const [];
+  List<String> _regions = const ['All'];
+  List<String> _categories = const ['All'];
+  Map<String, Color> _categoryColors = const {};
+
   static Color _hexColor(String code) {
     final n = code.replaceAll('#', '').padLeft(6, '0');
     return Color(int.parse('FF$n', radix: 16));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Seed from the already-emitted value so the list is never blank on back
+    // navigation (the stream may have emitted before this widget mounted).
+    ref.read(attractionsStreamProvider).whenData(_updateCache);
+    // ref.listenManual is the correct API for initState; ref.listen is build()-only.
+    ref.listenManual(attractionsStreamProvider, (_, next) {
+      next.whenData(_updateCache);
+    });
+  }
+
+  void _updateCache(List<AttractionModel> items) {
+    // Called from initState seed (no setState needed — first build hasn't run)
+    // and from listenManual (ref.watch in build triggers the rebuild, so
+    // setState is also not needed for subsequent emissions).
+    _allItems = items;
+    _regions = ['All', ...{...items.map((i) => i.region)}];
+    _categories = ['All', ...{...items.map((i) => i.category)}];
+    _categoryColors = {
+      for (final item in items) item.category: _hexColor(item.categoryColorCode),
+    };
   }
 
   @override
@@ -40,16 +73,10 @@ class _AttractionsListScreenState
       body: attractionsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(e.toString())),
-        data: (items) {
-          final regions = ['All', ...{...items.map((i) => i.region)}];
-          final categories = ['All', ...{...items.map((i) => i.category)}];
-
-          final categoryColors = <String, Color>{
-            for (final item in items)
-              item.category: _hexColor(item.categoryColorCode),
-          };
-
-          final filtered = items.where((item) {
+        data: (_) {
+          // Use pre-cached collections. Only the filter pass runs here,
+          // which is an O(n) scan — not the O(n) set/map allocations.
+          final filtered = _allItems.where((item) {
             final matchRegion =
                 _selectedRegion == 'All' || item.region == _selectedRegion;
             final matchCat = _selectedCategory == 'All' ||
@@ -58,7 +85,7 @@ class _AttractionsListScreenState
             final matchSearch = q.isEmpty ||
                 item.getName(isAr).toLowerCase().contains(q) ||
                 item.getCity(true).toLowerCase().contains(q) ||
-                    item.getCity(false).toLowerCase().contains(q);
+                item.getCity(false).toLowerCase().contains(q);
             return matchRegion && matchCat && matchSearch;
           }).toList();
 
@@ -177,7 +204,7 @@ class _AttractionsListScreenState
                 const SizedBox(height: 12),
                 _FilterRow(
                   label: isAr ? 'المنطقة' : 'Region',
-                  options: regions,
+                  options: _regions,
                   selected: _selectedRegion,
                   onSelected: (v) => setState(() => _selectedRegion = v),
                   isAr: isAr,
@@ -185,11 +212,11 @@ class _AttractionsListScreenState
                 const SizedBox(height: 6),
                 _FilterRow(
                   label: isAr ? 'التصنيف' : 'Category',
-                  options: categories,
+                  options: _categories,
                   selected: _selectedCategory,
                   onSelected: (v) => setState(() => _selectedCategory = v),
                   isAr: isAr,
-                  colorFor: (v) => v == 'All' ? null : categoryColors[v],
+                  colorFor: (v) => v == 'All' ? null : _categoryColors[v],
                 ),
               ],
               const SizedBox(height: 12),
@@ -197,7 +224,7 @@ class _AttractionsListScreenState
                 Expanded(
                   child: Center(
                     child: Text(
-                      items.isEmpty
+                      _allItems.isEmpty
                           ? (isAr
                               ? 'لا توجد معالم سياحية'
                               : 'No attractions available')

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 
@@ -22,7 +23,14 @@ class ExploreHeritageHomeCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: onTap == null
+          ? null
+          : () {
+              try {
+                precacheImage(CachedNetworkImageProvider(image), context);
+              } catch (_) {}
+              onTap!();
+            },
       child: Container(
       width: 270,
         margin: const EdgeInsets.only(right: 16),
@@ -50,11 +58,22 @@ class ExploreHeritageHomeCard extends StatelessWidget {
             // Image + Badge
             Stack(
               children: [
-                Image.network(
-                  image,
+                CachedNetworkImage(
+                  imageUrl: image,
                   height: 195,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  memCacheWidth: 800,
+                  fadeInDuration: const Duration(milliseconds: 200),
+                  placeholder: (_, __) => Container(
+                    height: 195,
+                    color: Colors.grey.shade200,
+                  ),
+                  errorWidget: (_, __, ___) => Container(
+                    height: 195,
+                    color: Colors.grey.shade300,
+                    child: const Icon(Icons.broken_image, size: 40),
+                  ),
                 ),
                 Positioned(
                   top: 8,

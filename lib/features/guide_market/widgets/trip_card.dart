@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
@@ -53,9 +54,16 @@ Widget _buildGridContent(
       Positioned.fill(
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
-          child: Image.network(
-            trip.imageUrl,
+          child: CachedNetworkImage(
+            imageUrl: trip.imageUrl,
             fit: BoxFit.cover,
+            memCacheWidth: 600,
+            fadeInDuration: const Duration(milliseconds: 200),
+            placeholder: (_, __) => Container(color: Colors.grey.shade300),
+            errorWidget: (_, __, ___) => Container(
+              color: Colors.grey.shade300,
+              child: const Icon(Icons.broken_image_outlined, size: 36),
+            ),
           ),
         ),
       ),
@@ -150,12 +158,17 @@ Widget _buildGridContent(
 
                   // الزر
                   GestureDetector(
-  onTap: () => Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => TripDetailsScreen(trip: trip),
-    ),
-  ),
+  onTap: () {
+    try {
+      precacheImage(CachedNetworkImageProvider(trip.imageUrl), context);
+    } catch (_) {}
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TripDetailsScreen(trip: trip),
+      ),
+    );
+  },
   child: Container(
     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
     decoration: BoxDecoration(
@@ -196,12 +209,19 @@ Widget _buildGridContent(
         // الصورة
         ClipRRect(
           borderRadius: BorderRadius.circular(24),
-          child: Image.network(
-            trip.imageUrl,
+          child: CachedNetworkImage(
+            imageUrl: trip.imageUrl,
             width: 130,
             height: 150,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Container(
+            memCacheWidth: 400,
+            fadeInDuration: const Duration(milliseconds: 200),
+            placeholder: (_, __) => Container(
+              width: 130,
+              height: 150,
+              color: colorScheme.surfaceContainerHighest,
+            ),
+            errorWidget: (_, __, ___) => Container(
               width: 130,
               height: 150,
               color: colorScheme.surface,
@@ -319,10 +339,15 @@ Widget _buildGridContent(
 
 Widget _buildActionButton(BuildContext context, bool isAr, ThemeData theme) {
   return GestureDetector(
-    onTap: () => Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => TripDetailsScreen(trip: trip)),
-    ),
+    onTap: () {
+      try {
+        precacheImage(CachedNetworkImageProvider(trip.imageUrl), context);
+      } catch (_) {}
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => TripDetailsScreen(trip: trip)),
+      );
+    },
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
       decoration: BoxDecoration(

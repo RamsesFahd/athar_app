@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:athar_app/core/models/attractions/attraction_model.dart';
@@ -19,6 +20,10 @@ class AttractionCard extends StatelessWidget {
   }
 
   void _openDetails(BuildContext context) {
+    // Fire-and-forget: warms memory cache during the ~300 ms route transition.
+    try {
+      precacheImage(CachedNetworkImageProvider(attraction.mainImage), context);
+    } catch (_) {}
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -65,11 +70,16 @@ Widget _buildGrid(
           flex: 5, // ✨ خلينا الصورة تاخذ أغلب مساحة الكارد
           child: Hero(
             tag: 'attraction-${attraction.id}-hero',
-            child: Image.network(
-              attraction.mainImage,
+            child: CachedNetworkImage(
+              imageUrl: attraction.mainImage,
               width: double.infinity,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => Container(
+              memCacheWidth: 600,
+              fadeInDuration: const Duration(milliseconds: 200),
+              placeholder: (_, __) => Container(
+                color: theme.colorScheme.surfaceContainerHighest,
+              ),
+              errorWidget: (_, __, ___) => Container(
                 width: double.infinity,
                 color: theme.colorScheme.surfaceContainerHighest,
                 child: Icon(
@@ -177,19 +187,25 @@ Widget _buildGrid(
                   topLeft: Radius.circular(24),
                   bottomLeft: Radius.circular(24),
                 ),
-                child: Image.network(
-                  attraction.mainImage,
+                child: CachedNetworkImage(
+                  imageUrl: attraction.mainImage,
                   width: 120,
                   height: 130,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  memCacheWidth: 400,
+                  fadeInDuration: const Duration(milliseconds: 200),
+                  placeholder: (_, __) => Container(
+                    width: 120,
+                    height: 130,
+                    color: theme.colorScheme.surfaceContainerHighest,
+                  ),
+                  errorWidget: (_, __, ___) => Container(
                     width: 120,
                     height: 130,
                     color: theme.colorScheme.surfaceContainerHighest,
                     child: Icon(
                       Icons.image_not_supported_outlined,
-                      color:
-                          theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     ),
                   ),
                 ),
