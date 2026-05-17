@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -113,11 +114,14 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
   Widget _buildHeroHeader(double height, bool isAr, String imageUrl) {
     return Stack(
       children: [
-        Image.network(
-          imageUrl,
+        CachedNetworkImage(
+          imageUrl: imageUrl,
           height: height * 0.45,
           width: double.infinity,
           fit: BoxFit.cover,
+          memCacheWidth: 1080,
+          fadeInDuration: const Duration(milliseconds: 150),
+          placeholder: (_, __) => const ColoredBox(color: Color(0xFFEEEEEE)),
         ),
         SafeArea(
           child: Padding(
