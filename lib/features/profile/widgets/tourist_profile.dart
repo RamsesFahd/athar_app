@@ -1,4 +1,5 @@
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:athar_app/core/models/user/user_model.dart'; //
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -56,7 +57,7 @@ Widget _buildAvatarWithEditIcon(ThemeData theme, AppLocalizations l10n, WidgetRe
           radius: 42,
           backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.1),
           backgroundImage: user.profileImage != null && user.profileImage!.isNotEmpty
-              ? NetworkImage(user.profileImage!)
+              ? CachedNetworkImageProvider(user.profileImage!)
               : null,
           child: user.profileImage == null || user.profileImage!.isEmpty
               ? Icon(Icons.person, size: 40, color: theme.colorScheme.primary)

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -520,7 +521,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
           DecorationImage(image: FileImage(_pickedImage!), fit: BoxFit.cover);
     } else if (hasExisting) {
       decorationImage = DecorationImage(
-          image: NetworkImage(_existingImageUrl!), fit: BoxFit.cover);
+          image: CachedNetworkImageProvider(_existingImageUrl!), fit: BoxFit.cover);
     }
 
     return GestureDetector(

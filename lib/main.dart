@@ -1,4 +1,3 @@
-import 'package:athar_app/features/cultural_archive/logic/cultural_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +14,10 @@ import 'package:athar_app/core/navigation/app_routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Cap in-memory image cache: 100 decoded images, max 100 MB.
+  PaintingBinding.instance.imageCache.maximumSize = 100;
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 100 << 20;
 
   await dotenv.load(fileName: ".env");
   // تهيئة Firebase

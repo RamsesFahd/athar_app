@@ -9,6 +9,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:athar_app/features/profile/screens/credential_verification_screen.dart';
 import 'package:athar_app/features/profile/screens/phone_otp_dialog.dart';
 import 'package:athar_app/features/profile/widgets/tutor_profile.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../generated/l10n/app_localizations.dart';
@@ -447,11 +448,24 @@ Widget _buildBookingItem(
             if (b.imageUrl.isNotEmpty)
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  b.imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: b.imageUrl,
                   width: 64,
                   height: 64,
                   fit: BoxFit.cover,
+                  memCacheWidth: 200,
+                  fadeInDuration: const Duration(milliseconds: 200),
+                  placeholder: (_, __) => Container(
+                    width: 64,
+                    height: 64,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  ),
+                  errorWidget: (_, __, ___) => Container(
+                    width: 64,
+                    height: 64,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    child: const Icon(Icons.image_not_supported_outlined, size: 28),
+                  ),
                 ),
               ),
 

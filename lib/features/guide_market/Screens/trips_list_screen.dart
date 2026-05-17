@@ -45,14 +45,9 @@ class _TripsListScreenState extends ConsumerState<TripsListScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(child: Text(error.toString())),
         data: (allTrips) {
+          // PERFORMANCE OPTIMIZATION: filterAndSort result used directly.
           final displayedTrips =
               filterNotifier.filterAndSort(allTrips, isAr);
-
-          final uniqueCities = allTrips
-              .map((trip) => trip.getCity(isAr))
-              .where((city) => city.trim().isNotEmpty)
-              .toSet()
-              .toList();
 
           return Column(
             children: [
@@ -62,6 +57,14 @@ class _TripsListScreenState extends ConsumerState<TripsListScreen> {
                 isFilterActive: filter.hasActiveFilters,
                 onChanged: filterNotifier.setSearchQuery,
                 onFilterTap: () async {
+                  // PERFORMANCE OPTIMIZATION: uniqueCities computed lazily here,
+                  // only when the filter sheet is about to open — not on every build.
+                  final uniqueCities = allTrips
+                      .map((trip) => trip.getCity(isAr))
+                      .where((city) => city.trim().isNotEmpty)
+                      .toSet()
+                      .toList();
+
                   final result =
                       await showModalBottomSheet<Map<String, dynamic>>(
                     context: context,

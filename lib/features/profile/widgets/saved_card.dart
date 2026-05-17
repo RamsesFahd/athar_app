@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class SavedCard extends StatelessWidget {
@@ -44,17 +45,22 @@ class SavedCard extends StatelessWidget {
               ClipRRect(
                 borderRadius:
                     const BorderRadius.horizontal(left: Radius.circular(11)),
-                child: Image.network(
-                  image,
+                child: CachedNetworkImage(
+                  imageUrl: image,
                   width: 100,
                   height: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
+                  memCacheWidth: 300,
+                  fadeInDuration: const Duration(milliseconds: 200),
+                  placeholder: (_, __) => Container(
                     width: 100,
-                    color: theme.colorScheme.surfaceVariant,
+                    color: theme.colorScheme.surfaceContainerHighest,
+                  ),
+                  errorWidget: (_, __, ___) => Container(
+                    width: 100,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     child: Icon(Icons.image_outlined,
-                        color:
-                            theme.colorScheme.primary.withValues(alpha: 0.4)),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.4)),
                   ),
                 ),
               ),

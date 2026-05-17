@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class BookingCard extends StatelessWidget {
@@ -48,14 +49,20 @@ class BookingCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (imageUrl != null)
-                Image.network(
-                  imageUrl!,
+                CachedNetworkImage(
+                  imageUrl: imageUrl!,
                   height: 140,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
+                  memCacheWidth: 800,
+                  fadeInDuration: const Duration(milliseconds: 200),
+                  placeholder: (_, __) => Container(
                     height: 140,
-                    color: theme.colorScheme.surfaceVariant,
+                    color: theme.colorScheme.surfaceContainerHighest,
+                  ),
+                  errorWidget: (_, __, ___) => Container(
+                    height: 140,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     child: Icon(Icons.image_not_supported_outlined,
                         color: theme.colorScheme.onSurfaceVariant),
                   ),

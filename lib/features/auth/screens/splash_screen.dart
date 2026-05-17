@@ -56,6 +56,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Keep authNotifierProvider alive while splash is visible so it is never
+    // auto-disposed before NavigationContainer reads it on navigation.
+    ref.watch(authNotifierProvider);
+
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 

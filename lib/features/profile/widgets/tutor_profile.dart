@@ -1,4 +1,5 @@
 // tutor_profile.dart
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -106,7 +107,7 @@ class TutorHeader extends ConsumerWidget {
         CircleAvatar(
           radius: 42,
           backgroundColor: theme.colorScheme.secondary.withValues(alpha: 0.1),
-          backgroundImage: user.profileImage != null ? NetworkImage(user.profileImage!) : null,
+          backgroundImage: user.profileImage != null ? CachedNetworkImageProvider(user.profileImage!) : null,
           child: user.profileImage == null ? Icon(Icons.person, size: 40, color: theme.colorScheme.primary) : null,
         ),
         Positioned(

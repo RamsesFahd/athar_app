@@ -29,15 +29,14 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
   int _currentIndex = 0;
   int _previousIndex = 0;
   Widget? _subPage;
-  late final List<Widget> screens;
-  late final bool _isTutor;
 
-  @override
-  void initState() {
-    super.initState();
-    final user = ref.read(authNotifierProvider).value;
-    _isTutor = user?.role == UserRole.tutor;
-    screens = [
+  // Screens are built lazily once auth resolves and cached per role.
+  // Never built in initState to avoid reading a potentially-disposed provider.
+  List<Widget>? _screens;
+  bool? _lastIsTutor;
+
+  List<Widget> _buildScreens(bool isTutor) {
+    return [
       HomeScreen(
         onSeeAllArchive: () => _onNavigateToSubPage(const CulturalArchive()),
         onEventTap: (EventModel event) {
@@ -51,27 +50,27 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
       ),
       const MapScreen(),
       const RawiLandingScreen(),
-      if (_isTutor) const TripManagementScreen() else const ContributionsAchievementsScreen(),
+      if (isTutor)
+        const TripManagementScreen()
+      else
+        const ContributionsAchievementsScreen(),
       const ProfileScreen(),
     ];
   }
 
-  // Go to a subpage (like Cultural Archive) from Home
   void _onNavigateToSubPage(Widget page) {
     setState(() {
       _subPage = page;
     });
   }
 
-  String _getPageTitle(BuildContext context) {
+  String _getPageTitle(BuildContext context, bool isTutor) {
     final l10n = AppLocalizations.of(context);
 
-    // if there's a subpage, we show its title (for now we only have Cultural Archive as a subpage, but this will extended)
     if (_subPage is CulturalArchive) {
       return l10n.culturalArchiveTitle;
     }
 
-    // otherwise, we show the title based on the current tab
     switch (_currentIndex) {
       case 0:
         return l10n.homeLabel;
@@ -80,7 +79,7 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
       case 2:
         return l10n.assistantLabel;
       case 3:
-        return _isTutor ? l10n.calendarLabel : l10n.contributions;
+        return isTutor ? l10n.calendarLabel : l10n.contributions;
       case 4:
         return l10n.profileLabel;
       default:
@@ -90,63 +89,88 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      // the AppBar is only shown when we're not in a subpage. If we are in a subpage, we want to hide the AppBar to give more space for the content (especially for the Cultural Archive which has a lot of content). The Header widget will automatically show the correct title based on the current tab or subpage.
-      appBar: _subPage != null
-          ? null
-          : Header(
-              isHome: _currentIndex == 0 && _subPage == null,
-              title: _getPageTitle(context),
-            ),
-      body: Stack(
-        children: [
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 400),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              final isMovingForward = _currentIndex > _previousIndex;
-              final beginOffset = isMovingForward
-                  ? const Offset(1.0, 0.0)
-                  : const Offset(-1.0, 0.0);
+    // ref.watch keeps authNotifierProvider alive for the full lifetime of this
+    // widget and reacts correctly if the user logs out or switches accounts.
+    final userAsync = ref.watch(authNotifierProvider);
 
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: beginOffset,
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeOutQuart,
-                )),
-                child: FadeTransition(
-                  opacity: animation,
-                  child: child,
-                ),
-              );
-            },
-            child: Container(
-              // The key is important to tell the AnimatedSwitcher when to animate. We use a different key for each tab and for the subpage, so that it knows when to animate between them.
-              key: ValueKey<String>(_subPage != null
-                  ? 'subpage_${_subPage.hashCode}'
-                  : 'tab_$_currentIndex'),
-              child: _subPage ?? screens[_currentIndex],
-            ),
-          ),
-        ],
+    return userAsync.when(
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator.adaptive()),
       ),
-      bottomNavigationBar: AtharBottomNavigation(
-        currentIndex: _currentIndex,
-        isTutor: _isTutor,
-        onTap: (index) {
-          if (index != _currentIndex || _subPage != null) {
-            setState(() {
-              _previousIndex = _currentIndex;
-              _currentIndex = index;
-              _subPage =
-                  null; // whenever we switch tabs, we want to exit any subpage and go back to the main screen of the new tab
-            });
+      error: (_, __) => const Scaffold(
+        body: Center(child: Icon(Icons.error_outline)),
+      ),
+      data: (user) {
+        final isTutor = user?.role == UserRole.tutor;
+
+        // Rebuild screen list only when the role actually changes.
+        // This avoids re-instantiating all 5 screens on every auth update.
+        if (_screens == null || _lastIsTutor != isTutor) {
+          _screens = _buildScreens(isTutor);
+          _lastIsTutor = isTutor;
+          // Guard against a stale index that would exceed the new list length.
+          if (_currentIndex >= _screens!.length) {
+            _currentIndex = 0;
+            _previousIndex = 0;
           }
-        },
-      ),
+        }
+
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: _subPage != null
+              ? null
+              : Header(
+                  isHome: _currentIndex == 0 && _subPage == null,
+                  title: _getPageTitle(context, isTutor),
+                ),
+          body: Stack(
+            children: [
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 280),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  final isMovingForward = _currentIndex > _previousIndex;
+                  final beginOffset = isMovingForward
+                      ? const Offset(1.0, 0.0)
+                      : const Offset(-1.0, 0.0);
+
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: beginOffset,
+                      end: Offset.zero,
+                    ).animate(CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutQuart,
+                    )),
+                    child: FadeTransition(
+                      opacity: animation,
+                      child: child,
+                    ),
+                  );
+                },
+                child: KeyedSubtree(
+                  key: ValueKey<String>(_subPage != null
+                      ? 'subpage_${_subPage.hashCode}'
+                      : 'tab_$_currentIndex'),
+                  child: _subPage ?? _screens![_currentIndex],
+                ),
+              ),
+            ],
+          ),
+          bottomNavigationBar: AtharBottomNavigation(
+            currentIndex: _currentIndex,
+            isTutor: isTutor,
+            onTap: (index) {
+              if (index != _currentIndex || _subPage != null) {
+                setState(() {
+                  _previousIndex = _currentIndex;
+                  _currentIndex = index;
+                  _subPage = null;
+                });
+              }
+            },
+          ),
+        );
+      },
     );
   }
 }
