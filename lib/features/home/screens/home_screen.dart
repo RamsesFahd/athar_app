@@ -108,7 +108,7 @@ class _YouMayLikeSection extends ConsumerWidget {
       authNotifierProvider.select((async) {
         final user = async.valueOrNull;
         return user is TouristModel
-            ? (user.interests ?? const <String>[])
+            ? (user.culturalInterests ?? const <String>[])
             : const <String>[];
       }),
     );

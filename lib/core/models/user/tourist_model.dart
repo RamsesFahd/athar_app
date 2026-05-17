@@ -2,7 +2,7 @@ part of 'user_model.dart';
 
 class TouristModel extends UserModel {
   final int points;
-  final List<String>? interests;
+  final List<String> culturalInterests;
   final int contributionsCount;
 
   TouristModel({
@@ -16,7 +16,7 @@ class TouristModel extends UserModel {
     super.profileImage,
     required super.accessibilitySettings,
     this.points = 0,
-    this.interests,
+    this.culturalInterests = const [],
     this.contributionsCount = 0,
     super.emailVerified,
     super.privacyPolicyAcceptedAt,
@@ -34,7 +34,7 @@ class TouristModel extends UserModel {
     'profileImage': profileImage,
     'accessibilitySettings': accessibilitySettings.toMap(),
     'points': points,
-    'interests': interests,
+    'culturalInterests': culturalInterests,
     'contributionsCount': contributionsCount,
     'emailVerified': emailVerified,
     'privacyPolicyAcceptedAt': privacyPolicyAcceptedAt != null
@@ -60,7 +60,7 @@ class TouristModel extends UserModel {
       profileImage: map['profileImage'],
       accessibilitySettings: AccessibilitySettings.fromMap(map['accessibilitySettings']),
       points: map['points'] ?? 0,
-      interests: map['interests'] != null ? List<String>.from(map['interests']) : null,
+      culturalInterests: List<String>.from(map['culturalInterests'] ?? map['interests'] ?? []),
       contributionsCount: map['contributionsCount'] ?? 0,
       emailVerified: map['emailVerified'] ?? false,
       privacyPolicyAcceptedAt:

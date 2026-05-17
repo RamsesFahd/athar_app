@@ -1,169 +1,86 @@
+// ============================================================================
+// Athar — User Preferences Screen (Refactored)
+// ----------------------------------------------------------------------------
+// Location: lib/features/onboarding/view/user_preferences_screen.dart
+//
+// What changed from the previous version:
+//   ❌ Removed: hardcoded `const _interests = [...]` list
+//   ❌ Removed: storing Arabic labels as IDs (broke i18n + recommendations)
+//   ❌ Removed: direct Image.network calls (no caching, no fallback)
+//
+//   ✅ Added: reads interests from Firestore via taxonomyProvider
+//   ✅ Added: uses InterestImage widget (Firebase Storage + cache)
+//   ✅ Added: stores English IDs (e.g., 'heritage_sites') in Firestore
+//   ✅ Added: bilingual labels (Arabic by default, English when locale is en)
+//   ✅ Added: uses PreferencesNotifier for state management
+//   ✅ Added: graceful loading and error states
+// ============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
+import 'package:athar_app/core/utils/taxonomy_repository.dart';
+import 'package:athar_app/core/widgets/interest_image_widget.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/onboarding/logic/preferences_notifier.dart';
 
-class _Interest {
-  final String tag;
-  final String imageUrl;
-  const _Interest(this.tag, this.imageUrl);
-}
-
-const _interests = [
-  _Interest(
-    'قصور',
-    'https://images.pexels.com/photos/2161467/pexels-photo-2161467.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-  _Interest(
-    'أحياء تاريخية',
-    'https://images.pexels.com/photos/356830/pexels-photo-356830.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-  _Interest(
-    'مدائن',
-    'https://images.pexels.com/photos/337909/pexels-photo-337909.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-  _Interest(
-    'بحر',
-    'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-  _Interest(
-    'جبال',
-    'https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-  _Interest(
-    'صحراء',
-    'https://images.pexels.com/photos/847402/pexels-photo-847402.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-  _Interest(
-    'غابة',
-    'https://images.pexels.com/photos/4827/nature-forest-trees-fog.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-  _Interest(
-    'أودية',
-    'https://images.pexels.com/photos/210186/pexels-photo-210186.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-  _Interest(
-    'متاحف',
-    'https://images.pexels.com/photos/2372978/pexels-photo-2372978.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-  _Interest(
-    'معارض',
-    'https://images.pexels.com/photos/1839919/pexels-photo-1839919.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-  _Interest(
-    'أبراج',
-    'https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-  _Interest(
-    'معالم معمارية',
-    'https://images.pexels.com/photos/2082103/pexels-photo-2082103.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-  _Interest(
-    'وجهات ترفيهية',
-    'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800',
-  ),
-];
-
-class UserPreferencesScreen extends ConsumerStatefulWidget {
+class UserPreferencesScreen extends ConsumerWidget {
   const UserPreferencesScreen({super.key});
 
   @override
-  ConsumerState<UserPreferencesScreen> createState() =>
-      _UserPreferencesScreenState();
-}
-
-class _UserPreferencesScreenState extends ConsumerState<UserPreferencesScreen> {
-  final Set<String> _selected = {};
-  bool _isSaving = false;
-
-  Future<void> _save() async {
-    if (_selected.isEmpty || _isSaving) return;
-
-    setState(() => _isSaving = true);
-
-    try {
-      final user = await ref.read(authNotifierProvider.future);
-
-      if (user == null) {
-        if (mounted) setState(() => _isSaving = false);
-        return;
-      }
-
-      await saveUserInterests(user.uId, _selected.toList());
-
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
-        ref.invalidate(authNotifierProvider);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isSaving = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('حدث خطأ: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final canContinue = _selected.isNotEmpty && !_isSaving;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final taxonomyAsync = ref.watch(taxonomyProvider);
+    final prefsState = ref.watch(preferencesNotifierProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Stack(
           children: [
             Column(
               children: [
-                _Header(selectedCount: _selected.length),
-
+                _Header(selectedCount: prefsState.selectedIds.length),
                 Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.fromLTRB(18, 10, 18, 112),
-                    itemCount: _interests.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 13,
-                      mainAxisSpacing: 18,
-                      childAspectRatio: 0.70,
+                  child: taxonomyAsync.when(
+                    data: (interests) => _InterestsGrid(interests: interests),
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    error: (err, _) => _ErrorView(
+                      message: 'تعذر تحميل الاهتمامات',
+                      onRetry: () => ref.invalidate(taxonomyProvider),
                     ),
-                    itemBuilder: (context, index) {
-                      final item = _interests[index];
-                      final isSelected = _selected.contains(item.tag);
-
-                      return _InterestTile(
-                        interest: item,
-                        isSelected: isSelected,
-                        onTap: () {
-                          setState(() {
-                            isSelected
-                                ? _selected.remove(item.tag)
-                                : _selected.add(item.tag);
-                          });
-                        },
-                      );
-                    },
                   ),
                 ),
               ],
             ),
-
+            // Show error snackbar reactively when notifier emits one
+            if (prefsState.errorMessage != null)
+              Positioned(
+                left: 22,
+                right: 22,
+                bottom: 90,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.red.shade200),
+                    ),
+                    child: Text(
+                      prefsState.errorMessage!,
+                      style: TextStyle(color: Colors.red.shade900),
+                    ),
+                  ),
+                ),
+              ),
             Positioned(
               left: 22,
               right: 22,
               bottom: 20,
               child: _ContinueButton(
-                canContinue: canContinue,
-                isSaving: _isSaving,
-                selectedCount: _selected.length,
-                onPressed: _save,
+                onPressed: () => _handleSave(context, ref),
               ),
             ),
           ],
@@ -171,7 +88,27 @@ class _UserPreferencesScreenState extends ConsumerState<UserPreferencesScreen> {
       ),
     );
   }
+
+  Future<void> _handleSave(BuildContext context, WidgetRef ref) async {
+    final user = await ref.read(authNotifierProvider.future);
+    if (user == null) return;
+
+    final success = await ref
+        .read(preferencesNotifierProvider.notifier)
+        .save(user.uId);
+
+    if (!context.mounted) return;
+
+    if (success) {
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+      ref.invalidate(authNotifierProvider);
+    }
+  }
 }
+
+// ============================================================================
+// Header
+// ============================================================================
 
 class _Header extends StatelessWidget {
   final int selectedCount;
@@ -224,14 +161,59 @@ class _Header extends StatelessWidget {
   }
 }
 
+// ============================================================================
+// Grid
+// ============================================================================
+
+class _InterestsGrid extends ConsumerWidget {
+  final List<TaxonomyInterest> interests;
+  const _InterestsGrid({required this.interests});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedIds = ref.watch(preferencesNotifierProvider).selectedIds;
+    final locale = Localizations.localeOf(context).languageCode;
+
+    return GridView.builder(
+      padding: const EdgeInsets.fromLTRB(18, 10, 18, 112),
+      itemCount: interests.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 13,
+        mainAxisSpacing: 18,
+        childAspectRatio: 0.70,
+      ),
+      itemBuilder: (context, index) {
+        final interest = interests[index];
+        final isSelected = selectedIds.contains(interest.id);
+
+        return _InterestTile(
+          interest: interest,
+          isSelected: isSelected,
+          locale: locale,
+          onTap: () => ref
+              .read(preferencesNotifierProvider.notifier)
+              .toggle(interest.id),
+        );
+      },
+    );
+  }
+}
+
+// ============================================================================
+// Tile
+// ============================================================================
+
 class _InterestTile extends StatelessWidget {
-  final _Interest interest;
+  final TaxonomyInterest interest;
   final bool isSelected;
+  final String locale;
   final VoidCallback onTap;
 
   const _InterestTile({
     required this.interest,
     required this.isSelected,
+    required this.locale,
     required this.onTap,
   });
 
@@ -256,16 +238,15 @@ class _InterestTile extends StatelessWidget {
               ),
               clipBehavior: Clip.antiAlias,
               child: Stack(
+                fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    interest.imageUrl,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
+                  InterestImage(
+                    storagePath: interest.imageUrl,
+                    borderRadius: BorderRadius.zero,
                   ),
                   if (isSelected)
                     Container(
-                      color:
-                          theme.colorScheme.primary.withValues(alpha: 0.2),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
                     ),
                 ],
               ),
@@ -273,10 +254,13 @@ class _InterestTile extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            interest.tag,
+            interest.label(locale),
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w700,
             ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
@@ -284,42 +268,68 @@ class _InterestTile extends StatelessWidget {
   }
 }
 
-class _ContinueButton extends StatelessWidget {
-  final bool canContinue;
-  final bool isSaving;
-  final int selectedCount;
-  final VoidCallback onPressed;
+// ============================================================================
+// Continue Button
+// ============================================================================
 
-  const _ContinueButton({
-    required this.canContinue,
-    required this.isSaving,
-    required this.selectedCount,
-    required this.onPressed,
-  });
+class _ContinueButton extends ConsumerWidget {
+  final VoidCallback onPressed;
+  const _ContinueButton({required this.onPressed});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final prefsState = ref.watch(preferencesNotifierProvider);
 
     return SizedBox(
       height: 55,
       child: ElevatedButton(
-        onPressed: canContinue ? onPressed : null,
+        onPressed: prefsState.canContinue ? onPressed : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: theme.colorScheme.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
           ),
         ),
-        child: isSaving
+        child: prefsState.isSaving
             ? const CircularProgressIndicator(color: Colors.white)
             : Text(
-                selectedCount == 0 ? 'اختر اهتمام' : 'متابعة',
+                prefsState.selectedIds.isEmpty ? 'اختر اهتمام' : 'متابعة',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
+      ),
+    );
+  }
+}
+
+// ============================================================================
+// Error View
+// ============================================================================
+
+class _ErrorView extends StatelessWidget {
+  final String message;
+  final VoidCallback onRetry;
+
+  const _ErrorView({required this.message, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.error_outline, size: 48, color: Colors.grey.shade400),
+          const SizedBox(height: 12),
+          Text(message),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: onRetry,
+            child: const Text('إعادة المحاولة'),
+          ),
+        ],
       ),
     );
   }
