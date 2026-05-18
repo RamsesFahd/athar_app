@@ -931,7 +931,7 @@ export const onBookingStatusChanged = onDocumentUpdated(
     const touristId: string = after.touristId ?? "";
     if (!touristId) return;
 
-    if (after.status === "accepted") {
+    if (after.status === "approved") {
       await notify(touristId, "booking_approved");
     } else if (after.status === "cancelled" || after.status === "rejected") {
       await notify(touristId, "booking_cancelled");

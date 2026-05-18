@@ -93,10 +93,10 @@ void main() {
       final original = makeBooking();
 
       // Act
-      final updated = original.copyWith(status: BookingStatus.accepted);
+      final updated = original.copyWith(status: BookingStatus.approved);
 
       // Assert — status changed
-      expect(updated.status, BookingStatus.accepted);
+      expect(updated.status, BookingStatus.approved);
       // Assert — all other fields unchanged
       expect(updated.bookingId, original.bookingId);
       expect(updated.touristId, original.touristId);

@@ -167,7 +167,7 @@ class _StatusBadge extends StatelessWidget {
     Color color;
     String label;
     switch (status) {
-      case BookingStatus.accepted:
+      case BookingStatus.approved:
         color = Colors.green;
         label = 'Accepted';
       case BookingStatus.completed:

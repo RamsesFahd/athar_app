@@ -115,24 +115,21 @@ Future<void> updateBookingStatus(
   }
 }
 
-  /// 7b. قبول الحجز مع حفظ بيانات المرشد للتواصل
-Future<void> acceptBooking(
-  String bookingId,
-  String tutorPhone,
-  String tutorName,
-  String touristId,
-) async {
-  await _bookings.doc(bookingId).update({
-    'status': BookingStatus.accepted.name,
-    'tutorPhone': tutorPhone,
-    'tutorName': tutorName,
-  });
+  /// 7b. قبول الحجز — معلومات التواصل تُقرأ live من user document
+  Future<void> acceptBooking(
+    String bookingId,
+    String touristId,
+  ) async {
+    await _bookings.doc(bookingId).update({
+      'status': BookingStatus.approved.name,
+      'approvedAt': FieldValue.serverTimestamp(),
+    });
 
-  await NotificationsRepository().addNotification(
-  userId: touristId,
-  type: 'booking_approved',
-);
-}
+    await NotificationsRepository().addNotification(
+      userId: touristId,
+      type: 'booking_approved',
+    );
+  }
 
   // 8. حذف رحلة
   Future<void> deleteTrip(String tripId) async {

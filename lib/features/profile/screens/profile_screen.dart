@@ -399,7 +399,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Color _statusColor(BookingStatus status, ThemeData theme) {
   switch (status) {
-    case BookingStatus.accepted:
+    case BookingStatus.approved:
       return Colors.green;
     case BookingStatus.rejected:
       return Colors.red;
@@ -414,7 +414,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
 String _statusLabel(BookingStatus status, AppLocalizations l10n) {
   switch (status) {
-    case BookingStatus.accepted:
+    case BookingStatus.approved:
       return l10n.booking_status_accepted;
     case BookingStatus.rejected:
       return l10n.booking_status_rejected;
@@ -613,8 +613,6 @@ Widget _buildBookingItem(
                       .read(marketplaceRepositoryProvider)
                       .acceptBooking(
                         b.bookingId,
-                        user.phoneNumber ?? '',
-                        user.fullName,
                         b.touristId,
                       ),
                   child: Text(l10n.accept_booking),
@@ -1076,7 +1074,7 @@ border: Border.all(
 
     final hasActive = bookings.any((b) =>
         b.status == BookingStatus.pending ||
-        b.status == BookingStatus.accepted);
+        b.status == BookingStatus.approved);
 
     if (hasActive) {
       if (!context.mounted) return;

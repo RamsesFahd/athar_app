@@ -16,7 +16,7 @@ class BookingViewScreen extends ConsumerWidget {
 
   Color _statusColor(BookingStatus status, ThemeData theme) {
   switch (status) {
-    case BookingStatus.accepted:
+    case BookingStatus.approved:
       return Colors.green;
     case BookingStatus.rejected:
       return Colors.red;
@@ -31,7 +31,7 @@ class BookingViewScreen extends ConsumerWidget {
 
 String _statusLabel(BookingStatus status, bool isAr) {
   switch (status) {
-    case BookingStatus.accepted:
+    case BookingStatus.approved:
       return isAr ? 'مقبول' : 'Accepted';
     case BookingStatus.rejected:
       return isAr ? 'مرفوض' : 'Rejected';
@@ -46,7 +46,7 @@ String _statusLabel(BookingStatus status, bool isAr) {
 
 String _statusMessage(BookingStatus status, bool isAr) {
   switch (status) {
-    case BookingStatus.accepted:
+    case BookingStatus.approved:
       return isAr
           ? 'تم قبول الحجز. يمكنك الآن مراجعة التفاصيل والمتابعة مع مزود الرحلة.'
           : 'Your booking has been accepted. You can now review the details and follow up with the trip provider.';
@@ -361,7 +361,7 @@ String _statusMessage(BookingStatus status, bool isAr) {
             ),
           ),
 
-          if (booking.status == BookingStatus.accepted) ...[
+          if (booking.status == BookingStatus.approved) ...[
             const SizedBox(height: 18),
             Text(
               isAr ? 'معلومات التواصل' : 'Contact Information',

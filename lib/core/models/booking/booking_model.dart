@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum BookingStatus { pending, accepted, rejected, cancelled, completed }
+enum BookingStatus { pending, approved, rejected, cancelled, completed }
 
 class BookingModel {
   final String bookingId;
@@ -19,7 +19,9 @@ class BookingModel {
   final BookingStatus status;
   final DateTime createdAt;
   final String imageUrl;
+  @Deprecated('Read live from users collection — see booking_view_screen')
   final String? tutorPhone;
+  @Deprecated('Read live from users collection — see booking_view_screen')
   final String? tutorName;
 
   BookingModel({

@@ -52,6 +52,11 @@ class TripModel {
   final DateTime? startDate;
   final DateTime? endDate;
 
+  /// Remaining bookable slots. Decremented by Cloud Function on each confirmed
+  /// booking; restored on cancellation or rejection. Defaults to maxCapacity
+  /// when the trip is first created.
+  final int? availableSeats;
+
   TripModel({
     required this.id,
     required this.titleAr,
@@ -69,7 +74,7 @@ class TripModel {
     required this.shortDescriptionAr,
     required this.shortDescriptionEn,
     this.tutorId,
-    this.status = 'approved',
+    this.status = 'pending',
     this.tutorType = 'individual',
     this.accessibilityFeatures = const [],
     this.guideBio,
@@ -85,7 +90,8 @@ class TripModel {
     this.tripDurationDays,
     this.startDate,
     this.endDate,
-  });
+    int? availableSeats,
+  }) : availableSeats = availableSeats ?? maxCapacity;
 
   // ── Schedule helpers ──────────────────────────────────────────────────────
 
@@ -145,7 +151,7 @@ class TripModel {
       shortDescriptionAr: map['shortDescriptionAr'] ?? '',
       shortDescriptionEn: map['shortDescriptionEn'] ?? '',
       tutorId: map['tutorId'],
-      status: map['status'] ?? 'approved',
+      status: map['status'] ?? 'pending',
       tutorType: map['tutorType'] ?? 'individual',
       accessibilityFeatures:
           List<String>.from(map['accessibilityFeatures'] ?? []),
@@ -166,6 +172,7 @@ class TripModel {
       tripDurationDays: map['tripDurationDays'] as int?,
       startDate: (map['startDate'] as Timestamp?)?.toDate(),
       endDate: (map['endDate'] as Timestamp?)?.toDate(),
+      availableSeats: map['availableSeats'] as int?,
     );
   }
 
@@ -201,6 +208,7 @@ class TripModel {
       'tripDurationDays': tripDurationDays,
       'startDate': startDate != null ? Timestamp.fromDate(startDate!) : null,
       'endDate': endDate != null ? Timestamp.fromDate(endDate!) : null,
+      'availableSeats': availableSeats,
     };
   }
 }
