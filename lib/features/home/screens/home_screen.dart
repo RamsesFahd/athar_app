@@ -125,7 +125,7 @@ class _YouMayLikeSection extends ConsumerWidget {
             final recommended = interests.isNotEmpty
                 ? all
                     .where(
-                        (a) => a.tags.any((t) => interests.contains(t)))
+                        (a) => a.interestIds.any((t) => interests.contains(t)))
                     .take(4)
                     .toList()
                 : <AttractionModel>[];

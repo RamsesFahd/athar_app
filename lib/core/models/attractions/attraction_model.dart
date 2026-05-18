@@ -13,7 +13,11 @@ class AttractionModel {
   final Map<String, String> description;
   final String category;
   final String categoryColorCode;
-  final List<String> tags;
+  // NEW: replaces `tags`. Holds IDs from /taxonomy collection (e.g., 'heritage_sites').
+  final List<String> interestIds;
+  // NEW: 768-dim semantic vector from Gemini text-embedding-004.
+  // Used for Rawi's semantic search and future "similar items" features.
+  final List<double> embedding;
   final String mainImage;
   final List<String> gallery;
   final String? videoUrl;
@@ -32,7 +36,8 @@ class AttractionModel {
     required this.description,
     required this.category,
     required this.categoryColorCode,
-    required this.tags,
+    this.interestIds = const [],
+    this.embedding = const [],
     required this.mainImage,
     required this.gallery,
     this.videoUrl,
@@ -60,11 +65,8 @@ class AttractionModel {
   }
 
   String getName(bool isAr) => localizedText(name, isAr);
-
   String getDescription(bool isAr) => localizedText(description, isAr);
-
   String getCity(bool isAr) => localizedText(city, isAr);
-
   String getOpeningHours(bool isAr) => localizedText(openingHours, isAr);
 
   bool get isValidCategory => allowedCategories.contains(category);
@@ -75,7 +77,10 @@ class AttractionModel {
       'description': description,
       'category': category,
       'categoryColorCode': categoryColorCode,
-      'tags': tags,
+      'interestIds': interestIds,
+      // embedding is intentionally excluded from manual saves — it's only
+      // written by the Cloud Function. Skipping it here avoids overwriting
+      // a valid embedding with an empty list during manual updates.
       'mainImage': mainImage,
       'gallery': gallery,
       'videoUrl': videoUrl,
@@ -105,9 +110,12 @@ class AttractionModel {
       description: _stringMap(map['description']),
       category: (map['category'] ?? '').toString(),
       categoryColorCode: (map['categoryColorCode'] ?? '#344235').toString(),
-      tags: (map['tags'] as List<dynamic>? ?? const [])
-          .map((tag) => tag.toString())
-          .where((tag) => tag.trim().isNotEmpty)
+      interestIds: (map['interestIds'] as List<dynamic>? ?? const [])
+          .map((id) => id.toString())
+          .where((id) => id.trim().isNotEmpty)
+          .toList(),
+      embedding: (map['embedding'] as List<dynamic>? ?? const [])
+          .map((v) => (v as num).toDouble())
           .toList(),
       mainImage: (map['mainImage'] ?? '').toString(),
       gallery: (map['gallery'] as List<dynamic>? ?? const [])
@@ -136,7 +144,6 @@ class AttractionModel {
     return const <String, String>{};
   }
 
-  // Handles legacy String values (old docs) and new nested Map values
   static Map<String, String> _cityMap(dynamic raw) {
     if (raw is Map) {
       return raw.map((key, value) => MapEntry(
@@ -144,7 +151,6 @@ class AttractionModel {
             value?.toString() ?? '',
           ));
     }
-    // Legacy: single string stored as-is — keep it for both languages
     final s = raw?.toString() ?? '';
     return {'ar': s, 'en': s};
   }

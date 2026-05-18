@@ -16,54 +16,7 @@ class AttractionsAdminScreen extends ConsumerStatefulWidget {
 
 class _AttractionsAdminScreenState
     extends ConsumerState<AttractionsAdminScreen> {
-  bool _isBackfilling = false;
 
-  Future<void> _confirmBackfill() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Tag All Untagged Attractions'),
-        content: const Text(
-          'This will call Gemini for every attraction that has no tags. '
-          'It may take a moment. Continue?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Tag All'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed != true || !mounted) return;
-
-    setState(() => _isBackfilling = true);
-    try {
-      final count =
-          await ref.read(adminRepositoryProvider).backfillAttractionTags();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Tagged $count attraction${count == 1 ? '' : 's'} successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isBackfilling = false);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,27 +41,7 @@ class _AttractionsAdminScreenState
             );
           },
         ),
-        Positioned(
-          bottom: 24,
-          left: 16,
-          child: Tooltip(
-            message: 'Tag all untagged attractions with AI',
-            child: FloatingActionButton.small(
-              heroTag: 'backfill_tags',
-              onPressed: _isBackfilling ? null : _confirmBackfill,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.85),
-              foregroundColor: Colors.white,
-              child: _isBackfilling
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: Colors.white),
-                    )
-                  : const Icon(Icons.local_offer_outlined, size: 18),
-            ),
-          ),
-        ),
+
         Positioned(
           bottom: 24,
           right: 16,

@@ -176,10 +176,18 @@ class AdminRepository {
     await _attractions.doc(attractionId).delete();
   }
 
-  Future<int> backfillAttractionTags() async {
-    final callable = FirebaseFunctions.instance.httpsCallable('backfillAttractionTags');
-    final result = await callable.call<Map<String, dynamic>>();
-    return (result.data['processed'] as int?) ?? 0;
+  Future<Map<String, int>> migrateAllContent({String collection = 'all'}) async {
+    final callable = FirebaseFunctions.instance.httpsCallable(
+      'migrateAllContent',
+      options: HttpsCallableOptions(timeout: const Duration(minutes: 9)),
+    );
+    final result = await callable.call<Map<String, dynamic>>({
+      'collection': collection,
+    });
+
+    // Convert dynamic counts to int
+    final raw = result.data;
+    return raw.map((key, value) => MapEntry(key, (value as num).toInt()));
   }
 
   // ── Events ───────────────────────────────────────────────────────────────────
