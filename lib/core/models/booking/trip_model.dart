@@ -20,6 +20,7 @@ class TripModel {
   final String status; // 'pending' | 'approved' | 'rejected'
   final String tutorType; // 'individual' | 'company'
   final List<String> accessibilityFeatures;
+  final List<String> interestIds;
 
   // ── Guide snapshot ────────────────────────────────────────────────────────
   final String? guideBio;
@@ -76,6 +77,7 @@ class TripModel {
     this.guideRating,
     this.guideReviewsCount,
     this.tripLanguages,
+    this.interestIds = const [],
     this.allowsKids = false,
     this.maxCapacity,
     this.startTime,
@@ -147,6 +149,7 @@ class TripModel {
       tutorType: map['tutorType'] ?? 'individual',
       accessibilityFeatures:
           List<String>.from(map['accessibilityFeatures'] ?? []),
+      interestIds: List<String>.from(map['interestIds'] ?? []),
       guideBio: map['guideBio'] as String?,
       guideLanguages: (map['guideLanguages'] as List<dynamic>?)
           ?.map((e) => e as String)

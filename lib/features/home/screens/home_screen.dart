@@ -9,6 +9,9 @@ import 'package:athar_app/features/cultural_archive/widgets/cultural_item_detail
 import 'package:athar_app/features/home/widgets/explore_heritage_home_card.dart';
 import 'package:athar_app/features/home/widgets/home_hero_slider.dart';
 import 'package:athar_app/core/models/attractions/attraction_model.dart';
+import 'package:athar_app/core/models/booking/trip_model.dart';
+import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
+import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/features/attractions/logic/attractions_repository.dart';
 import 'package:athar_app/features/attractions/screens/attractions_list_screen.dart';
 import 'package:athar_app/features/attractions/screens/attraction_details_screen.dart';
@@ -16,7 +19,8 @@ import 'package:athar_app/features/guide_market/logic/marketplace_repository.dar
 import 'package:athar_app/features/guide_market/screens/trips_list_screen.dart';
 import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
 import 'package:athar_app/features/events/logic/events_repository.dart';
-import 'package:athar_app/core/models/events/event_model.dart';
+import 'package:athar_app/features/home/logic/recommendations_repository.dart';
+import 'package:athar_app/features/home/models/recommended_item.dart';
 
 // PERFORMANCE OPTIMIZATION: HomeScreen converted from ConsumerWidget to
 // StatelessWidget. Each carousel section is now its own ConsumerWidget so
@@ -73,7 +77,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               const HomeHeroSlider(),
               const SizedBox(height: _sectionGap),
-              const _YouMayLikeSection(),
+              _YouMayLikeSection(onEventTap: onEventTap),
               const SizedBox(height: _sectionGap),
               _HeritageSection(onSeeAll: onSeeAllArchive),
               const SizedBox(height: _sectionGap),
@@ -97,7 +101,9 @@ class HomeScreen extends StatelessWidget {
 // other user field update (e.g. profile picture).
 
 class _YouMayLikeSection extends ConsumerWidget {
-  const _YouMayLikeSection();
+  final void Function(EventModel event)? onEventTap;
+
+  const _YouMayLikeSection({this.onEventTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -108,56 +114,33 @@ class _YouMayLikeSection extends ConsumerWidget {
       authNotifierProvider.select((async) {
         final user = async.valueOrNull;
         return user is TouristModel
-            ? (user.culturalInterests ?? const <String>[])
+            ? user.culturalInterests
             : const <String>[];
       }),
     );
 
-    final attractionsAsync = ref.watch(attractionsStreamProvider);
+    final recommendationsAsync = ref.watch(homeRecommendationsProvider(interests));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _SectionHeader(title: l10n.homeYouMayLikeTitle, onTap: null),
         const SizedBox(height: HomeScreen._headerToContent),
-        attractionsAsync.when(
-          data: (all) {
-            final recommended = interests.isNotEmpty
-                ? all
-                    .where(
-                        (a) => a.interestIds.any((t) => interests.contains(t)))
-                    .take(4)
-                    .toList()
-                : <AttractionModel>[];
-            final items =
-                recommended.isNotEmpty ? recommended : all.take(4).toList();
-
+        recommendationsAsync.when(
+          data: (items) {
             if (items.isEmpty) return const SizedBox.shrink();
 
             return SizedBox(
               height: HomeScreen._homeCardListHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: HomeScreen._pageH),
+                padding: const EdgeInsets.symmetric(horizontal: HomeScreen._pageH),
                 itemCount: items.length,
                 itemBuilder: (context, index) {
-                  final a = items[index];
+                  final item = items[index];
                   return Padding(
                     padding: const EdgeInsetsDirectional.only(end: 14),
-                    child: ExploreHeritageHomeCard(
-                      title: a.getName(isAr),
-                      image: a.mainImage,
-                      categoryLabel: a.category,
-                      locationLabel: a.getCity(isAr),
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              AttractionDetailsScreen(attraction: a),
-                        ),
-                      ),
-                    ),
+                    child: _buildCard(context, item, isAr),
                   );
                 },
               ),
@@ -171,6 +154,59 @@ class _YouMayLikeSection extends ConsumerWidget {
         ),
       ],
     );
+  }
+
+  Widget _buildCard(BuildContext context, RecommendedItem item, bool isAr) {
+    final title = isAr ? item.titleAr : item.titleEn;
+    final image = item.imageUrl ?? '';
+
+    switch (item.type) {
+      case RecommendedItemType.attraction:
+        final a = item.source as AttractionModel;
+        return ExploreHeritageHomeCard(
+          title: title,
+          image: image,
+          categoryLabel: a.category,
+          locationLabel: a.getCity(isAr),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => AttractionDetailsScreen(attraction: a)),
+          ),
+        );
+      case RecommendedItemType.trip:
+        final t = item.source as TripModel;
+        return ExploreHeritageHomeCard(
+          title: title,
+          image: image,
+          categoryLabel: t.price,
+          locationLabel: t.getCity(isAr),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => TripDetailsScreen(trip: t)),
+          ),
+        );
+      case RecommendedItemType.event:
+        final e = item.source as EventModel;
+        return ExploreHeritageHomeCard(
+          title: title,
+          image: image,
+          categoryLabel: isAr ? e.eventType.labelAr : e.eventType.labelEn,
+          locationLabel: e.getRegion(isAr),
+          onTap: () => onEventTap?.call(e),
+        );
+      case RecommendedItemType.culturalItem:
+        final c = item.source as CulturalItemModel;
+        return ExploreHeritageHomeCard(
+          title: title,
+          image: image,
+          categoryLabel: HomeScreen._translateCategory(c.categoryId, AppLocalizations.of(context)),
+          locationLabel: isAr ? c.regionAr : c.regionEn,
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => CulturalItemDetails(item: c)),
+          ),
+        );
+    }
   }
 }
 

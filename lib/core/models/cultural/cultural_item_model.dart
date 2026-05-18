@@ -18,6 +18,7 @@ class CulturalItemModel {
   final bool isContribution;
   final String? contributorId;
   final String? contributorName;
+  final List<String> interestIds;
 
   CulturalItemModel({
     required this.id,
@@ -37,6 +38,7 @@ class CulturalItemModel {
     this.isContribution = false,
     this.contributorId,
     this.contributorName,
+    this.interestIds = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -81,6 +83,7 @@ class CulturalItemModel {
       isContribution: map['isContribution'] as bool? ?? false,
       contributorId: map['contributorId'] as String?,
       contributorName: map['contributorName'] as String?,
+      interestIds: List<String>.from(map['interestIds'] ?? []),
     );
   }
 }

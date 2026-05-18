@@ -86,6 +86,7 @@ class EventModel {
   final DateTime? endDate;
   final DateTime? createdAt;
   final String? createdBy;
+  final List<String> interestIds;
 
   EventModel({
     required this.id,
@@ -109,6 +110,7 @@ class EventModel {
     this.endDate,
     this.createdAt,
     this.createdBy,
+    this.interestIds = const [],
   });
 
   String getTitle(bool isAr) => isAr ? titleAr : titleEn;
@@ -170,6 +172,7 @@ class EventModel {
           ? (map['createdAt'] as Timestamp).toDate()
           : null,
       createdBy: map['createdBy'] ?? 'Admin',
+      interestIds: List<String>.from(map['interestIds'] ?? []),
     );
   }
 }
