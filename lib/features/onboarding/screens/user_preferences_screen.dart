@@ -14,6 +14,7 @@
 //   ✅ Added: bilingual labels (Arabic by default, English when locale is en)
 //   ✅ Added: uses PreferencesNotifier for state management
 //   ✅ Added: graceful loading and error states
+//   ✅ Added: isEditMode param for editing interests from profile screen
 // ============================================================================
 
 import 'package:flutter/material.dart';
@@ -24,11 +25,42 @@ import 'package:athar_app/core/widgets/interest_image_widget.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/onboarding/logic/preferences_notifier.dart';
 
-class UserPreferencesScreen extends ConsumerWidget {
-  const UserPreferencesScreen({super.key});
+class UserPreferencesScreen extends ConsumerStatefulWidget {
+  /// When true, the screen operates in edit mode:
+  /// pre-fills selection, shows "حفظ التغييرات", and pops on success.
+  final bool isEditMode;
+
+  /// The user's current interests — used to pre-fill selection in edit mode.
+  final List<String> initialInterests;
+
+  const UserPreferencesScreen({
+    super.key,
+    this.isEditMode = false,
+    this.initialInterests = const [],
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UserPreferencesScreen> createState() =>
+      _UserPreferencesScreenState();
+}
+
+class _UserPreferencesScreenState
+    extends ConsumerState<UserPreferencesScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEditMode && widget.initialInterests.isNotEmpty) {
+      // Pre-fill the selection after the first frame so the provider is ready.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(preferencesNotifierProvider.notifier)
+            .initializeWith(widget.initialInterests);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final taxonomyAsync = ref.watch(taxonomyProvider);
     final prefsState = ref.watch(preferencesNotifierProvider);
     final theme = Theme.of(context);
@@ -44,7 +76,8 @@ class UserPreferencesScreen extends ConsumerWidget {
                 Expanded(
                   child: taxonomyAsync.when(
                     data: (interests) => _InterestsGrid(interests: interests),
-                    loading: () => const Center(child: CircularProgressIndicator()),
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
                     error: (err, _) => _ErrorView(
                       message: 'تعذر تحميل الاهتمامات',
                       onRetry: () => ref.invalidate(taxonomyProvider),
@@ -80,7 +113,8 @@ class UserPreferencesScreen extends ConsumerWidget {
               right: 22,
               bottom: 20,
               child: _ContinueButton(
-                onPressed: () => _handleSave(context, ref),
+                isEditMode: widget.isEditMode,
+                onPressed: () => _handleSave(context),
               ),
             ),
           ],
@@ -89,7 +123,7 @@ class UserPreferencesScreen extends ConsumerWidget {
     );
   }
 
-  Future<void> _handleSave(BuildContext context, WidgetRef ref) async {
+  Future<void> _handleSave(BuildContext context) async {
     final user = await ref.read(authNotifierProvider.future);
     if (user == null) return;
 
@@ -100,8 +134,19 @@ class UserPreferencesScreen extends ConsumerWidget {
     if (!context.mounted) return;
 
     if (success) {
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
       ref.invalidate(authNotifierProvider);
+
+      if (widget.isEditMode) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تم حفظ اهتماماتك بنجاح'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
+      }
     }
   }
 }
@@ -269,17 +314,31 @@ class _InterestTile extends StatelessWidget {
 }
 
 // ============================================================================
-// Continue Button
+// Continue / Save Button
 // ============================================================================
 
 class _ContinueButton extends ConsumerWidget {
+  final bool isEditMode;
   final VoidCallback onPressed;
-  const _ContinueButton({required this.onPressed});
+
+  const _ContinueButton({
+    required this.isEditMode,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final prefsState = ref.watch(preferencesNotifierProvider);
+
+    String label;
+    if (prefsState.selectedIds.isEmpty) {
+      label = 'اختر اهتمام';
+    } else if (isEditMode) {
+      label = 'حفظ التغييرات';
+    } else {
+      label = 'متابعة';
+    }
 
     return SizedBox(
       height: 55,
@@ -294,7 +353,7 @@ class _ContinueButton extends ConsumerWidget {
         child: prefsState.isSaving
             ? const CircularProgressIndicator(color: Colors.white)
             : Text(
-                prefsState.selectedIds.isEmpty ? 'اختر اهتمام' : 'متابعة',
+                label,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,

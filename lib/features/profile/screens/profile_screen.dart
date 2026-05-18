@@ -19,6 +19,7 @@ import '../widgets/guest_profile_view.dart';
 import '../widgets/tourist_profile.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/features/contributions/screens/contributions_achievements_screen.dart';
+import 'package:athar_app/features/onboarding/screens/user_preferences_screen.dart';
 import 'package:athar_app/core/models/favorites/favorite_item_model.dart';
 import 'package:athar_app/features/profile/logic/favorites_notifier.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_repository.dart';
@@ -278,7 +279,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           SettingsTile(
                             title: l10n.myInterests,
                             leadingIcon: Icons.favorite_border_rounded,
-                            onTap: () {},
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => UserPreferencesScreen(
+                                  isEditMode: true,
+                                  initialInterests:
+                                      user.culturalInterests,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                         SettingsTile(
