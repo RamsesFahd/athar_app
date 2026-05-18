@@ -50,6 +50,10 @@ class AdminRepository {
       'verificationActionAt': Timestamp.now(),
       'rejectionReason': null,
     });
+    await NotificationsRepository().addNotification(
+      userId: uId,
+      type: 'guide_verified',
+    );
   }
 
   Future<void> rejectTutor(
@@ -79,12 +83,20 @@ class AdminRepository {
             .toList());
   }
 
-  Future<void> approveTrip(String tripId) async {
+  Future<void> approveTrip(String tripId, {required String tutorId}) async {
     await _trips.doc(tripId).update({'status': 'approved'});
+    await NotificationsRepository().addNotification(
+      userId: tutorId,
+      type: 'trip_approved',
+    );
   }
 
-  Future<void> rejectTrip(String tripId) async {
+  Future<void> rejectTrip(String tripId, {required String tutorId}) async {
     await _trips.doc(tripId).update({'status': 'rejected'});
+    await NotificationsRepository().addNotification(
+      userId: tutorId,
+      type: 'trip_rejected',
+    );
   }
 
   // ── Users Management ────────────────────────────────────────────────────────
@@ -299,7 +311,8 @@ class AdminRepository {
    await NotificationsRepository().addNotification(
   userId: touristId,
   type: 'contribution_rejected',
-  body: reason,
+  bodyOverrideAr: reason,
+  bodyOverrideEn: reason,
 );
   }
 }

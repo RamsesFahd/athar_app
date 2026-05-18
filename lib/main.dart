@@ -9,8 +9,10 @@ import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-// استيراد نظام المسارات
 import 'package:athar_app/core/navigation/app_routes.dart';
+import 'package:athar_app/core/services/notification_service.dart';
+
+final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +22,6 @@ void main() async {
   PaintingBinding.instance.imageCache.maximumSizeBytes = 100 << 20;
 
   await dotenv.load(fileName: ".env");
-  // تهيئة Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -30,6 +31,9 @@ void main() async {
       appVerificationDisabledForTesting: true,
     );
   }
+
+  NotificationService.navigatorKey = navigatorKey;
+  await NotificationService.instance.init();
 
   runApp(
     const ProviderScope(
@@ -55,6 +59,7 @@ class AtharApp extends ConsumerWidget {
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
 
+      navigatorKey: navigatorKey,
       initialRoute: AppRoutes.splash,
 
       routes: AppRoutes.getRoutes(),

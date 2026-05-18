@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/contribution/contribution_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
 
 part 'contribution_repository.g.dart';
 
@@ -130,6 +131,19 @@ class ContributionRepository {
       'adminName': null,
       'reviewedAt': null,
     });
+
+    // Notify all admins that a new contribution needs review.
+    final adminSnap = await _firestore
+        .collection('users')
+        .where('role', isEqualTo: UserRole.admin.name)
+        .get();
+    final notifRepo = NotificationsRepository();
+    for (final doc in adminSnap.docs) {
+      await notifRepo.addNotification(
+        userId: doc.id,
+        type: 'contribution_submitted',
+      );
+    }
   }
 
   Stream<List<ContributionModel>> getTouristContributions(String touristId) {

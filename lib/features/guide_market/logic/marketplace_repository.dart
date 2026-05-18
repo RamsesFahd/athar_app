@@ -43,14 +43,30 @@ class MarketplaceRepository {
         .toList();
   }
 
-  // 3. حفظ الحجز الجديد في Firestore [cite: 110]
+  // 3. حفظ الحجز الجديد في Firestore
   Future<void> createBooking(BookingModel booking) async {
     await _bookings.doc(booking.bookingId).set(booking.toMap());
+    // Notify the guide that a tourist has booked their trip.
+    await NotificationsRepository().addNotification(
+      userId: booking.tutorId,
+      type: 'booking_new',
+    );
   }
 
   // 5. تقديم رحلة جديدة من قِبل المرشد (تُحفظ بحالة pending حتى يوافق الأدمن)
   Future<void> submitTrip(TripModel trip) async {
     await _trips.doc(trip.id).set(trip.toMap());
+    // Notify all admins that a new trip is pending review.
+    final adminSnap = await _users
+        .where('role', isEqualTo: UserRole.admin.name)
+        .get();
+    final repo = NotificationsRepository();
+    for (final doc in adminSnap.docs) {
+      await repo.addNotification(
+        userId: doc.id,
+        type: 'trip_submitted',
+      );
+    }
   }
 
   // 6. جلب رحلات مرشد معين

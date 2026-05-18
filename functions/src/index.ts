@@ -1,9 +1,10 @@
 import { initializeApp } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { getMessaging } from "firebase-admin/messaging";
 import { onDocumentCreated, onDocumentUpdated } from "firebase-functions/v2/firestore";
 import { onCall, HttpsError } from "firebase-functions/v2/https";
 import { logger } from "firebase-functions";
-import { GoogleGenerativeAI } from "@google/generative-ai"; // رجعنا للمكتبة المثبتة عندك عشان يختفي الأيرور ✅
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 initializeApp();
 const db = getFirestore();
@@ -631,5 +632,356 @@ export const inspectDocumentShapes = onCall(
 
     logger.info("[inspect] Document shapes:", JSON.stringify(samples, null, 2));
     return { samples };
+  }
+);
+
+// =====================================================
+// NOTIFICATIONS — FCM Push + Firestore In-App (dual-layer)
+// =====================================================
+
+interface BilingualText {
+  ar: string;
+  en: string;
+}
+
+interface NotificationPayload {
+  type: string;
+  title: BilingualText;
+  body: BilingualText;
+}
+
+const NOTIFICATION_COPY: Record<string, NotificationPayload> = {
+  contribution_submitted: {
+    type: "contribution_submitted",
+    title: { ar: "مساهمة جديدة بانتظار المراجعة", en: "New Contribution Awaiting Review" },
+    body:  { ar: "قدّم سائح مساهمة جديدة تحتاج للمراجعة.", en: "A tourist submitted a contribution for review." },
+  },
+  contribution_approved: {
+    type: "contribution_approved",
+    title: { ar: "تم قبول المساهمة", en: "Contribution Approved" },
+    body:  { ar: "تم قبول مساهمتك بنجاح وإضافة النقاط لحسابك.", en: "Your contribution was approved and points have been added." },
+  },
+  contribution_rejected: {
+    type: "contribution_rejected",
+    title: { ar: "تم رفض المساهمة", en: "Contribution Rejected" },
+    body:  { ar: "تم رفض مساهمتك. يرجى مراجعة السبب.", en: "Your contribution was rejected. Please review the reason." },
+  },
+  trip_submitted: {
+    type: "trip_submitted",
+    title: { ar: "رحلة جديدة بانتظار المراجعة", en: "New Trip Awaiting Review" },
+    body:  { ar: "قام مرشد بتقديم رحلة جديدة تحتاج للمراجعة.", en: "A guide submitted a new trip for review." },
+  },
+  trip_approved: {
+    type: "trip_approved",
+    title: { ar: "تم قبول رحلتك", en: "Trip Approved" },
+    body:  { ar: "تهانينا! رحلتك متاحة الآن للحجز.", en: "Congratulations! Your trip is now open for bookings." },
+  },
+  trip_rejected: {
+    type: "trip_rejected",
+    title: { ar: "تم رفض رحلتك", en: "Trip Rejected" },
+    body:  { ar: "تم رفض رحلتك. يرجى مراجعة التفاصيل.", en: "Your trip was rejected. Please review the details." },
+  },
+  booking_new: {
+    type: "booking_new",
+    title: { ar: "حجز جديد", en: "New Booking" },
+    body:  { ar: "لديك حجز جديد من سائح. تحقق من التفاصيل.", en: "A tourist booked your trip. Review the details." },
+  },
+  booking_approved: {
+    type: "booking_approved",
+    title: { ar: "تم قبول الحجز", en: "Booking Approved" },
+    body:  { ar: "تم قبول حجزك بنجاح. استعد لرحلتك!", en: "Your booking is confirmed. Get ready for your trip!" },
+  },
+  booking_cancelled: {
+    type: "booking_cancelled",
+    title: { ar: "تم إلغاء الحجز", en: "Booking Cancelled" },
+    body:  { ar: "تم إلغاء حجزك.", en: "Your booking has been cancelled." },
+  },
+  guide_verified: {
+    type: "guide_verified",
+    title: { ar: "تم توثيق حسابك", en: "Account Verified" },
+    body:  { ar: "تهانينا! تم توثيق حسابك كمرشد سياحي معتمد.", en: "Congratulations! Your guide account has been verified." },
+  },
+  points_awarded: {
+    type: "points_awarded",
+    title: { ar: "نقاط إضافية", en: "Bonus Points Awarded" },
+    body:  { ar: "تم منحك نقاطاً إضافية من الإدارة.", en: "The admin has awarded you bonus points." },
+  },
+};
+
+/**
+ * Writes one Firestore in-app notification document under
+ * users/{userId}/notifications/{auto-id}.
+ */
+async function createInAppNotification(
+  userId: string,
+  notif: NotificationPayload,
+  bodyOverride?: BilingualText
+): Promise<void> {
+  await db
+    .collection("users")
+    .doc(userId)
+    .collection("notifications")
+    .add({
+      type: notif.type,
+      title: notif.title,
+      body: bodyOverride ?? notif.body,
+      isRead: false,
+      createdAt: FieldValue.serverTimestamp(),
+    });
+}
+
+/**
+ * Reads the FCM tokens for a user and sends a multicast push message.
+ * Silently ignores users with no tokens (guests, web-only users, etc.).
+ * Removes any tokens reported as invalid by FCM to keep the list clean.
+ */
+async function sendPushToUser(
+  userId: string,
+  notif: NotificationPayload,
+  bodyOverride?: BilingualText
+): Promise<void> {
+  const userSnap = await db.collection("users").doc(userId).get();
+  if (!userSnap.exists) return;
+
+  const tokens: string[] = userSnap.data()?.fcmTokens ?? [];
+  if (tokens.length === 0) return;
+
+  const title = notif.title; // bilingual; FCM will show one string — we use Arabic as primary
+  const body  = bodyOverride ?? notif.body;
+
+  const message: Parameters<ReturnType<typeof getMessaging>["sendEachForMulticast"]>[0] = {
+    tokens,
+    notification: {
+      title: title.ar,   // device system notification text (Arabic primary)
+      body:  body.ar,
+    },
+    data: {
+      type:    notif.type,
+      titleAr: title.ar,
+      titleEn: title.en,
+      bodyAr:  body.ar,
+      bodyEn:  body.en,
+    },
+    android: {
+      notification: {
+        channelId: "athar_high_importance",
+        priority: "high",
+      },
+    },
+    apns: {
+      payload: {
+        aps: { sound: "default", badge: 1 },
+      },
+    },
+  };
+
+  const response = await getMessaging().sendEachForMulticast(message);
+  logger.info(`[FCM] ${notif.type} → ${userId}: ${response.successCount} ok, ${response.failureCount} failed`);
+
+  // Prune stale tokens reported by FCM.
+  const invalidTokens: string[] = [];
+  response.responses.forEach((res, idx) => {
+    if (!res.success && (
+      res.error?.code === "messaging/registration-token-not-registered" ||
+      res.error?.code === "messaging/invalid-registration-token"
+    )) {
+      invalidTokens.push(tokens[idx]);
+    }
+  });
+  if (invalidTokens.length > 0) {
+    await db.collection("users").doc(userId).update({
+      fcmTokens: FieldValue.arrayRemove(...invalidTokens),
+    });
+    logger.info(`[FCM] Pruned ${invalidTokens.length} stale token(s) for ${userId}`);
+  }
+}
+
+/**
+ * Convenience wrapper: writes Firestore doc AND sends FCM push for one user.
+ */
+async function notify(
+  userId: string,
+  type: string,
+  bodyOverride?: BilingualText
+): Promise<void> {
+  const notif = NOTIFICATION_COPY[type];
+  if (!notif) {
+    logger.warn(`[notify] Unknown notification type: ${type}`);
+    return;
+  }
+  await Promise.all([
+    createInAppNotification(userId, notif, bodyOverride),
+    sendPushToUser(userId, notif, bodyOverride),
+  ]);
+}
+
+/**
+ * Notifies every admin user. Used when a tourist/guide submits content.
+ */
+async function notifyAllAdmins(type: string): Promise<void> {
+  const notif = NOTIFICATION_COPY[type];
+  if (!notif) return;
+
+  const adminSnap = await db
+    .collection("users")
+    .where("role", "==", "admin")
+    .get();
+
+  await Promise.all(
+    adminSnap.docs.map((doc) => notify(doc.id, type))
+  );
+}
+
+// ── Trigger 1: Tourist submits a contribution → notify all admins ──────────
+
+export const onContributionSubmitted = onDocumentCreated(
+  "contributions/{contributionId}",
+  async (event) => {
+    if (!event.data) return;
+    const data = event.data.data();
+    if (data.status !== "pending") return; // only fire for new submissions
+    logger.info(`[notif] New contribution ${event.params.contributionId}`);
+    await notifyAllAdmins("contribution_submitted");
+  }
+);
+
+// ── Trigger 2: Admin approves or rejects a contribution → notify tourist ───
+
+export const onContributionReviewed = onDocumentUpdated(
+  "contributions/{contributionId}",
+  async (event) => {
+    const before = event.data?.before.data();
+    const after  = event.data?.after.data();
+    if (!before || !after) return;
+    if (before.status === after.status) return; // no status change
+
+    const touristId: string = after.touristId;
+    if (!touristId) return;
+
+    if (after.status === "approved") {
+      await notify(touristId, "contribution_approved");
+    } else if (after.status === "rejected") {
+      const reason: string = after.rejectionReason ?? "";
+      const bodyOverride: BilingualText | undefined = reason
+        ? { ar: reason, en: reason }
+        : undefined;
+      await notify(touristId, "contribution_rejected", bodyOverride);
+    }
+  }
+);
+
+// ── Trigger 3: Guide submits a trip → notify all admins ───────────────────
+
+export const onTripSubmitted = onDocumentCreated(
+  "trips/{tripId}",
+  async (event) => {
+    if (!event.data) return;
+    const data = event.data.data();
+    if (data.status !== "pending") return;
+    logger.info(`[notif] New trip submitted ${event.params.tripId}`);
+    await notifyAllAdmins("trip_submitted");
+  }
+);
+
+// ── Trigger 4: Admin approves or rejects a trip → notify guide ────────────
+
+export const onTripReviewed = onDocumentUpdated(
+  "trips/{tripId}",
+  async (event) => {
+    const before = event.data?.before.data();
+    const after  = event.data?.after.data();
+    if (!before || !after) return;
+    if (before.status === after.status) return;
+
+    const tutorId: string = after.tutorId ?? "";
+    if (!tutorId) return;
+
+    if (after.status === "approved") {
+      await notify(tutorId, "trip_approved");
+    } else if (after.status === "rejected") {
+      await notify(tutorId, "trip_rejected");
+    }
+  }
+);
+
+// ── Trigger 5: Tourist books a trip → notify the guide ────────────────────
+
+export const onBookingCreated = onDocumentCreated(
+  "bookings/{bookingId}",
+  async (event) => {
+    if (!event.data) return;
+    const data = event.data.data();
+    const tutorId: string = data.tutorId ?? "";
+    if (!tutorId) return;
+    logger.info(`[notif] New booking ${event.params.bookingId} → guide ${tutorId}`);
+    await notify(tutorId, "booking_new");
+  }
+);
+
+// ── Trigger 6: Guide confirms or rejects a booking → notify tourist ────────
+
+export const onBookingStatusChanged = onDocumentUpdated(
+  "bookings/{bookingId}",
+  async (event) => {
+    const before = event.data?.before.data();
+    const after  = event.data?.after.data();
+    if (!before || !after) return;
+    if (before.status === after.status) return;
+
+    const touristId: string = after.touristId ?? "";
+    if (!touristId) return;
+
+    if (after.status === "accepted") {
+      await notify(touristId, "booking_approved");
+    } else if (after.status === "cancelled" || after.status === "rejected") {
+      await notify(touristId, "booking_cancelled");
+    }
+  }
+);
+
+// ── Trigger 7: Admin verifies a guide account → notify the guide ───────────
+
+export const onGuideVerified = onDocumentUpdated(
+  "users/{userId}",
+  async (event) => {
+    const before = event.data?.before.data();
+    const after  = event.data?.after.data();
+    if (!before || !after) return;
+
+    // Only fire when verificationStatus transitions to "verified"
+    if (
+      before.verificationStatus === after.verificationStatus ||
+      after.verificationStatus !== "verified" ||
+      after.role !== "tutor"
+    ) return;
+
+    logger.info(`[notif] Guide verified: ${event.params.userId}`);
+    await notify(event.params.userId, "guide_verified");
+  }
+);
+
+// ── Trigger 8: Admin awards bonus points → notify the tourist ─────────────
+//
+// The admin writes a `bonusPointsAwardedAt` timestamp field when awarding
+// points. Watching for that field appearing (null → timestamp) is the
+// cleanest signal because the `points` field also increments on every
+// contribution approval.
+
+export const onBonusPointsAwarded = onDocumentUpdated(
+  "users/{userId}",
+  async (event) => {
+    const before = event.data?.before.data();
+    const after  = event.data?.after.data();
+    if (!before || !after) return;
+
+    // Fire only when bonusPointsAwardedAt is newly set by an admin action.
+    if (
+      before.bonusPointsAwardedAt === after.bonusPointsAwardedAt ||
+      !after.bonusPointsAwardedAt ||
+      after.role !== "tourist"
+    ) return;
+
+    logger.info(`[notif] Bonus points awarded to tourist: ${event.params.userId}`);
+    await notify(event.params.userId, "points_awarded");
   }
 );

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:athar_app/core/services/notification_service.dart';
 import 'package:athar_app/features/profile/logic/profile_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/features/auth/logic/auth_repository.dart';
@@ -40,10 +41,13 @@ class AuthNotifier extends _$AuthNotifier {
     state = await AsyncValue.guard(() async {
       final repo = ref.read(authRepositoryProvider);
       final error = await repo.signIn(email: email, password: password);
-      
-      if (error != null) throw error; // throw the error if sign in failed
+      if (error != null) throw error;
 
-      return await _checkAuthStatus(); // return the user data if sign in is successful
+      final user = await _checkAuthStatus();
+      if (user != null) {
+        await NotificationService.instance.registerToken(user.uId);
+      }
+      return user;
     });
   }
 
@@ -73,12 +77,15 @@ class AuthNotifier extends _$AuthNotifier {
       return await _checkAuthStatus(); 
     });
   }
-  // Logout method that signs the user out and sets the state to null (not authenticated)
   Future<void> logout() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
+      final userId = state.value?.uId;
+      if (userId != null) {
+        await NotificationService.instance.removeToken(userId);
+      }
       await ref.read(authRepositoryProvider).logOut();
-      return null; // return null to indicate that the user is now logged out and there's no authenticated user data
+      return null;
     });
   }
 
@@ -90,8 +97,10 @@ class AuthNotifier extends _$AuthNotifier {
       if (error != null) throw error;
 
       final user = await _checkAuthStatus();
-      // new Google user has no Firestore doc yet
       if (user == null && repo.currentUser != null) throw 'needsRoleSelection';
+      if (user != null) {
+        await NotificationService.instance.registerToken(user.uId);
+      }
       return user;
     });
   }

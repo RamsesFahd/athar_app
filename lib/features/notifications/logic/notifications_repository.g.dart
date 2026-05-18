@@ -181,5 +181,127 @@ class _UserNotificationsProviderElement
   @override
   String get userId => (origin as UserNotificationsProvider).userId;
 }
+String _$unreadNotificationCountHash() =>
+    r'b3e2c1a4d7f0e5b8c9d1a2e3f4b5c6d7e8f9a0b';
+
+/// See also [unreadNotificationCount].
+@ProviderFor(unreadNotificationCount)
+const unreadNotificationCountProvider = UnreadNotificationCountFamily();
+
+/// See also [unreadNotificationCount].
+class UnreadNotificationCountFamily extends Family<AsyncValue<int>> {
+  /// See also [unreadNotificationCount].
+  const UnreadNotificationCountFamily();
+
+  /// See also [unreadNotificationCount].
+  UnreadNotificationCountProvider call(String userId) {
+    return UnreadNotificationCountProvider(userId);
+  }
+
+  @override
+  UnreadNotificationCountProvider getProviderOverride(
+    covariant UnreadNotificationCountProvider provider,
+  ) {
+    return call(provider.userId);
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'unreadNotificationCountProvider';
+}
+
+/// See also [unreadNotificationCount].
+class UnreadNotificationCountProvider extends AutoDisposeStreamProvider<int> {
+  UnreadNotificationCountProvider(String userId)
+      : this._internal(
+          (ref) => unreadNotificationCount(
+            ref as UnreadNotificationCountRef,
+            userId,
+          ),
+          from: unreadNotificationCountProvider,
+          name: r'unreadNotificationCountProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$unreadNotificationCountHash,
+          dependencies: UnreadNotificationCountFamily._dependencies,
+          allTransitiveDependencies:
+              UnreadNotificationCountFamily._allTransitiveDependencies,
+          userId: userId,
+        );
+
+  UnreadNotificationCountProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.userId,
+  }) : super.internal();
+
+  final String userId;
+
+  @override
+  Override overrideWith(
+    Stream<int> Function(UnreadNotificationCountRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: UnreadNotificationCountProvider._internal(
+        (ref) => create(ref as UnreadNotificationCountRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        userId: userId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<int> createElement() {
+    return _UnreadNotificationCountProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is UnreadNotificationCountProvider && other.userId == userId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, userId.hashCode);
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin UnreadNotificationCountRef on AutoDisposeStreamProviderRef<int> {
+  String get userId;
+}
+
+class _UnreadNotificationCountProviderElement
+    extends AutoDisposeStreamProviderElement<int>
+    with UnreadNotificationCountRef {
+  _UnreadNotificationCountProviderElement(super.provider);
+
+  @override
+  String get userId => (origin as UnreadNotificationCountProvider).userId;
+}
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

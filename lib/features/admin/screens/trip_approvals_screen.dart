@@ -147,7 +147,7 @@ class _TripApprovalCard extends ConsumerWidget {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: () async {
-                          await repo.rejectTrip(trip.id);
+                          await repo.rejectTrip(trip.id, tutorId: trip.tutorId ?? '');
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
@@ -170,7 +170,7 @@ class _TripApprovalCard extends ConsumerWidget {
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          await repo.approveTrip(trip.id);
+                          await repo.approveTrip(trip.id, tutorId: trip.tutorId ?? '');
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(

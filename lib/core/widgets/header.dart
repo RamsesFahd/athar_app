@@ -1,9 +1,13 @@
 import 'dart:ui';
-import 'package:athar_app/core/widgets/accessibility_controls.dart';
-import 'package:flutter/material.dart';
-import 'package:athar_app/features/notifications/screens/notifications_screen.dart';
 
-class Header extends StatelessWidget implements PreferredSizeWidget {
+import 'package:athar_app/core/widgets/accessibility_controls.dart';
+import 'package:athar_app/features/auth/logic/auth_notifier.dart';
+import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
+import 'package:athar_app/features/notifications/screens/notifications_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class Header extends ConsumerWidget implements PreferredSizeWidget {
   final String? title;
   final bool isHome;
 
@@ -14,22 +18,25 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    final user = ref.watch(authNotifierProvider).valueOrNull;
+    final unreadCount = user != null
+        ? ref
+            .watch(unreadNotificationCountProvider(user.uId))
+            .valueOrNull ?? 0
+        : 0;
+
     return ClipRect(
       child: BackdropFilter(
-        // Blur effect for the header background
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: AppBar(
           backgroundColor: colorScheme.surface.withValues(alpha: 0.08),
           elevation: 0,
           centerTitle: true,
-          automaticallyImplyLeading:
-              false, // Hides the default back button on non-home screens
-
-          // Implementing the animated title/logo switch
+          automaticallyImplyLeading: false,
           title: AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             transitionBuilder: (Widget child, Animation<double> animation) {
@@ -60,14 +67,12 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
           ),
-
           actions: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: colorScheme
-                      .primary, // Thematic color for accessibility button
+                  color: colorScheme.primary,
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
@@ -92,34 +97,32 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                     icon: const Icon(Icons.notifications_none_rounded,
                         color: Colors.black87),
                     onPressed: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => const NotificationsScreen(),
-    ),
-  );
-},
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsScreen(),
+                        ),
+                      );
+                    },
                   ),
-                  // Indicator for unread notifications
-                  Positioned(
-                    top: 15,
-                    right: 12,
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: colorScheme.primary,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 1.5),
+                  if (unreadCount > 0)
+                    Positioned(
+                      top: 15,
+                      right: 12,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 1.5),
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
           ],
-
-          // Adding a subtle bottom border to separate the header from content
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
             child: Container(

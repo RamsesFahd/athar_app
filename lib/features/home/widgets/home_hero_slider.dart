@@ -144,7 +144,7 @@ ${jsonEncode(items)}
         ? userAsync.valueOrNull as TouristModel
         : null;
 
-    final interests = tourist?.interests ?? <String>[];
+    final interests = tourist?.culturalInterests ?? <String>[];
     final attractions =
         attractionsAsync.valueOrNull ?? const <AttractionModel>[];
     final events = eventsAsync.valueOrNull ?? const <EventModel>[];
