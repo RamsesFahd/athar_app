@@ -25,6 +25,8 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
   Widget build(BuildContext context) {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
+    final isHighContrast =
+    theme.colorScheme.primary == Colors.black;
     final l10n = AppLocalizations.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
 
@@ -44,22 +46,36 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildHeroHeader(screenHeight, isAr, currentItem.imageUrl),
+            _buildHeroHeader(screenHeight, isAr, currentItem.imageUrl, isHighContrast, ),
             Transform.translate(
               offset: const Offset(0, -40),
               child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(40)),
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.05),
-                        blurRadius: 20,
-                        offset: const Offset(0, -5))
-                  ],
-                ),
+               decoration: BoxDecoration(
+  color: theme.colorScheme.surface,
+
+  borderRadius:
+      const BorderRadius.vertical(
+    top: Radius.circular(40),
+  ),
+
+  border: isHighContrast
+      ? Border.all(
+          color: Colors.black,
+          width: 2,
+        )
+      : null,
+
+  boxShadow: isHighContrast
+      ? []
+      : [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, -5),
+          )
+        ],
+),
                 padding: const EdgeInsets.fromLTRB(24, 32, 24, 100),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +109,11 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
                       theme,
                     ),
                     const SizedBox(height: 24),
-                    _buildCategoryBadge(theme, currentItem.categoryId, l10n),
+                    _buildCategoryBadge(
+                     theme,
+                     _localizedCategory(currentItem.categoryId, l10n, isAr),
+                      l10n,
+                      ),
                     if (currentItem.isContribution &&
                         currentItem.contributorName != null &&
                         currentItem.contributorName!.isNotEmpty) ...[
@@ -111,7 +131,7 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
     );
   }
 
-  Widget _buildHeroHeader(double height, bool isAr, String imageUrl) {
+  Widget _buildHeroHeader(double height, bool isAr, String imageUrl,bool isHighContrast, ) {
     return Stack(
       children: [
         CachedNetworkImage(
@@ -127,7 +147,9 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: CircleAvatar(
-              backgroundColor: Colors.black26,
+              backgroundColor: isHighContrast
+    ? Colors.black
+    : Colors.black26,
               child: IconButton(
                 icon: Icon(isAr ? Icons.chevron_right : Icons.chevron_left,
                     color: Colors.white),
@@ -241,10 +263,14 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
 
   Widget _buildCategoryBadge(
       ThemeData theme, String categoryLabel, AppLocalizations l10n) {
+        final isHighContrast =
+    theme.colorScheme.primary == Colors.black;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.secondary.withValues(alpha: 0.1),
+       color: isHighContrast
+    ? Colors.white
+    : AppColors.secondary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -283,4 +309,35 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
   Widget _bodyText(String text, ThemeData theme) {
     return Text(text, style: theme.textTheme.bodyLarge?.copyWith(height: 1.6));
   }
+  String _localizedCategory(
+  String category,
+  AppLocalizations l10n,
+  bool isAr,
+) {
+  switch (category.toLowerCase()) {
+    case 'architecture':
+      return isAr ? 'عمارة' : 'Architecture';
+
+    case 'clothing':
+      return isAr ? 'ملابس تقليدية' : 'Traditional Clothing';
+
+    case 'food':
+    case 'traditional_food':
+      return isAr ? ' طعام تقليدي' : 'Traditional Food';
+
+    case 'craft':
+    case 'handicraft':
+    case 'crafts':
+      return isAr ? 'حرفة يدوية' : 'Handicrafts';
+
+    case 'music':
+      return isAr ? 'موسيقى' : 'Music';
+
+    case 'dance':
+      return isAr ? 'رقص' : 'Traditional Dance';
+
+    default:
+      return category;
+  }
+}
 }

@@ -36,9 +36,47 @@ class AppTheme {
         secondary: AppColors.secondary,
         surface: surfaceColor,
         onPrimary: Colors.white,
-        tertiary: AppColors.henna500,
-        onSurfaceVariant: AppColors.sage50,
+        // ✨ text color on cards/surfaces, linked for high contrast mode
+        onSurface: textColorPrimary,
+
+         tertiary: AppColors.henna500,
+
+  // ✨ secondary text color linked for high contrast mode
+         onSurfaceVariant: textColorSecondary,
       ),
+
+      // ✨ default card styling linked for high contrast mode
+cardTheme: CardThemeData(
+  color: surfaceColor,
+  elevation: isHighContrast ? 0 : 2,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(16),
+    side: BorderSide(
+      color: isHighContrast ? Colors.black : AppColors.sage50,
+      width: isHighContrast ? 2 : 1,
+    ),
+  ),
+),
+
+// ✨ default icon color linked for high contrast mode
+iconTheme: IconThemeData(
+  color: isHighContrast ? Colors.black : AppColors.primary,
+),
+
+// ✨ bottom navigation colors linked for high contrast mode
+bottomNavigationBarTheme: BottomNavigationBarThemeData(
+  backgroundColor: backgroundColor,
+  selectedItemColor: isHighContrast ? Colors.black : AppColors.primary,
+  unselectedItemColor: isHighContrast ? Colors.black87 : AppColors.sage800,
+  selectedLabelStyle: TextStyle(
+    fontSize: baseFontSize - 4,
+    fontWeight: FontWeight.w800,
+  ),
+  unselectedLabelStyle: TextStyle(
+    fontSize: baseFontSize - 4,
+    fontWeight: FontWeight.w600,
+  ),
+),
       
       textTheme: TextTheme(
         displayLarge: TextStyle(

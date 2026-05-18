@@ -149,6 +149,8 @@ class _CredentialVerificationScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isHighContrast =
+    theme.colorScheme.primary == Colors.black;
     final authState = ref.watch(authNotifierProvider);
     final notifierState = ref.watch(profileNotifierProvider);
     final isLoading = notifierState is AsyncLoading;
@@ -179,11 +181,19 @@ class _CredentialVerificationScreenState
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: Colors.red.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                            color: Colors.red.withValues(alpha: 0.3)),
-                      ),
+  color: isHighContrast
+      ? Colors.white
+      : Colors.red.withValues(alpha: 0.08),
+
+  borderRadius: BorderRadius.circular(12),
+
+  border: Border.all(
+    color: isHighContrast
+        ? Colors.black
+        : Colors.red.withValues(alpha: 0.3),
+    width: isHighContrast ? 2 : 1,
+  ),
+),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -323,7 +333,9 @@ class _CredentialVerificationScreenState
                           ? 'سيتم مراجعة بياناتك من قِبل الإدارة'
                           : 'Your credentials will be reviewed by our team',
                       style: theme.textTheme.bodySmall
-                          ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                          ?.copyWith(color: isHighContrast
+    ? theme.colorScheme.onSurface
+    : theme.colorScheme.onSurface.withValues(alpha: 0.5)),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -340,6 +352,8 @@ class _CredentialVerificationScreenState
 
   Widget _buildPendingReviewScaffold(BuildContext context) {
     final theme = Theme.of(context);
+    final isHighContrast =
+    theme.colorScheme.primary == Colors.black;
     return Scaffold(
       appBar: AppBar(
         title: Text(_isAr ? 'توثيق البيانات' : 'Credential Verification'),
@@ -353,11 +367,18 @@ class _CredentialVerificationScreenState
               Container(
                 padding: const EdgeInsets.all(28),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.1),
+                  color: isHighContrast
+    ? Colors.white
+    : Colors.orange.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.hourglass_top_outlined,
-                    size: 56, color: Colors.orange),
+                child: Icon(
+  Icons.hourglass_top_outlined,
+  size: 56,
+  color: isHighContrast
+      ? Colors.black
+      : Colors.orange,
+),
               ),
               const SizedBox(height: 24),
               Text(
@@ -373,7 +394,9 @@ class _CredentialVerificationScreenState
                     : 'Your verification request has been received and is currently under review by our team.\nWe\'ll notify you once approved — no need to resubmit.',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color:
-                      theme.colorScheme.onSurface.withValues(alpha: 0.65),
+                      isHighContrast
+    ? theme.colorScheme.onSurface
+    : theme.colorScheme.onSurface.withValues(alpha: 0.65),
                   height: 1.55,
                 ),
                 textAlign: TextAlign.center,
@@ -452,7 +475,7 @@ class _CredentialVerificationScreenState
           formatted,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: value == null
-                ? theme.colorScheme.onSurface.withValues(alpha: 0.4)
+                ? theme.colorScheme.onSurfaceVariant
                 : null,
           ),
         ),

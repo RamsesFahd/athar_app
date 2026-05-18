@@ -31,6 +31,8 @@ class CulturalItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
+    final isHighContrast =
+    theme.colorScheme.primary == Colors.black;
     final l10n = AppLocalizations.of(context)!;
 
     final String displayTitle = title;
@@ -45,13 +47,13 @@ class CulturalItemCard extends StatelessWidget {
       },
       child: layout == CardLayout.horizontal
           ? _buildHorizontalLayout(
-              displayTitle, displayDescription, isArabic, theme, l10n)
-          : _buildVerticalLayout(displayTitle, isArabic, theme, l10n),
+              displayTitle, displayDescription, isArabic, theme, l10n,isHighContrast,)
+          : _buildVerticalLayout(displayTitle, isArabic, theme, l10n,isHighContrast,),
     );
   }
 
   Widget _buildVerticalLayout(
-      String title, bool isAr, ThemeData theme, AppLocalizations l10n) {
+      String title, bool isAr, ThemeData theme, AppLocalizations l10n, bool isHighContrast,) {
     return Container(
       width: 180,
       margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -70,13 +72,16 @@ class CulturalItemCard extends StatelessWidget {
               placeholder: (_, __) => Container(
                 height: 120,
                 width: 180,
-                color: Colors.grey.shade200,
+                color: theme.colorScheme.surfaceContainerHighest,
               ),
               errorWidget: (_, __, ___) => Container(
-                height: 120,
-                width: 180,
-                color: Colors.grey.shade200,
-                child: const Icon(Icons.broken_image, color: Colors.grey),
+  height: 120,
+  width: 180,
+  color: theme.colorScheme.surfaceContainerHighest,
+  child: Icon(
+    Icons.broken_image,
+    color: theme.colorScheme.onSurfaceVariant,
+  ),
               ),
             ),
           ),
@@ -95,17 +100,27 @@ class CulturalItemCard extends StatelessWidget {
   }
 
   Widget _buildHorizontalLayout(String title, String desc, bool isAr,
-      ThemeData theme, AppLocalizations l10n) {
+      ThemeData theme, AppLocalizations l10n,bool isHighContrast, ) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)
+  color: theme.colorScheme.surface,
+  borderRadius: BorderRadius.circular(15),
+
+  border: isHighContrast
+      ? Border.all(color: Colors.black, width: 2)
+      : null,
+
+  boxShadow: isHighContrast
+      ? []
+      : [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+          )
         ],
-      ),
+),
       child: Row(
         children: [
           ClipRRect(
@@ -120,13 +135,15 @@ class CulturalItemCard extends StatelessWidget {
               placeholder: (_, __) => Container(
                 width: 110,
                 height: 110,
-                color: Colors.grey[200],
+                color: theme.colorScheme.surfaceContainerHighest,
               ),
               errorWidget: (_, __, ___) => Container(
                 width: 110,
                 height: 110,
-                color: Colors.grey[200],
-                child: const Icon(Icons.broken_image, color: Colors.grey),
+                color: theme.colorScheme.surfaceContainerHighest,                child: Icon(
+  Icons.broken_image,
+  color: theme.colorScheme.onSurfaceVariant,
+),
               ),
             ),
           ),
