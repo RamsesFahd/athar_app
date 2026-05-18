@@ -632,6 +632,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get rawiUntitledEnglish => 'محادثة جديدة';
 
   @override
+  String get rawiMicTooltip => 'إدخال صوتي';
+
+  @override
+  String get rawiMicListening => 'جارٍ الاستماع...';
+
+  @override
+  String get rawiMicPermissionDenied =>
+      'يرجى السماح بالوصول إلى الميكروفون من الإعدادات';
+
+  @override
+  String get rawiMicError => 'تعذّر بدء التعرف على الصوت';
+
+  @override
+  String get rawiSuggestedItems => 'اقتراحات راوي';
+
+  @override
   String get all_trips => ' استكشف الرحلات';
 
   @override

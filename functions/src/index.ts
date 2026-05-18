@@ -345,6 +345,261 @@ export const embedMissingDocuments = onCall(
 // =====================================================
 // DIAGNOSTIC — Inspect actual document shapes
 // =====================================================
+// =====================================================
+// ASK RAWI — RAG-powered cultural AI assistant
+// =====================================================
+
+const SIMILARITY_THRESHOLD = 0.6;
+const TOP_K = 5;
+const MAX_SUGGESTED_ITEMS = 3;
+const RAWI_CHAT_MODEL = "gemini-2.0-flash";
+const EMBEDDING_CACHE_TTL_MS = 5 * 60 * 1000;
+
+interface CachedEmbedding {
+  embedding: number[];
+  titleAr: string;
+  titleEn: string;
+  imageUrl: string | null;
+  description: string;
+  region: string;
+  type: "attraction" | "trip" | "event" | "cultural_item";
+  docId: string;
+}
+
+let embeddingCache: Map<string, CachedEmbedding> | null = null;
+let embeddingCachedAt = 0;
+
+function cosineSimilarity(a: number[], b: number[]): number {
+  let dot = 0, normA = 0, normB = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    normA += a[i] * a[i];
+    normB += b[i] * b[i];
+  }
+  return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+}
+
+function extractDocMeta(
+  collection: string,
+  docId: string,
+  data: FirebaseFirestore.DocumentData
+): CachedEmbedding | null {
+  const emb = data.embedding;
+  if (!Array.isArray(emb) || emb.length === 0) return null;
+
+  const type = collection as "attraction" | "trip" | "event" | "cultural_item";
+
+  let titleAr = "";
+  let titleEn = "";
+  let description = "";
+  let imageUrl: string | null = null;
+  let region = "";
+
+  switch (collection) {
+    case "attractions": {
+      const name = data.name || {};
+      const desc = data.description || {};
+      titleAr = name.ar || "";
+      titleEn = name.en || "";
+      description = (desc.ar || desc.en || "").slice(0, 200);
+      imageUrl = data.mainImageUrl || data.imageUrl || null;
+      region = data.region || data.regionId || "";
+      break;
+    }
+    case "trips": {
+      const t = data.title || {};
+      const d = data.description || {};
+      titleAr = typeof t === "object" ? (t.ar || "") : String(t || "");
+      titleEn = typeof t === "object" ? (t.en || "") : "";
+      description = (typeof d === "object" ? (d.ar || d.en || "") : String(d || "")).slice(0, 200);
+      imageUrl = data.imageUrl || data.mainImageUrl || null;
+      region = data.region || data.regionId || "";
+      break;
+    }
+    case "events": {
+      titleAr = data.titleAr || "";
+      titleEn = data.titleEn || "";
+      description = (data.descriptionAr || data.descriptionEn || "").slice(0, 200);
+      imageUrl = data.imageUrl || data.mainImageUrl || null;
+      region = data.region || data.regionId || data.location || "";
+      break;
+    }
+    case "cultural_items": {
+      titleAr = data.titleAr || "";
+      titleEn = data.titleEn || "";
+      description = (data.descriptionAr || data.descriptionEn || "").slice(0, 200);
+      imageUrl = data.imageUrl || data.mainImageUrl || null;
+      region = data.region || data.regionId || "";
+      break;
+    }
+  }
+
+  return {
+    embedding: emb,
+    titleAr,
+    titleEn,
+    description,
+    imageUrl,
+    region,
+    type,
+    docId,
+  };
+}
+
+async function loadEmbeddingCache(): Promise<Map<string, CachedEmbedding>> {
+  const now = Date.now();
+  if (embeddingCache && now - embeddingCachedAt < EMBEDDING_CACHE_TTL_MS) {
+    return embeddingCache;
+  }
+
+  const collections = ["attractions", "trips", "events", "cultural_items"];
+  const cache = new Map<string, CachedEmbedding>();
+
+  for (const col of collections) {
+    const snap = await db.collection(col).select("embedding", "name", "title", "titleAr", "titleEn", "descriptionAr", "descriptionEn", "description", "imageUrl", "mainImageUrl", "region", "regionId", "location", "category", "eventType").get();
+    for (const doc of snap.docs) {
+      const meta = extractDocMeta(col, doc.id, doc.data());
+      if (meta) cache.set(`${col}/${doc.id}`, meta);
+    }
+  }
+
+  embeddingCache = cache;
+  embeddingCachedAt = now;
+  return cache;
+}
+
+export const askRawi = onCall(
+  {
+    enforceAppCheck: false,
+    timeoutSeconds: 60,
+    memory: "512MiB",
+    region: "us-central1",
+    secrets: ["GEMINI_API_KEY"],
+  },
+  async (request) => {
+    if (!GEMINI_KEY) throw new HttpsError("failed-precondition", "GEMINI_API_KEY is not set");
+
+    const { conversationId, userMessage, recentMessages, locale } = request.data as {
+      conversationId: string;
+      userMessage: string;
+      recentMessages: Array<{ role: "user" | "assistant"; content: string }>;
+      locale: "ar" | "en";
+    };
+
+    if (!userMessage?.trim()) throw new HttpsError("invalid-argument", "userMessage is required");
+
+    const genAI = new GoogleGenerativeAI(GEMINI_KEY);
+
+    // 1. Embed the user query
+    const queryEmbedding = await generateEmbedding(userMessage);
+
+    // 2. Load cached embeddings
+    const cache = await loadEmbeddingCache();
+
+    // 3. Cosine similarity → top-K
+    const scored: Array<{ key: string; score: number; meta: CachedEmbedding }> = [];
+    for (const [key, meta] of cache.entries()) {
+      const score = cosineSimilarity(queryEmbedding, meta.embedding);
+      if (score >= SIMILARITY_THRESHOLD) {
+        scored.push({ key, score, meta });
+      }
+    }
+    scored.sort((a, b) => b.score - a.score);
+    const topDocs = scored.slice(0, TOP_K);
+
+    // 4. Build retrieved context
+    const contextLines = topDocs.map((d) => {
+      const m = d.meta;
+      const title = locale === "ar" ? (m.titleAr || m.titleEn) : (m.titleEn || m.titleAr);
+      const desc = locale === "ar" ? m.description : m.description;
+      return `• [${m.type}] ${title} — ${desc.slice(0, 200)}${m.region ? ` (${m.region})` : ""}`;
+    }).join("\n");
+
+    // 5. System prompt
+    const langInstruction = locale === "ar"
+      ? "You MUST respond entirely in Arabic (العربية). Do not mix languages."
+      : "You MUST respond entirely in English. Do not mix languages.";
+
+    const systemPrompt = `You are Rawi (راوي), a warm and knowledgeable cultural narrator for Saudi Arabian heritage and tourism. You are aligned with Vision 2030's goal of promoting authentic Saudi cultural experiences.
+
+${langInstruction}
+
+Your knowledge is grounded in the following real content from the Athar platform. ONLY recommend items listed here — do not invent places, events, or cultural items:
+
+${contextLines || (locale === "ar" ? "لم يتم العثور على محتوى مطابق." : "No matching content found.")}
+
+Rules:
+- Respond warmly but not casually.
+- If the user's question matches items above, mention them specifically.
+- At the END of your response, append a JSON block with up to ${MAX_SUGGESTED_ITEMS} item IDs of the most relevant items from the context. Use exactly this format (no other text after it):
+<<<RECOMMENDED>>>{"itemIds":["docId1","docId2"]}<<<END>>>
+- If no items are relevant, append: <<<RECOMMENDED>>>{"itemIds":[]}<<<END>>>`;
+
+    // 6. Build conversation turns
+    const isAr = locale === "ar";
+    const historyText = (recentMessages || [])
+      .slice(-6)
+      .map((m) => `${m.role === "user" ? (isAr ? "المستخدم" : "User") : "Rawi"}: ${m.content}`)
+      .join("\n");
+
+    const userPrompt = historyText
+      ? `${isAr ? "سياق المحادثة:" : "Conversation context:"}\n${historyText}\n\n${isAr ? "المستخدم" : "User"}: ${userMessage}`
+      : `${isAr ? "المستخدم" : "User"}: ${userMessage}`;
+
+    // 7. Generate response
+    const chatModel = genAI.getGenerativeModel({
+      model: RAWI_CHAT_MODEL,
+      systemInstruction: systemPrompt,
+    });
+    const result = await chatModel.generateContent(userPrompt);
+    const rawText = result.response.text()?.trim() ?? "";
+
+    // 8. Parse recommended IDs from JSON block
+    let itemIds: string[] = [];
+    const blockMatch = rawText.match(/<<<RECOMMENDED>>>([\s\S]*?)<<<END>>>/);
+    let visibleText = rawText;
+
+    if (blockMatch) {
+      try {
+        const parsed = JSON.parse(blockMatch[1].trim());
+        if (Array.isArray(parsed.itemIds)) {
+          itemIds = parsed.itemIds.slice(0, MAX_SUGGESTED_ITEMS).map(String);
+        }
+      } catch (_) {}
+      visibleText = rawText.replace(/<<<RECOMMENDED>>>[\s\S]*?<<<END>>>/, "").trim();
+    }
+
+    // 9. Look up metadata for suggested items
+    const suggestedItems: Array<{
+      id: string;
+      type: string;
+      titleAr: string;
+      titleEn: string;
+      imageUrl: string | null;
+    }> = [];
+
+    for (const id of itemIds) {
+      // Search cache first
+      for (const meta of cache.values()) {
+        if (meta.docId === id) {
+          suggestedItems.push({
+            id,
+            type: meta.type,
+            titleAr: meta.titleAr,
+            titleEn: meta.titleEn,
+            imageUrl: meta.imageUrl,
+          });
+          break;
+        }
+      }
+    }
+
+    logger.info(`[askRawi] session=${conversationId} locale=${locale} topDocs=${topDocs.length} suggested=${suggestedItems.length}`);
+
+    return { reply: visibleText, suggestedItems };
+  }
+);
+
 export const inspectDocumentShapes = onCall(
   {
     enforceAppCheck: false,

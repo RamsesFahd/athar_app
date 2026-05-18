@@ -1304,6 +1304,36 @@ abstract class AppLocalizations {
   /// **'New Chat'**
   String get rawiUntitledEnglish;
 
+  /// No description provided for @rawiMicTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice input'**
+  String get rawiMicTooltip;
+
+  /// No description provided for @rawiMicListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening...'**
+  String get rawiMicListening;
+
+  /// No description provided for @rawiMicPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Please allow microphone access in settings'**
+  String get rawiMicPermissionDenied;
+
+  /// No description provided for @rawiMicError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start voice recognition'**
+  String get rawiMicError;
+
+  /// No description provided for @rawiSuggestedItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Rawi\'s Suggestions'**
+  String get rawiSuggestedItems;
+
   /// No description provided for @all_trips.
   ///
   /// In en, this message translates to:

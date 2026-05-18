@@ -3,6 +3,7 @@ import 'package:athar_app/core/models/chat/chat_message_model.dart';
 import 'package:athar_app/core/models/chat/chat_session_model.dart';
 import 'package:athar_app/features/historical_chat/logic/chat_notifier.dart';
 import 'package:athar_app/features/historical_chat/logic/chat_repository.dart';
+import 'package:athar_app/features/historical_chat/widgets/rawi_suggestion_card.dart';
 import 'package:athar_app/features/auth/logic/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +13,7 @@ import 'package:athar_app/core/constants/region_data.dart';
 import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
   final RegionModel? region; // null يعني شات عام
@@ -22,16 +24,26 @@ class ChatScreen extends ConsumerStatefulWidget {
   ConsumerState<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends ConsumerState<ChatScreen> {
+class _ChatScreenState extends ConsumerState<ChatScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late final String _sessionId = widget.existingSessionId ??
       DateTime.now().millisecondsSinceEpoch.toString();
 
+  final SpeechToText _speech = SpeechToText();
+  bool _isListening = false;
+  bool _speechAvailable = false;
+  late final AnimationController _micPulse;
+
   @override
   void initState() {
     super.initState();
-    // نطلب من راوي يرحب بالمستخدم أول ما تفتح الشاشة
+    _micPulse = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat(reverse: true);
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.region != null) {
         ref.read(chatNotifierProvider.notifier).sendInitialGreeting(
@@ -39,13 +51,69 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               sessionId: _sessionId,
             );
       }
+      _initSpeech();
     });
+  }
+
+  Future<void> _initSpeech() async {
+    final available = await _speech.initialize(
+      onError: (_) {
+        if (mounted) setState(() => _isListening = false);
+      },
+      onStatus: (status) {
+        if (status == 'done' || status == 'notListening') {
+          if (mounted) setState(() => _isListening = false);
+        }
+      },
+    );
+    if (mounted) setState(() => _speechAvailable = available);
+  }
+
+  Future<void> _toggleListening(bool isAr, AppLocalizations l10n) async {
+    if (_isListening) {
+      await _speech.stop();
+      setState(() => _isListening = false);
+      return;
+    }
+
+    if (!_speechAvailable) {
+      final available = await _speech.initialize();
+      if (!available) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.rawiMicPermissionDenied)),
+        );
+        return;
+      }
+      setState(() => _speechAvailable = true);
+    }
+
+    setState(() => _isListening = true);
+
+    final localeId = isAr ? 'ar-SA' : 'en-US';
+    await _speech.listen(
+      localeId: localeId,
+      onResult: (result) {
+        if (result.recognizedWords.isNotEmpty) {
+          _messageController.text = result.recognizedWords;
+          _messageController.selection = TextSelection.fromPosition(
+            TextPosition(offset: _messageController.text.length),
+          );
+        }
+        if (result.finalResult) {
+          setState(() => _isListening = false);
+        }
+      },
+      listenOptions: SpeechListenOptions(
+        cancelOnError: true,
+        partialResults: true,
+      ),
+    );
   }
 
   Future<void> _pickAndSendImage(ImageSource source, bool isAr) async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image =
-        await picker.pickImage(source: source); // هنا بيفتح المصدر اللي نحدده
+    final XFile? image = await picker.pickImage(source: source);
 
     if (image != null) {
       final Uint8List imageBytes = await image.readAsBytes();
@@ -61,15 +129,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     }
   }
 
-  bool _containsArabic(String value) {
-    final arabicRegex = RegExp(r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]');
-    return arabicRegex.hasMatch(value);
-  }
-
   @override
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
+    _micPulse.dispose();
+    _speech.stop();
     super.dispose();
   }
 
@@ -79,9 +144,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final authRepo = ref.read(authRepositoryProvider);
     final userId = authRepo.currentUser?.uid ?? 'guest_user';
 
-    // تعريفات اللغة والمترجم لاستخدامها في الدوال بالأسفل
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -89,7 +153,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // 1. عرض الرسائل باستخدام Stream من فيرستور
             Expanded(
               child: StreamBuilder<List<ChatMessageModel>>(
                 stream: ref
@@ -98,8 +161,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                 builder: (context, snapshot) {
                   final messages = snapshot.data ?? const <ChatMessageModel>[];
 
-                  // Keep the current UI while the stream is reconnecting/loading
-                  // to avoid a visible page "refresh" flicker.
                   if (snapshot.connectionState == ConnectionState.waiting &&
                       messages.isEmpty) {
                     if (widget.region == null) {
@@ -112,7 +173,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     if (widget.region == null) {
                       return _buildGeneralWelcomeWithRegionChips(isAr);
                     }
-                    return _buildEmptyState(isAr, l10n);
+                    return _buildEmptyState(isAr);
                   }
 
                   final firstBotMessageWithSuggestionsId =
@@ -120,7 +181,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
                   return ListView.builder(
                     controller: _scrollController,
-                    reverse: true, // الرسائل الجديدة تظهر تحت
+                    reverse: true,
                     padding: const EdgeInsets.all(16),
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
@@ -130,11 +191,25 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           msg.id != null &&
                           msg.id == firstBotMessageWithSuggestionsId;
 
-                      return _buildMessageBubble(
-                        message: msg.text,
-                        isMe: msg.isUser,
-                        showQuickReplies: showQuickReplies,
-                        isAr: isAr,
+                      final hasSuggestions = !msg.isUser &&
+                          msg.suggestedItems != null &&
+                          msg.suggestedItems!.isNotEmpty;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildMessageBubble(
+                            message: msg.text,
+                            isMe: msg.isUser,
+                            showQuickReplies: showQuickReplies,
+                            isAr: isAr,
+                          ),
+                          if (hasSuggestions)
+                            RawiSuggestionsRow(
+                              items: msg.suggestedItems!,
+                              isAr: isAr,
+                            ),
+                        ],
                       );
                     },
                   );
@@ -142,8 +217,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
             ),
             _buildTypingIndicator(isAr, l10n),
-
-            // 3. منطقة الإدخال وربطها بالـ Notifier
             _buildInputArea(theme, isAr, l10n),
           ],
         ),
@@ -223,7 +296,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  Widget _buildEmptyState(bool isAr, AppLocalizations l10n) {
+  Widget _buildEmptyState(bool isAr) {
     if (widget.region == null) {
       return Center(
         child: Padding(
@@ -324,10 +397,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 9),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.12),
+                        color: AppColors.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: AppColors.primary.withOpacity(0.35),
+                          color: AppColors.primary.withValues(alpha: 0.35),
                         ),
                       ),
                       child: Row(
@@ -373,7 +446,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 5,
                   offset: const Offset(0, 2),
                 ),
@@ -409,13 +482,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       ),
       child: Row(
         children: [
-          // 1. زر الزائد (+) لإضافة الوسائط
+          // زر الزائد (+) لإضافة الوسائط
           IconButton(
             icon: Icon(Icons.add_circle_outline,
                 color: AppColors.primary, size: 28),
             onPressed: () => _showAttachmentMenu(context, isAr),
           ),
-          // 2. حقل الإدخال النصي
+          // حقل الإدخال النصي
           Expanded(
             child: TextField(
               controller: _messageController,
@@ -443,9 +516,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                     );
               },
               decoration: InputDecoration(
-                hintText: isAr ? "اسأل راوي..." : "Ask Rawi...",
-                hintStyle: const TextStyle(
-                  color: Colors.black45,
+                hintText: _isListening
+                    ? l10n.rawiMicListening
+                    : (isAr ? "اسأل راوي..." : "Ask Rawi..."),
+                hintStyle: TextStyle(
+                  color: _isListening ? AppColors.primary : Colors.black45,
                   fontSize: 14,
                 ),
                 filled: true,
@@ -462,30 +537,46 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
           const SizedBox(width: 4),
 
-          // 3. زر التسجيل الصوتي
-          IconButton(
-            icon: Icon(Icons.mic_none_rounded,
-                color: AppColors.primary, size: 26),
-            onPressed: () {
-              // منطق بدء التسجيل الصوتي سيضاف هنا
+          // زر الميكروفون
+          AnimatedBuilder(
+            animation: _micPulse,
+            builder: (context, child) {
+              return IconButton(
+                tooltip: l10n.rawiMicTooltip,
+                icon: Icon(
+                  _isListening ? Icons.mic_rounded : Icons.mic_none_rounded,
+                  color: _isListening
+                      ? Color.lerp(
+                          AppColors.primary,
+                          Colors.red,
+                          _micPulse.value,
+                        )!
+                      : AppColors.primary,
+                  size: 26,
+                ),
+                onPressed: isLoading
+                    ? null
+                    : () => _toggleListening(isAr, l10n),
+              );
             },
           ),
 
-          // 4. زر الإرسال أو مؤشر التحميل
+          // زر الإرسال أو مؤشر التحميل
           CircleAvatar(
             radius: 20,
-            // يتغير اللون لرمادي باهت وقت التحميل ليعطي إيحاء بالتعطيل
             backgroundColor: isLoading ? Colors.grey[300] : AppColors.primary,
             child: IconButton(
               icon: const Icon(Icons.send, color: Colors.white, size: 18),
-              // السر هنا: جعل onPressed تساوي null يعطل الزر تلقائياً ويمنع الـ "فصل"
               onPressed: isLoading
                   ? null
                   : () async {
                       if (_messageController.text.trim().isEmpty) return;
                       final text = _messageController.text;
                       _messageController.clear();
-
+                      if (_isListening) {
+                        await _speech.stop();
+                        setState(() => _isListening = false);
+                      }
                       await ref
                           .read(chatNotifierProvider.notifier)
                           .sendUserMessage(
@@ -501,29 +592,27 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  // أضيفي هذا الويدجت داخل الـ ListView.builder أو كعنصر إضافي
   Widget _buildTypingIndicator(bool isAr, AppLocalizations l10n) {
     final isLoading = ref.watch(chatNotifierProvider);
 
-    // إذا ما فيه تحميل، لا تظهر شيء
     if (!isLoading) return const SizedBox.shrink();
 
     return Align(
-      alignment: Alignment.centerLeft, // جهة راوي (اليسار)
+      alignment: Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: Colors.white, // خلفية بيضاء مثل رسائل راوي
+          color: Colors.white,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),
             bottomRight: Radius.circular(16),
-            bottomLeft: Radius.zero, // زاوية حادة لجهة اليسار
+            bottomLeft: Radius.zero,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),
@@ -559,7 +648,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               _buildAttachmentOption(Icons.insert_drive_file,
                   isAr ? "ملف" : "File", Colors.blue, () {}),
               _buildAttachmentOption(
-                  Icons.camera_alt, isAr ? "كاميرا" : "Camera", Colors.red, () {
+                  Icons.camera_alt, isAr ? "كاميرا" : "Camera", Colors.red,
+                  () {
                 Navigator.pop(context);
                 _pickAndSendImage(ImageSource.camera, isAr);
               }),
@@ -584,7 +674,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         children: [
           CircleAvatar(
             radius: 30,
-            backgroundColor: color.withOpacity(0.1),
+            backgroundColor: color.withValues(alpha: 0.1),
             child: Icon(icon, color: color, size: 30),
           ),
           const SizedBox(height: 8),

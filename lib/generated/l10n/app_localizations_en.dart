@@ -633,6 +633,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rawiUntitledEnglish => 'New Chat';
 
   @override
+  String get rawiMicTooltip => 'Voice input';
+
+  @override
+  String get rawiMicListening => 'Listening...';
+
+  @override
+  String get rawiMicPermissionDenied =>
+      'Please allow microphone access in settings';
+
+  @override
+  String get rawiMicError => 'Could not start voice recognition';
+
+  @override
+  String get rawiSuggestedItems => 'Rawi\'s Suggestions';
+
+  @override
   String get all_trips => 'Explore Trips';
 
   @override

@@ -8,8 +8,21 @@ import 'package:athar_app/core/models/chat/chat_message_model.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_repository.dart';
 import 'package:athar_app/features/auth/logic/auth_repository.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'dart:typed_data';
 part 'chat_notifier.g.dart';
+
+dynamic _convertResponse(dynamic data) {
+  if (data is Map) {
+    return Map<String, dynamic>.fromEntries(
+      data.entries.map((e) => MapEntry(e.key.toString(), _convertResponse(e.value))),
+    );
+  }
+  if (data is List) {
+    return data.map(_convertResponse).toList();
+  }
+  return data;
+}
 
 @riverpod
 class ChatNotifier extends _$ChatNotifier {
@@ -378,12 +391,36 @@ STRICT RULE: Your response MUST be in the same language as "Current User Message
           ChatMessageModel(
               text: cleanText, senderId: userId, isUser: true, timestamp: now));
 
-      // 5. الحصول على رد Gemini باستخدام الـ fullPrompt
-      final response = await gemini.getResponse(
-        prompt: fullPrompt,
-        systemInstruction: systemInstruction,
-        imageBytes: imageBytes,
-      );
+      // 5. استدعاء askRawi Cloud Function (RAG)
+      String botReply;
+      List<Map<String, dynamic>>? suggestedItems;
+
+      if (imageBytes != null) {
+        // Image messages fall back to direct Gemini (askRawi is text-only)
+        botReply = await gemini.getResponse(
+          prompt: fullPrompt,
+          systemInstruction: systemInstruction,
+          imageBytes: imageBytes,
+        );
+      } else {
+        final callable = FirebaseFunctions.instance.httpsCallable('askRawi');
+        final rawResult = await callable.call({
+          'conversationId': sessionId,
+          'userMessage': cleanText,
+          'recentMessages': recentMessages.reversed
+              .map((m) => {'role': m.isUser ? 'user' : 'assistant', 'content': m.text})
+              .toList(),
+          'locale': effectiveLangCode,
+        });
+        final converted = _convertResponse(rawResult.data) as Map<String, dynamic>;
+        botReply = (converted['reply'] as String?)?.trim() ?? '';
+        final rawItems = converted['suggestedItems'];
+        if (rawItems is List && rawItems.isNotEmpty) {
+          suggestedItems = rawItems
+              .whereType<Map<String, dynamic>>()
+              .toList();
+        }
+      }
 
       // Stop typing indicator before the final bot message is rendered.
       state = false;
@@ -393,9 +430,10 @@ STRICT RULE: Your response MUST be in the same language as "Current User Message
           userId,
           sessionId,
           ChatMessageModel(
-              text: response,
+              text: botReply,
               senderId: 'bot',
               isUser: false,
+              suggestedItems: suggestedItems,
               timestamp: DateTime.now()));
 
       // 7. تحسين العنوان إذا لزم الأمر
