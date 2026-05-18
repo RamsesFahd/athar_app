@@ -1099,4 +1099,38 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get privacyPolicyContactBody =>
       'For privacy-related enquiries please email: privacy@athar-app.com';
+
+  @override
+  String get bookingPendingForGuide => 'New request — action required';
+
+  @override
+  String get bookingPendingForTourist => 'Waiting for Guide\'s approval';
+
+  @override
+  String get bookingApproved => 'Confirmed';
+
+  @override
+  String get bookingRejectedByGuide => 'You rejected this';
+
+  @override
+  String get bookingRejectedForTourist => 'Rejected by Guide';
+
+  @override
+  String get bookingCancelledByTourist =>
+      'Tourist cancelled before your approval';
+
+  @override
+  String get bookingCancelledByMe => 'Cancelled before approval';
+
+  @override
+  String get bookingCompleted => 'Completed';
+
+  @override
+  String get guideContactInfo => 'Guide Contact';
+
+  @override
+  String get touristContactInfo => 'Tourist Contact';
+
+  @override
+  String get rateYourGuide => 'Rate your Guide';
 }

@@ -419,5 +419,17 @@
   "privacyPolicyRightsTitle": "حقوقك",
   "privacyPolicyRightsBody": "يمكنك طلب الوصول إلى بياناتك الشخصية أو تصحيحها أو حذفها في أي وقت عبر التواصل معنا.",
   "privacyPolicyContactTitle": "تواصل معنا",
-  "privacyPolicyContactBody": "لأي استفسارات تتعلق بالخصوصية يرجى مراسلتنا على: privacy@athar-app.com"
+  "privacyPolicyContactBody": "لأي استفسارات تتعلق بالخصوصية يرجى مراسلتنا على: privacy@athar-app.com",
+
+  "bookingPendingForGuide": "طلب جديد يحتاج إجراء",
+  "bookingPendingForTourist": "بانتظار موافقة المرشد",
+  "bookingApproved": "مؤكد",
+  "bookingRejectedByGuide": "رفضت هذا الطلب",
+  "bookingRejectedForTourist": "تم الرفض من المرشد",
+  "bookingCancelledByTourist": "ألغى السائح قبل موافقتك",
+  "bookingCancelledByMe": "ألغيت قبل الموافقة",
+  "bookingCompleted": "اكتملت الرحلة",
+  "guideContactInfo": "معلومات المرشد",
+  "touristContactInfo": "معلومات السائح",
+  "rateYourGuide": "قيّم المرشد"
 }

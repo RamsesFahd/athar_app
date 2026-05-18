@@ -2185,6 +2185,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For privacy-related enquiries please email: privacy@athar-app.com'**
   String get privacyPolicyContactBody;
+
+  /// No description provided for @bookingPendingForGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'New request — action required'**
+  String get bookingPendingForGuide;
+
+  /// No description provided for @bookingPendingForTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Guide\'s approval'**
+  String get bookingPendingForTourist;
+
+  /// No description provided for @bookingApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get bookingApproved;
+
+  /// No description provided for @bookingRejectedByGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'You rejected this'**
+  String get bookingRejectedByGuide;
+
+  /// No description provided for @bookingRejectedForTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected by Guide'**
+  String get bookingRejectedForTourist;
+
+  /// No description provided for @bookingCancelledByTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourist cancelled before your approval'**
+  String get bookingCancelledByTourist;
+
+  /// No description provided for @bookingCancelledByMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled before approval'**
+  String get bookingCancelledByMe;
+
+  /// No description provided for @bookingCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get bookingCompleted;
+
+  /// No description provided for @guideContactInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide Contact'**
+  String get guideContactInfo;
+
+  /// No description provided for @touristContactInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourist Contact'**
+  String get touristContactInfo;
+
+  /// No description provided for @rateYourGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate your Guide'**
+  String get rateYourGuide;
 }
 
 class _AppLocalizationsDelegate

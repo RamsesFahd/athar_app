@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/core/utils/booking_status_helper.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
-import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 /// Read-only view of a completed/pending booking.
@@ -29,43 +30,26 @@ class BookingViewScreen extends ConsumerWidget {
   }
 }
 
-String _statusLabel(BookingStatus status, bool isAr) {
+String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
   switch (status) {
-    case BookingStatus.approved:
-      return isAr ? 'مقبول' : 'Accepted';
-    case BookingStatus.rejected:
-      return isAr ? 'مرفوض' : 'Rejected';
-    case BookingStatus.cancelled:
-      return isAr ? 'ملغي' : 'Cancelled';
-    case BookingStatus.completed:
-      return isAr ? 'مكتمل' : 'Completed';
     case BookingStatus.pending:
-      return isAr ? 'قيد المراجعة' : 'Pending';
-  }
-}
-
-String _statusMessage(BookingStatus status, bool isAr) {
-  switch (status) {
+      return isGuide
+          ? (isAr ? 'لديك طلب حجز جديد يحتاج إلى مراجعتك.' : 'You have a new booking request that needs your review.')
+          : (isAr ? 'طلبك قيد المراجعة حاليًا. سيتم إشعارك عند تحديث الحالة.' : 'Your booking is currently under review. You will be notified once the status changes.');
     case BookingStatus.approved:
-      return isAr
-          ? 'تم قبول الحجز. يمكنك الآن مراجعة التفاصيل والمتابعة مع مزود الرحلة.'
-          : 'Your booking has been accepted. You can now review the details and follow up with the trip provider.';
+      return isGuide
+          ? (isAr ? 'قبلت هذا الحجز. يمكنك التواصل مع السائح عبر معلوماته أدناه.' : 'You confirmed this booking. Contact the tourist using their details below.')
+          : (isAr ? 'تم تأكيد الحجز. يمكنك التواصل مع المرشد عبر معلوماته أدناه.' : 'Booking confirmed. You can contact the Guide using their details below.');
     case BookingStatus.rejected:
-      return isAr
-          ? 'نعتذر، تم رفض هذا الحجز. يمكنك تجربة موعد آخر أو رحلة مختلفة.'
-          : 'Sorry, this booking was rejected. You can try another date or a different trip.';
+      return isGuide
+          ? (isAr ? 'رفضت هذا الطلب.' : 'You rejected this request.')
+          : (isAr ? 'نعتذر، تم رفض هذا الحجز. يمكنك تجربة موعد آخر أو رحلة مختلفة.' : 'Sorry, this booking was rejected. You can try another date or a different trip.');
     case BookingStatus.cancelled:
-      return isAr
-          ? 'تم إلغاء هذا الحجز.'
-          : 'This booking has been cancelled.';
+      return isGuide
+          ? (isAr ? 'ألغى السائح هذا الطلب قبل موافقتك.' : 'The tourist cancelled this request before your approval.')
+          : (isAr ? 'تم إلغاء هذا الحجز.' : 'This booking has been cancelled.');
     case BookingStatus.completed:
-      return isAr
-          ? 'تمت هذه الرحلة بنجاح.'
-          : 'This trip has been completed successfully.';
-    case BookingStatus.pending:
-      return isAr
-          ? 'طلبك قيد المراجعة حاليًا. سيتم إشعارك عند تحديث الحالة.'
-          : 'Your booking is currently under review. You will be notified once the status changes.';
+      return isAr ? 'تمت هذه الرحلة بنجاح.' : 'This trip has been completed successfully.';
   }
 }
 
@@ -108,7 +92,7 @@ String _statusMessage(BookingStatus status, bool isAr) {
 
           const SizedBox(height: 16),
 
-          _buildBookingOverviewCard(theme, isAr, l10n, ref),
+          _buildBookingOverviewCard(theme, isAr, l10n, ref, isTourist),
 
           const SizedBox(height: 24),
 
@@ -178,7 +162,9 @@ String _statusMessage(BookingStatus status, bool isAr) {
     bool isAr,
     AppLocalizations l10n,
     WidgetRef ref,
+    bool isTourist,
   ) {
+    final isGuide = !isTourist;
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
     final statusColor = _statusColor(booking.status, theme);
@@ -251,7 +237,7 @@ String _statusMessage(BookingStatus status, bool isAr) {
                   ),
                 ),
                 child: Text(
-                  _statusLabel(booking.status, isAr),
+                  bookingStatusLabel(status: booking.status, isGuide: isGuide, l10n: l10n),
                   style: textTheme.labelSmall?.copyWith(
                     color: statusColor,
                     fontWeight: FontWeight.w700,
@@ -271,7 +257,7 @@ String _statusMessage(BookingStatus status, bool isAr) {
               borderRadius: BorderRadius.circular(14),
             ),
             child: Text(
-              _statusMessage(booking.status, isAr),
+              _statusMessage(booking.status, isAr, isGuide),
               style: textTheme.bodySmall,
             ),
           ),
@@ -361,37 +347,36 @@ String _statusMessage(BookingStatus status, bool isAr) {
             ),
           ),
 
-          if (booking.status == BookingStatus.approved) ...[
+          if (booking.status == BookingStatus.approved ||
+              booking.status == BookingStatus.completed) ...[
             const SizedBox(height: 18),
             Text(
-              isAr ? 'معلومات التواصل' : 'Contact Information',
+              isGuide
+                  ? (isAr ? 'معلومات السائح' : 'Tourist Contact')
+                  : (isAr ? 'معلومات المرشد' : 'Guide Contact'),
               style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 12),
-            // Old bookings accepted before tutorName/tutorPhone were stored:
-            // fall back to a live Firestore fetch using tutorId.
-            if (booking.tutorName != null || booking.tutorPhone != null)
-              _contactRows(
-                theme: theme,
-                isAr: isAr,
-                name: booking.tutorName,
-                phone: booking.tutorPhone,
-              )
-            else
-              FutureBuilder<TutorModel?>(
-                future: ref
-                    .read(marketplaceRepositoryProvider)
-                    .fetchTutorById(booking.tutorId),
-                builder: (context, snap) {
-                  final tutor = snap.data;
-                  return _contactRows(
-                    theme: theme,
-                    isAr: isAr,
-                    name: tutor?.fullName,
-                    phone: tutor?.phoneNumber,
-                  );
-                },
-              ),
+            StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(isGuide ? booking.touristId : booking.tutorId)
+                  .snapshots(),
+              builder: (context, snap) {
+                final data = snap.data?.data() as Map<String, dynamic>?;
+                final name = data?['fullName'] as String? ?? '';
+                final phone = data?['phoneNumber'] as String? ?? '';
+                final email = data?['email'] as String? ?? '';
+                return _contactRows(
+                  theme: theme,
+                  isAr: isAr,
+                  isGuide: isGuide,
+                  name: name.isNotEmpty ? name : null,
+                  phone: phone.isNotEmpty ? phone : null,
+                  email: email.isNotEmpty ? email : null,
+                );
+              },
+            ),
           ],
 
           if (booking.status == BookingStatus.rejected) ...[
@@ -419,32 +404,33 @@ String _statusMessage(BookingStatus status, bool isAr) {
   Widget _contactRows({
     required ThemeData theme,
     required bool isAr,
+    required bool isGuide,
     required String? name,
     required String? phone,
+    required String? email,
   }) {
+    final personLabel = isGuide
+        ? (isAr ? 'السائح' : 'Tourist')
+        : (isAr ? 'المرشد' : 'Guide');
     return Column(
       children: [
         _modernInfoRow(
           theme,
           Icons.person_outline,
-          isAr ? 'المرشد' : 'Guide',
-          (name != null && name.isNotEmpty)
-              ? name
-              : (isAr ? 'سيظهر لاحقًا' : 'Available soon'),
+          personLabel,
+          name ?? (isAr ? 'سيظهر لاحقًا' : 'Available soon'),
         ),
         _modernInfoRow(
           theme,
           Icons.phone_outlined,
           isAr ? 'رقم التواصل' : 'Phone',
-          (phone != null && phone.isNotEmpty)
-              ? phone
-              : (isAr ? 'سيظهر بعد التأكيد' : 'Shown after confirmation'),
+          phone ?? (isAr ? 'سيظهر بعد التأكيد' : 'Shown after confirmation'),
         ),
         _modernInfoRow(
           theme,
-          Icons.place_outlined,
-          isAr ? 'نقطة التجمع' : 'Meeting Point',
-          isAr ? 'سيتم تحديدها لاحقًا' : 'To be shared later',
+          Icons.email_outlined,
+          isAr ? 'البريد الإلكتروني' : 'Email',
+          email ?? (isAr ? 'سيظهر بعد التأكيد' : 'Shown after confirmation'),
         ),
       ],
     );

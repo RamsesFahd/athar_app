@@ -1,5 +1,6 @@
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
+import 'package:athar_app/core/utils/booking_status_helper.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
 import 'package:athar_app/features/guide_market/Screens/add_trip_screen.dart';
@@ -412,20 +413,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 }
 
-String _statusLabel(BookingStatus status, AppLocalizations l10n) {
-  switch (status) {
-    case BookingStatus.approved:
-      return l10n.booking_status_accepted;
-    case BookingStatus.rejected:
-      return l10n.booking_status_rejected;
-    case BookingStatus.cancelled:
-      return 'Cancelled';
-    case BookingStatus.completed:
-      return l10n.booking_status_completed;
-    case BookingStatus.pending:
-      return l10n.booking_status_pending;
-  }
-}
 
 Widget _buildBookingItem(
   BuildContext context,
@@ -582,7 +569,7 @@ Widget _buildBookingItem(
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text(
-                _statusLabel(b.status, l10n),
+                bookingStatusLabel(status: b.status, isGuide: isTutor, l10n: l10n),
                 style: theme.textTheme.labelSmall?.copyWith(
                   color: statusColor,
                   fontWeight: FontWeight.w700,

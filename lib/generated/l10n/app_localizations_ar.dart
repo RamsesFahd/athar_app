@@ -1094,4 +1094,37 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get privacyPolicyContactBody =>
       'لأي استفسارات تتعلق بالخصوصية يرجى مراسلتنا على: privacy@athar-app.com';
+
+  @override
+  String get bookingPendingForGuide => 'طلب جديد يحتاج إجراء';
+
+  @override
+  String get bookingPendingForTourist => 'بانتظار موافقة المرشد';
+
+  @override
+  String get bookingApproved => 'مؤكد';
+
+  @override
+  String get bookingRejectedByGuide => 'رفضت هذا الطلب';
+
+  @override
+  String get bookingRejectedForTourist => 'تم الرفض من المرشد';
+
+  @override
+  String get bookingCancelledByTourist => 'ألغى السائح قبل موافقتك';
+
+  @override
+  String get bookingCancelledByMe => 'ألغيت قبل الموافقة';
+
+  @override
+  String get bookingCompleted => 'اكتملت الرحلة';
+
+  @override
+  String get guideContactInfo => 'معلومات المرشد';
+
+  @override
+  String get touristContactInfo => 'معلومات السائح';
+
+  @override
+  String get rateYourGuide => 'قيّم المرشد';
 }
