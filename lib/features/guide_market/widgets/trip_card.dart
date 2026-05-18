@@ -124,7 +124,7 @@ Widget _buildGridContent(
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: textTheme.labelSmall?.copyWith(
-                        color: colorScheme.onPrimary.withOpacity(0.8),
+                        color: colorScheme.onPrimary.withValues(alpha: 0.8),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -142,7 +142,7 @@ Widget _buildGridContent(
                     children: [
                       Flexible(
                         child: Text(
-                          trip.price,
+  '${trip.price.replaceAll('ر.س', '').replaceAll('SAR', '').trim()} ${isAr ? '﷼' : 'SAR'}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: textTheme.bodyLarge?.copyWith(
@@ -299,29 +299,35 @@ Widget _buildGridContent(
 
                 // السعر + الزر
                 Row(
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          trip.price,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: textTheme.titleMedium?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          isAr ? '﷼' : 'SAR',
-                          style: textTheme.labelSmall?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
+  children: [
+    Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          trip.price
+              .replaceAll('ر.س', '')
+              .replaceAll('SAR', '')
+              .trim(),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: textTheme.titleMedium?.copyWith(
+            color: colorScheme.primary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+
+        const SizedBox(width: 4),
+
+        Text(
+          isAr ? '﷼' : 'SAR',
+          style: textTheme.labelSmall?.copyWith(
+            color: colorScheme.primary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    ),
+
 
                     const Spacer(),
 

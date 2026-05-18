@@ -62,6 +62,23 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
+  static String _translateAttractionCategory(String value, bool isAr) {
+  if (!isAr) return value;
+
+  switch (value.toLowerCase()) {
+    case 'heritage':
+      return 'تراث';
+    case 'nature':
+      return 'طبيعة';
+    case 'arts':
+      return 'فنون';
+    case 'modern':
+      return 'عصري';
+    default:
+      return value;
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -166,7 +183,7 @@ class _YouMayLikeSection extends ConsumerWidget {
         return ExploreHeritageHomeCard(
           title: title,
           image: image,
-          categoryLabel: a.category,
+          categoryLabel: HomeScreen._translateAttractionCategory(a.category, isAr),
           locationLabel: a.getCity(isAr),
           onTap: () => Navigator.push(
             context,
@@ -328,7 +345,8 @@ class _AttractionsSection extends ConsumerWidget {
                     child: ExploreHeritageHomeCard(
                       title: a.getName(isAr),
                       image: a.mainImage,
-                      categoryLabel: a.category,
+                      categoryLabel:
+                     HomeScreen._translateAttractionCategory(a.category, isAr),
                       locationLabel: a.getCity(isAr),
                       onTap: () => Navigator.push(
                         context,
@@ -395,7 +413,9 @@ class _TripsSection extends ConsumerWidget {
                     child: ExploreHeritageHomeCard(
                       title: trip.getTitle(isAr),
                       image: trip.imageUrl,
-                      categoryLabel: trip.price,
+                   categoryLabel: isAr
+    ? '${trip.price.replaceAll('ر.س', '').replaceAll('SAR', '').trim()} ﷼'
+    : '${trip.price.replaceAll('ر.س', '').replaceAll('SAR', '').trim()} SAR',
                       locationLabel: trip.getCity(isAr),
                       onTap: () => Navigator.push(
                         context,
