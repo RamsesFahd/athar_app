@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:athar_app/core/services/notification_service.dart';
@@ -8,15 +10,50 @@ import 'package:athar_app/features/auth/logic/auth_repository.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 
 // This line link this file to the generated file Riverpod will create
-part 'auth_notifier.g.dart'; 
+part 'auth_notifier.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AuthNotifier extends _$AuthNotifier {
-  
+
+  StreamSubscription<UserModel?>? _userSub;
+
   // this method is called when the provider is first created, we use it to check the authentication status of the user and return their data if they are logged in or null if they are not logged in. The AsyncValue type allows us to represent the loading, error, and data states of this asynchronous operation in a way that can be easily consumed by the UI.
   @override
   FutureOr<UserModel?> build() async {
-    return _checkAuthStatus();
+    ref.onDispose(() => _userSub?.cancel());
+    final user = await _checkAuthStatus();
+    if (user != null && user.role != UserRole.guest) {
+      _startUserStream(user.uId);
+    }
+    return user;
+  }
+
+  // Starts (or replaces) the Firestore real-time listener for the given user.
+  // Called from build() for persisted sessions and from every sign-in / sign-up
+  // path so the stream is active for users who authenticate during the current
+  // app session. Previous subscription is cancelled before creating a new one.
+  void _startUserStream(String uId) {
+    _userSub?.cancel();
+    _userSub = ref
+        .read(authRepositoryProvider)
+        .getUserStream(uId)
+        .listen(
+          (updated) {
+            debugPrint('[AuthNotifier STREAM] fired: phoneNumber=${updated?.phoneNumber}, phoneVerified=${updated?.phoneVerified}, stateUid=${state.value?.uId}, updatedUid=${updated?.uId}');
+            // uId guard: prevents stale updates after logout / re-login with a different account.
+            if (updated != null && state.value?.uId == updated.uId) {
+              state = AsyncData(updated);
+              debugPrint('[AuthNotifier STREAM] state updated');
+            } else {
+              debugPrint('[AuthNotifier STREAM] guard blocked — stateUid=${state.value?.uId}, updatedUid=${updated?.uId}');
+            }
+          },
+          onError: (e, st) {
+            // Log silently — stream may fail during offline or permission changes.
+            // Do NOT crash or overwrite auth state here.
+            debugPrint('[AuthNotifier] getUserStream error: $e');
+          },
+        );
   }
 
   // This private method checks the authentication status of the user by first checking if there's a currently authenticated user in Firebase Authentication, and if there is, it then fetches the corresponding user data from Firestore to return a UserModel instance. This is useful for determining if the user is logged in and getting their details when the app starts.
@@ -46,6 +83,7 @@ class AuthNotifier extends _$AuthNotifier {
       final user = await _checkAuthStatus();
       if (user != null) {
         await NotificationService.instance.registerToken(user.uId);
+        if (user.role != UserRole.guest) _startUserStream(user.uId);
       }
       return user;
     });
@@ -53,8 +91,8 @@ class AuthNotifier extends _$AuthNotifier {
 
   // Sign up method that takes email, password, full name, and role to create a new user account. It sets the state to loading while the sign up process is happening, and then uses AsyncValue.guard to handle the asynchronous operation and update the state accordingly based on whether the sign up was successful or if it threw an error.
   Future<void> signUp({
-    required String email, 
-    required String password, 
+    required String email,
+    required String password,
     required String fullName,
     required UserRole role,
     TutorType? tutorType,
@@ -62,25 +100,34 @@ class AuthNotifier extends _$AuthNotifier {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final repo = ref.read(authRepositoryProvider);
-      
 
       final error = await repo.signUp(
-        email: email, 
-        password: password, 
+        email: email,
+        password: password,
         fullName: fullName,
-        role: role, 
+        role: role,
         tutorType: tutorType,
       );
 
       if (error != null) throw error;
 
-      return await _checkAuthStatus(); 
+      final user = await _checkAuthStatus();
+      if (user != null && user.role != UserRole.guest) {
+        _startUserStream(user.uId);
+      }
+      return user;
     });
   }
+
   Future<void> logout() async {
+    // Capture userId before state changes, cancel stream before any Firebase
+    // calls to prevent a final stream emit from restoring the logged-out user.
+    final userId = state.value?.uId;
+    _userSub?.cancel();
+    _userSub = null;
+
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final userId = state.value?.uId;
       if (userId != null) {
         await NotificationService.instance.removeToken(userId);
       }
@@ -100,6 +147,7 @@ class AuthNotifier extends _$AuthNotifier {
       if (user == null && repo.currentUser != null) throw 'needsRoleSelection';
       if (user != null) {
         await NotificationService.instance.registerToken(user.uId);
+        if (user.role != UserRole.guest) _startUserStream(user.uId);
       }
       return user;
     });
@@ -114,7 +162,11 @@ class AuthNotifier extends _$AuthNotifier {
       final repo = ref.read(authRepositoryProvider);
       final error = await repo.createGoogleUser(role: role, tutorType: tutorType);
       if (error != null) throw error;
-      return await _checkAuthStatus();
+      final user = await _checkAuthStatus();
+      if (user != null && user.role != UserRole.guest) {
+        _startUserStream(user.uId);
+      }
+      return user;
     });
   }
 
@@ -154,24 +206,24 @@ class AuthNotifier extends _$AuthNotifier {
   // checking email verification status method that checks if the user's email is verified. If it is, it refreshes the user data to reflect any changes. If it's not, it throws an error that can be caught and displayed in the UI
   Future<void> checkEmailVerificationStatus() async {
     state = const AsyncLoading(); // we set the state to loading while we check the verification status
-    
+
     state = await AsyncValue.guard(() async {
-    final repo = ref.read(authRepositoryProvider);
-    final isVerified = await repo.isEmailVerified();
+      final repo = ref.read(authRepositoryProvider);
+      final isVerified = await repo.isEmailVerified();
 
-    if (isVerified) {
-      final uId = repo.currentUser?.uid;
-      
-      if (uId != null) {
-        // Before returning the updated user data, we call the method to update the email verification status in Firestore. This ensures that the user's document in Firestore reflects that their email has been verified, which can be important for controlling access to certain features or content in the app based on email verification status.
-        await repo.updateEmailVerificationInFirestore(uId);
+      if (isVerified) {
+        final uId = repo.currentUser?.uid;
+
+        if (uId != null) {
+          // Before returning the updated user data, we call the method to update the email verification status in Firestore. This ensures that the user's document in Firestore reflects that their email has been verified, which can be important for controlling access to certain features or content in the app based on email verification status.
+          await repo.updateEmailVerificationInFirestore(uId);
+        }
+
+        //
+        return await _checkAuthStatus();
+      } else {
+        throw 'errorEmailNotVerified';
       }
-
-      // 
-      return await _checkAuthStatus();
-    } else {
-      throw 'errorEmailNotVerified';
-    }
     });
   }
 
@@ -189,7 +241,7 @@ class AuthNotifier extends _$AuthNotifier {
           credentialData: {'licenceNumber': licence},
         );
       }
-      return await _checkAuthStatus(); 
+      return await _checkAuthStatus();
     });
   }
 
@@ -220,7 +272,7 @@ Future<void> updateProfilePicture() async {
     // 2. if there's no lost data, we proceed with the normal image picking process, allowing the user to select a new image from their gallery. We also set the image quality to 50 to reduce the file size and help prevent memory issues that can occur with large images.
     final XFile? pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 50, 
+      imageQuality: 50,
     );
     if (pickedFile != null) {
       imageFile = File(pickedFile.path);

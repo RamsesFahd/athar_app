@@ -2281,6 +2281,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
+
+  /// No description provided for @guideTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide Type'**
+  String get guideTypeLabel;
+
+  /// No description provided for @guideTypeIndependent.
+  ///
+  /// In en, this message translates to:
+  /// **'Individual'**
+  String get guideTypeIndependent;
+
+  /// No description provided for @guideTypeCompany.
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get guideTypeCompany;
+
+  /// No description provided for @myTrips.
+  ///
+  /// In en, this message translates to:
+  /// **'My Trips'**
+  String get myTrips;
+
+  /// No description provided for @myBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'My Bookings'**
+  String get myBookings;
+
+  /// No description provided for @privacyDisclaimerTouristTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Disclaimer'**
+  String get privacyDisclaimerTouristTitle;
+
+  /// No description provided for @privacyDisclaimerTouristBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We care about your data privacy and confidentiality.'**
+  String get privacyDisclaimerTouristBody;
+
+  /// No description provided for @privacyDisclaimerGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide Privacy Disclaimer'**
+  String get privacyDisclaimerGuideTitle;
+
+  /// No description provided for @privacyDisclaimerGuideBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data and documents are stored and protected with the highest standards.'**
+  String get privacyDisclaimerGuideBody;
+
+  /// No description provided for @credVerifTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Verification'**
+  String get credVerifTitle;
+
+  /// No description provided for @credVerifIndividualLicence.
+  ///
+  /// In en, this message translates to:
+  /// **'Freelance License'**
+  String get credVerifIndividualLicence;
+
+  /// No description provided for @credVerifCompanyDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Company Details'**
+  String get credVerifCompanyDetails;
+
+  /// No description provided for @credVerifLicenceNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'License Number'**
+  String get credVerifLicenceNumber;
+
+  /// No description provided for @credVerifLicenceExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'License Expiry Date'**
+  String get credVerifLicenceExpiry;
+
+  /// No description provided for @credVerifCompanyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Company Name'**
+  String get credVerifCompanyName;
+
+  /// No description provided for @credVerifCommercialReg.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial Registration Number'**
+  String get credVerifCommercialReg;
+
+  /// No description provided for @credVerifCommercialRegExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'CR Expiry Date'**
+  String get credVerifCommercialRegExpiry;
+
+  /// No description provided for @credVerifTourismLicenceSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Tour Guide License'**
+  String get credVerifTourismLicenceSection;
+
+  /// No description provided for @credVerifTourismLicenceNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Tour Guide License Number'**
+  String get credVerifTourismLicenceNumber;
+
+  /// No description provided for @credVerifTourismLicenceExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Tour Guide License Expiry'**
+  String get credVerifTourismLicenceExpiry;
+
+  /// No description provided for @credVerifPickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick Date'**
+  String get credVerifPickDate;
+
+  /// No description provided for @credVerifRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get credVerifRequired;
+
+  /// No description provided for @credVerifPickLicenceExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick license expiry date'**
+  String get credVerifPickLicenceExpiry;
+
+  /// No description provided for @credVerifPickAllExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Please specify all expiry dates'**
+  String get credVerifPickAllExpiry;
+
+  /// No description provided for @credVerifSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for Verification'**
+  String get credVerifSubmit;
+
+  /// No description provided for @credVerifReviewNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents will be reviewed by the administration'**
+  String get credVerifReviewNote;
+
+  /// No description provided for @credVerifSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents submitted successfully'**
+  String get credVerifSuccess;
+
+  /// No description provided for @credVerifRejectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents Rejected'**
+  String get credVerifRejectionTitle;
+
+  /// No description provided for @credVerifPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents Under Review'**
+  String get credVerifPendingTitle;
+
+  /// No description provided for @credVerifPendingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents are currently under review, we will notify you once done.'**
+  String get credVerifPendingBody;
+
+  /// No description provided for @credVerifVerifiedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get credVerifVerifiedTitle;
+
+  /// No description provided for @credVerifVerifiedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your documents have been verified and approved successfully.'**
+  String get credVerifVerifiedBody;
+
+  /// No description provided for @credVerifPhoneRequiredFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Please verify your phone number before submitting credentials'**
+  String get credVerifPhoneRequiredFirst;
+
+  /// No description provided for @credVerifPhoneNotVerifiedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Not Verified'**
+  String get credVerifPhoneNotVerifiedTitle;
+
+  /// No description provided for @credVerifPhoneNotVerifiedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You must verify your phone number first. Go back to your profile and verify your phone.'**
+  String get credVerifPhoneNotVerifiedBody;
+
+  /// No description provided for @tripEligibilityProfileIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile (bio & languages) to add trips'**
+  String get tripEligibilityProfileIncomplete;
 }
 
 class _AppLocalizationsDelegate

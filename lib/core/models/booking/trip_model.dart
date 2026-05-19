@@ -1,3 +1,4 @@
+import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TripModel {
@@ -117,7 +118,7 @@ class TripModel {
 
   // ── Display helpers ───────────────────────────────────────────────────────
 
-  String get price => '${adultPrice.toInt()} ر.س';
+  String get price => CurrencyFormatter.formatNumber(adultPrice);
   String getTitle(bool isAr) => isAr ? titleAr : titleEn;
   String getDescription(bool isAr) => isAr ? descriptionAr : descriptionEn;
   String getShortDescription(bool isAr) =>

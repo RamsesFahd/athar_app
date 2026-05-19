@@ -1,6 +1,7 @@
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/profile/logic/profile_notifier.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,9 +29,6 @@ class _CredentialVerificationScreenState
   DateTime? _commercialRegExpiry;
   final _tourismLicenceNumber = TextEditingController();
   DateTime? _tourismLicenceExpiry;
-
-  bool get _isAr =>
-      WidgetsBinding.instance.platformDispatcher.locale.languageCode == 'ar';
 
   @override
   void didChangeDependencies() {
@@ -89,16 +87,14 @@ class _CredentialVerificationScreenState
     if (picked != null) onPicked(picked);
   }
 
-  Future<void> _submit(TutorModel tutor) async {
+  Future<void> _submit(TutorModel tutor, AppLocalizations l10n) async {
     if (!_formKey.currentState!.validate()) return;
 
     Map<String, dynamic> data;
 
     if (tutor.tutorType == TutorType.individual) {
       if (_licenceExpiryDate == null) {
-        _showError(_isAr
-            ? 'يرجى اختيار تاريخ انتهاء الرخصة'
-            : 'Please select licence expiry date');
+        _showError(l10n.credVerifPickLicenceExpiry);
         return;
       }
       data = {
@@ -107,9 +103,7 @@ class _CredentialVerificationScreenState
       };
     } else {
       if (_commercialRegExpiry == null || _tourismLicenceExpiry == null) {
-        _showError(_isAr
-            ? 'يرجى اختيار تواريخ الانتهاء'
-            : 'Please select all expiry dates');
+        _showError(l10n.credVerifPickAllExpiry);
         return;
       }
       data = {
@@ -130,9 +124,7 @@ class _CredentialVerificationScreenState
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_isAr
-              ? 'تم إرسال طلب التوثيق بنجاح'
-              : 'Verification request submitted'),
+          content: Text(l10n.credVerifSuccess),
           backgroundColor: Colors.green,
         ),
       );
@@ -148,9 +140,9 @@ class _CredentialVerificationScreenState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final isHighContrast =
-    theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.colorScheme.primary == Colors.black;
     final authState = ref.watch(authNotifierProvider);
     final notifierState = ref.watch(profileNotifierProvider);
     final isLoading = notifierState is AsyncLoading;
@@ -160,13 +152,19 @@ class _CredentialVerificationScreenState
         if (user == null || user is! TutorModel) {
           return const Scaffold(body: Center(child: Text('Not a tutor account')));
         }
+        if (user.verificationStatus == VerificationStatus.verified) {
+          return _buildVerifiedScaffold(context, l10n);
+        }
         if (user.verificationStatus == VerificationStatus.pending) {
-          return _buildPendingReviewScaffold(context);
+          return _buildPendingReviewScaffold(context, l10n);
+        }
+        if (!user.phoneVerified) {
+          return _buildPhoneNotVerifiedScaffold(context, l10n);
         }
         final isIndividual = user.tutorType == TutorType.individual;
         return Scaffold(
           appBar: AppBar(
-            title: Text(_isAr ? 'توثيق البيانات' : 'Credential Verification'),
+            title: Text(l10n.credVerifTitle),
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
@@ -181,19 +179,17 @@ class _CredentialVerificationScreenState
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-  color: isHighContrast
-      ? Colors.white
-      : Colors.red.withValues(alpha: 0.08),
-
-  borderRadius: BorderRadius.circular(12),
-
-  border: Border.all(
-    color: isHighContrast
-        ? Colors.black
-        : Colors.red.withValues(alpha: 0.3),
-    width: isHighContrast ? 2 : 1,
-  ),
-),
+                        color: isHighContrast
+                            ? Colors.white
+                            : Colors.red.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: isHighContrast
+                              ? Colors.black
+                              : Colors.red.withValues(alpha: 0.3),
+                          width: isHighContrast ? 2 : 1,
+                        ),
+                      ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -205,7 +201,7 @@ class _CredentialVerificationScreenState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  _isAr ? 'سبب الرفض' : 'Rejection Reason',
+                                  l10n.credVerifRejectionTitle,
                                   style: const TextStyle(
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold,
@@ -229,22 +225,24 @@ class _CredentialVerificationScreenState
                   _buildSectionHeader(
                     theme,
                     isIndividual
-                        ? (_isAr ? 'بيانات الرخصة الفردية' : 'Individual Licence')
-                        : (_isAr ? 'بيانات الشركة' : 'Company Details'),
+                        ? l10n.credVerifIndividualLicence
+                        : l10n.credVerifCompanyDetails,
                     isIndividual ? Icons.person_outlined : Icons.business_outlined,
                   ),
                   const SizedBox(height: 16),
                   if (isIndividual) ...[
                     _buildTextField(
                       controller: _licenceNumber,
-                      label: _isAr ? 'رقم الرخصة' : 'Licence Number',
+                      label: l10n.credVerifLicenceNumber,
                       icon: Icons.badge_outlined,
+                      requiredMsg: l10n.credVerifRequired,
                     ),
                     const SizedBox(height: 16),
                     _buildDateField(
-                      label: _isAr ? 'تاريخ انتهاء الرخصة' : 'Licence Expiry Date',
+                      label: l10n.credVerifLicenceExpiry,
                       value: _licenceExpiryDate,
                       icon: Icons.calendar_today_outlined,
+                      placeholder: l10n.credVerifPickDate,
                       onTap: () => _pickDate(
                         current: _licenceExpiryDate,
                         onPicked: (d) => setState(() => _licenceExpiryDate = d),
@@ -254,22 +252,23 @@ class _CredentialVerificationScreenState
                   ] else ...[
                     _buildTextField(
                       controller: _companyName,
-                      label: _isAr ? 'اسم الشركة' : 'Company Name',
+                      label: l10n.credVerifCompanyName,
                       icon: Icons.business_outlined,
+                      requiredMsg: l10n.credVerifRequired,
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _commercialReg,
-                      label: _isAr ? 'رقم السجل التجاري' : 'Commercial Registration No.',
+                      label: l10n.credVerifCommercialReg,
                       icon: Icons.receipt_long_outlined,
+                      requiredMsg: l10n.credVerifRequired,
                     ),
                     const SizedBox(height: 16),
                     _buildDateField(
-                      label: _isAr
-                          ? 'تاريخ انتهاء السجل التجاري'
-                          : 'Commercial Reg. Expiry Date',
+                      label: l10n.credVerifCommercialRegExpiry,
                       value: _commercialRegExpiry,
                       icon: Icons.calendar_today_outlined,
+                      placeholder: l10n.credVerifPickDate,
                       onTap: () => _pickDate(
                         current: _commercialRegExpiry,
                         onPicked: (d) => setState(() => _commercialRegExpiry = d),
@@ -279,22 +278,22 @@ class _CredentialVerificationScreenState
                     const SizedBox(height: 24),
                     _buildSectionHeader(
                       theme,
-                      _isAr ? 'ترخيص النشاط السياحي' : 'Tourism Activity Licence',
+                      l10n.credVerifTourismLicenceSection,
                       Icons.tour_outlined,
                     ),
                     const SizedBox(height: 16),
                     _buildTextField(
                       controller: _tourismLicenceNumber,
-                      label: _isAr ? 'رقم الترخيص السياحي' : 'Tourism Licence Number',
+                      label: l10n.credVerifTourismLicenceNumber,
                       icon: Icons.badge_outlined,
+                      requiredMsg: l10n.credVerifRequired,
                     ),
                     const SizedBox(height: 16),
                     _buildDateField(
-                      label: _isAr
-                          ? 'تاريخ انتهاء الترخيص السياحي'
-                          : 'Tourism Licence Expiry Date',
+                      label: l10n.credVerifTourismLicenceExpiry,
                       value: _tourismLicenceExpiry,
                       icon: Icons.calendar_today_outlined,
+                      placeholder: l10n.credVerifPickDate,
                       onTap: () => _pickDate(
                         current: _tourismLicenceExpiry,
                         onPicked: (d) => setState(() => _tourismLicenceExpiry = d),
@@ -306,7 +305,7 @@ class _CredentialVerificationScreenState
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: isLoading ? null : () => _submit(user),
+                      onPressed: isLoading ? null : () => _submit(user, l10n),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -320,7 +319,7 @@ class _CredentialVerificationScreenState
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : Text(
-                              _isAr ? 'إرسال للتوثيق' : 'Submit for Verification',
+                              l10n.credVerifSubmit,
                               style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
@@ -329,13 +328,12 @@ class _CredentialVerificationScreenState
                   const SizedBox(height: 16),
                   Center(
                     child: Text(
-                      _isAr
-                          ? 'سيتم مراجعة بياناتك من قِبل الإدارة'
-                          : 'Your credentials will be reviewed by our team',
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: isHighContrast
-    ? theme.colorScheme.onSurface
-    : theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+                      l10n.credVerifReviewNote,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: isHighContrast
+                            ? theme.colorScheme.onSurface
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -350,13 +348,12 @@ class _CredentialVerificationScreenState
     );
   }
 
-  Widget _buildPendingReviewScaffold(BuildContext context) {
+  Widget _buildVerifiedScaffold(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
-    final isHighContrast =
-    theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.colorScheme.primary == Colors.black;
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isAr ? 'توثيق البيانات' : 'Credential Verification'),
+        title: Text(l10n.credVerifTitle),
       ),
       body: Center(
         child: Padding(
@@ -368,50 +365,135 @@ class _CredentialVerificationScreenState
                 padding: const EdgeInsets.all(28),
                 decoration: BoxDecoration(
                   color: isHighContrast
-    ? Colors.white
-    : Colors.orange.withValues(alpha: 0.1),
+                      ? Colors.white
+                      : Colors.green.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-  Icons.hourglass_top_outlined,
-  size: 56,
-  color: isHighContrast
-      ? Colors.black
-      : Colors.orange,
-),
+                  Icons.verified_outlined,
+                  size: 56,
+                  color: isHighContrast ? Colors.black : Colors.green,
+                ),
               ),
               const SizedBox(height: 24),
               Text(
-                _isAr ? 'طلبك قيد المراجعة' : 'Your Request is Under Review',
+                l10n.credVerifVerifiedTitle,
                 style: theme.textTheme.titleLarge
                     ?.copyWith(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               Text(
-                _isAr
-                    ? 'تم استلام طلب التوثيق وهو قيد المراجعة من قِبل فريقنا.\nسنُعلمك حالما يتم اعتماد طلبك، لا داعي لإعادة الإرسال.'
-                    : 'Your verification request has been received and is currently under review by our team.\nWe\'ll notify you once approved — no need to resubmit.',
+                l10n.credVerifVerifiedBody,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color:
-                      isHighContrast
-    ? theme.colorScheme.onSurface
-    : theme.colorScheme.onSurface.withValues(alpha: 0.65),
+                  color: isHighContrast
+                      ? theme.colorScheme.onSurface
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.65),
                   height: 1.55,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 32),
-              OutlinedButton.icon(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.arrow_back_rounded, size: 20),
-                label: Text(_isAr ? 'عودة' : 'Go Back'),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 24, vertical: 14),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPendingReviewScaffold(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.credVerifTitle),
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(40),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(28),
+                decoration: BoxDecoration(
+                  color: isHighContrast
+                      ? Colors.white
+                      : Colors.orange.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
                 ),
+                child: Icon(
+                  Icons.hourglass_top_outlined,
+                  size: 56,
+                  color: isHighContrast ? Colors.black : Colors.orange,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                l10n.credVerifPendingTitle,
+                style: theme.textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                l10n.credVerifPendingBody,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: isHighContrast
+                      ? theme.colorScheme.onSurface
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.65),
+                  height: 1.55,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhoneNotVerifiedScaffold(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.credVerifTitle)),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(40),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(28),
+                decoration: BoxDecoration(
+                  color: isHighContrast
+                      ? Colors.white
+                      : Colors.orange.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.phone_locked_outlined,
+                  size: 56,
+                  color: isHighContrast ? Colors.black : Colors.orange,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                l10n.credVerifPhoneNotVerifiedTitle,
+                style: theme.textTheme.titleLarge
+                    ?.copyWith(fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                l10n.credVerifPhoneNotVerifiedBody,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: isHighContrast
+                      ? theme.colorScheme.onSurface
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.65),
+                  height: 1.55,
+                ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -438,6 +520,7 @@ class _CredentialVerificationScreenState
     required TextEditingController controller,
     required String label,
     required IconData icon,
+    required String requiredMsg,
   }) {
     return TextFormField(
       controller: controller,
@@ -447,7 +530,7 @@ class _CredentialVerificationScreenState
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       validator: (v) =>
-          (v == null || v.trim().isEmpty) ? (_isAr ? 'هذا الحقل مطلوب' : 'Required') : null,
+          (v == null || v.trim().isEmpty) ? requiredMsg : null,
     );
   }
 
@@ -455,12 +538,13 @@ class _CredentialVerificationScreenState
     required String label,
     required DateTime? value,
     required IconData icon,
+    required String placeholder,
     required VoidCallback onTap,
     required ThemeData theme,
   }) {
     final formatted = value != null
         ? DateFormat('yyyy-MM-dd').format(value)
-        : (_isAr ? 'اضغط لاختيار التاريخ' : 'Tap to select date');
+        : placeholder;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),

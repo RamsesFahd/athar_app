@@ -192,7 +192,7 @@ Future<void> migrateRegionIds() async {
   int count = 0;
 
   for (final doc in snapshot.docs) {
-    final data = doc.data() as Map<String, dynamic>;
+    final data = doc.data();
 
     // Skip if regionId already exists
     if (data['regionId'] != null && data['regionId'].toString().isNotEmpty) {

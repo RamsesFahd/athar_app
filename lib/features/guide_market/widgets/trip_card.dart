@@ -17,7 +17,7 @@ class TripCard extends StatelessWidget {
   @override
  Widget build(BuildContext context) {
   final isAr = Localizations.localeOf(context).languageCode == 'ar';
-  final l10n = AppLocalizations.of(context)!;
+  final l10n = AppLocalizations.of(context);
   final theme = Theme.of(context);
 
   return Container(
@@ -310,14 +310,6 @@ Widget _buildGridContent(
                           style: textTheme.titleMedium?.copyWith(
                             color: colorScheme.primary,
                             fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          isAr ? '﷼' : 'SAR',
-                          style: textTheme.labelSmall?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ],

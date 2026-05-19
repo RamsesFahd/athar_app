@@ -181,8 +181,9 @@ class _UserNotificationsProviderElement
   @override
   String get userId => (origin as UserNotificationsProvider).userId;
 }
+
 String _$unreadNotificationCountHash() =>
-    r'b3e2c1a4d7f0e5b8c9d1a2e3f4b5c6d7e8f9a0b';
+    r'8b11a657a1e29ecc4e2dbff9c74aac9b21f0aa7b';
 
 /// See also [unreadNotificationCount].
 @ProviderFor(unreadNotificationCount)
@@ -194,15 +195,21 @@ class UnreadNotificationCountFamily extends Family<AsyncValue<int>> {
   const UnreadNotificationCountFamily();
 
   /// See also [unreadNotificationCount].
-  UnreadNotificationCountProvider call(String userId) {
-    return UnreadNotificationCountProvider(userId);
+  UnreadNotificationCountProvider call(
+    String userId,
+  ) {
+    return UnreadNotificationCountProvider(
+      userId,
+    );
   }
 
   @override
   UnreadNotificationCountProvider getProviderOverride(
     covariant UnreadNotificationCountProvider provider,
   ) {
-    return call(provider.userId);
+    return call(
+      provider.userId,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -222,8 +229,10 @@ class UnreadNotificationCountFamily extends Family<AsyncValue<int>> {
 
 /// See also [unreadNotificationCount].
 class UnreadNotificationCountProvider extends AutoDisposeStreamProvider<int> {
-  UnreadNotificationCountProvider(String userId)
-      : this._internal(
+  /// See also [unreadNotificationCount].
+  UnreadNotificationCountProvider(
+    String userId,
+  ) : this._internal(
           (ref) => unreadNotificationCount(
             ref as UnreadNotificationCountRef,
             userId,
@@ -284,6 +293,7 @@ class UnreadNotificationCountProvider extends AutoDisposeStreamProvider<int> {
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, userId.hashCode);
+
     return _SystemHash.finish(hash);
   }
 }
@@ -291,6 +301,7 @@ class UnreadNotificationCountProvider extends AutoDisposeStreamProvider<int> {
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin UnreadNotificationCountRef on AutoDisposeStreamProviderRef<int> {
+  /// The parameter `userId` of this provider.
   String get userId;
 }
 
@@ -302,6 +313,5 @@ class _UnreadNotificationCountProviderElement
   @override
   String get userId => (origin as UnreadNotificationCountProvider).userId;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

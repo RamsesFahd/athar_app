@@ -1,3 +1,4 @@
+import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -303,8 +304,8 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
                         ?.copyWith(fontWeight: FontWeight.w800),
                   ),
                 ),
-                Text(
-                  '${booking.totalPrice.toInt()} ${l10n.currency}',
+                CurrencyFormatter.format(
+                  booking.totalPrice,
                   style: textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w900,
                     color: colorScheme.primary,

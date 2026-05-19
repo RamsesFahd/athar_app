@@ -223,51 +223,54 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
   }
 
   Widget _buildOtpBoxes(ThemeData theme, bool isLoading) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(6, (i) {
-        return SizedBox(
-          width: 42,
-          height: 52,
-          child: TextField(
-            controller: _otpControllers[i],
-            focusNode: _otpFocusNodes[i],
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            maxLength: 1,
-            enabled: !isLoading,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            style: theme.textTheme.titleLarge
-                ?.copyWith(fontWeight: FontWeight.bold),
-            decoration: InputDecoration(
-              counterText: '',
-              contentPadding: EdgeInsets.zero,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: theme.colorScheme.primary,
-                  width: 2,
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: List.generate(6, (i) {
+          return SizedBox(
+            width: 42,
+            height: 52,
+            child: TextField(
+              controller: _otpControllers[i],
+              focusNode: _otpFocusNodes[i],
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+              maxLength: 1,
+              enabled: !isLoading,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              style: theme.textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
+              decoration: InputDecoration(
+                counterText: '',
+                contentPadding: EdgeInsets.zero,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.primary,
+                    width: 2,
+                  ),
                 ),
               ),
-            ),
-            onChanged: (val) {
-              if (val.isNotEmpty) {
-                if (i < 5) {
-                  _otpFocusNodes[i + 1].requestFocus();
-                } else {
-                  _otpFocusNodes[i].unfocus();
-                  _verifyOtp();
+              onChanged: (val) {
+                if (val.isNotEmpty) {
+                  if (i < 5) {
+                    _otpFocusNodes[i + 1].requestFocus();
+                  } else {
+                    _otpFocusNodes[i].unfocus();
+                    _verifyOtp();
+                  }
+                } else if (val.isEmpty && i > 0) {
+                  _otpFocusNodes[i - 1].requestFocus();
                 }
-              } else if (val.isEmpty && i > 0) {
-                _otpFocusNodes[i - 1].requestFocus();
-              }
-            },
-          ),
-        );
-      }),
+              },
+            ),
+          );
+        }),
+      ),
     );
   }
 

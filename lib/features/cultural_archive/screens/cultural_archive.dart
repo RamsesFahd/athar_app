@@ -12,7 +12,7 @@ class CulturalArchive extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final viewMode = ref.watch(viewModeProvider);
     final showFilters = ref.watch(showFiltersProvider);

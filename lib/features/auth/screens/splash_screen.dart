@@ -42,7 +42,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           );
         } else {
           final tourist = user is TouristModel ? user : null;
-          final hasInterests = tourist?.culturalInterests?.isNotEmpty ?? false;
+          final hasInterests = tourist?.culturalInterests.isNotEmpty ?? false;
           if (tourist != null && !hasInterests) {
             Navigator.pushReplacementNamed(context, AppRoutes.userPreferences);
           } else {

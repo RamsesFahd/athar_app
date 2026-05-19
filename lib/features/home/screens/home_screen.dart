@@ -110,14 +110,10 @@ class _YouMayLikeSection extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
 
-    final interests = ref.watch(
-      authNotifierProvider.select((async) {
-        final user = async.valueOrNull;
-        return user is TouristModel
-            ? user.culturalInterests
-            : const <String>[];
-      }),
-    );
+    final user = ref.watch(authNotifierProvider.select((a) => a.valueOrNull));
+    if (user is TutorModel) return const SizedBox.shrink();
+
+    final interests = user is TouristModel ? user.culturalInterests : const <String>[];
 
     final recommendationsAsync = ref.watch(homeRecommendationsProvider(interests));
 

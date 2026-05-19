@@ -109,6 +109,24 @@ class TutorModel extends UserModel {
     return expiry.isAfter(DateTime.now());
   }
 
+  // ── Trip publishing eligibility ───────────────────────────────────────────
+
+  /// True when the guide meets ALL requirements to publish trips.
+  bool get canPublishTrips =>
+      verificationStatus == VerificationStatus.verified &&
+      isCredentialValid &&
+      phoneVerified &&
+      (bio?.isNotEmpty ?? false) &&
+      (languages?.isNotEmpty ?? false);
+
+  /// Keys for each unmet requirement. UI uses these to show specific messages.
+  List<String> get missingTripRequirements => [
+        if (!phoneVerified) 'phone_verification',
+        if (verificationStatus != VerificationStatus.verified) 'guide_verification',
+        if (bio?.isEmpty ?? true) 'bio',
+        if (languages?.isEmpty ?? true) 'languages',
+      ];
+
   // ── Profile completeness ──────────────────────────────────────────────────
 
   bool get isProfileComplete {

@@ -25,7 +25,7 @@ class ProfileNotifier extends _$ProfileNotifier {
         {'fullName': newName},
       );
       if (error != null) throw Exception(error);
-      ref.invalidate(authNotifierProvider);
+      // Stream in AuthNotifier propagates the Firestore update automatically.
     });
   }
 
@@ -44,7 +44,7 @@ class ProfileNotifier extends _$ProfileNotifier {
       if (languages != null) data['languages'] = languages;
       final error = await ref.read(profileRepositoryProvider).updateUserData(user.uId, data);
       if (error != null) throw Exception(error);
-      ref.invalidate(authNotifierProvider);
+      // Stream in AuthNotifier propagates the Firestore update automatically.
     });
   }
 
@@ -89,7 +89,7 @@ class ProfileNotifier extends _$ProfileNotifier {
         phoneNumber: phoneNumber,
       );
       if (error != null) throw Exception(error);
-      ref.invalidate(authNotifierProvider);
+      // Stream in AuthNotifier propagates the Firestore update automatically.
     });
   }
 
@@ -104,7 +104,7 @@ class ProfileNotifier extends _$ProfileNotifier {
         credentialData: credentialData,
       );
       if (error != null) throw Exception(error);
-      ref.invalidate(authNotifierProvider);
+      // Stream in AuthNotifier propagates the Firestore update automatically.
     });
   }
 
@@ -112,7 +112,7 @@ class ProfileNotifier extends _$ProfileNotifier {
     if (tutor.verificationStatus == VerificationStatus.verified &&
         tutor.isCredentialExpired) {
       await ref.read(profileRepositoryProvider).markCredentialExpired(tutor.uId);
-      ref.invalidate(authNotifierProvider);
+      // Stream in AuthNotifier propagates the Firestore update automatically.
     }
   }
 
@@ -130,7 +130,7 @@ class ProfileNotifier extends _$ProfileNotifier {
             phoneNumber: phoneNumber,
           );
       if (error != null) throw Exception(error);
-      ref.invalidate(authNotifierProvider);
+      // Stream in AuthNotifier propagates the Firestore update automatically.
     });
   }
 }

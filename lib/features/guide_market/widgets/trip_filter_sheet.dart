@@ -62,7 +62,7 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     
     // a unified shape for both ChoiceChip and FilterChip with dynamic border color based on selection
     RoundedRectangleBorder chipShape(bool isSelected) {

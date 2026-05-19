@@ -421,7 +421,7 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final authRepo = ref.read(authRepositoryProvider);
     final userId = authRepo.currentUser?.uid ?? 'guest_user';

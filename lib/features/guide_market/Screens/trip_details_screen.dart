@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/favorites/favorite_item_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:athar_app/core/utils/share_utils.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/profile/logic/favorites_notifier.dart';
@@ -24,9 +25,7 @@ class TripDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
-    final l10n = AppLocalizations.of(context)!;
-    final isCompany = trip.tutorType == 'company';
-
+    final l10n = AppLocalizations.of(context);
     //acc
     final settings = ref.watch(settingsProvider);
     final ttsService = ref.read(ttsServiceProvider);
@@ -277,7 +276,7 @@ class TripDetailsScreen extends ConsumerWidget {
           _buildPriceItem(
             theme,
             label: isAr ? 'للبالغين' : 'Adults',
-            price: '${trip.adultPrice.toInt()} ${isAr ? 'ر.س' : 'SAR'}',
+            price: CurrencyFormatter.format(trip.adultPrice),
             icon: Icons.person_outline,
           ),
 
@@ -294,8 +293,8 @@ class TripDetailsScreen extends ConsumerWidget {
             theme,
             label: isAr ? 'للأطفال' : 'Children',
             price: trip.childPrice == 0
-                ? (isAr ? 'مجاناً' : 'Free')
-                : '${trip.childPrice.toInt()} ${isAr ? 'ر.س' : 'SAR'}',
+              ? Text(isAr ? 'مجاناً' : 'Free')
+              : CurrencyFormatter.format(trip.childPrice),
             icon: Icons.child_care_outlined,
           ),
         ],
@@ -303,32 +302,39 @@ class TripDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPriceItem(ThemeData theme,
-      {required String label, required String price, required IconData icon}) {
+  Widget _buildPriceItem(
+    ThemeData theme,
+    {required String label,
+    required Widget price,
+    required IconData icon}
+    ) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 20, color: theme.colorScheme.primary.withOpacity(0.7)),
+        Icon(icon, size: 20, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
         const SizedBox(width: 10),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: Colors.grey[500],
-                letterSpacing: 0.5,
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: Colors.grey[500],
+                  letterSpacing: 0.5,
+                ),
               ),
-            ),
-            Text(
-              price,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: theme.colorScheme.onSurface,
+              DefaultTextStyle(
+                style: theme.textTheme.titleMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: theme.colorScheme.onSurface,
+                ),
+                child: price,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -399,12 +405,14 @@ class TripDetailsScreen extends ConsumerWidget {
         children: [
           Icon(icon, size: 20, color: theme.colorScheme.primary),
           const SizedBox(width: 8),
-          Text(
-          text,
-          style: theme.textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-  ),
-),
+          Expanded(
+            child: Text(
+              text,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           if (trailing != null) ...[
             const SizedBox(width: 8),
             trailing,

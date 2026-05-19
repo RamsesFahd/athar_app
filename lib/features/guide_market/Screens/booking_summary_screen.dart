@@ -1,3 +1,4 @@
+import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -41,7 +42,7 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
 
     return Scaffold(
@@ -66,44 +67,52 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start, // لضمان محاذاة العناصر لليمين في العربي
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // قسم صورة العنوان والرحلة
-                      Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(widget.imageUrl,
-                                width: 90, height: 90, fit: BoxFit.cover),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // قسم صورة العنوان والرحلة
+                              Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(widget.imageUrl,
+                                        width: 90, height: 90, fit: BoxFit.cover),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Text(
+                                      widget.tripTitle,
+                                      style: theme.textTheme.titleLarge?.copyWith(height: 1.2),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Divider(height: 40),
+
+                              _buildInfoRow(Icons.person_outline, l10n.guide, widget.guideName, theme),
+                              _buildInfoRow(Icons.calendar_today, l10n.date, widget.date, theme),
+                              _buildInfoRow(Icons.access_time, l10n.time, widget.time, theme),
+                              _buildInfoRow(
+                                Icons.people_outline,
+                                l10n.people_count,
+                                isAr
+                                    ? "${widget.adults} بالغ، ${widget.children} طفل"
+                                    : "${widget.adults} Adults, ${widget.children} Children",
+                                theme,
+                              ),
+
+                              const SizedBox(height: 10),
+                              _buildPriceBreakdown(l10n, theme, isAr),
+                            ],
                           ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Text(
-                              widget.tripTitle,
-                              style: theme.textTheme.titleLarge?.copyWith(height: 1.2),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const Divider(height: 40),
-
-                      // تفاصيل الحجز (البيانات ملاصقة الآن)
-                      _buildInfoRow(Icons.person_outline, l10n.guide, widget.guideName, theme),
-                      _buildInfoRow(Icons.calendar_today, l10n.date, widget.date, theme),
-                      _buildInfoRow(Icons.access_time, l10n.time, widget.time, theme),
-                      _buildInfoRow(
-                        Icons.people_outline,
-                        l10n.people_count,
-                        isAr
-                            ? "${widget.adults} بالغ، ${widget.children} طفل"
-                            : "${widget.adults} Adults, ${widget.children} Children",
-                        theme,
+                        ),
                       ),
 
-                      const SizedBox(height: 10),
-                      _buildPriceBreakdown(l10n, theme, isAr),
-
-                      const Spacer(),
+                      const SizedBox(height: 12),
 
                       // قسم التنويه
                       Container(
@@ -218,13 +227,12 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
             
             _priceRow(
               isAr
-                  ? '${widget.adults} بالغ × ${widget.adultPrice.toInt()} ر.س'
-                  : '${widget.adults} Adult × ${widget.adultPrice.toInt()} SAR',
-              '${(widget.adults * widget.adultPrice).toInt()} ${l10n.currency}',
+                  ? '${widget.adults} بالغ × ${CurrencyFormatter.formatNumber(widget.adultPrice)}'
+                  : '${widget.adults} Adult × ${CurrencyFormatter.formatNumber(widget.adultPrice)}',
+              CurrencyFormatter.format(widget.adults * widget.adultPrice),
               theme,
             ),
-            
-            
+
             if (widget.children > 0)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -232,11 +240,11 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                   widget.childPrice == 0
                       ? (isAr ? '${widget.children} طفل (مجاناً)' : '${widget.children} Child (Free)')
                       : (isAr
-                          ? '${widget.children} طفل × ${widget.childPrice.toInt()} ر.س'
-                          : '${widget.children} Child × ${widget.childPrice.toInt()} SAR'),
+                          ? '${widget.children} طفل × ${CurrencyFormatter.formatNumber(widget.childPrice)}'
+                          : '${widget.children} Child × ${CurrencyFormatter.formatNumber(widget.childPrice)}'),
                   widget.childPrice == 0
-                      ? (isAr ? 'مجاناً' : 'Free')
-                      : '${(widget.children * widget.childPrice).toInt()} ${l10n.currency}',
+                      ? Text(isAr ? 'مجاناً' : 'Free')
+                      : CurrencyFormatter.format(widget.children * widget.childPrice),
                   theme,
                 ),
               ),
@@ -266,23 +274,23 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
           color: theme.colorScheme.primary,
         ),
       ),
-            Text(
-             '${widget.totalPrice.toInt()} ${l10n.currency}',
-        style: theme.textTheme.titleLarge?.copyWith( 
-          color: theme.colorScheme.primary,
-  ),
-),
+            CurrencyFormatter.format(
+              widget.totalPrice,
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: theme.colorScheme.primary,
+              ),
+            ),
           ],
         ),
       ),
     ],
   );
 }
-  Widget _priceRow(String label, String value, ThemeData theme, {bool isTotal = false}) {
+  Widget _priceRow(String label, Widget value, ThemeData theme, {bool isTotal = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
@@ -290,14 +298,14 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                 ? theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)
                 : theme.textTheme.bodyMedium,
           ),
-          Text(
-            value,
+          DefaultTextStyle.merge(
             style: isTotal
-                ? theme.textTheme.bodyLarge?.copyWith(
+                ? theme.textTheme.bodyLarge!.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.primary,
                   )
-                : theme.textTheme.bodyMedium,
+                : theme.textTheme.bodyMedium!,
+            child: value,
           ),
         ],
       ),

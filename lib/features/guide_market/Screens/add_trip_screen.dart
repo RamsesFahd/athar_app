@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -478,7 +479,19 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
             const SizedBox(height: 12),
             _buildCitySection(),
             const SizedBox(height: 20),
-            _SectionHeader(theme: theme, title: 'التسعير والسعة (ر.س)'),
+            _SectionHeader(
+              theme: theme,
+              title: 'التسعير والسعة',
+              trailing: SvgPicture.asset(
+                'assets/icons/saudi_riyal.svg',
+                width: 20,
+                height: 20,
+                colorFilter: ColorFilter.mode(
+                  theme.colorScheme.primary,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
             const SizedBox(height: 12),
             _buildPricingSection(theme),
             const SizedBox(height: 20),
@@ -1009,19 +1022,30 @@ class _SectionHeader extends StatelessWidget {
   const _SectionHeader({
     required this.theme,
     required this.title,
+    this.trailing,
   });
 
   final ThemeData theme;
   final String title;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
+    final text = Text(
       title,
       style: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.bold,
         color: theme.colorScheme.primary,
       ),
+    );
+    if (trailing == null) return text;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        text,
+        const SizedBox(width: 6),
+        trailing!,
+      ],
     );
   }
 }

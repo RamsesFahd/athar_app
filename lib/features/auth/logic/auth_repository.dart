@@ -206,17 +206,32 @@ Future<String?> guestLogin() async {
   }
 
 
-  // This method checks the authentication status of the user by first checking if there's a currently authenticated user in Firebase Authentication, and if there is, it then fetches the corresponding user data from Firestore to return a UserModel instance. This is useful for determining if the user is logged in and getting their details when the app starts.
+  // Shared parsing logic used by both getUserData and getUserStream.
+  // Injects emailVerified from Firebase Auth (not stored in Firestore) before parsing.
+  UserModel? _parseUserDoc(DocumentSnapshot doc) {
+    if (!doc.exists) return null;
+    final data = doc.data() as Map<String, dynamic>;
+    data['emailVerified'] = _auth.currentUser?.emailVerified ?? false;
+    return UserModel.fromMap(data);
+  }
+
   Future<UserModel?> getUserData(String uId) async {
     try {
-      final doc = await _firestore.collection('users').doc(uId).get();
-      if (!doc.exists) return null;
-      final data = doc.data() as Map<String, dynamic>;
-      data['emailVerified'] = _auth.currentUser?.emailVerified ?? false;
-      return UserModel.fromMap(data);
+      final doc = await _users.doc(uId).get();
+      return _parseUserDoc(doc);
     } catch (e) {
       return null;
     }
+  }
+
+  Stream<UserModel?> getUserStream(String uid) {
+    return _users.doc(uid).snapshots().map((doc) {
+      try {
+        return _parseUserDoc(doc);
+      } catch (_) {
+        return null;
+      }
+    });
   }
   Future<String?> deleteAccount(String uId) async {
     try {

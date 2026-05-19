@@ -3,7 +3,6 @@ import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/utils/booking_status_helper.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
-import 'package:athar_app/features/guide_market/Screens/add_trip_screen.dart';
 import 'package:athar_app/features/guide_market/screens/booking_view_screen.dart';
 import 'package:athar_app/features/profile/logic/profile_notifier.dart';
 import 'package:flutter/scheduler.dart';
@@ -53,9 +52,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
-    final isHighContrast =
-    theme.colorScheme.primary == Colors.black;
-    
     // Watch the authentication state to conditionally render content or redirect if not authenticated
     final authState = ref.watch(authNotifierProvider);
 
@@ -70,7 +66,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             child: Column(
               children: [
                 _buildUserInformationHeader(theme, l10n, user),
-                _buildNavigationTabs(theme, l10n),
+                _buildNavigationTabs(theme, l10n, user),
                 Expanded(
                   child: _buildDynamicContentArea(theme, l10n, user),
                 ),
@@ -96,14 +92,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  Widget _buildNavigationTabs(ThemeData theme, AppLocalizations l10n) {
+  Widget _buildNavigationTabs(ThemeData theme, AppLocalizations l10n, UserModel user) {
+    final isTutor = user is TutorModel;
     return Container(
       color: theme.colorScheme.surface,
       child: Row(
         children: [
           _tabItem(l10n.profileTabSettings, 0, theme),
-          _tabItem(l10n.profileTabBooking, 1, theme),
-          _tabItem(l10n.profileTabSaved, 2, theme),
+          if (!isTutor) _tabItem(l10n.profileTabBooking, 1, theme),
+          _tabItem(l10n.profileTabSaved, isTutor ? 1 : 2, theme),
         ],
       ),
     );
@@ -146,45 +143,51 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget _buildDynamicContentArea(
       ThemeData theme, AppLocalizations l10n, UserModel user) {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
-    switch (_activeTabIndex) {
-      case 2:
-        final favAsync = ref.watch(favoritesStreamProvider);
-        return favAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Error: $e')),
-          data: (favorites) {
-            if (favorites.isEmpty) {
-              return Center(
-                child: Text(
-                  isAr ? 'لا توجد عناصر محفوظة' : 'No saved items yet',
-                  style: theme.textTheme.bodyLarge
-                      ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                ),
-              );
-            }
-            return ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              itemCount: favorites.length,
-              itemBuilder: (context, index) {
-                final item = favorites[index];
-                final typeText = item.itemType == FavoriteItemType.cultural
-                    ? (isAr ? 'تراث ثقافي' : 'Cultural')
-                    : (isAr ? 'رحلة' : 'Trip');
-                return SavedCard(
-                  title: isAr ? item.titleAr : item.titleEn,
-                  location: isAr ? item.locationAr : item.locationEn,
-                  typeText: typeText,
-                  image: item.imageUrl,
-                  isSaved: true,
-                  onToggleSave: () => ref
-                      .read(favoritesNotifierProvider.notifier)
-                      .toggle(item),
-                  onTap: () => _openFavoriteItem(context, item),
-                );
-              },
+    final bool isTutor = user is TutorModel;
+    // For TutorModel: tab 0 = settings, tab 1 = saved (no bookings tab)
+    // For TouristModel: tab 0 = settings, tab 1 = bookings, tab 2 = saved
+    final int savedTabIndex = isTutor ? 1 : 2;
+    if (_activeTabIndex == savedTabIndex) {
+      // Saved tab
+      final favAsync = ref.watch(favoritesStreamProvider);
+      return favAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('Error: $e')),
+        data: (favorites) {
+          if (favorites.isEmpty) {
+            return Center(
+              child: Text(
+                isAr ? 'لا توجد عناصر محفوظة' : 'No saved items yet',
+                style: theme.textTheme.bodyLarge
+                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+              ),
             );
-          },
-        );
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            itemCount: favorites.length,
+            itemBuilder: (context, index) {
+              final item = favorites[index];
+              final typeText = item.itemType == FavoriteItemType.cultural
+                  ? (isAr ? 'تراث ثقافي' : 'Cultural')
+                  : (isAr ? 'رحلة' : 'Trip');
+              return SavedCard(
+                title: isAr ? item.titleAr : item.titleEn,
+                location: isAr ? item.locationAr : item.locationEn,
+                typeText: typeText,
+                image: item.imageUrl,
+                isSaved: true,
+                onToggleSave: () => ref
+                    .read(favoritesNotifierProvider.notifier)
+                    .toggle(item),
+                onTap: () => _openFavoriteItem(context, item),
+              );
+            },
+          );
+        },
+      );
+    }
+    switch (_activeTabIndex) {
       case 1:
         return StreamBuilder<List<BookingModel>>(
           stream: ref
@@ -259,15 +262,25 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               titleColor: user.verificationStatus == VerificationStatus.expired
                                   ? Colors.red
                                   : theme.colorScheme.primary,
-                              onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const CredentialVerificationScreen(),
-                                ),
-                              ),
+                              onTap: () {
+                                if (!user.phoneVerified) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(l10n.credVerifPhoneRequiredFirst),
+                                      backgroundColor: Colors.orange,
+                                    ),
+                                  );
+                                  return;
+                                }
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const CredentialVerificationScreen(),
+                                  ),
+                                );
+                              },
                             ),
                           ],
-                          _buildAddTripTile(user, theme, l10n, isAr, context),
                         ],
                         if (user is TouristModel) ...[
                           SettingsTile(
@@ -652,8 +665,8 @@ Widget _buildBookingItem(
     if (tutor.bio == null || tutor.bio!.trim().isEmpty) {
       missing.add(isAr ? 'نبذة شخصية' : 'Bio');
     }
-    if (tutor.phoneNumber == null || tutor.phoneNumber!.trim().isEmpty) {
-      missing.add(isAr ? 'رقم الهاتف (للتواصل مع السياح)' : 'Phone number (for tourist contact)');
+    if (!tutor.phoneVerified) {
+      missing.add(isAr ? 'رقم الهاتف (يجب التحقق منه)' : 'Phone number (must be verified)');
     }
     // Languages live on the profile for individuals only.
     // Companies pick languages per-trip (different employees, different langs).
@@ -695,16 +708,7 @@ Widget _buildBookingItem(
     return missing;
   }
 
-  /// Combined list used by the "Cannot Add Trip" dialog.
-  List<String> _missingFields(TutorModel tutor, bool isAr) => [
-        ..._missingProfileFields(tutor, isAr),
-        ..._missingVerificationFields(tutor, isAr),
-      ];
-
-  bool _canAddTrip(TutorModel tutor) =>
-      tutor.verificationStatus == VerificationStatus.verified &&
-      tutor.isCredentialValid &&
-      _missingProfileFields(tutor, false).isEmpty;
+  bool _canAddTrip(TutorModel tutor) => tutor.canPublishTrips;
 
   Widget _buildTutorCompletenessCard(
     TutorModel tutor,
@@ -847,87 +851,6 @@ Widget _buildBookingItem(
           ],
         ],
       ),
-    );
-  }
-
-  Widget _buildAddTripTile(
-    TutorModel tutor,
-    ThemeData theme,
-    AppLocalizations l10n,
-    bool isAr,
-    BuildContext context,
-  ) {
-    final canAdd = _canAddTrip(tutor);
-    final blockedColor = theme.colorScheme.onSurface.withValues(alpha: 0.35);
-
-    return SettingsTile(
-      title: l10n.add_new_trip,
-      subtitle: canAdd
-          ? l10n.add_trip_subtitle
-          : (isAr ? 'أكمل التوثيق أولاً' : 'Complete verification first'),
-      leadingIcon: canAdd
-          ? Icons.add_location_alt_outlined
-          : Icons.lock_outline,
-      titleColor: canAdd ? theme.colorScheme.primary : blockedColor,
-      onTap: () {
-        // Phone check — required before any other validation
-        if (tutor.phoneNumber == null || tutor.phoneNumber!.isEmpty) {
-          showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-              title: Text(l10n.completeProfileTitle),
-              content: Text(l10n.phoneRequiredForGuide),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(l10n.cancel),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    _showEditProfileSheet(context, l10n, tutor);
-                  },
-                  child: Text(l10n.editProfile),
-                ),
-              ],
-            ),
-          );
-          return;
-        }
-        if (!canAdd) {
-          final missing = _missingFields(tutor, isAr);
-          final lines = <String>[];
-          if (tutor.verificationStatus != VerificationStatus.verified) {
-            lines.add(isAr
-                ? '• حسابك غير موثّق بعد'
-                : '• Account not verified yet');
-          }
-          if (tutor.isCredentialExpired) {
-            lines.add(isAr ? '• رخصتك منتهية' : '• Credential expired');
-          }
-          for (final f in missing) {
-            lines.add('• $f');
-          }
-          showDialog(
-            context: context,
-            builder: (_) => AlertDialog(
-              title: Text(isAr ? 'لا يمكن إضافة رحلة' : 'Cannot Add Trip'),
-              content: Text(lines.join('\n')),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text(isAr ? 'حسناً' : 'OK'),
-                ),
-              ],
-            ),
-          );
-          return;
-        }
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const AddTripScreen()),
-        );
-      },
     );
   }
 

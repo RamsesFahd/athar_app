@@ -80,7 +80,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
                   backgroundColor: Colors.green),
             );
             final tourist = user is TouristModel ? user : null;
-            final hasInterests = tourist?.culturalInterests?.isNotEmpty ?? false;
+            final hasInterests = tourist?.culturalInterests.isNotEmpty ?? false;
             if (tourist != null && !hasInterests) {
               Navigator.pushReplacementNamed(context, AppRoutes.userPreferences);
             } else {

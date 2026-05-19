@@ -55,6 +55,16 @@ class PrivacyPolicyScreen extends StatelessWidget {
               context,
               title: l10n.privacyPolicyContactTitle,
               body: l10n.privacyPolicyContactBody,
+            ),
+            _buildSection(
+              context,
+              title: l10n.privacyDisclaimerTouristTitle,
+              body: l10n.privacyDisclaimerTouristBody,
+            ),
+            _buildSection(
+              context,
+              title: l10n.privacyDisclaimerGuideTitle,
+              body: l10n.privacyDisclaimerGuideBody,
               isLast: true,
             ),
           ],

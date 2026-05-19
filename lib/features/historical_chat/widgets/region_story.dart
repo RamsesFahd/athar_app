@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/historical_chat/screens/chat_screen.dart';
 import 'package:athar_app/core/constants/region_data.dart'; //
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -121,7 +120,7 @@ class _RegionStoryScreenState extends State<RegionStoryScreen>
   }
 
   Widget _buildGlassButton(dynamic region) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 50),
       child: ClipRRect(

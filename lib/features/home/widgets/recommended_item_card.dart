@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
 import '../widgets/recommended_item_details.dart';
 
 class RecommendedItemCard extends StatelessWidget {

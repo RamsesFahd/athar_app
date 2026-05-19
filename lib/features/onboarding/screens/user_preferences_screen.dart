@@ -134,7 +134,7 @@ class _UserPreferencesScreenState
     if (!context.mounted) return;
 
     if (success) {
-      ref.invalidate(authNotifierProvider);
+      // Stream in AuthNotifier propagates the Firestore update automatically.
 
       if (widget.isEditMode) {
         ScaffoldMessenger.of(context).showSnackBar(

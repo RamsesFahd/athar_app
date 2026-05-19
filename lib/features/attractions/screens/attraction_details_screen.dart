@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:athar_app/core/models/attractions/attraction_model.dart';
+import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/services/tts_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -126,9 +127,9 @@ class AttractionDetailsScreen extends ConsumerWidget {
                             child: _InfoCard(
                               icon: Icons.schedule_outlined,
                               title: isAr ? 'ساعات العمل' : 'Hours',
-                              value: attraction.isAlwaysOpen
+                              value: Text(attraction.isAlwaysOpen
                                   ? (isAr ? 'مفتوح 24/7' : 'Always Open')
-                                  : attraction.getOpeningHours(isAr),
+                                  : attraction.getOpeningHours(isAr)),
                               color: accent,
                               isAr: isAr,
                             ),
@@ -139,8 +140,8 @@ class AttractionDetailsScreen extends ConsumerWidget {
                               icon: Icons.payments_outlined,
                               title: isAr ? 'رسوم الدخول' : 'Entry Fee',
                               value: attraction.entryFee == 0
-                                  ? (isAr ? 'مجاني' : 'Free')
-                                  : '${attraction.entryFee.toStringAsFixed(0)} SAR',
+                                  ? Text(isAr ? 'مجاني' : 'Free')
+                                  : CurrencyFormatter.format(attraction.entryFee),
                               color: attraction.entryFee == 0
                                   ? Colors.green.shade600
                                   : accent,
@@ -325,7 +326,7 @@ class _CircleNavButton extends StatelessWidget {
 class _InfoCard extends StatelessWidget {
   final IconData icon;
   final String title;
-  final String value;
+  final Widget value;
   final Color color;
   final bool isAr;
 
@@ -371,17 +372,17 @@ class _InfoCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 6),
-          Text(
-            value.isNotEmpty ? value : '—',
-            style: (isAr
-                    ? GoogleFonts.ibmPlexSansArabic()
-                    : GoogleFonts.playfairDisplay())
-                .copyWith(
-              fontWeight: FontWeight.w700,
-              fontSize: 14,
-              color: color,
-            ),
+          DefaultTextStyle(
+          style: (isAr
+                  ? GoogleFonts.ibmPlexSansArabic()
+                  : GoogleFonts.playfairDisplay())
+              .copyWith(
+            fontWeight: FontWeight.w700,
+            fontSize: 14,
+            color: color,
           ),
+          child: value,
+        ),
         ],
       ),
     );

@@ -1150,4 +1150,120 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cancel => 'Cancel';
+
+  @override
+  String get guideTypeLabel => 'Guide Type';
+
+  @override
+  String get guideTypeIndependent => 'Individual';
+
+  @override
+  String get guideTypeCompany => 'Company';
+
+  @override
+  String get myTrips => 'My Trips';
+
+  @override
+  String get myBookings => 'My Bookings';
+
+  @override
+  String get privacyDisclaimerTouristTitle => 'Privacy Disclaimer';
+
+  @override
+  String get privacyDisclaimerTouristBody =>
+      'We care about your data privacy and confidentiality.';
+
+  @override
+  String get privacyDisclaimerGuideTitle => 'Guide Privacy Disclaimer';
+
+  @override
+  String get privacyDisclaimerGuideBody =>
+      'Your data and documents are stored and protected with the highest standards.';
+
+  @override
+  String get credVerifTitle => 'Document Verification';
+
+  @override
+  String get credVerifIndividualLicence => 'Freelance License';
+
+  @override
+  String get credVerifCompanyDetails => 'Company Details';
+
+  @override
+  String get credVerifLicenceNumber => 'License Number';
+
+  @override
+  String get credVerifLicenceExpiry => 'License Expiry Date';
+
+  @override
+  String get credVerifCompanyName => 'Company Name';
+
+  @override
+  String get credVerifCommercialReg => 'Commercial Registration Number';
+
+  @override
+  String get credVerifCommercialRegExpiry => 'CR Expiry Date';
+
+  @override
+  String get credVerifTourismLicenceSection => 'Tour Guide License';
+
+  @override
+  String get credVerifTourismLicenceNumber => 'Tour Guide License Number';
+
+  @override
+  String get credVerifTourismLicenceExpiry => 'Tour Guide License Expiry';
+
+  @override
+  String get credVerifPickDate => 'Pick Date';
+
+  @override
+  String get credVerifRequired => 'This field is required';
+
+  @override
+  String get credVerifPickLicenceExpiry => 'Pick license expiry date';
+
+  @override
+  String get credVerifPickAllExpiry => 'Please specify all expiry dates';
+
+  @override
+  String get credVerifSubmit => 'Submit for Verification';
+
+  @override
+  String get credVerifReviewNote =>
+      'Your documents will be reviewed by the administration';
+
+  @override
+  String get credVerifSuccess => 'Documents submitted successfully';
+
+  @override
+  String get credVerifRejectionTitle => 'Documents Rejected';
+
+  @override
+  String get credVerifPendingTitle => 'Documents Under Review';
+
+  @override
+  String get credVerifPendingBody =>
+      'Your documents are currently under review, we will notify you once done.';
+
+  @override
+  String get credVerifVerifiedTitle => 'Verified';
+
+  @override
+  String get credVerifVerifiedBody =>
+      'Your documents have been verified and approved successfully.';
+
+  @override
+  String get credVerifPhoneRequiredFirst =>
+      'Please verify your phone number before submitting credentials';
+
+  @override
+  String get credVerifPhoneNotVerifiedTitle => 'Phone Not Verified';
+
+  @override
+  String get credVerifPhoneNotVerifiedBody =>
+      'You must verify your phone number first. Go back to your profile and verify your phone.';
+
+  @override
+  String get tripEligibilityProfileIncomplete =>
+      'Complete your profile (bio & languages) to add trips';
 }

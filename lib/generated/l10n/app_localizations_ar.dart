@@ -1144,4 +1144,118 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get cancel => 'إلغاء';
+
+  @override
+  String get guideTypeLabel => 'نوع المرشد';
+
+  @override
+  String get guideTypeIndependent => 'فرد مستقل';
+
+  @override
+  String get guideTypeCompany => 'شركة';
+
+  @override
+  String get myTrips => 'رحلاتي';
+
+  @override
+  String get myBookings => 'حجوزاتي';
+
+  @override
+  String get privacyDisclaimerTouristTitle => 'تنويه الخصوصية';
+
+  @override
+  String get privacyDisclaimerTouristBody =>
+      'نحن نهتم بخصوصية بياناتك وسريتها.';
+
+  @override
+  String get privacyDisclaimerGuideTitle => 'تنويه الخصوصية للمرشد';
+
+  @override
+  String get privacyDisclaimerGuideBody =>
+      'بياناتك ووثائقك محفوظة ومحمية بأعلى المعايير.';
+
+  @override
+  String get credVerifTitle => 'التحقق من الوثائق';
+
+  @override
+  String get credVerifIndividualLicence => 'رخصة العمل الحر';
+
+  @override
+  String get credVerifCompanyDetails => 'بيانات الشركة';
+
+  @override
+  String get credVerifLicenceNumber => 'رقم الرخصة';
+
+  @override
+  String get credVerifLicenceExpiry => 'تاريخ انتهاء الرخصة';
+
+  @override
+  String get credVerifCompanyName => 'اسم الشركة';
+
+  @override
+  String get credVerifCommercialReg => 'رقم السجل التجاري';
+
+  @override
+  String get credVerifCommercialRegExpiry => 'تاريخ انتهاء السجل';
+
+  @override
+  String get credVerifTourismLicenceSection => 'رخصة الإرشاد السياحي';
+
+  @override
+  String get credVerifTourismLicenceNumber => 'رقم رخصة الإرشاد';
+
+  @override
+  String get credVerifTourismLicenceExpiry => 'تاريخ انتهاء رخصة الإرشاد';
+
+  @override
+  String get credVerifPickDate => 'اختر التاريخ';
+
+  @override
+  String get credVerifRequired => 'هذا الحقل مطلوب';
+
+  @override
+  String get credVerifPickLicenceExpiry => 'اختر تاريخ انتهاء الرخصة';
+
+  @override
+  String get credVerifPickAllExpiry => 'الرجاء تحديد جميع تواريخ الانتهاء';
+
+  @override
+  String get credVerifSubmit => 'إرسال للتحقق';
+
+  @override
+  String get credVerifReviewNote => 'سيتم مراجعة وثائقك من قبل الإدارة';
+
+  @override
+  String get credVerifSuccess => 'تم إرسال الوثائق بنجاح';
+
+  @override
+  String get credVerifRejectionTitle => 'تم رفض الوثائق';
+
+  @override
+  String get credVerifPendingTitle => 'الوثائق قيد المراجعة';
+
+  @override
+  String get credVerifPendingBody =>
+      'وثائقك قيد المراجعة حالياً، سنقوم بإعلامك فور الانتهاء.';
+
+  @override
+  String get credVerifVerifiedTitle => 'تم التحقق';
+
+  @override
+  String get credVerifVerifiedBody => 'تم التحقق من وثائقك واعتمادها بنجاح.';
+
+  @override
+  String get credVerifPhoneRequiredFirst =>
+      'يرجى التحقق من رقم هاتفك قبل تقديم بيانات التوثيق';
+
+  @override
+  String get credVerifPhoneNotVerifiedTitle => 'الهاتف غير موثق';
+
+  @override
+  String get credVerifPhoneNotVerifiedBody =>
+      'يجب عليك التحقق من رقم هاتفك أولاً. عد إلى ملفك الشخصي وتحقق من هاتفك.';
+
+  @override
+  String get tripEligibilityProfileIncomplete =>
+      'أكمل ملفك الشخصي (النبذة واللغات) لتتمكن من إضافة رحلات';
 }

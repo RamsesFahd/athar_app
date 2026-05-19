@@ -1,3 +1,4 @@
+import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
@@ -26,8 +27,7 @@ class AllBookingsScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.book_online_outlined,
-                    size: 72,
-                    color: AppColors.primary.withValues(alpha: 0.15)),
+                    size: 72, color: AppColors.primary.withValues(alpha: 0.15)),
                 const SizedBox(height: 16),
                 Text('No bookings yet',
                     style: theme.textTheme.bodyLarge
@@ -105,16 +105,25 @@ class _BookingTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   _DetailRow(
-                      icon: Icons.calendar_today,
-                      text: '${booking.date}  •  ${booking.timeSlot}'),
+                    icon: Icons.calendar_today,
+                    text: Text(
+                      '${booking.date}  •  ${booking.timeSlot}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                   _DetailRow(
-                      icon: Icons.people_outline,
-                      text:
-                          '${booking.adultsCount} adults, ${booking.childrenCount} children'),
+                    icon: Icons.people_outline,
+                    text: Text(
+                      '${booking.adultsCount} adults, ${booking.childrenCount} children',
+                      style: Theme.of(context).textTheme.bodySmall,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                   _DetailRow(
                       icon: Icons.payments_outlined,
-                      text:
-                          '${booking.totalPrice.toStringAsFixed(2)} SAR'),
+                      text: CurrencyFormatter.format(booking.totalPrice,
+                          decimals: 2)),
                   const SizedBox(height: 4),
                   Text('Tourist: ${booking.touristId}',
                       style: theme.textTheme.labelSmall
@@ -136,8 +145,12 @@ class _BookingTile extends StatelessWidget {
 
 class _DetailRow extends StatelessWidget {
   final IconData icon;
-  final String text;
-  const _DetailRow({required this.icon, required this.text});
+  final Widget text;
+
+  const _DetailRow({
+    required this.icon,
+    required this.text,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -147,11 +160,7 @@ class _DetailRow extends StatelessWidget {
         children: [
           Icon(icon, size: 13, color: AppColors.primary),
           const SizedBox(width: 5),
-          Expanded(
-            child: Text(text,
-                style: Theme.of(context).textTheme.bodySmall,
-                overflow: TextOverflow.ellipsis),
-          ),
+          Expanded(child: text),
         ],
       ),
     );

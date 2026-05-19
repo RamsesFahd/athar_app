@@ -1,3 +1,4 @@
+import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -35,7 +36,7 @@ class ShareUtils {
     required bool isAr,
   }) {
     final text =
-        '$titleAr | $titleEn\n$cityAr | $cityEn\n${adultPrice.toInt()} SAR\nAthar App';
+        '$titleAr | $titleEn\n$cityAr | $cityEn\n${CurrencyFormatter.format(adultPrice)}\nAthar App';
     _copyAndNotify(context: context, text: text, isAr: isAr);
   }
 

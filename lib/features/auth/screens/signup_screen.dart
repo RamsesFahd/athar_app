@@ -110,14 +110,16 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     const SizedBox(height: 25),
                     // يظهر فقط إذا كان المستخدم اختار "مرشد"
                     if (_selectedRole == UserRole.tutor) ...[
-                      _buildSectionLabel("نوع الحساب", theme), // يمكنك استبدال النص بـ l10n لاحقاً
+                      _buildSectionLabel(l10n.guideTypeLabel, theme),
+                      const SizedBox(height: 12),
                       Row(
                         children: [
-                          _tutorTypeOption(TutorType.individual, "فرد مستقل", theme),
+                          _tutorTypeOption(TutorType.individual, l10n.guideTypeIndependent, theme),
                           const SizedBox(width: 12),
-                          _tutorTypeOption(TutorType.company, "شركة سياحية", theme),
+                          _tutorTypeOption(TutorType.company, l10n.guideTypeCompany, theme),
                         ],
                       ),
+                      const SizedBox(height: 25),
                     ],
                     // --- حقول البيانات ---
                     _buildSectionLabel(l10n.fullNameLabel, theme),
@@ -290,9 +292,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           role: _selectedRole,
           tutorType: _selectedTutorType,
         );
-    if (mounted)
-      setState(() => _isSignUpLoading =
-          false); // Reset loading state after the process completes
+    if (mounted) {
+      setState(() => _isSignUpLoading = false);
+    }
   }
 
   void _showError(String message) {

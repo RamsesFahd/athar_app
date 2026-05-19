@@ -33,7 +33,7 @@ class CulturalItemCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isHighContrast =
     theme.colorScheme.primary == Colors.black;
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
 
     final String displayTitle = title;
     final String displayDescription = description;
