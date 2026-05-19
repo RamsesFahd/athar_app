@@ -45,7 +45,9 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
 void initState() {
   super.initState();
 
-  _rotationSeed = Random().nextInt(9999);
+  _rotationSeed =
+      DateTime.now().millisecondsSinceEpoch ~/
+      Duration.millisecondsPerHour;
 }
 
   @override
@@ -177,11 +179,14 @@ ${jsonEncode(items)}
     );
 
     if (slides.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _generateAiTexts(slides);
-        _startTimer(slides.length);
-      });
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    _startTimer(slides.length);
+
+    if (_aiTexts.isEmpty) {
+      _generateAiTexts(slides);
     }
+  });
+}
 
     if (slides.isEmpty) return _StaticHeroFallback(isAr: isAr);
 
