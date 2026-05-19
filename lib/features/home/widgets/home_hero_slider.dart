@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,7 +31,7 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
   Timer? _timer;
   int _currentIndex = 0;
   int _lastLength = 0;
-  int _rotationSeed = 0;
+  late final int _rotationSeed;
 
   String? _lastSignature;
   Map<int, _AiHeroText> _aiTexts = {};
@@ -39,6 +39,13 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
   T _pickByRotation<T>(List<T> items, int offset) {
   final index = (_rotationSeed + offset) % items.length;
   return items[index];
+}
+
+@override
+void initState() {
+  super.initState();
+
+  _rotationSeed = Random().nextInt(9999);
 }
 
   @override
@@ -59,14 +66,6 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
     if (!_controller.hasClients) return;
 
     final nextPage = (_currentIndex + 1) % length;
-
-    if (nextPage == 0) {
-      setState(() {
-        _rotationSeed++;
-        _aiTexts = {};
-        _lastSignature = null;
-      });
-    }
 
     _controller.animateToPage(
       nextPage,
