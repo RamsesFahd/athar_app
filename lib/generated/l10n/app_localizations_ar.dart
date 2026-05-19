@@ -1127,4 +1127,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get rateYourGuide => 'قيّم المرشد';
+
+  @override
+  String get completeProfileTitle => 'أكمل بياناتك';
+
+  @override
+  String get phoneRequiredForGuide =>
+      'أكمل بيانات حسابك أولاً — رقم الجوال مطلوب لنشر الرحلات';
+
+  @override
+  String get phoneRequiredForTourist =>
+      'أكمل بيانات حسابك أولاً — رقم الجوال مطلوب لإتمام الحجز';
+
+  @override
+  String get editProfile => 'تعديل البيانات';
+
+  @override
+  String get cancel => 'إلغاء';
 }

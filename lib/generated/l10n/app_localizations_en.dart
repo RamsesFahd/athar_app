@@ -1133,4 +1133,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rateYourGuide => 'Rate your Guide';
+
+  @override
+  String get completeProfileTitle => 'Complete your profile';
+
+  @override
+  String get phoneRequiredForGuide =>
+      'Complete your profile first — phone number is required to publish trips';
+
+  @override
+  String get phoneRequiredForTourist =>
+      'Complete your profile first — phone number is required to book a trip';
+
+  @override
+  String get editProfile => 'Edit Profile';
+
+  @override
+  String get cancel => 'Cancel';
 }

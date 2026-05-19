@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
-import 'package:athar_app/core/utils/booking_status_helper.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
+import 'package:athar_app/features/bookings/widgets/rating_stars_widget.dart';
 import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
@@ -95,6 +95,17 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
           _buildBookingOverviewCard(theme, isAr, l10n, ref, isTourist),
 
           const SizedBox(height: 24),
+
+          if (isTourist && booking.status == BookingStatus.completed)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: RatingStarsWidget(
+                bookingId: booking.bookingId,
+                touristId: booking.touristId,
+                tutorId: booking.tutorId,
+                tripId: booking.tripId,
+              ),
+            ),
 
           if (isTourist && booking.status == BookingStatus.pending)
             SizedBox(
@@ -225,25 +236,6 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
                   ],
                 ),
               ),
-              const SizedBox(width: 10),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: statusColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(
-                    color: statusColor.withValues(alpha: 0.25),
-                  ),
-                ),
-                child: Text(
-                  bookingStatusLabel(status: booking.status, isGuide: isGuide, l10n: l10n),
-                  style: textTheme.labelSmall?.copyWith(
-                    color: statusColor,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
             ],
           ),
 
@@ -295,31 +287,6 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
           ),
 
           const SizedBox(height: 12),
-
-          _modernPriceRow(
-            theme,
-            isAr
-                ? '${booking.adultsCount} بالغ × ${booking.adultPrice.toInt()} ر.س'
-                : '${booking.adultsCount} Adult × ${booking.adultPrice.toInt()} SAR',
-            '${(booking.adultsCount * booking.adultPrice).toInt()} ${l10n.currency}',
-          ),
-
-          if (booking.childrenCount > 0)
-            _modernPriceRow(
-              theme,
-              booking.childPrice == 0
-                  ? (isAr
-                      ? '${booking.childrenCount} طفل (مجانًا)'
-                      : '${booking.childrenCount} Child (Free)')
-                  : (isAr
-                      ? '${booking.childrenCount} طفل × ${booking.childPrice.toInt()} ر.س'
-                      : '${booking.childrenCount} Child × ${booking.childPrice.toInt()} SAR'),
-              booking.childPrice == 0
-                  ? (isAr ? 'مجانًا' : 'Free')
-                  : '${(booking.childrenCount * booking.childPrice).toInt()} ${l10n.currency}',
-            ),
-
-          const SizedBox(height: 10),
 
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -484,28 +451,6 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
     );
   }
 
-  Widget _modernPriceRow(ThemeData theme, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            value,
-            style: theme.textTheme.bodySmall
-                ?.copyWith(fontWeight: FontWeight.w700),
-          ),
-        ],
-      ),
-    );
-  }
 
   String _localizedTimeSlot(String timeSlot, bool isAr) {
     if (!isAr) return timeSlot;

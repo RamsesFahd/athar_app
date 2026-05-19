@@ -869,39 +869,65 @@ Widget _buildBookingItem(
           ? Icons.add_location_alt_outlined
           : Icons.lock_outline,
       titleColor: canAdd ? theme.colorScheme.primary : blockedColor,
-      onTap: canAdd
-          ? () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const AddTripScreen()),
-              )
-          : () {
-              final missing = _missingFields(tutor, isAr);
-              final lines = <String>[];
-              if (tutor.verificationStatus != VerificationStatus.verified) {
-                lines.add(isAr
-                    ? '• حسابك غير موثّق بعد'
-                    : '• Account not verified yet');
-              }
-              if (tutor.isCredentialExpired) {
-                lines.add(isAr ? '• رخصتك منتهية' : '• Credential expired');
-              }
-              for (final f in missing) {
-                lines.add('• $f');
-              }
-              showDialog(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: Text(isAr ? 'لا يمكن إضافة رحلة' : 'Cannot Add Trip'),
-                  content: Text(lines.join('\n')),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text(isAr ? 'حسناً' : 'OK'),
-                    ),
-                  ],
+      onTap: () {
+        // Phone check — required before any other validation
+        if (tutor.phoneNumber == null || tutor.phoneNumber!.isEmpty) {
+          showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: Text(l10n.completeProfileTitle),
+              content: Text(l10n.phoneRequiredForGuide),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(l10n.cancel),
                 ),
-              );
-            },
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _showEditProfileSheet(context, l10n, tutor);
+                  },
+                  child: Text(l10n.editProfile),
+                ),
+              ],
+            ),
+          );
+          return;
+        }
+        if (!canAdd) {
+          final missing = _missingFields(tutor, isAr);
+          final lines = <String>[];
+          if (tutor.verificationStatus != VerificationStatus.verified) {
+            lines.add(isAr
+                ? '• حسابك غير موثّق بعد'
+                : '• Account not verified yet');
+          }
+          if (tutor.isCredentialExpired) {
+            lines.add(isAr ? '• رخصتك منتهية' : '• Credential expired');
+          }
+          for (final f in missing) {
+            lines.add('• $f');
+          }
+          showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: Text(isAr ? 'لا يمكن إضافة رحلة' : 'Cannot Add Trip'),
+              content: Text(lines.join('\n')),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(isAr ? 'حسناً' : 'OK'),
+                ),
+              ],
+            ),
+          );
+          return;
+        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AddTripScreen()),
+        );
+      },
     );
   }
 

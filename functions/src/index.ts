@@ -3,6 +3,7 @@ import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { getMessaging } from "firebase-admin/messaging";
 import { onDocumentCreated, onDocumentUpdated } from "firebase-functions/v2/firestore";
 import { onCall, HttpsError } from "firebase-functions/v2/https";
+import { onSchedule } from "firebase-functions/v2/scheduler";
 import { logger } from "firebase-functions";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -696,6 +697,21 @@ const NOTIFICATION_COPY: Record<string, NotificationPayload> = {
     title: { ar: "تم إلغاء الحجز", en: "Booking Cancelled" },
     body:  { ar: "تم إلغاء حجزك.", en: "Your booking has been cancelled." },
   },
+  booking_rejected: {
+    type: "booking_rejected",
+    title: { ar: "تعذّر تأكيد الحجز", en: "Booking Could Not Be Confirmed" },
+    body:  { ar: "نأسف، الرحلة وصلت حدها الأقصى من الحجوزات.", en: "Sorry, this trip is fully booked." },
+  },
+  booking_auto_approved: {
+    type: "booking_auto_approved",
+    title: { ar: "تم تأكيد حجزك تلقائيًا", en: "Booking Auto-Confirmed" },
+    body:  { ar: "لم يرد المرشد خلال 24 ساعة، تم تأكيد حجزك تلقائيًا.", en: "The guide did not respond within 24 hours, your booking has been auto-confirmed." },
+  },
+  booking_completed: {
+    type: "booking_completed",
+    title: { ar: "اكتملت رحلتك", en: "Trip Completed" },
+    body:  { ar: "نأمل أن تكون رحلتك رائعة! شاركنا تقييمك للمرشد.", en: "We hope you had a great trip! Share your rating for the guide." },
+  },
   guide_verified: {
     type: "guide_verified",
     title: { ar: "تم توثيق حسابك", en: "Account Verified" },
@@ -904,7 +920,11 @@ export const onTripReviewed = onDocumentUpdated(
   }
 );
 
-// ── Trigger 5: Tourist books a trip → notify the guide ────────────────────
+// ── Trigger 5: Tourist books a trip → capacity guard + notify guide ──────────
+//
+// Uses a Firestore transaction to atomically check and decrement availableSeats.
+// If the trip is fully booked the booking document is immediately rejected and
+// the tourist is notified; the guide is NOT notified in that case.
 
 export const onBookingCreated = onDocumentCreated(
   "bookings/{bookingId}",
@@ -912,13 +932,61 @@ export const onBookingCreated = onDocumentCreated(
     if (!event.data) return;
     const data = event.data.data();
     const tutorId: string = data.tutorId ?? "";
-    if (!tutorId) return;
+    const tripId: string = data.tripId ?? "";
+    const touristId: string = data.touristId ?? "";
+    if (!tutorId || !tripId) return;
+
+    const bookingRef = db.collection("bookings").doc(event.params.bookingId);
+    const tripRef = db.collection("trips").doc(tripId);
+
+    // adultsCount + ceil(childrenCount / 2) = adult-equivalent slot consumption
+    const adultsCount: number = data.adultsCount ?? 1;
+    const childrenCount: number = data.childrenCount ?? 0;
+    const slotsNeeded = adultsCount + Math.ceil(childrenCount / 2);
+
+    let capacityExceeded = false;
+
+    try {
+      await db.runTransaction(async (tx) => {
+        const tripSnap = await tx.get(tripRef);
+        if (!tripSnap.exists) return;
+
+        const tripData = tripSnap.data()!;
+        const availableSeats: number | null = tripData.availableSeats ?? null;
+
+        // Only enforce capacity when the trip has a seat limit configured.
+        if (availableSeats !== null && availableSeats < slotsNeeded) {
+          capacityExceeded = true;
+          tx.update(bookingRef, {
+            status: "rejected",
+            rejectionReason: "capacity_exceeded",
+          });
+        } else if (availableSeats !== null) {
+          tx.update(tripRef, {
+            availableSeats: FieldValue.increment(-slotsNeeded),
+          });
+        }
+      });
+    } catch (err) {
+      logger.error(`[capacity] Transaction failed for booking ${event.params.bookingId}`, err);
+    }
+
+    if (capacityExceeded) {
+      logger.info(`[capacity] Booking ${event.params.bookingId} rejected — trip fully booked`);
+      if (touristId) await notify(touristId, "booking_rejected");
+      return;
+    }
+
     logger.info(`[notif] New booking ${event.params.bookingId} → guide ${tutorId}`);
     await notify(tutorId, "booking_new");
   }
 );
 
-// ── Trigger 6: Guide confirms or rejects a booking → notify tourist ────────
+// ── Trigger 6: Booking status changed → notify tourist + restore seats ────────
+//
+// Seat restoration: if a booking moves to rejected or cancelled we increment
+// availableSeats back. Exception: rejectionReason === 'capacity_exceeded' means
+// the booking was never confirmed (seats were never decremented), so skip.
 
 export const onBookingStatusChanged = onDocumentUpdated(
   "bookings/{bookingId}",
@@ -929,12 +997,39 @@ export const onBookingStatusChanged = onDocumentUpdated(
     if (before.status === after.status) return;
 
     const touristId: string = after.touristId ?? "";
+    const tripId: string = after.tripId ?? "";
+
+    // ── Seat restoration ───────────────────────────────────────────────────
+    const shouldRestore =
+      (after.status === "rejected" || after.status === "cancelled") &&
+      after.rejectionReason !== "capacity_exceeded" &&
+      tripId;
+
+    if (shouldRestore) {
+      const adultsCount: number = after.adultsCount ?? 1;
+      const childrenCount: number = after.childrenCount ?? 0;
+      const slotsToRestore = adultsCount + Math.ceil(childrenCount / 2);
+      try {
+        await db.collection("trips").doc(tripId).update({
+          availableSeats: FieldValue.increment(slotsToRestore),
+        });
+        logger.info(`[seats] Restored ${slotsToRestore} seat(s) to trip ${tripId}`);
+      } catch (err) {
+        logger.error(`[seats] Failed to restore seats for trip ${tripId}`, err);
+      }
+    }
+
+    // ── Tourist notification ───────────────────────────────────────────────
     if (!touristId) return;
 
     if (after.status === "approved") {
       await notify(touristId, "booking_approved");
-    } else if (after.status === "cancelled" || after.status === "rejected") {
+    } else if (after.status === "cancelled") {
       await notify(touristId, "booking_cancelled");
+    } else if (after.status === "rejected" && after.rejectionReason !== "capacity_exceeded") {
+      await notify(touristId, "booking_cancelled");
+    } else if (after.status === "completed") {
+      await notify(touristId, "booking_completed");
     }
   }
 );
@@ -983,5 +1078,140 @@ export const onBonusPointsAwarded = onDocumentUpdated(
 
     logger.info(`[notif] Bonus points awarded to tourist: ${event.params.userId}`);
     await notify(event.params.userId, "points_awarded");
+  }
+);
+
+// ── Scheduled 1: Auto-approve bookings pending for > 24 hours ─────────────
+//
+// Runs every hour. Any booking still in 'pending' with createdAt older than
+// 24 hours is auto-approved so tourists are never left waiting indefinitely.
+
+export const autoApproveBookings = onSchedule(
+  { schedule: "every 60 minutes", timeZone: "Asia/Riyadh" },
+  async () => {
+    const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const snap = await db
+      .collection("bookings")
+      .where("status", "==", "pending")
+      .where("createdAt", "<=", cutoff)
+      .get();
+
+    if (snap.empty) {
+      logger.info("[autoApprove] No pending bookings to auto-approve.");
+      return;
+    }
+
+    const batch = db.batch();
+    const notifications: Array<() => Promise<void>> = [];
+
+    for (const doc of snap.docs) {
+      batch.update(doc.ref, { status: "approved", autoApproved: true });
+      const touristId: string = doc.data().touristId ?? "";
+      if (touristId) {
+        notifications.push(() => notify(touristId, "booking_auto_approved"));
+      }
+    }
+
+    await batch.commit();
+    await Promise.all(notifications.map((fn) => fn()));
+    logger.info(`[autoApprove] Auto-approved ${snap.size} booking(s).`);
+  }
+);
+
+// ── Scheduled 2: Mark approved bookings as completed when date has passed ──
+//
+// Runs daily at 01:00 Riyadh time. Finds all approved bookings whose date
+// string (YYYY-MM-DD) is strictly before today and transitions them to
+// 'completed'. The tourist receives a completion notification with a prompt
+// to rate their guide.
+
+export const markCompletedBookings = onSchedule(
+  { schedule: "0 1 * * *", timeZone: "Asia/Riyadh" },
+  async () => {
+    // Today's date in YYYY-MM-DD, used for lexicographic comparison with the
+    // stored date string which uses the same format (from Dart's DateTime.toString()).
+    const today = new Date().toISOString().split("T")[0];
+
+    const snap = await db
+      .collection("bookings")
+      .where("status", "==", "approved")
+      .get();
+
+    const toComplete = snap.docs.filter((doc) => {
+      const date: string = doc.data().date ?? "";
+      return date < today; // YYYY-MM-DD lexicographic comparison is correct
+    });
+
+    if (toComplete.length === 0) {
+      logger.info("[markCompleted] No bookings to complete.");
+      return;
+    }
+
+    const batch = db.batch();
+    const notifications: Array<() => Promise<void>> = [];
+
+    for (const doc of toComplete) {
+      batch.update(doc.ref, { status: "completed" });
+      const touristId: string = doc.data().touristId ?? "";
+      if (touristId) {
+        notifications.push(() => notify(touristId, "booking_completed"));
+      }
+    }
+
+    await batch.commit();
+    await Promise.all(notifications.map((fn) => fn()));
+    logger.info(`[markCompleted] Marked ${toComplete.length} booking(s) as completed.`);
+  }
+);
+
+// ── Trigger 9: New rating created → update Guide's aggregate ──────────────
+//
+// When a tourist submits a rating for a completed booking:
+// 1. Atomically recomputes the guide's weighted-average rating and reviewsCount
+//    on the user document.
+// 2. Batch-updates the guideRating snapshot on all the guide's trip documents
+//    so trip cards reflect the latest aggregate without N+1 reads.
+
+export const onRatingCreated = onDocumentCreated(
+  "ratings/{ratingId}",
+  async (event) => {
+    if (!event.data) return;
+    const { tutorId, stars } = event.data.data() as {
+      tutorId: string;
+      stars: number;
+    };
+    if (!tutorId || typeof stars !== "number") return;
+
+    const tutorRef = db.collection("users").doc(tutorId);
+
+    // 1. Update aggregate on user document using a transaction.
+    let newRating = stars;
+    let newCount = 1;
+    await db.runTransaction(async (tx) => {
+      const tutorSnap = await tx.get(tutorRef);
+      if (!tutorSnap.exists) return;
+      const data = tutorSnap.data()!;
+      const oldCount: number = data.reviewsCount ?? 0;
+      const oldRating: number = data.rating ?? 0;
+      newCount = oldCount + 1;
+      newRating = ((oldRating * oldCount) + stars) / newCount;
+      tx.update(tutorRef, { rating: newRating, reviewsCount: newCount });
+    });
+
+    // 2. Propagate guideRating snapshot to this guide's trip documents.
+    const tripsSnap = await db
+      .collection("trips")
+      .where("tutorId", "==", tutorId)
+      .get();
+
+    if (!tripsSnap.empty) {
+      const batch = db.batch();
+      for (const doc of tripsSnap.docs) {
+        batch.update(doc.ref, { guideRating: newRating, guideReviewsCount: newCount });
+      }
+      await batch.commit();
+    }
+
+    logger.info(`[rating] Guide ${tutorId}: new avg=${newRating.toFixed(2)}, count=${newCount}`);
   }
 );

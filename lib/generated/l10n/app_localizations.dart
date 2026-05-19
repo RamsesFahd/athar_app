@@ -2251,6 +2251,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rate your Guide'**
   String get rateYourGuide;
+
+  /// No description provided for @completeProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get completeProfileTitle;
+
+  /// No description provided for @phoneRequiredForGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile first — phone number is required to publish trips'**
+  String get phoneRequiredForGuide;
+
+  /// No description provided for @phoneRequiredForTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile first — phone number is required to book a trip'**
+  String get phoneRequiredForTourist;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
 }
 
 class _AppLocalizationsDelegate

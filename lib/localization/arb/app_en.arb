@@ -462,5 +462,11 @@
   "bookingCompleted": "Completed",
   "guideContactInfo": "Guide Contact",
   "touristContactInfo": "Tourist Contact",
-  "rateYourGuide": "Rate your Guide"
+  "rateYourGuide": "Rate your Guide",
+
+  "completeProfileTitle": "Complete your profile",
+  "phoneRequiredForGuide": "Complete your profile first — phone number is required to publish trips",
+  "phoneRequiredForTourist": "Complete your profile first — phone number is required to book a trip",
+  "editProfile": "Edit Profile",
+  "cancel": "Cancel"
 }

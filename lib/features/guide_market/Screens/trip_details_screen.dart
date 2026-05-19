@@ -1,9 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/favorites/favorite_item_model.dart';
+import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/utils/share_utils.dart';
+import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/profile/logic/favorites_notifier.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:athar_app/features/guide_market/screens/booking_form_screen.dart';
@@ -88,24 +91,38 @@ class TripDetailsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 32),
 
-                      // ── Tutor / company info ───────────────────────
-                      _buildInfoRow(
-                        context,
-                        Icons.person_outline,
-                        '${l10n.guide}: ${trip.guide}',
-                        trailing: GestureDetector(
-                          onTap: () =>
-                              _showGuideDetailsPopUp(context, l10n, isAr),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 4.0),
-                            child: Icon(
-                              Icons.info_outline,
-                              size: 18,
-                              color: theme.colorScheme.secondary,
+                      // ── Tutor / company info — live from user doc ──
+                      StreamBuilder<DocumentSnapshot>(
+                        stream: trip.tutorId != null
+                            ? FirebaseFirestore.instance
+                                .collection('users')
+                                .doc(trip.tutorId)
+                                .snapshots()
+                            : const Stream.empty(),
+                        builder: (context, snap) {
+                          final data = snap.data?.data()
+                              as Map<String, dynamic>?;
+                          final liveName =
+                              data?['fullName'] as String? ?? trip.guide;
+                          return _buildInfoRow(
+                            context,
+                            Icons.person_outline,
+                            '${l10n.guide}: $liveName',
+                            trailing: GestureDetector(
+                              onTap: () => _showGuideDetailsPopUp(
+                                  context, l10n, isAr),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 4.0),
+                                child: Icon(
+                                  Icons.info_outline,
+                                  size: 18,
+                                  color: theme.colorScheme.secondary,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       ),
                       _buildInfoRow(context, Icons.verified_outlined,
                           '${l10n.license}: ${trip.license}'),
@@ -207,6 +224,30 @@ class TripDetailsScreen extends ConsumerWidget {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
+                    final currentUser =
+                        ref.read(authNotifierProvider).value;
+                    if (currentUser is TouristModel &&
+                        (currentUser.phoneNumber == null ||
+                            currentUser.phoneNumber!.isEmpty)) {
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: Text(l10n.completeProfileTitle),
+                          content: Text(l10n.phoneRequiredForTourist),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(l10n.cancel),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(l10n.editProfile),
+                            ),
+                          ],
+                        ),
+                      );
+                      return;
+                    }
                     ref
                         .read(bookingNotifierProvider.notifier)
                         .startBooking(trip);
@@ -376,138 +417,166 @@ class TripDetailsScreen extends ConsumerWidget {
   void _showGuideDetailsPopUp(
       BuildContext context, AppLocalizations l10n, bool isAr) {
     final theme = Theme.of(context);
+    // guideRating / guideReviewsCount stay as trip snapshots (performance)
     final rating = trip.guideRating;
     final reviews = trip.guideReviewsCount;
-    final bio = trip.guideBio;
-    final languages = trip.guideLanguages ?? [];
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         contentPadding: EdgeInsets.zero,
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Align(
-              alignment: isAr ? Alignment.topLeft : Alignment.topRight,
-              child: IconButton(
-                icon: const Icon(Icons.close, color: Colors.grey),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-              child: Column(
-                children: [
-                  Text(
-                    trip.guide,
-                    style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Tajawal'),
-                  ),
-                  if (rating != null) ...[
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          rating.toStringAsFixed(1),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: theme.colorScheme.onSurface,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Row(
-                          children: List.generate(
-                              5,
-                              (i) => Icon(
-                                    i < rating.round()
-                                        ? Icons.star
-                                        : Icons.star_border,
-                                    color: Colors.amber,
-                                    size: 18,
-                                  )),
-                        ),
-                        if (reviews != null) ...[
-                          const SizedBox(width: 8),
-                          Text(
-                            isAr
-                                ? "($reviews تقييم)"
-                                : "($reviews reviews)",
-                            style:
-                                TextStyle(color: Colors.grey[500], fontSize: 13),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ],
-                  if (bio != null && bio.isNotEmpty) ...[
-                    const SizedBox(height: 25),
-                    Align(
-                      alignment:
-                          isAr ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Text(
-                        bio,
-                        textAlign: isAr ? TextAlign.right : TextAlign.left,
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          height: 1.6,
-                          fontSize: 14,
-                          fontFamily: 'Tajawal',
+        content: trip.tutorId == null
+            ? Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(isAr ? 'لا تتوفر معلومات المرشد' : 'No guide info available'),
+              )
+            : StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(trip.tutorId)
+                    .snapshots(),
+                builder: (context, snap) {
+                  final data = snap.data?.data() as Map<String, dynamic>?;
+                  final liveName = data?['fullName'] as String? ?? trip.guide;
+                  final bio = data?['bio'] as String? ?? trip.guideBio ?? '';
+                  final languages =
+                      (data?['languages'] as List<dynamic>?)
+                          ?.cast<String>() ??
+                      trip.guideLanguages ??
+                      [];
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Align(
+                        alignment: isAr ? Alignment.topLeft : Alignment.topRight,
+                        child: IconButton(
+                          icon: const Icon(Icons.close, color: Colors.grey),
+                          onPressed: () => Navigator.pop(context),
                         ),
                       ),
-                    ),
-                  ],
-                  if (languages.isNotEmpty) ...[
-                    const SizedBox(height: 30),
-                    Align(
-                      alignment:
-                          isAr ? Alignment.centerRight : Alignment.centerLeft,
-                      child: Text(l10n.languages,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16)),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        alignment: WrapAlignment.start,
-                        children: languages
-                            .map((lang) => Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: theme.colorScheme.primary
-                                        .withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                        color: theme.colorScheme.primary
-                                            .withValues(alpha: 0.5),
-                                        width: 1.5),
-                                  ),
-                                  child: Text(
-                                    lang,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                        child: Column(
+                          children: [
+                            Text(
+                              liveName,
+                              style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Tajawal'),
+                            ),
+                            if (rating != null) ...[
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    rating.toStringAsFixed(1),
                                     style: TextStyle(
-                                        color: theme.colorScheme.primary,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Tajawal'),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                      color: theme.colorScheme.onSurface,
+                                    ),
                                   ),
-                                ))
-                            .toList(),
+                                  const SizedBox(width: 8),
+                                  Row(
+                                    children: List.generate(
+                                        5,
+                                        (i) => Icon(
+                                              i < rating.round()
+                                                  ? Icons.star
+                                                  : Icons.star_border,
+                                              color: Colors.amber,
+                                              size: 18,
+                                            )),
+                                  ),
+                                  if (reviews != null) ...[
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      isAr
+                                          ? "($reviews تقييم)"
+                                          : "($reviews reviews)",
+                                      style: TextStyle(
+                                          color: Colors.grey[500], fontSize: 13),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ],
+                            if (bio.isNotEmpty) ...[
+                              const SizedBox(height: 25),
+                              Align(
+                                alignment: isAr
+                                    ? Alignment.centerRight
+                                    : Alignment.centerLeft,
+                                child: Text(
+                                  bio,
+                                  textAlign:
+                                      isAr ? TextAlign.right : TextAlign.left,
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    height: 1.6,
+                                    fontSize: 14,
+                                    fontFamily: 'Tajawal',
+                                  ),
+                                ),
+                              ),
+                            ],
+                            if (languages.isNotEmpty) ...[
+                              const SizedBox(height: 30),
+                              Align(
+                                alignment: isAr
+                                    ? Alignment.centerRight
+                                    : Alignment.centerLeft,
+                                child: Text(l10n.languages,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16)),
+                              ),
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                width: double.infinity,
+                                child: Wrap(
+                                  spacing: 12,
+                                  runSpacing: 12,
+                                  alignment: WrapAlignment.start,
+                                  children: languages
+                                      .map((lang) => Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: theme.colorScheme.primary
+                                                  .withValues(alpha: 0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              border: Border.all(
+                                                  color: theme
+                                                      .colorScheme.primary
+                                                      .withValues(alpha: 0.5),
+                                                  width: 1.5),
+                                            ),
+                                            child: Text(
+                                              lang,
+                                              style: TextStyle(
+                                                  color:
+                                                      theme.colorScheme.primary,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Tajawal'),
+                                            ),
+                                          ))
+                                      .toList(),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ],
+                    ],
+                  );
+                },
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

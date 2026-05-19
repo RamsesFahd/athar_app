@@ -431,5 +431,11 @@
   "bookingCompleted": "اكتملت الرحلة",
   "guideContactInfo": "معلومات المرشد",
   "touristContactInfo": "معلومات السائح",
-  "rateYourGuide": "قيّم المرشد"
+  "rateYourGuide": "قيّم المرشد",
+
+  "completeProfileTitle": "أكمل بياناتك",
+  "phoneRequiredForGuide": "أكمل بيانات حسابك أولاً — رقم الجوال مطلوب لنشر الرحلات",
+  "phoneRequiredForTourist": "أكمل بيانات حسابك أولاً — رقم الجوال مطلوب لإتمام الحجز",
+  "editProfile": "تعديل البيانات",
+  "cancel": "إلغاء"
 }
