@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,9 +31,24 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
   Timer? _timer;
   int _currentIndex = 0;
   int _lastLength = 0;
+  late final int _rotationSeed;
 
   String? _lastSignature;
   Map<int, _AiHeroText> _aiTexts = {};
+
+  T _pickByRotation<T>(List<T> items, int offset) {
+  final index = (_rotationSeed + offset) % items.length;
+  return items[index];
+}
+
+@override
+void initState() {
+  super.initState();
+
+  _rotationSeed =
+      DateTime.now().millisecondsSinceEpoch ~/
+      Duration.millisecondsPerHour;
+}
 
   @override
   void dispose() {
@@ -43,22 +58,24 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
   }
 
   void _startTimer(int length) {
-    if (_lastLength == length && _timer != null) return;
-    _lastLength = length;
+  if (_lastLength == length && _timer != null) return;
+  _lastLength = length;
 
-    _timer?.cancel();
-    if (length <= 1) return;
+  _timer?.cancel();
+  if (length <= 1) return;
 
-    _timer = Timer.periodic(const Duration(seconds: 6), (_) {
-      if (!_controller.hasClients) return;
-      final nextPage = (_currentIndex + 1) % length;
-      _controller.animateToPage(
-        nextPage,
-        duration: const Duration(milliseconds: 650),
-        curve: Curves.easeInOutCubic,
-      );
-    });
-  }
+  _timer = Timer.periodic(const Duration(seconds: 10), (_) {
+    if (!_controller.hasClients) return;
+
+    final nextPage = (_currentIndex + 1) % length;
+
+    _controller.animateToPage(
+      nextPage,
+      duration: const Duration(milliseconds: 650),
+      curve: Curves.easeInOutCubic,
+    );
+  });
+}
 
   Future<void> _generateAiTexts(List<_HeroSlideData> slides) async {
     final signature = slides.map((s) => '${s.kind}-${s.titleEn}').join('|');
@@ -133,7 +150,7 @@ ${jsonEncode(items)}
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
     final isHighContrast = theme.colorScheme.primary == Colors.black;
-    
+
     final userAsync = ref.watch(authNotifierProvider);
     final attractionsAsync = ref.watch(attractionsStreamProvider);
     final eventsAsync = ref.watch(upcomingEventsStreamProvider);
@@ -162,11 +179,14 @@ ${jsonEncode(items)}
     );
 
     if (slides.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _generateAiTexts(slides);
-        _startTimer(slides.length);
-      });
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    _startTimer(slides.length);
+
+    if (_aiTexts.isEmpty) {
+      _generateAiTexts(slides);
     }
+  });
+}
 
     if (slides.isEmpty) return _StaticHeroFallback(isAr: isAr);
 
@@ -178,9 +198,9 @@ ${jsonEncode(items)}
           PageView.builder(
             controller: _controller,
             itemCount: slides.length,
-            onPageChanged: (index) {
-              setState(() => _currentIndex = index);
-            },
+           onPageChanged: (index) {
+  setState(() => _currentIndex = index);
+},
             itemBuilder: (context, index) {
               final slide = slides[index];
               final ai = _aiTexts[index];
@@ -225,8 +245,8 @@ ${jsonEncode(items)}
                   height: 8,
                   decoration: BoxDecoration(
                     color: isHighContrast
-                    ? Colors.white
-                    : Colors.white.withValues(alpha: active ? 0.95 : 0.42),
+                        ? Colors.white
+                        : Colors.white.withValues(alpha: active ? 0.95 : 0.42),
                     borderRadius: BorderRadius.circular(99),
                   ),
                 );
@@ -267,40 +287,26 @@ ${jsonEncode(items)}
         ),
       );
     }
-
-
-    if (attractions.isNotEmpty) {
-
-  final mirrorAttraction = attractions.firstWhere(
-    (a) {
-      final text =
-          '${a.getName(true)} ${a.getName(false)}'.toLowerCase();
-
-      return text.contains('مرايا') ||
-          text.contains('maraya');
-    },
-    orElse: () => attractions.first,
-  );
+if (attractions.isNotEmpty) {
+  final attraction = _pickByRotation(attractions, 1);
 
   slides.add(
     _HeroSlideData(
       kind: _HeroKind.attraction,
-      imageUrl: mirrorAttraction.mainImage,
+      imageUrl: attraction.mainImage,
       badgeAr: '',
       badgeEn: '',
-      titleAr: 'مرايا العلا',
-      titleEn: 'Maraya AlUla',
-      subtitleAr: 'تحفة معمارية تعكس جمال الصحراء',
-      subtitleEn: 'A mirrored landmark reflecting the desert',
+      titleAr: attraction.getName(true),
+      titleEn: attraction.getName(false),
+      subtitleAr: attraction.getDescription(true),
+      subtitleEn: attraction.getDescription(false),
       ctaAr: 'استكشف المعلم',
       ctaEn: 'Explore Landmark',
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => AttractionDetailsScreen(
-              attraction: mirrorAttraction,
-            ),
+            builder: (_) => AttractionDetailsScreen(attraction: attraction),
           ),
         );
       },
@@ -308,16 +314,11 @@ ${jsonEncode(items)}
   );
 }
 
-    final contributionItems =
-        culturalItems.where((item) => item.isContribution).toList();
-
-    if (contributionItems.isNotEmpty) {
-      final contributionItems =
+   final contributionItems =
     culturalItems.where((item) => item.isContribution).toList();
 
 if (contributionItems.isNotEmpty) {
-
-  final item = contributionItems.first;
+  final item = _pickByRotation(contributionItems, 2);
 
   slides.add(
     _HeroSlideData(
@@ -325,12 +326,10 @@ if (contributionItems.isNotEmpty) {
       imageUrl: item.imageUrl,
       badgeAr: '',
       badgeEn: '',
-      titleAr: 'شارك الأثر من منظورك',
-      titleEn: 'Share Athar Through Your Lens',
-      subtitleAr:
-          'وثّق الأماكن والقصص التي تستحق أن تُروى',
-      subtitleEn:
-          'Capture places and stories worth preserving',
+      titleAr: item.titleAr,
+      titleEn: item.titleEn,
+      subtitleAr: item.descriptionAr,
+      subtitleEn: item.descriptionEn,
       ctaAr: 'شارك الأثر',
       ctaEn: 'Share Athar',
       onTap: () {
@@ -344,19 +343,12 @@ if (contributionItems.isNotEmpty) {
     ),
   );
 }
-    
-   if (culturalItems.isNotEmpty) {
 
-  final item = culturalItems.firstWhere(
-    (item) {
-      final text =
-          '${item.titleAr} ${item.titleEn}'.toLowerCase();
+final archiveItems =
+    culturalItems.where((item) => !item.isContribution).toList();
 
-      return text.contains('المرفوع') ||
-    text.contains('marfoo');
-    },
-    orElse: () => culturalItems.first,
-  );
+if (archiveItems.isNotEmpty) {
+  final item = _pickByRotation(archiveItems, 3);
 
   slides.add(
     _HeroSlideData(
@@ -364,12 +356,10 @@ if (contributionItems.isNotEmpty) {
       imageUrl: item.imageUrl,
       badgeAr: '',
       badgeEn: '',
-      titleAr: 'ثقافة تُلبس وتُروى',
-      titleEn: 'Culture Woven Into Every Detail',
-      subtitleAr:
-          'اكتشف الأزياء والعادات التي تميز مناطق المملكة',
-      subtitleEn:
-          'Discover traditions and clothing across the Kingdom',
+      titleAr: item.titleAr,
+      titleEn: item.titleEn,
+      subtitleAr: item.descriptionAr,
+      subtitleEn: item.descriptionEn,
       ctaAr: 'افتح الأرشيف',
       ctaEn: 'Open Archive',
       onTap: () {
@@ -382,18 +372,10 @@ if (contributionItems.isNotEmpty) {
       },
     ),
   );
-}
-}
+    }
 
     if (trips.isNotEmpty) {
-      final balloonTrip = trips.where((trip) {
-        final text =
-            '${trip.titleAr} ${trip.titleEn} ${trip.descriptionAr} ${trip.descriptionEn}'
-                .toLowerCase();
-        return text.contains('منطاد') || text.contains('balloon');
-      }).toList();
-
-      final trip = balloonTrip.isNotEmpty ? balloonTrip.first : trips.first;
+      final trip = _pickByRotation(trips, 4);
 
       slides.add(
         _HeroSlideData(
@@ -513,15 +495,15 @@ class _CinematicHeroSlide extends StatelessWidget {
               return Transform.scale(scale: scale, child: child);
             },
             child: _HeroImage(
-            imageUrl: !isAr && slide.imageUrlEn != null
-            ? slide.imageUrlEn!
-            : slide.imageUrl,
-),
+              imageUrl: !isAr && slide.imageUrlEn != null
+                  ? slide.imageUrlEn!
+                  : slide.imageUrl,
+            ),
           ),
-         _HeroGradient(
-          kind: slide.kind,
-          isHighContrast: theme.colorScheme.primary == Colors.black,
-           ),
+          _HeroGradient(
+            kind: slide.kind,
+            isHighContrast: theme.colorScheme.primary == Colors.black,
+          ),
           PositionedDirectional(
             start: 24,
             end: 24,
@@ -565,18 +547,16 @@ class _AdContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      if (slide.kind == _HeroKind.event &&
-          slide.countdownDate != null) ...[
-        _LargeCountdown(
-          date: slide.countdownDate!,
-          isAr: isAr,
-        ),
-        const SizedBox(height: 18),
-      ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (slide.kind == _HeroKind.event && slide.countdownDate != null) ...[
+          _LargeCountdown(
+            date: slide.countdownDate!,
+            isAr: isAr,
+          ),
+          const SizedBox(height: 18),
+        ],
         Text(
           title,
           maxLines: 2,
@@ -785,27 +765,27 @@ class _HeroCta extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
       decoration: BoxDecoration(
-       color: isHighContrast
-       ? Colors.white
-       : Colors.white.withValues(alpha: 0.94),
+        color: isHighContrast
+            ? Colors.white
+            : Colors.white.withValues(alpha: 0.94),
         borderRadius: BorderRadius.circular(999),
         boxShadow: isHighContrast
-         ? []
-          : [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.20),
-          blurRadius: 16,
-          offset: const Offset(0, 6),
-        ),
-      ],
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.20),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
       ),
       child: Text(
         text,
-       style: TextStyle(
-       color: isHighContrast ? Colors.black : const Color(0xFF344235),
-       fontWeight: FontWeight.w900,
-       fontSize: 12,
-       ),
+        style: TextStyle(
+          color: isHighContrast ? Colors.black : const Color(0xFF344235),
+          fontWeight: FontWeight.w900,
+          fontSize: 12,
+        ),
       ),
     );
   }

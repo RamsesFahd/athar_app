@@ -58,6 +58,46 @@ class _AttractionsListScreenState
     };
   }
 
+String _translateCategory(String value, bool isAr) {
+  if (!isAr) return value;
+
+  switch (value.toLowerCase()) {
+    case 'heritage':
+      return 'تراث';
+    case 'nature':
+      return 'طبيعة';
+    case 'arts':
+      return 'فنون';
+    case 'modern':
+      return 'عصري';
+    case 'all':
+      return 'الكل';
+    default:
+      return value;
+  }
+}
+
+String _translateRegion(String value, bool isAr) {
+  if (!isAr) return value;
+
+  switch (value.toLowerCase()) {
+    case 'central_region':
+      return 'المنطقة الوسطى';
+    case 'northern_region':
+      return 'المنطقة الشمالية';
+    case 'western_region':
+      return 'المنطقة الغربية';
+    case 'southern_region':
+      return 'المنطقة الجنوبية';
+    case 'eastern_region':
+      return 'المنطقة الشرقية';
+    case 'all':
+      return 'الكل';
+    default:
+      return value;
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
@@ -203,21 +243,23 @@ class _AttractionsListScreenState
               if (_showFilters) ...[
                 const SizedBox(height: 12),
                 _FilterRow(
-                  label: isAr ? 'المنطقة' : 'Region',
-                  options: _regions,
-                  selected: _selectedRegion,
-                  onSelected: (v) => setState(() => _selectedRegion = v),
-                  isAr: isAr,
-                ),
+  label: isAr ? 'المنطقة' : 'Region',
+  options: _regions,
+  selected: _selectedRegion,
+  onSelected: (v) => setState(() => _selectedRegion = v),
+  isAr: isAr,
+  labelFor: (v) => _translateRegion(v, isAr),
+),
                 const SizedBox(height: 6),
                 _FilterRow(
-                  label: isAr ? 'التصنيف' : 'Category',
-                  options: _categories,
-                  selected: _selectedCategory,
-                  onSelected: (v) => setState(() => _selectedCategory = v),
-                  isAr: isAr,
-                  colorFor: (v) => v == 'All' ? null : _categoryColors[v],
-                ),
+  label: isAr ? 'التصنيف' : 'Category',
+  options: _categories,
+  selected: _selectedCategory,
+  onSelected: (v) => setState(() => _selectedCategory = v),
+  isAr: isAr,
+  colorFor: (v) => v == 'All' ? null : _categoryColors[v],
+  labelFor: (v) => _translateCategory(v, isAr),
+),
               ],
               const SizedBox(height: 12),
               if (filtered.isEmpty)
@@ -279,6 +321,7 @@ class _FilterRow extends StatelessWidget {
   final ValueChanged<String> onSelected;
   final bool isAr;
   final Color? Function(String)? colorFor;
+  final String Function(String)? labelFor;
 
   const _FilterRow({
     required this.label,
@@ -287,6 +330,7 @@ class _FilterRow extends StatelessWidget {
     required this.onSelected,
     required this.isAr,
     this.colorFor,
+    this.labelFor,
   });
 
   @override
@@ -324,7 +368,8 @@ class _FilterRow extends StatelessWidget {
                 ),
               ),
               child: Text(
-                value == 'All' ? (isAr ? 'الكل' : 'All') : value,
+                labelFor?.call(value) ??
+                (value == 'All' ? (isAr ? 'الكل' : 'All') : value),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: isSelected ? Colors.white : AppColors.sage800,
                       fontWeight: FontWeight.w600,

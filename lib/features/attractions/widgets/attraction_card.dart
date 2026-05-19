@@ -19,6 +19,23 @@ class AttractionCard extends StatelessWidget {
     return Color(int.parse('FF$n', radix: 16));
   }
 
+  String _categoryLabel(bool isAr) {
+  if (!isAr) return attraction.category;
+
+  switch (attraction.category.toLowerCase()) {
+    case 'heritage':
+      return 'تراث';
+    case 'nature':
+      return 'طبيعة';
+    case 'arts':
+      return 'فنون';
+    case 'modern':
+      return 'عصري';
+    default:
+      return attraction.category;
+  }
+}
+
   void _openDetails(BuildContext context) {
     // Fire-and-forget: warms memory cache during the ~300 ms route transition.
     try {
@@ -260,7 +277,7 @@ Widget _buildGrid(
                     const SizedBox(height: 4),
                     // Category
                     Text(
-                      attraction.category,
+                      _categoryLabel(isAr),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.labelSmall?.copyWith(
