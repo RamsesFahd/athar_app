@@ -165,7 +165,7 @@ class TripDetailsScreen extends ConsumerWidget {
                       builder: (ctx, consumerRef, _) {
                         final isFavAsync =
                             consumerRef.watch(isFavoriteProvider(trip.id));
-                        final isFav = isFavAsync.value ?? false;
+                        final isFav = isFavAsync.valueOrNull ?? false;
                         return CircleAvatar(
                           backgroundColor: Colors.black54,
                           child: IconButton(
@@ -349,7 +349,7 @@ class TripDetailsScreen extends ConsumerWidget {
       ),
       'family': (
         icon: Icons.family_restroom_rounded,
-        labelEn: 'مناسب للعائلات',
+        labelEn: 'Family Friendly',
         labelAr: 'مناسب للعائلات',
       ),
     };

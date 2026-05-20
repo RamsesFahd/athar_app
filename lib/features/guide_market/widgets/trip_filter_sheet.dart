@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class TripFilterBottomSheet extends StatefulWidget {
@@ -150,7 +151,7 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: l10n.min_price, 
-                    suffixText: l10n.currencySAR,
+                    suffix: SvgPicture.asset('assets/icons/saudi_riyal.svg', width: 16, height: 16),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                   onChanged: (val) => _updateRangeFromInputs(),
@@ -166,7 +167,7 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: l10n.max_price, 
-                    suffixText: l10n.currencySAR,
+                    suffix: SvgPicture.asset('assets/icons/saudi_riyal.svg', width: 16, height: 16),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                   onChanged: (val) => _updateRangeFromInputs(),
