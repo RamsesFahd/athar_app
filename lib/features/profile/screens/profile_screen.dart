@@ -25,6 +25,9 @@ import 'package:athar_app/features/profile/logic/favorites_notifier.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_repository.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
+import 'package:athar_app/features/profile/screens/about_athar_screen.dart';
+import 'package:athar_app/features/profile/screens/privacy_policy_screen.dart';
+import 'package:athar_app/features/profile/screens/contact_us_screen.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -284,19 +287,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ],
                         if (user is TouristModel) ...[
                           SettingsTile(
-                            title: l10n.manageContributions,
-                            leadingIcon: Icons.edit_note_rounded,
-                            onTap: () {
-                              Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                              builder: (_) => const ContributionsAchievementsScreen(),
-                               ),
-                              );
-
-                            },
-                          ),
-                          SettingsTile(
                             title: l10n.myInterests,
                             leadingIcon: Icons.favorite_border_rounded,
                             onTap: () => Navigator.push(
@@ -384,17 +374,37 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         SettingsTile(
                           title: l10n.settingsContactUs,
                           leadingIcon: Icons.support_agent_rounded,
-                          onTap: () {},
-                        ),
+onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const ContactUsScreen(),
+    ),
+  );
+},                        ),
                         SettingsTile(
                           title: l10n.settingsPrivacyPolicy,
                           leadingIcon: Icons.privacy_tip_outlined,
-                          onTap: () {},
+                          onTap: () {
+                          Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                          builder: (_) => const PrivacyPolicyScreen(),
+                            ),
+                          );
+                        },
                         ),
                         SettingsTile(
                           title: l10n.settingsAboutAthar,
                           leadingIcon: Icons.info_outline_rounded,
-                          onTap: () {},
+                         onTap: () {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => const AboutAtharScreen(),
+    ),
+  );
+},
                         ),
                       ],
                     ),

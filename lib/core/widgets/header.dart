@@ -69,25 +69,32 @@ class Header extends ConsumerWidget implements PreferredSizeWidget {
           ),
           actions: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: colorScheme.primary,
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  icon: const Icon(Icons.accessibility_new,
-                      color: Colors.white, size: 22),
-                  tooltip: 'سهولة الوصول',
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => const AccessibilityControls(),
-                    );
-                  },
-                ),
-              ),
-            ),
+  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+  child: Container(
+    width: 40,
+    height: 40,
+    decoration: BoxDecoration(
+      color: colorScheme.primary,
+      shape: BoxShape.circle,
+    ),
+    child: IconButton(
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
+      icon: const Icon(
+        Icons.accessibility_new,
+        color: Colors.white,
+        size: 22,
+      ),
+      tooltip: 'سهولة الوصول',
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) => const AccessibilityControls(),
+        );
+      },
+    ),
+  ),
+),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: Stack(
