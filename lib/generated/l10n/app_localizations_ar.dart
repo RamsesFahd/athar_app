@@ -1258,4 +1258,41 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get tripEligibilityProfileIncomplete =>
       'أكمل ملفك الشخصي (النبذة واللغات) لتتمكن من إضافة رحلات';
+
+  @override
+  String get goBack => 'رجوع';
+
+  @override
+  String get selectTutorTypeError => 'يرجى اختيار نوع الحساب (فرد أو شركة)';
+
+  @override
+  String get phoneDialogTitle => 'رقم الجوال';
+
+  @override
+  String get otpDialogTitle => 'أدخل رمز التحقق';
+
+  @override
+  String get phoneSmsSubtitle => 'سيُرسل إليك رمز تحقق عبر SMS';
+
+  @override
+  String get phoneInvalidError => 'أدخل رقم جوال صحيح';
+
+  @override
+  String get phoneVerifiedSuccess => 'تم التحقق من رقم الجوال بنجاح';
+
+  @override
+  String otpSentTo(String phone) {
+    return 'أُرسل رمز التحقق إلى\n$phone';
+  }
+
+  @override
+  String otpResendIn(int seconds) {
+    return 'إعادة الإرسال خلال $seconds ثانية';
+  }
+
+  @override
+  String get otpResendCode => 'إعادة إرسال الرمز';
+
+  @override
+  String get otpSendCode => 'إرسال الرمز';
 }

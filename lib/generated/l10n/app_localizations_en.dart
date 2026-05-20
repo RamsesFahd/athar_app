@@ -1266,4 +1266,43 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tripEligibilityProfileIncomplete =>
       'Complete your profile (bio & languages) to add trips';
+
+  @override
+  String get goBack => 'Back';
+
+  @override
+  String get selectTutorTypeError =>
+      'Please select an account type (individual or company)';
+
+  @override
+  String get phoneDialogTitle => 'Phone Number';
+
+  @override
+  String get otpDialogTitle => 'Enter Verification Code';
+
+  @override
+  String get phoneSmsSubtitle =>
+      'A verification code will be sent to you via SMS';
+
+  @override
+  String get phoneInvalidError => 'Enter a valid phone number';
+
+  @override
+  String get phoneVerifiedSuccess => 'Phone number verified successfully';
+
+  @override
+  String otpSentTo(String phone) {
+    return 'Verification code sent to\n$phone';
+  }
+
+  @override
+  String otpResendIn(int seconds) {
+    return 'Resend in $seconds seconds';
+  }
+
+  @override
+  String get otpResendCode => 'Resend Code';
+
+  @override
+  String get otpSendCode => 'Send Code';
 }

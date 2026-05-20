@@ -473,5 +473,28 @@
   "credVerifPhoneRequiredFirst": "يرجى التحقق من رقم هاتفك قبل تقديم بيانات التوثيق",
   "credVerifPhoneNotVerifiedTitle": "الهاتف غير موثق",
   "credVerifPhoneNotVerifiedBody": "يجب عليك التحقق من رقم هاتفك أولاً. عد إلى ملفك الشخصي وتحقق من هاتفك.",
-  "tripEligibilityProfileIncomplete": "أكمل ملفك الشخصي (النبذة واللغات) لتتمكن من إضافة رحلات"
+  "tripEligibilityProfileIncomplete": "أكمل ملفك الشخصي (النبذة واللغات) لتتمكن من إضافة رحلات",
+
+  "goBack": "رجوع",
+  "selectTutorTypeError": "يرجى اختيار نوع الحساب (فرد أو شركة)",
+
+  "phoneDialogTitle": "رقم الجوال",
+  "otpDialogTitle": "أدخل رمز التحقق",
+  "phoneSmsSubtitle": "سيُرسل إليك رمز تحقق عبر SMS",
+  "phoneInvalidError": "أدخل رقم جوال صحيح",
+  "phoneVerifiedSuccess": "تم التحقق من رقم الجوال بنجاح",
+  "otpSentTo": "أُرسل رمز التحقق إلى\n{phone}",
+  "@otpSentTo": {
+    "placeholders": {
+      "phone": { "type": "String" }
+    }
+  },
+  "otpResendIn": "إعادة الإرسال خلال {seconds} ثانية",
+  "@otpResendIn": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "otpResendCode": "إعادة إرسال الرمز",
+  "otpSendCode": "إرسال الرمز"
 }

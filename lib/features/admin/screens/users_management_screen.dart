@@ -5,54 +5,39 @@ import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/admin/screens/tutor_verification_detail_screen.dart';
 
-class UsersManagementScreen extends ConsumerStatefulWidget {
+class UsersManagementScreen extends ConsumerWidget {
   const UsersManagementScreen({super.key});
 
   @override
-  ConsumerState<UsersManagementScreen> createState() =>
-      _UsersManagementScreenState();
-}
-
-class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TabBar(
-          controller: _tabController,
-          labelColor: AppColors.primary,
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: AppColors.primary,
-          tabs: const [
-            Tab(text: 'Users'),
-            Tab(text: 'Guides'),
-          ],
-        ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: const [
-              _UsersTab(),
-              _GuidesTab(),
-            ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    return DefaultTabController(
+      length: 2,
+      child: Column(
+        children: [
+          Material(
+            color: Theme.of(context).colorScheme.surface,
+            elevation: 1,
+            child: TabBar(
+              labelColor: AppColors.primary,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: AppColors.primary,
+              dividerColor: Colors.transparent,
+              tabs: const [
+                Tab(text: 'Users'),
+                Tab(text: 'Guides'),
+              ],
+            ),
           ),
-        ),
-      ],
+          const Expanded(
+            child: TabBarView(
+              children: [
+                _UsersTab(),
+                _GuidesTab(),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

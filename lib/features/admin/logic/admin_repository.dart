@@ -8,7 +8,6 @@ import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/models/contribution/contribution_model.dart';
-import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
 part 'admin_repository.g.dart';
 
 @riverpod
@@ -50,10 +49,6 @@ class AdminRepository {
       'verificationActionAt': Timestamp.now(),
       'rejectionReason': null,
     });
-    await NotificationsRepository().addNotification(
-      userId: uId,
-      type: 'guide_verified',
-    );
   }
 
   Future<void> rejectTutor(
@@ -95,18 +90,10 @@ class AdminRepository {
 
   Future<void> approveTrip(String tripId, {required String tutorId}) async {
     await _trips.doc(tripId).update({'status': 'approved'});
-    await NotificationsRepository().addNotification(
-      userId: tutorId,
-      type: 'trip_approved',
-    );
   }
 
   Future<void> rejectTrip(String tripId, {required String tutorId}) async {
     await _trips.doc(tripId).update({'status': 'rejected'});
-    await NotificationsRepository().addNotification(
-      userId: tutorId,
-      type: 'trip_rejected',
-    );
   }
 
   // ── Users Management ────────────────────────────────────────────────────────
@@ -298,10 +285,6 @@ class AdminRepository {
     });
 
     await batch.commit();
-    await NotificationsRepository().addNotification(
-  userId: touristId,
-  type: 'contribution_approved',
-);
   }
 
   Future<void> rejectContribution(
@@ -318,11 +301,5 @@ class AdminRepository {
       'adminName': adminName,
       'reviewedAt': Timestamp.now(),
     });
-   await NotificationsRepository().addNotification(
-  userId: touristId,
-  type: 'contribution_rejected',
-  bodyOverrideAr: reason,
-  bodyOverrideEn: reason,
-);
   }
 }

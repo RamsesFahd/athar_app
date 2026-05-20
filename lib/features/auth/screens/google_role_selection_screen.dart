@@ -5,6 +5,7 @@ import 'package:athar_app/core/navigation/app_routes.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/auth/widgets/custom_button.dart';
 import 'package:athar_app/features/auth/widgets/custom_header.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class GoogleRoleSelectionScreen extends ConsumerStatefulWidget {
   const GoogleRoleSelectionScreen({super.key});
@@ -22,7 +23,9 @@ class _GoogleRoleSelectionScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authNotifierProvider);
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
 
     ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (_, next) {
       next.whenOrNull(
@@ -44,8 +47,8 @@ class _GoogleRoleSelectionScreenState
       body: Column(
         children: [
           CustomHeader(
-            title: 'أهلاً بك في أثر',
-            subtitle: 'اختر نوع حسابك للمتابعة',
+            title: l10n.welcomeToAthar,
+            subtitle: isAr ? 'اختر نوع حسابك للمتابعة' : 'Choose your account type',
             imagePath: 'assets/images/signup_header.png',
           ),
           Expanded(
@@ -63,36 +66,26 @@ class _GoogleRoleSelectionScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'سجّل كـ',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontSize: theme.textTheme.bodyLarge?.fontSize,
-                      ),
-                    ),
+                    Text(l10n.signUpAsLabel, style: theme.textTheme.titleMedium),
                     const SizedBox(height: 12),
-                    _buildRoleSelector(theme),
+                    _buildRoleSelector(theme, l10n),
                     if (_selectedRole == UserRole.tutor) ...[
                       const SizedBox(height: 20),
-                      Text(
-                        'نوع الحساب',
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontSize: theme.textTheme.bodyLarge?.fontSize,
-                        ),
-                      ),
+                      Text(l10n.guideTypeLabel, style: theme.textTheme.titleMedium),
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          _tutorTypeOption(TutorType.individual, 'فرد مستقل', theme),
+                          _tutorTypeOption(TutorType.individual, l10n.guideTypeIndependent, theme),
                           const SizedBox(width: 12),
-                          _tutorTypeOption(TutorType.company, 'شركة سياحية', theme),
+                          _tutorTypeOption(TutorType.company, l10n.guideTypeCompany, theme),
                         ],
                       ),
                     ],
                     const SizedBox(height: 32),
                     AtharButton(
-                      label: 'متابعة',
+                      label: l10n.continueButton,
                       isLoading: authState.isLoading,
-                      onPressed: authState.isLoading ? null : _handleConfirm,
+                      onPressed: authState.isLoading ? null : () => _handleConfirm(l10n, isAr),
                     ),
                   ],
                 ),
@@ -104,12 +97,12 @@ class _GoogleRoleSelectionScreenState
     );
   }
 
-  Widget _buildRoleSelector(ThemeData theme) {
+  Widget _buildRoleSelector(ThemeData theme, AppLocalizations l10n) {
     return Row(
       children: [
-        _roleCard(UserRole.tourist, 'سائح', Icons.explore_outlined, theme),
+        _roleCard(UserRole.tourist, l10n.touristRole, Icons.explore_outlined, theme),
         const SizedBox(width: 12),
-        _roleCard(UserRole.tutor, 'مرشد سياحي', Icons.account_balance_outlined, theme),
+        _roleCard(UserRole.tutor, l10n.tutorRole, Icons.account_balance_outlined, theme),
       ],
     );
   }
@@ -175,10 +168,12 @@ class _GoogleRoleSelectionScreenState
     );
   }
 
-  void _handleConfirm() {
+  void _handleConfirm(AppLocalizations l10n, bool isAr) {
     if (_selectedRole == UserRole.tutor && _selectedTutorType == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('يرجى اختيار نوع الحساب')),
+        SnackBar(
+          content: Text(isAr ? 'يرجى اختيار نوع الحساب' : 'Please select an account type'),
+        ),
       );
       return;
     }

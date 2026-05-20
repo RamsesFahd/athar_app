@@ -717,6 +717,11 @@ const NOTIFICATION_COPY: Record<string, NotificationPayload> = {
     title: { ar: "تم توثيق حسابك", en: "Account Verified" },
     body:  { ar: "تهانينا! تم توثيق حسابك كمرشد سياحي معتمد.", en: "Congratulations! Your guide account has been verified." },
   },
+  guide_rejected: {
+    type: "guide_rejected",
+    title: { ar: "تم رفض طلب التوثيق", en: "Verification Rejected" },
+    body:  { ar: "تم رفض طلب توثيقك كمرشد سياحي.", en: "Your guide verification request has been rejected." },
+  },
   points_awarded: {
     type: "points_awarded",
     title: { ar: "نقاط إضافية", en: "Bonus Points Awarded" },
@@ -1043,15 +1048,22 @@ export const onGuideVerified = onDocumentUpdated(
     const after  = event.data?.after.data();
     if (!before || !after) return;
 
-    // Only fire when verificationStatus transitions to "verified"
     if (
       before.verificationStatus === after.verificationStatus ||
-      after.verificationStatus !== "verified" ||
       after.role !== "tutor"
     ) return;
 
-    logger.info(`[notif] Guide verified: ${event.params.userId}`);
-    await notify(event.params.userId, "guide_verified");
+    if (after.verificationStatus === "verified") {
+      logger.info(`[notif] Guide verified: ${event.params.userId}`);
+      await notify(event.params.userId, "guide_verified");
+    } else if (after.verificationStatus === "rejected") {
+      logger.info(`[notif] Guide rejected: ${event.params.userId}`);
+      const reason = after.rejectionReason as string | undefined;
+      const bodyOverride = reason
+        ? { ar: `تم رفض طلب توثيقك. السبب: ${reason}`, en: `Your verification was rejected. Reason: ${reason}` }
+        : undefined;
+      await notify(event.params.userId, "guide_rejected", bodyOverride);
+    }
   }
 );
 

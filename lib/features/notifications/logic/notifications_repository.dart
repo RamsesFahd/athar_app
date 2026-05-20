@@ -39,6 +39,7 @@ Map<String, Map<String, String>> _titles = {
   'booking_approved':      {'ar': 'تم قبول الحجز', 'en': 'Booking Approved'},
   'booking_cancelled':     {'ar': 'تم إلغاء الحجز', 'en': 'Booking Cancelled'},
   'guide_verified':        {'ar': 'تم توثيق حسابك', 'en': 'Account Verified'},
+  'guide_rejected':        {'ar': 'تم رفض طلب التوثيق', 'en': 'Verification Rejected'},
   'points_awarded':        {'ar': 'نقاط إضافية', 'en': 'Bonus Points Awarded'},
 };
 
@@ -53,6 +54,7 @@ Map<String, Map<String, String>> _bodies = {
   'booking_approved':      {'ar': 'تم قبول حجزك بنجاح. استعد لرحلتك!', 'en': 'Your booking is confirmed. Get ready for your trip!'},
   'booking_cancelled':     {'ar': 'تم إلغاء حجزك.', 'en': 'Your booking has been cancelled.'},
   'guide_verified':        {'ar': 'تهانينا! تم توثيق حسابك كمرشد سياحي معتمد.', 'en': 'Congratulations! Your guide account has been verified.'},
+  'guide_rejected':        {'ar': 'تم رفض طلب توثيقك كمرشد سياحي.', 'en': 'Your guide verification request has been rejected.'},
   'points_awarded':        {'ar': 'تم منحك نقاطاً إضافية من الإدارة.', 'en': 'The admin has awarded you bonus points.'},
 };
 

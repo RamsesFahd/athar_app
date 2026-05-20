@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:athar_app/features/profile/logic/profile_notifier.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -77,9 +78,10 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
 
   // ── actions ───────────────────────────────────────────────────────────────
   void _sendOtp({bool isResend = false}) {
+    final l10n = AppLocalizations.of(context);
     final raw = _phoneController.text.trim();
     if (raw.length < 9) {
-      setState(() => _phoneError = 'أدخل رقم جوال صحيح');
+      setState(() => _phoneError = l10n.phoneInvalidError);
       return;
     }
     setState(() => _phoneError = null);
@@ -109,11 +111,12 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
     );
 
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
     final state = ref.read(profileNotifierProvider);
     if (state is AsyncData) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم التحقق من رقم الجوال بنجاح')),
+        SnackBar(content: Text(l10n.phoneVerifiedSuccess)),
       );
     } else if (state is AsyncError) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -136,7 +139,7 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
       child: AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          _otpStep ? 'أدخل رمز التحقق' : 'رقم الجوال',
+          _otpStep ? AppLocalizations.of(context).otpDialogTitle : AppLocalizations.of(context).phoneDialogTitle,
           style: theme.textTheme.titleLarge
               ?.copyWith(fontWeight: FontWeight.bold),
         ),
@@ -155,12 +158,13 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
 
   // ── phone step UI ─────────────────────────────────────────────────────────
   Widget _buildPhoneStep(ThemeData theme, bool isLoading, bool isHighContrast,) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'سيُرسل إليك رمز تحقق عبر SMS',
+          l10n.phoneSmsSubtitle,
           style: theme.textTheme.bodySmall
               ?.copyWith(color: isHighContrast
     ? theme.colorScheme.onSurface
@@ -186,28 +190,32 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
     );
   }
 
-  List<Widget> _phoneActions(ThemeData theme, bool isLoading) => [
-    TextButton(
-      onPressed: isLoading ? null : () => Navigator.of(context).pop(),
-      child: const Text('إلغاء'),
-    ),
-    FilledButton(
-      onPressed: isLoading ? null : _sendOtp,
-      child: isLoading
-          ? const SizedBox(
-              width: 18, height: 18,
-              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-          : const Text('إرسال الرمز'),
-    ),
-  ];
+  List<Widget> _phoneActions(ThemeData theme, bool isLoading) {
+    final l10n = AppLocalizations.of(context);
+    return [
+      TextButton(
+        onPressed: isLoading ? null : () => Navigator.of(context).pop(),
+        child: Text(l10n.cancel),
+      ),
+      FilledButton(
+        onPressed: isLoading ? null : _sendOtp,
+        child: isLoading
+            ? const SizedBox(
+                width: 18, height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+            : Text(l10n.otpSendCode),
+      ),
+    ];
+  }
 
   // ── OTP step UI ───────────────────────────────────────────────────────────
   Widget _buildOtpStep(ThemeData theme, bool isLoading, bool isHighContrast,) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'أُرسل رمز التحقق إلى\n$_phoneNumber',
+          l10n.otpSentTo(_phoneNumber),
           textAlign: TextAlign.center,
           style: theme.textTheme.bodySmall
               ?.copyWith(color: isHighContrast
@@ -275,36 +283,40 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
   }
 
   Widget _buildResendRow(ThemeData theme, bool isLoading) {
+    final l10n = AppLocalizations.of(context);
     if (_countdown > 0) {
       return Text(
-        'إعادة الإرسال خلال $_countdown ثانية',
+        l10n.otpResendIn(_countdown),
         style: theme.textTheme.bodySmall
             ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
       );
     }
     return TextButton(
       onPressed: isLoading ? null : () => _sendOtp(isResend: true),
-      child: const Text('إعادة إرسال الرمز'),
+      child: Text(l10n.otpResendCode),
     );
   }
 
-  List<Widget> _otpActions(ThemeData theme, bool isLoading) => [
-    TextButton(
-      onPressed: isLoading
-          ? null
-          : () => setState(() {
-                _otpStep = false;
-                _timer?.cancel();
-              }),
-      child: const Text('رجوع'),
-    ),
-    FilledButton(
-      onPressed: isLoading ? null : _verifyOtp,
-      child: isLoading
-          ? const SizedBox(
-              width: 18, height: 18,
-              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-          : const Text('تحقق'),
-    ),
-  ];
+  List<Widget> _otpActions(ThemeData theme, bool isLoading) {
+    final l10n = AppLocalizations.of(context);
+    return [
+      TextButton(
+        onPressed: isLoading
+            ? null
+            : () => setState(() {
+                  _otpStep = false;
+                  _timer?.cancel();
+                }),
+        child: Text(l10n.goBack),
+      ),
+      FilledButton(
+        onPressed: isLoading ? null : _verifyOtp,
+        child: isLoading
+            ? const SizedBox(
+                width: 18, height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+            : Text(l10n.verifyButton),
+      ),
+    ];
+  }
 }

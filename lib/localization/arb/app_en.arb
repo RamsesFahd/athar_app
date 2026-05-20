@@ -505,5 +505,28 @@
   "credVerifPhoneRequiredFirst": "Please verify your phone number before submitting credentials",
   "credVerifPhoneNotVerifiedTitle": "Phone Not Verified",
   "credVerifPhoneNotVerifiedBody": "You must verify your phone number first. Go back to your profile and verify your phone.",
-  "tripEligibilityProfileIncomplete": "Complete your profile (bio & languages) to add trips"
+  "tripEligibilityProfileIncomplete": "Complete your profile (bio & languages) to add trips",
+
+  "goBack": "Back",
+  "selectTutorTypeError": "Please select an account type (individual or company)",
+
+  "phoneDialogTitle": "Phone Number",
+  "otpDialogTitle": "Enter Verification Code",
+  "phoneSmsSubtitle": "A verification code will be sent to you via SMS",
+  "phoneInvalidError": "Enter a valid phone number",
+  "phoneVerifiedSuccess": "Phone number verified successfully",
+  "otpSentTo": "Verification code sent to\n{phone}",
+  "@otpSentTo": {
+    "placeholders": {
+      "phone": { "type": "String" }
+    }
+  },
+  "otpResendIn": "Resend in {seconds} seconds",
+  "@otpResendIn": {
+    "placeholders": {
+      "seconds": { "type": "int" }
+    }
+  },
+  "otpResendCode": "Resend Code",
+  "otpSendCode": "Send Code"
 }

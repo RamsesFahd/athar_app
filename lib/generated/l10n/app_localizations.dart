@@ -2497,6 +2497,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Complete your profile (bio & languages) to add trips'**
   String get tripEligibilityProfileIncomplete;
+
+  /// No description provided for @goBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get goBack;
+
+  /// No description provided for @selectTutorTypeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select an account type (individual or company)'**
+  String get selectTutorTypeError;
+
+  /// No description provided for @phoneDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneDialogTitle;
+
+  /// No description provided for @otpDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Verification Code'**
+  String get otpDialogTitle;
+
+  /// No description provided for @phoneSmsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A verification code will be sent to you via SMS'**
+  String get phoneSmsSubtitle;
+
+  /// No description provided for @phoneInvalidError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid phone number'**
+  String get phoneInvalidError;
+
+  /// No description provided for @phoneVerifiedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number verified successfully'**
+  String get phoneVerifiedSuccess;
+
+  /// No description provided for @otpSentTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code sent to\n{phone}'**
+  String otpSentTo(String phone);
+
+  /// No description provided for @otpResendIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds} seconds'**
+  String otpResendIn(int seconds);
+
+  /// No description provided for @otpResendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend Code'**
+  String get otpResendCode;
+
+  /// No description provided for @otpSendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Code'**
+  String get otpSendCode;
 }
 
 class _AppLocalizationsDelegate
