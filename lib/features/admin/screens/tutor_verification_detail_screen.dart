@@ -189,6 +189,11 @@ class _TutorVerificationDetailScreenState
                   _buildTutorHeader(theme),
                   const SizedBox(height: 20),
                   _buildCredentialCard(theme, isIndividual),
+                  if (tutor.verificationStatus != VerificationStatus.pending &&
+                      tutor.verifiedByAdminName != null) ...[
+                    const SizedBox(height: 16),
+                    _buildDecisionCard(theme),
+                  ],
                 ],
               ),
             ),
@@ -221,6 +226,21 @@ class _TutorVerificationDetailScreenState
                       ?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 4),
               Text(tutor.email, style: theme.textTheme.bodySmall),
+              if (tutor.phoneNumber != null) ...[
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Icon(Icons.phone_outlined,
+                        size: 13,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
+                    const SizedBox(width: 4),
+                    Text(tutor.phoneNumber!,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.55))),
+                  ],
+                ),
+              ],
               const SizedBox(height: 6),
               _typeBadge(theme),
             ],
@@ -393,6 +413,83 @@ class _TutorVerificationDetailScreenState
         style: TextStyle(
             fontSize: 11, fontWeight: FontWeight.bold, color: color),
       ),
+    );
+  }
+
+  Widget _buildDecisionCard(ThemeData theme) {
+    final isRejected = tutor.verificationStatus == VerificationStatus.rejected;
+    final cardColor = isRejected
+        ? Colors.red.withValues(alpha: 0.06)
+        : Colors.green.withValues(alpha: 0.06);
+    final borderColor = isRejected
+        ? Colors.red.withValues(alpha: 0.25)
+        : Colors.green.withValues(alpha: 0.25);
+    final labelColor = isRejected ? Colors.red.shade700 : Colors.green.shade700;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: borderColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                isRejected ? Icons.cancel_outlined : Icons.verified_outlined,
+                size: 16,
+                color: labelColor,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                isRejected ? 'تفاصيل الرفض' : 'تفاصيل التوثيق',
+                style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold, color: labelColor),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          _decisionRow(theme, 'بواسطة', tutor.verifiedByAdminName ?? '—'),
+          const SizedBox(height: 6),
+          _decisionRow(
+            theme,
+            'التاريخ',
+            tutor.verificationActionAt != null
+                ? DateFormat('yyyy-MM-dd – HH:mm')
+                    .format(tutor.verificationActionAt!)
+                : '—',
+          ),
+          if (isRejected && tutor.rejectionReason != null) ...[
+            const SizedBox(height: 6),
+            _decisionRow(theme, 'سبب الرفض', tutor.rejectionReason!),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _decisionRow(ThemeData theme, String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 80,
+          child: Text(
+            label,
+            style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5)),
+          ),
+        ),
+        Expanded(
+          child: Text(value,
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(fontWeight: FontWeight.w600)),
+        ),
+      ],
     );
   }
 

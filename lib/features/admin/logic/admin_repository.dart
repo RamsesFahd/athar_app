@@ -71,6 +71,16 @@ class AdminRepository {
     });
   }
 
+  Stream<List<TutorModel>> getAllTutors() {
+    return _users
+        .where('role', isEqualTo: UserRole.tutor.name)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((doc) =>
+                TutorModel.fromMap(doc.data() as Map<String, dynamic>))
+            .toList());
+  }
+
   // ── Trip Approvals ──────────────────────────────────────────────────────────
 
   Stream<List<TripModel>> getPendingTrips() {

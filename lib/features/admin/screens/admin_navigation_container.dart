@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
-import 'package:athar_app/features/admin/screens/tutor_verification_screen.dart';
 import 'package:athar_app/features/admin/screens/trip_approvals_screen.dart';
 import 'package:athar_app/features/admin/screens/users_management_screen.dart';
 import 'package:athar_app/features/admin/screens/all_bookings_screen.dart';
@@ -26,9 +25,8 @@ class _AdminNavigationContainerState
   int _currentIndex = 0;
 
   final List<Widget> _screens = const [
-    TutorVerificationScreen(),
-    TripApprovalsScreen(),
     UsersManagementScreen(),
+    TripApprovalsScreen(),
     AllBookingsScreen(),
     CulturalArchiveAdminScreen(),
     AddEventScreen(),
@@ -38,9 +36,8 @@ class _AdminNavigationContainerState
   ];
 
   final List<({String label, IconData icon})> _tabs = const [
-    (label: 'Tutors', icon: Icons.verified_user_outlined),
+    (label: 'People', icon: Icons.people_outline),
     (label: 'Trips', icon: Icons.card_travel_outlined),
-    (label: 'Users', icon: Icons.people_outline),
     (label: 'Bookings', icon: Icons.book_online_outlined),
     (label: 'Archive', icon: Icons.museum_outlined),
     (label: 'Events', icon: Icons.celebration_outlined),
