@@ -138,22 +138,12 @@ Widget _buildGridContent(
               // Price + Button
               Row(
                 children: [
-                  Flexible(
+                  Directionality(
+                    textDirection: TextDirection.ltr,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Flexible(
-                          child: Text(
-                            trip.price.replaceAll('ر.س', '').replaceAll('SAR', '').replaceAll('﷼', '').trim(),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: textTheme.bodyLarge?.copyWith(
-                              color: colorScheme.onPrimary,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 4),
                         SvgPicture.asset(
                           'assets/icons/saudi_riyal.svg',
                           width: 16,
@@ -161,6 +151,14 @@ Widget _buildGridContent(
                           colorFilter: ColorFilter.mode(
                             colorScheme.onPrimary,
                             BlendMode.srcIn,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          trip.price,
+                          style: textTheme.bodyLarge?.copyWith(
+                            color: colorScheme.onPrimary,
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
                       ],
@@ -171,49 +169,49 @@ Widget _buildGridContent(
 
                   // الزر
                   GestureDetector(
-  onTap: () {
-    try {
-      precacheImage(CachedNetworkImageProvider(trip.imageUrl), context);
-    } catch (_) {}
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TripDetailsScreen(trip: trip),
-      ),
-    );
-  },
-  child: Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-    decoration: BoxDecoration(
-      color: colorScheme.primary,
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Text(
-      isAr ? "التفاصيل" : "Details",
-      style: textTheme.labelSmall?.copyWith(
-        color: colorScheme.onPrimary,
-        fontWeight: FontWeight.w600,
-      ),
-    ),
-  ),
-),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    ],
-  );
-}
- Widget _buildListContent(
-  BuildContext context,
-  bool isAr,
-  AppLocalizations l10n,
-  ThemeData theme,
-) {
-  final textTheme = theme.textTheme;
-  final colorScheme = theme.colorScheme;
+                    onTap: () {
+                      try {
+                        precacheImage(CachedNetworkImageProvider(trip.imageUrl), context);
+                      } catch (_) {}
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TripDetailsScreen(trip: trip),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        isAr ? "التفاصيل" : "Details",
+                        style: textTheme.labelSmall?.copyWith(
+                          color: colorScheme.onPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                  Widget _buildListContent(
+                    BuildContext context,
+                    bool isAr,
+                    AppLocalizations l10n,
+                    ThemeData theme,
+                  ) {
+                    final textTheme = theme.textTheme;
+                    final colorScheme = theme.colorScheme;
 
   return SizedBox(
     height: 150,
@@ -313,22 +311,11 @@ Widget _buildGridContent(
                 // السعر + الزر
                 Row(
                   children: [
-                    Flexible(
+                    Directionality(
+                      textDirection: TextDirection.ltr,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Flexible(
-                            child: Text(
-                              trip.price.replaceAll('ر.س', '').replaceAll('SAR', '').replaceAll('﷼', '').trim(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: textTheme.titleMedium?.copyWith(
-                                color: colorScheme.primary,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 4),
                           SvgPicture.asset(
                             'assets/icons/saudi_riyal.svg',
                             width: 16,
@@ -336,6 +323,14 @@ Widget _buildGridContent(
                             colorFilter: ColorFilter.mode(
                               colorScheme.primary,
                               BlendMode.srcIn,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            trip.price,
+                            style: textTheme.titleMedium?.copyWith(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ],

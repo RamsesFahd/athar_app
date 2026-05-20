@@ -109,27 +109,30 @@ class ExploreHeritageHomeCard extends StatelessWidget {
                           : null,
                     ),
                     child: showRiyalIcon
-                        ? Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                categoryLabel,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onPrimary,
-                                  fontWeight: FontWeight.w800,
+                        ? Directionality(
+                            textDirection: TextDirection.ltr,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/icons/saudi_riyal.svg',
+                                  width: 14,
+                                  height: 14,
+                                  colorFilter: ColorFilter.mode(
+                                    theme.colorScheme.onPrimary,
+                                    BlendMode.srcIn,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 4),
-                              SvgPicture.asset(
-                                'assets/icons/saudi_riyal.svg',
-                                width: 14,
-                                height: 14,
-                                colorFilter: ColorFilter.mode(
-                                  theme.colorScheme.onPrimary,
-                                  BlendMode.srcIn,
+                                const SizedBox(width: 4),
+                                Text(
+                                  categoryLabel,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    color: theme.colorScheme.onPrimary,
+                                    fontWeight: FontWeight.w800,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           )
                         : Text(
                             categoryLabel,
