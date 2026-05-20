@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ExploreHeritageHomeCard extends StatelessWidget {
   final String title;
@@ -7,6 +8,7 @@ class ExploreHeritageHomeCard extends StatelessWidget {
   final String categoryLabel;
   final String locationLabel;
   final VoidCallback? onTap;
+  final bool showRiyalIcon;
 
   const ExploreHeritageHomeCard({
     super.key,
@@ -15,6 +17,7 @@ class ExploreHeritageHomeCard extends StatelessWidget {
     required this.categoryLabel,
     required this.locationLabel,
     this.onTap,
+    this.showRiyalIcon = false,
   });
 
   @override
@@ -105,13 +108,36 @@ class ExploreHeritageHomeCard extends StatelessWidget {
                           ? Border.all(color: Colors.black, width: 1.5)
                           : null,
                     ),
-                    child: Text(
-                      categoryLabel,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
+                    child: showRiyalIcon
+                        ? Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                categoryLabel,
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: theme.colorScheme.onPrimary,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              SvgPicture.asset(
+                                'assets/icons/saudi_riyal.svg',
+                                width: 14,
+                                height: 14,
+                                colorFilter: ColorFilter.mode(
+                                  theme.colorScheme.onPrimary,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Text(
+                            categoryLabel,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onPrimary,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
                   ),
                 ),
               ],

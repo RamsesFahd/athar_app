@@ -191,8 +191,9 @@ class _YouMayLikeSection extends ConsumerWidget {
         return ExploreHeritageHomeCard(
           title: title,
           image: image,
-          categoryLabel: t.price,
+          categoryLabel: t.price.replaceAll('ر.س', '').replaceAll('SAR', '').replaceAll('﷼', '').trim(),
           locationLabel: t.getCity(isAr),
+          showRiyalIcon: true,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => TripDetailsScreen(trip: t)),
@@ -409,10 +410,9 @@ class _TripsSection extends ConsumerWidget {
                     child: ExploreHeritageHomeCard(
                       title: trip.getTitle(isAr),
                       image: trip.imageUrl,
-                   categoryLabel: isAr
-    ? '${trip.price.replaceAll('ر.س', '').replaceAll('SAR', '').trim()} ﷼'
-    : '${trip.price.replaceAll('ر.س', '').replaceAll('SAR', '').trim()} SAR',
+                      categoryLabel: trip.price.replaceAll('ر.س', '').replaceAll('SAR', '').replaceAll('﷼', '').trim(),
                       locationLabel: trip.getCity(isAr),
+                      showRiyalIcon: true,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(

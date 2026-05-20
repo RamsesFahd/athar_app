@@ -164,7 +164,7 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
 
   Widget _buildTitleSection(ThemeData theme, bool isAr, String title,VoidCallback? onSpeak) {
     final isFavAsync = ref.watch(isFavoriteProvider(widget.item.id));
-    final isFav = isFavAsync.value ?? false;
+    final isFav = isFavAsync.valueOrNull ?? false;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
