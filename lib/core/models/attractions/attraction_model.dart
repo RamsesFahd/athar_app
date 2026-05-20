@@ -1,3 +1,4 @@
+import 'package:athar_app/features/home/models/hero_ai_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AttractionModel {
@@ -15,6 +16,7 @@ class AttractionModel {
   final String categoryColorCode;
   // NEW: replaces `tags`. Holds IDs from /taxonomy collection (e.g., 'heritage_sites').
   final List<String> interestIds;
+  final HeroAiText? heroCopy;
   // NEW: 768-dim semantic vector from Gemini text-embedding-004.
   // Used for Rawi's semantic search and future "similar items" features.
   final List<double> embedding;
@@ -37,6 +39,7 @@ class AttractionModel {
     required this.category,
     required this.categoryColorCode,
     this.interestIds = const [],
+    this.heroCopy,
     this.embedding = const [],
     required this.mainImage,
     required this.gallery,
@@ -131,6 +134,9 @@ class AttractionModel {
       isAlwaysOpen: map['isAlwaysOpen'] as bool? ?? false,
       entryFee: (map['entryFee'] as num?)?.toDouble() ?? 0,
       ticketBookingUrl: map['ticketBookingUrl']?.toString(),
+      heroCopy: map['heroCopy'] is Map
+          ? HeroAiText.fromMap(Map<String, dynamic>.from(map['heroCopy'] as Map))
+          : null,
     );
   }
 

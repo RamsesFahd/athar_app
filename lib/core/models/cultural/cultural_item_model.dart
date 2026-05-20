@@ -1,3 +1,4 @@
+import 'package:athar_app/features/home/models/hero_ai_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CulturalItemModel {
@@ -19,6 +20,7 @@ class CulturalItemModel {
   final String? contributorId;
   final String? contributorName;
   final List<String> interestIds;
+  final HeroAiText? heroCopy;
 
   CulturalItemModel({
     required this.id,
@@ -39,6 +41,7 @@ class CulturalItemModel {
     this.contributorId,
     this.contributorName,
     this.interestIds = const [],
+    this.heroCopy,
   });
 
   Map<String, dynamic> toMap() {
@@ -84,6 +87,9 @@ class CulturalItemModel {
       contributorId: map['contributorId'] as String?,
       contributorName: map['contributorName'] as String?,
       interestIds: List<String>.from(map['interestIds'] ?? []),
+      heroCopy: map['heroCopy'] is Map
+          ? HeroAiText.fromMap(Map<String, dynamic>.from(map['heroCopy'] as Map))
+          : null,
     );
   }
 }

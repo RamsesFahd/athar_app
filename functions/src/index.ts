@@ -11,7 +11,7 @@ initializeApp();
 const db = getFirestore();
 
 const GEMINI_KEY = process.env.GEMINI_API_KEY || "";
-const CLASSIFY_MODEL = process.env.GEMINI_MODEL || "gemini-1.5-flash"; 
+const CLASSIFY_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 const EMBED_MODEL = "gemini-embedding-001";
  // الموديل الصحيح اللي بيفك أزمة الـ 404
 
@@ -21,6 +21,13 @@ interface TaxonomyEntry {
   labelEn: string;
   synonyms: string[];
   appliesTo: string[];
+}
+
+interface HeroCopyResult {
+  titleAr: string;
+  subtitleAr: string;
+  titleEn: string;
+  subtitleEn: string;
 }
 
 let taxonomyCache: TaxonomyEntry[] | null = null;
@@ -190,18 +197,141 @@ async function classifyDocument(
   });
 }
 
+async function generateHeroCopyForDoc(
+  collection: string,
+  data: FirebaseFirestore.DocumentData
+): Promise<HeroCopyResult> {
+  const content = extractContentText(collection, data);
+  if (!content.title && !content.description) {
+    throw new Error(`generateHeroCopyForDoc: no text content for ${collection}`);
+  }
+
+  const prompt = [
+    "You are a premium cultural content writer for Athar, a Saudi heritage tourism app aligned with Vision 2030.",
+    "Write SHORT, cinematic, emotionally resonant promotional hero banner copy for the following item.",
+    "The Arabic must be Modern Standard Arabic (فصحى), elegant and culturally authentic.",
+    "The English must be polished, evocative, and premium — like a luxury travel campaign.",
+    "",
+    `Item title: ${content.title}`,
+    `Item description: ${content.description}`,
+    "",
+    "Rules:",
+    "- Arabic title: max 6 words, cinematic and evocative",
+    "- Arabic subtitle: max 12 words, poetic but clear",
+    "- English title: max 6 words, premium and punchy",
+    "- English subtitle: max 12 words, inspiring and specific",
+    "- Do NOT mention AI, apps, or technology",
+    "- Do NOT use generic phrases like 'discover the beauty'",
+    "- Sound like a world-class tourism campaign",
+    "",
+    'Return ONLY this JSON object — no markdown fences, no extra text:',
+    '{"titleAr":"...","subtitleAr":"...","titleEn":"...","subtitleEn":"..."}',
+  ].join("\n");
+
+  const genAI = new GoogleGenerativeAI(GEMINI_KEY);
+  const model = genAI.getGenerativeModel({ model: CLASSIFY_MODEL });
+  const result = await model.generateContent(prompt);
+  const rawText = result.response.text().trim();
+
+  // Strip markdown fences defensively before parsing
+  const cleaned = rawText
+    .replace(/^```json\s*/i, "")
+    .replace(/^```\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(cleaned);
+  } catch (_) {
+    const match = cleaned.match(/\{[\s\S]*\}/);
+    if (!match) {
+      throw new Error(`generateHeroCopyForDoc: no JSON found in response: ${rawText.slice(0, 200)}`);
+    }
+    try {
+      parsed = JSON.parse(match[0]);
+    } catch {
+      throw new Error(`generateHeroCopyForDoc: JSON parse failed: ${rawText.slice(0, 200)}`);
+    }
+  }
+
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error("generateHeroCopyForDoc: parsed value is not an object");
+  }
+
+  const obj = parsed as Record<string, unknown>;
+  const titleAr   = String(obj.titleAr   ?? "").trim();
+  const subtitleAr = String(obj.subtitleAr ?? "").trim();
+  const titleEn   = String(obj.titleEn   ?? "").trim();
+  const subtitleEn = String(obj.subtitleEn ?? "").trim();
+
+  if (!titleAr || !subtitleAr || !titleEn || !subtitleEn) {
+    throw new Error(
+      `generateHeroCopyForDoc: one or more fields empty — ` +
+      `titleAr=${!!titleAr} subtitleAr=${!!subtitleAr} titleEn=${!!titleEn} subtitleEn=${!!subtitleEn}`
+    );
+  }
+
+  return { titleAr, subtitleAr, titleEn, subtitleEn };
+}
+
+async function writeHeroCopy(
+  collection: string,
+  docId: string,
+  data: FirebaseFirestore.DocumentData
+): Promise<void> {
+  const copy = await generateHeroCopyForDoc(collection, data);
+  await db.collection(collection).doc(docId).update({
+    heroCopy: {
+      ...copy,
+      generatedAt: FieldValue.serverTimestamp(),
+    },
+  });
+}
+
 // Triggers
 export const classifyNewAttraction = onDocumentCreated({ document: "attractions/{docId}", secrets: ["GEMINI_API_KEY"] }, async (event) => {
-  if (event.data) await classifyDocument("attractions", event.params.docId, event.data.data());
+  if (!event.data) return;
+  const data = event.data.data();
+  await classifyDocument("attractions", event.params.docId, data);
+  try {
+    await writeHeroCopy("attractions", event.params.docId, data);
+  } catch (err) {
+    console.error("[heroCopy] onCreate attractions", event.params.docId, err);
+  }
 });
+
 export const classifyNewTrip = onDocumentCreated({ document: "trips/{docId}", secrets: ["GEMINI_API_KEY"] }, async (event) => {
-  if (event.data) await classifyDocument("trips", event.params.docId, event.data.data());
+  if (!event.data) return;
+  const data = event.data.data();
+  await classifyDocument("trips", event.params.docId, data);
+  try {
+    await writeHeroCopy("trips", event.params.docId, data);
+  } catch (err) {
+    console.error("[heroCopy] onCreate trips", event.params.docId, err);
+  }
 });
+
 export const classifyNewEvent = onDocumentCreated({ document: "events/{docId}", secrets: ["GEMINI_API_KEY"] }, async (event) => {
-  if (event.data) await classifyDocument("events", event.params.docId, event.data.data());
+  if (!event.data) return;
+  const data = event.data.data();
+  await classifyDocument("events", event.params.docId, data);
+  try {
+    await writeHeroCopy("events", event.params.docId, data);
+  } catch (err) {
+    console.error("[heroCopy] onCreate events", event.params.docId, err);
+  }
 });
+
 export const classifyNewCulturalItem = onDocumentCreated({ document: "cultural_items/{docId}", secrets: ["GEMINI_API_KEY"] }, async (event) => {
-  if (event.data) await classifyDocument("cultural_items", event.params.docId, event.data.data());
+  if (!event.data) return;
+  const data = event.data.data();
+  await classifyDocument("cultural_items", event.params.docId, data);
+  try {
+    await writeHeroCopy("cultural_items", event.params.docId, data);
+  } catch (err) {
+    console.error("[heroCopy] onCreate cultural_items", event.params.docId, err);
+  }
 });
 
 function textFieldsChanged(before: FirebaseFirestore.DocumentData, after: FirebaseFirestore.DocumentData, fields: string[]): boolean {
@@ -209,20 +339,68 @@ function textFieldsChanged(before: FirebaseFirestore.DocumentData, after: Fireba
 }
 
 export const reclassifyUpdatedAttraction = onDocumentUpdated({ document: "attractions/{docId}", secrets: ["GEMINI_API_KEY"] }, async (event) => {
-  const before = event.data?.before.data(); const after = event.data?.after.data();
-  if (before && after && textFieldsChanged(before, after, ["name", "description", "category"])) await classifyDocument("attractions", event.params.docId, after);
+  const before = event.data?.before.data();
+  const after = event.data?.after.data();
+  if (!before || !after) return;
+  // classify fires on text OR category change; heroCopy only on text change
+  if (textFieldsChanged(before, after, ["name", "description", "category"])) {
+    await classifyDocument("attractions", event.params.docId, after);
+  }
+  if (textFieldsChanged(before, after, ["name", "description"])) {
+    try {
+      await writeHeroCopy("attractions", event.params.docId, after);
+    } catch (err) {
+      console.error("[heroCopy] onUpdate attractions", event.params.docId, err);
+    }
+  }
 });
+
 export const reclassifyUpdatedTrip = onDocumentUpdated({ document: "trips/{docId}", secrets: ["GEMINI_API_KEY"] }, async (event) => {
-  const before = event.data?.before.data(); const after = event.data?.after.data();
-  if (before && after && textFieldsChanged(before, after, ["title", "description"])) await classifyDocument("trips", event.params.docId, after);
+  const before = event.data?.before.data();
+  const after = event.data?.after.data();
+  if (!before || !after) return;
+  if (textFieldsChanged(before, after, ["title", "description"])) {
+    await classifyDocument("trips", event.params.docId, after);
+    try {
+      await writeHeroCopy("trips", event.params.docId, after);
+    } catch (err) {
+      console.error("[heroCopy] onUpdate trips", event.params.docId, err);
+    }
+  }
 });
+
 export const reclassifyUpdatedEvent = onDocumentUpdated({ document: "events/{docId}", secrets: ["GEMINI_API_KEY"] }, async (event) => {
-  const before = event.data?.before.data(); const after = event.data?.after.data();
-  if (before && after && textFieldsChanged(before, after, ["titleAr", "titleEn", "descriptionAr", "descriptionEn", "eventType"])) await classifyDocument("events", event.params.docId, after);
+  const before = event.data?.before.data();
+  const after = event.data?.after.data();
+  if (!before || !after) return;
+  // classify fires on text OR eventType change; heroCopy only on text change
+  if (textFieldsChanged(before, after, ["titleAr", "titleEn", "descriptionAr", "descriptionEn", "eventType"])) {
+    await classifyDocument("events", event.params.docId, after);
+  }
+  if (textFieldsChanged(before, after, ["titleAr", "titleEn", "descriptionAr", "descriptionEn"])) {
+    try {
+      await writeHeroCopy("events", event.params.docId, after);
+    } catch (err) {
+      console.error("[heroCopy] onUpdate events", event.params.docId, err);
+    }
+  }
 });
+
 export const reclassifyUpdatedCulturalItem = onDocumentUpdated({ document: "cultural_items/{docId}", secrets: ["GEMINI_API_KEY"] }, async (event) => {
-  const before = event.data?.before.data(); const after = event.data?.after.data();
-  if (before && after && textFieldsChanged(before, after, ["titleAr", "titleEn", "descriptionAr", "descriptionEn", "categoryId"])) await classifyDocument("cultural_items", event.params.docId, after);
+  const before = event.data?.before.data();
+  const after = event.data?.after.data();
+  if (!before || !after) return;
+  // classify fires on text OR categoryId change; heroCopy only on text change
+  if (textFieldsChanged(before, after, ["titleAr", "titleEn", "descriptionAr", "descriptionEn", "categoryId"])) {
+    await classifyDocument("cultural_items", event.params.docId, after);
+  }
+  if (textFieldsChanged(before, after, ["titleAr", "titleEn", "descriptionAr", "descriptionEn"])) {
+    try {
+      await writeHeroCopy("cultural_items", event.params.docId, after);
+    } catch (err) {
+      console.error("[heroCopy] onUpdate cultural_items", event.params.docId, err);
+    }
+  }
 });
 
 export const migrateAllContent = onCall({ enforceAppCheck: false, timeoutSeconds: 540, memory: "512MiB", secrets: ["GEMINI_API_KEY"] }, async (request) => {
@@ -354,7 +532,7 @@ export const embedMissingDocuments = onCall(
 const SIMILARITY_THRESHOLD = 0.6;
 const TOP_K = 5;
 const MAX_SUGGESTED_ITEMS = 3;
-const RAWI_CHAT_MODEL = "gemini-2.0-flash";
+const RAWI_CHAT_MODEL = "gemini-3.1-flash-lite-preview";
 const EMBEDDING_CACHE_TTL_MS = 5 * 60 * 1000;
 
 interface CachedEmbedding {
@@ -553,8 +731,14 @@ Rules:
       model: RAWI_CHAT_MODEL,
       systemInstruction: systemPrompt,
     });
-    const result = await chatModel.generateContent(userPrompt);
-    const rawText = result.response.text()?.trim() ?? "";
+    let rawText: string;
+    try {
+      const result = await chatModel.generateContent(userPrompt);
+      rawText = result.response.text()?.trim() ?? "";
+    } catch (err) {
+      logger.error("[askRawi] Gemini chat generation failed", { conversationId, error: err });
+      throw new HttpsError("internal", "AI assistant is temporarily unavailable. Please try again.");
+    }
 
     // 8. Parse recommended IDs from JSON block
     let itemIds: string[] = [];
@@ -1225,5 +1409,94 @@ export const onRatingCreated = onDocumentCreated(
     }
 
     logger.info(`[rating] Guide ${tutorId}: new avg=${newRating.toFixed(2)}, count=${newCount}`);
+  }
+);
+
+// ── Scheduled 3: Backfill heroCopy for existing items that predate the triggers ──
+//
+// Runs every 60 minutes. Scans all four content collections for documents that
+// have no heroCopy field yet, picks up to 15 total across all collections, and
+// generates copy sequentially with a 1 s gap to stay within Gemini rate limits.
+// Once all items are backfilled this becomes a cheap no-op (empty query result).
+
+const BACKFILL_BATCH_SIZE = 15;
+const BACKFILL_COLLECTIONS = ["attractions", "cultural_items", "events", "trips"] as const;
+
+export const backfillHeroCopy = onSchedule(
+  {
+    schedule: "every 60 minutes",
+    timeZone: "Asia/Riyadh",
+    timeoutSeconds: 300,
+    memory: "256MiB",
+    secrets: ["GEMINI_API_KEY"],
+  },
+  async () => {
+    if (!GEMINI_KEY) {
+      logger.warn("[backfillHeroCopy] GEMINI_API_KEY not set — skipping");
+      return;
+    }
+
+    // Collect up to BACKFILL_BATCH_SIZE items missing heroCopy across all collections.
+    type PendingItem = { collection: string; docId: string; data: FirebaseFirestore.DocumentData };
+    const pending: PendingItem[] = [];
+
+    for (const col of BACKFILL_COLLECTIONS) {
+      if (pending.length >= BACKFILL_BATCH_SIZE) break;
+      const remaining = BACKFILL_BATCH_SIZE - pending.length;
+      const snap = await db
+        .collection(col)
+        .where("heroCopy", "==", null)
+        .limit(remaining)
+        .get();
+      for (const doc of snap.docs) {
+        pending.push({ collection: col, docId: doc.id, data: doc.data() });
+      }
+    }
+
+    // Firestore stores absent fields as undefined, not null — re-query for missing field.
+    // The above catches explicitly null-set docs; run a second pass for truly absent docs.
+    if (pending.length < BACKFILL_BATCH_SIZE) {
+      for (const col of BACKFILL_COLLECTIONS) {
+        if (pending.length >= BACKFILL_BATCH_SIZE) break;
+        const alreadyQueued = new Set(
+          pending.filter((p) => p.collection === col).map((p) => p.docId)
+        );
+        const remaining = BACKFILL_BATCH_SIZE - pending.length;
+        const snap = await db.collection(col).limit(remaining + alreadyQueued.size).get();
+        for (const doc of snap.docs) {
+          if (alreadyQueued.has(doc.id)) continue;
+          const data = doc.data();
+          if (!data.heroCopy) {
+            pending.push({ collection: col, docId: doc.id, data });
+            if (pending.length >= BACKFILL_BATCH_SIZE) break;
+          }
+        }
+      }
+    }
+
+    if (pending.length === 0) {
+      logger.info("[backfillHeroCopy] All items have heroCopy — nothing to do.");
+      return;
+    }
+
+    logger.info(`[backfillHeroCopy] Found ${pending.length} item(s) missing heroCopy — processing sequentially.`);
+
+    let succeeded = 0;
+    let failed = 0;
+
+    for (const item of pending) {
+      try {
+        await writeHeroCopy(item.collection, item.docId, item.data);
+        succeeded++;
+        logger.info(`[backfillHeroCopy] ✓ ${item.collection}/${item.docId}`);
+      } catch (err) {
+        failed++;
+        console.error(`[backfillHeroCopy] ✗ ${item.collection}/${item.docId}`, err);
+      }
+      // 1 s gap between calls to respect Gemini rate limits.
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+
+    logger.info(`[backfillHeroCopy] Done — succeeded: ${succeeded}, failed: ${failed}.`);
   }
 );
