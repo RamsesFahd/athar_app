@@ -73,8 +73,9 @@ class CustomHeader extends StatelessWidget {
           // ✨ 4. زر سهولة الوصول (في الزاوية العلوية)
           PositionedDirectional(
             top: 50, // مسافة من الأعلى ليتجاوز النوتش
-            end: 20, // في نهاية الشاشة حسب اتجاه اللغة
+            end: 16, // في نهاية الشاشة حسب اتجاه اللغة
             child: Container(
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary,
                 shape: BoxShape.circle,
@@ -88,7 +89,7 @@ class CustomHeader extends StatelessWidget {
               ),
               child: IconButton(
                 icon: const Icon(Icons.accessibility_new,
-                    color: Colors.white, size: 22),
+                    color: Colors.white, size: 18),
                 tooltip: 'سهولة الوصول',
                 onPressed: () {
                   // فتح النافذة المنبثقة للأداة
