@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:athar_app/core/constants/region_city_constants.dart';
 import 'package:athar_app/core/models/contribution/contribution_model.dart';
 import 'package:athar_app/features/contributions/screens/add_contribution_screen.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
 class ContributionRejectionDetailScreen extends StatelessWidget {
@@ -13,6 +14,7 @@ class ContributionRejectionDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final c = contribution;
 
@@ -28,7 +30,7 @@ class ContributionRejectionDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isAr ? 'تفاصيل المساهمة' : 'Submission Details'),
+        title: Text(l10n.contributionRejectionDetailsTitle),
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -41,27 +43,27 @@ class ContributionRejectionDetailScreen extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Rejection reason — prominent
-          _buildRejectionCard(theme, isAr, c.rejectionReason),
+          _buildRejectionCard(theme, l10n, isAr, c.rejectionReason),
           const SizedBox(height: 16),
 
           // Submitted content
           _buildInfoCard(
             theme,
-            title: isAr ? 'المحتوى المُرسَل' : 'Submitted Content',
+            title: l10n.contributionSubmittedContentTitle,
             children: [
               _InfoRow(
                 icon: Icons.title,
-                label: isAr ? 'العنوان' : 'Title',
+                label: l10n.titleLabel,
                 value: sourceTitle.isNotEmpty
                     ? sourceTitle
-                    : (isAr ? 'بلا عنوان' : 'No title'),
+                    : l10n.commonNoTitle,
               ),
               _InfoRow(
                 icon: Icons.notes_rounded,
-                label: isAr ? 'الوصف' : 'Description',
+                label: l10n.descriptionLabel,
                 value: sourceDesc.isNotEmpty
                     ? sourceDesc
-                    : (isAr ? 'بلا وصف' : 'No description'),
+                    : l10n.commonNoDescription,
                 maxLines: 6,
               ),
             ],
@@ -71,26 +73,26 @@ class ContributionRejectionDetailScreen extends StatelessWidget {
           // Submission details
           _buildInfoCard(
             theme,
-            title: isAr ? 'معلومات التقديم' : 'Submission Info',
+            title: l10n.contributionSubmissionInfoTitle,
             children: [
               _InfoRow(
                 icon: Icons.category_outlined,
-                label: isAr ? 'الفئة' : 'Category',
+                label: l10n.categoryLabel,
                 value: c.category.replaceAll('_', ' '),
               ),
               _InfoRow(
                 icon: Icons.location_on_outlined,
-                label: isAr ? 'المنطقة' : 'Region',
+                label: l10n.locationLabel,
                 value: isAr ? regionAr : regionEn,
               ),
               _InfoRow(
                 icon: Icons.location_city_outlined,
-                label: isAr ? 'المدينة' : 'City',
+                label: l10n.cityLabel,
                 value: isAr ? cityAr : cityEn,
               ),
               _InfoRow(
                 icon: Icons.calendar_today_outlined,
-                label: isAr ? 'تاريخ الإرسال' : 'Submitted',
+                label: l10n.contributionSubmittedDateLabel,
                 value: date,
               ),
             ],
@@ -112,7 +114,7 @@ class ContributionRejectionDetailScreen extends StatelessWidget {
               },
               icon: const Icon(Icons.add_rounded),
               label: Text(
-                isAr ? 'إرسال مساهمة جديدة' : 'Submit New Contribution',
+                l10n.contributionSubmitNew,
               ),
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -163,7 +165,7 @@ class ContributionRejectionDetailScreen extends StatelessWidget {
   }
 
   Widget _buildRejectionCard(
-      ThemeData theme, bool isAr, String? rejectionReason) {
+    ThemeData theme, AppLocalizations l10n, bool isAr, String? rejectionReason) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -183,7 +185,7 @@ class ContributionRejectionDetailScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isAr ? 'سبب الرفض' : 'Rejection Reason',
+                  l10n.contributionRejectionReason,
                   style: theme.textTheme.labelLarge?.copyWith(
                       color: theme.colorScheme.error,
                       fontWeight: FontWeight.bold),

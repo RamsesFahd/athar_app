@@ -309,13 +309,14 @@ class _AttractionsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final l10n = AppLocalizations.of(context);
     final attractionsAsync = ref.watch(attractionsStreamProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _SectionHeader(
-          title: isAr ? 'المعالم السياحية' : 'Attractions',
+          title: l10n.homeAttractionsSectionTitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
@@ -378,13 +379,14 @@ class _TripsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final l10n = AppLocalizations.of(context);
     final tripsAsync = ref.watch(allTripsStreamProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _SectionHeader(
-          title: isAr ? 'الرحلات' : 'Trips',
+          title: l10n.homeTripsSectionTitle,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const TripsListScreen()),
@@ -446,13 +448,14 @@ class _EventsSection extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final l10n = AppLocalizations.of(context);
     final eventsAsync = ref.watch(upcomingEventsStreamProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _SectionHeader(
-          title: isAr ? 'الفعاليات' : 'Events',
+          title: l10n.homeEventsSectionTitle,
           onTap: null,
         ),
         const SizedBox(height: HomeScreen._headerToContent),

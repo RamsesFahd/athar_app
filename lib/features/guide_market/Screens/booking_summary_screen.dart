@@ -43,7 +43,6 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final isAr = Localizations.localeOf(context).languageCode == 'ar';
 
     return Scaffold(
       appBar: AppBar(
@@ -99,14 +98,15 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                               _buildInfoRow(
                                 Icons.people_outline,
                                 l10n.people_count,
-                                isAr
-                                    ? "${widget.adults} بالغ، ${widget.children} طفل"
-                                    : "${widget.adults} Adults, ${widget.children} Children",
+                                l10n.bookingPeopleSummary(
+                                  widget.adults,
+                                  widget.children,
+                                ),
                                 theme,
                               ),
 
                               const SizedBox(height: 10),
-                              _buildPriceBreakdown(l10n, theme, isAr),
+                              _buildPriceBreakdown(l10n, theme),
                             ],
                           ),
                         ),
@@ -175,13 +175,13 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
       await ref.read(bookingNotifierProvider.notifier).confirmBooking();
       if (!mounted) return;
       messenger.showSnackBar(
-        const SnackBar(content: Text('Booking confirmed!'), backgroundColor: Colors.green),
+        SnackBar(content: Text(AppLocalizations.of(context).bookingConfirmedMessage), backgroundColor: Colors.green),
       );
       navigator.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
     } catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -215,7 +215,7 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
     );
   }
 
-  Widget _buildPriceBreakdown(AppLocalizations l10n, ThemeData theme, bool isAr) {
+  Widget _buildPriceBreakdown(AppLocalizations l10n, ThemeData theme) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -226,9 +226,10 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
           children: [
             
             _priceRow(
-              isAr
-                  ? '${widget.adults} بالغ × ${CurrencyFormatter.formatNumber(widget.adultPrice)}'
-                  : '${widget.adults} Adult × ${CurrencyFormatter.formatNumber(widget.adultPrice)}',
+              l10n.bookingAdultPriceLine(
+                widget.adults,
+                CurrencyFormatter.formatNumber(widget.adultPrice),
+              ),
               CurrencyFormatter.format(widget.adults * widget.adultPrice),
               theme,
             ),
@@ -238,12 +239,13 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                 padding: const EdgeInsets.only(top: 8),
                 child: _priceRow(
                   widget.childPrice == 0
-                      ? (isAr ? '${widget.children} طفل (مجاناً)' : '${widget.children} Child (Free)')
-                      : (isAr
-                          ? '${widget.children} طفل × ${CurrencyFormatter.formatNumber(widget.childPrice)}'
-                          : '${widget.children} Child × ${CurrencyFormatter.formatNumber(widget.childPrice)}'),
+                      ? l10n.bookingChildFreeLine(widget.children)
+                      : l10n.bookingChildPriceLine(
+                          widget.children,
+                          CurrencyFormatter.formatNumber(widget.childPrice),
+                        ),
                   widget.childPrice == 0
-                      ? Text(isAr ? 'مجاناً' : 'Free')
+                      ? Text(l10n.commonFree)
                       : CurrencyFormatter.format(widget.children * widget.childPrice),
                   theme,
                 ),

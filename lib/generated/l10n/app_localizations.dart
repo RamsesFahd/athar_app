@@ -1742,6 +1742,36 @@ abstract class AppLocalizations {
   /// **'French'**
   String get french;
 
+  /// No description provided for @spanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Spanish'**
+  String get spanish;
+
+  /// No description provided for @german.
+  ///
+  /// In en, this message translates to:
+  /// **'German'**
+  String get german;
+
+  /// No description provided for @turkish.
+  ///
+  /// In en, this message translates to:
+  /// **'Turkish'**
+  String get turkish;
+
+  /// No description provided for @urdu.
+  ///
+  /// In en, this message translates to:
+  /// **'Urdu'**
+  String get urdu;
+
+  /// No description provided for @chinese.
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese'**
+  String get chinese;
+
   /// No description provided for @myCulturalAchievements.
   ///
   /// In en, this message translates to:
@@ -2563,6 +2593,2731 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Send Code'**
   String get otpSendCode;
+
+  /// No description provided for @contactUsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Us'**
+  String get contactUsTitle;
+
+  /// No description provided for @contactUsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'d love to hear your suggestions or feedback to improve Athar.'**
+  String get contactUsSubtitle;
+
+  /// No description provided for @contactUsEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get contactUsEmailTitle;
+
+  /// No description provided for @contactUsLocationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get contactUsLocationTitle;
+
+  /// No description provided for @contactUsSaudiArabia.
+  ///
+  /// In en, this message translates to:
+  /// **'Saudi Arabia'**
+  String get contactUsSaudiArabia;
+
+  /// No description provided for @contactUsSupportType.
+  ///
+  /// In en, this message translates to:
+  /// **'Support Type'**
+  String get contactUsSupportType;
+
+  /// No description provided for @contactUsReportIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Issue'**
+  String get contactUsReportIssue;
+
+  /// No description provided for @contactUsSuggestFeature.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest Feature'**
+  String get contactUsSuggestFeature;
+
+  /// No description provided for @contactUsGuideSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide Support'**
+  String get contactUsGuideSupport;
+
+  /// No description provided for @contactUsContributions.
+  ///
+  /// In en, this message translates to:
+  /// **'Contributions'**
+  String get contactUsContributions;
+
+  /// No description provided for @contactUsSendMessageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a Message'**
+  String get contactUsSendMessageTitle;
+
+  /// No description provided for @contactUsSendMessageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your message and we will review it as soon as possible.'**
+  String get contactUsSendMessageSubtitle;
+
+  /// No description provided for @contactUsNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Name'**
+  String get contactUsNameHint;
+
+  /// No description provided for @contactUsEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Email'**
+  String get contactUsEmailHint;
+
+  /// No description provided for @contactUsMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your message here...'**
+  String get contactUsMessageHint;
+
+  /// No description provided for @contactUsMessageSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Your message has been sent successfully'**
+  String get contactUsMessageSent;
+
+  /// No description provided for @contactUsSendMessageButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Message'**
+  String get contactUsSendMessageButton;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsSignInRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please sign in'**
+  String get notificationsSignInRequired;
+
+  /// No description provided for @notificationsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load notifications'**
+  String get notificationsLoadError;
+
+  /// No description provided for @notificationsEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get notificationsEmptyState;
+
+  /// No description provided for @notificationContributionApprovedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribution Approved'**
+  String get notificationContributionApprovedTitle;
+
+  /// No description provided for @notificationContributionRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribution Rejected'**
+  String get notificationContributionRejectedTitle;
+
+  /// No description provided for @notificationContributionSubmittedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Contribution Awaiting Review'**
+  String get notificationContributionSubmittedTitle;
+
+  /// No description provided for @notificationTripSubmittedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Trip Awaiting Review'**
+  String get notificationTripSubmittedTitle;
+
+  /// No description provided for @notificationTripApprovedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip Approved'**
+  String get notificationTripApprovedTitle;
+
+  /// No description provided for @notificationTripRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip Rejected'**
+  String get notificationTripRejectedTitle;
+
+  /// No description provided for @notificationBookingNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Booking'**
+  String get notificationBookingNewTitle;
+
+  /// No description provided for @notificationBookingApprovedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Approved'**
+  String get notificationBookingApprovedTitle;
+
+  /// No description provided for @notificationBookingCancelledTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking Cancelled'**
+  String get notificationBookingCancelledTitle;
+
+  /// No description provided for @notificationGuideVerifiedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Verified'**
+  String get notificationGuideVerifiedTitle;
+
+  /// No description provided for @notificationGuideRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Rejected'**
+  String get notificationGuideRejectedTitle;
+
+  /// No description provided for @notificationPointsAwardedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bonus Points Awarded'**
+  String get notificationPointsAwardedTitle;
+
+  /// No description provided for @notificationDefaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Notification'**
+  String get notificationDefaultTitle;
+
+  /// No description provided for @notificationContributionApprovedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your contribution has been approved.'**
+  String get notificationContributionApprovedBody;
+
+  /// No description provided for @notificationContributionRejectedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your contribution was rejected. Please review the reason.'**
+  String get notificationContributionRejectedBody;
+
+  /// No description provided for @notificationContributionSubmittedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A tourist submitted a contribution for review.'**
+  String get notificationContributionSubmittedBody;
+
+  /// No description provided for @notificationTripSubmittedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A guide submitted a new trip for review.'**
+  String get notificationTripSubmittedBody;
+
+  /// No description provided for @notificationTripApprovedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Congratulations! Your trip is now open for bookings.'**
+  String get notificationTripApprovedBody;
+
+  /// No description provided for @notificationTripRejectedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your trip was rejected.'**
+  String get notificationTripRejectedBody;
+
+  /// No description provided for @notificationBookingNewBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A tourist has booked your trip.'**
+  String get notificationBookingNewBody;
+
+  /// No description provided for @notificationBookingApprovedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your booking has been approved.'**
+  String get notificationBookingApprovedBody;
+
+  /// No description provided for @notificationBookingCancelledBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your booking has been cancelled.'**
+  String get notificationBookingCancelledBody;
+
+  /// No description provided for @notificationGuideVerifiedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your guide account has been verified.'**
+  String get notificationGuideVerifiedBody;
+
+  /// No description provided for @notificationGuideRejectedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your guide verification request has been rejected.'**
+  String get notificationGuideRejectedBody;
+
+  /// No description provided for @notificationPointsAwardedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Bonus points have been added to your account.'**
+  String get notificationPointsAwardedBody;
+
+  /// No description provided for @notificationDefaultBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You have a new notification.'**
+  String get notificationDefaultBody;
+
+  /// No description provided for @commonErrorWithMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {message}'**
+  String commonErrorWithMessage(String message);
+
+  /// No description provided for @commonFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get commonFree;
+
+  /// No description provided for @commonPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get commonPaid;
+
+  /// No description provided for @commonLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied'**
+  String get commonLinkCopied;
+
+  /// No description provided for @commonNoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No title'**
+  String get commonNoTitle;
+
+  /// No description provided for @commonNoDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No description'**
+  String get commonNoDescription;
+
+  /// No description provided for @commonOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get commonOk;
+
+  /// No description provided for @timeAmMarker.
+  ///
+  /// In en, this message translates to:
+  /// **'AM'**
+  String get timeAmMarker;
+
+  /// No description provided for @timePmMarker.
+  ///
+  /// In en, this message translates to:
+  /// **'PM'**
+  String get timePmMarker;
+
+  /// No description provided for @homeAttractionsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attractions'**
+  String get homeAttractionsSectionTitle;
+
+  /// No description provided for @homeTripsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trips'**
+  String get homeTripsSectionTitle;
+
+  /// No description provided for @homeEventsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get homeEventsSectionTitle;
+
+  /// No description provided for @homeHeroFallbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover Saudi Heritage'**
+  String get homeHeroFallbackTitle;
+
+  /// No description provided for @homeHeroEventBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'The Countdown Begins'**
+  String get homeHeroEventBadge;
+
+  /// No description provided for @homeHeroEventSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A cultural moment is almost here'**
+  String get homeHeroEventSubtitle;
+
+  /// No description provided for @homeHeroEventCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Ready'**
+  String get homeHeroEventCta;
+
+  /// No description provided for @homeHeroAttractionCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore Landmark'**
+  String get homeHeroAttractionCta;
+
+  /// No description provided for @homeHeroCommunityCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Athar'**
+  String get homeHeroCommunityCta;
+
+  /// No description provided for @homeHeroArchiveCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Archive'**
+  String get homeHeroArchiveCta;
+
+  /// No description provided for @homeHeroTripBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Balloon Experience'**
+  String get homeHeroTripBadge;
+
+  /// No description provided for @homeHeroTripSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rise above a landscape made for memory'**
+  String get homeHeroTripSubtitle;
+
+  /// No description provided for @homeHeroTripCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Experience'**
+  String get homeHeroTripCta;
+
+  /// No description provided for @homeHeroDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Days'**
+  String get homeHeroDaysLabel;
+
+  /// No description provided for @homeHeroHoursLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours'**
+  String get homeHeroHoursLabel;
+
+  /// No description provided for @attractionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attractions'**
+  String get attractionsTitle;
+
+  /// No description provided for @attractionsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search attractions...'**
+  String get attractionsSearchHint;
+
+  /// No description provided for @attractionsNoAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No attractions available'**
+  String get attractionsNoAvailable;
+
+  /// No description provided for @attractionsNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get attractionsNoResults;
+
+  /// No description provided for @attractionHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours'**
+  String get attractionHours;
+
+  /// No description provided for @attractionAlwaysOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Always Open'**
+  String get attractionAlwaysOpen;
+
+  /// No description provided for @attractionEntryFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry Fee'**
+  String get attractionEntryFee;
+
+  /// No description provided for @attractionAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get attractionAbout;
+
+  /// No description provided for @attractionTicketLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Get tickets here'**
+  String get attractionTicketLink;
+
+  /// No description provided for @attractionGetDirections.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Directions'**
+  String get attractionGetDirections;
+
+  /// No description provided for @mapSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search landmarks or events...'**
+  String get mapSearchHint;
+
+  /// No description provided for @mapLandmarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Landmarks'**
+  String get mapLandmarks;
+
+  /// No description provided for @mapAttractions.
+  ///
+  /// In en, this message translates to:
+  /// **'Attractions'**
+  String get mapAttractions;
+
+  /// No description provided for @mapEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get mapEvents;
+
+  /// No description provided for @mapNearMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Near Me'**
+  String get mapNearMe;
+
+  /// No description provided for @mapMyLocationTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'My location'**
+  String get mapMyLocationTooltip;
+
+  /// No description provided for @mapShareTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get mapShareTooltip;
+
+  /// No description provided for @mapAboutEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'About the Event'**
+  String get mapAboutEvent;
+
+  /// No description provided for @mapAboutAttraction.
+  ///
+  /// In en, this message translates to:
+  /// **'About the Attraction'**
+  String get mapAboutAttraction;
+
+  /// No description provided for @mapAboutLandmark.
+  ///
+  /// In en, this message translates to:
+  /// **'About the Landmark'**
+  String get mapAboutLandmark;
+
+  /// No description provided for @mapBookTicket.
+  ///
+  /// In en, this message translates to:
+  /// **'Book Ticket'**
+  String get mapBookTicket;
+
+  /// No description provided for @mapSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get mapSource;
+
+  /// No description provided for @mapDirections.
+  ///
+  /// In en, this message translates to:
+  /// **'Directions'**
+  String get mapDirections;
+
+  /// No description provided for @mapNoResultsInArea.
+  ///
+  /// In en, this message translates to:
+  /// **'No results in this area'**
+  String get mapNoResultsInArea;
+
+  /// No description provided for @mapAttractionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attraction'**
+  String get mapAttractionLabel;
+
+  /// No description provided for @mapLandmarkLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Landmark'**
+  String get mapLandmarkLabel;
+
+  /// No description provided for @mapLocationPermissionSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Location access requires enabling permission from settings'**
+  String get mapLocationPermissionSettings;
+
+  /// No description provided for @mapLoadDataError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load data. Check your internet connection'**
+  String get mapLoadDataError;
+
+  /// No description provided for @contributionAuthError.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication error'**
+  String get contributionAuthError;
+
+  /// No description provided for @contributionUserUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'User not available'**
+  String get contributionUserUnavailable;
+
+  /// No description provided for @contributionErrorWithMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {message}'**
+  String contributionErrorWithMessage(String message);
+
+  /// No description provided for @contributionGoToProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Profile'**
+  String get contributionGoToProfile;
+
+  /// No description provided for @contributionTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribution Type'**
+  String get contributionTypeLabel;
+
+  /// No description provided for @contributionTitleExampleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: Al-Khatwa Dance - Asir'**
+  String get contributionTitleExampleHint;
+
+  /// No description provided for @contributionDescriptionExampleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a clear description: what is it, where is it used, and why is it important?'**
+  String get contributionDescriptionExampleHint;
+
+  /// No description provided for @contributionSelectRegionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select region'**
+  String get contributionSelectRegionHint;
+
+  /// No description provided for @contributionSelectRegionFirstHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select region first'**
+  String get contributionSelectRegionFirstHint;
+
+  /// No description provided for @contributionFileSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'File selected'**
+  String get contributionFileSelected;
+
+  /// No description provided for @contributionRejectionDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Details'**
+  String get contributionRejectionDetailsTitle;
+
+  /// No description provided for @contributionSubmittedContentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted Content'**
+  String get contributionSubmittedContentTitle;
+
+  /// No description provided for @contributionSubmissionInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Info'**
+  String get contributionSubmissionInfoTitle;
+
+  /// No description provided for @contributionSubmittedDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get contributionSubmittedDateLabel;
+
+  /// No description provided for @contributionSubmitNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit New Contribution'**
+  String get contributionSubmitNew;
+
+  /// No description provided for @contributionRejectionReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection Reason'**
+  String get contributionRejectionReason;
+
+  /// No description provided for @contributionAchievementsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements'**
+  String get contributionAchievementsSection;
+
+  /// No description provided for @contributionMyContributionsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'My Contributions'**
+  String get contributionMyContributionsSection;
+
+  /// No description provided for @contributionPhoneVerificationRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Verification Required'**
+  String get contributionPhoneVerificationRequiredTitle;
+
+  /// No description provided for @contributionPhoneVerificationRequiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You must verify your phone number before adding a contribution. Go to your profile to complete verification.'**
+  String get contributionPhoneVerificationRequiredBody;
+
+  /// No description provided for @contributionCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get contributionCompleted;
+
+  /// No description provided for @contributionContributorLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Contributor Level'**
+  String get contributionContributorLevel;
+
+  /// No description provided for @contributionActiveContributor.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Contributor'**
+  String get contributionActiveContributor;
+
+  /// No description provided for @contributionPointsUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'pts'**
+  String get contributionPointsUnit;
+
+  /// No description provided for @contributionLikes.
+  ///
+  /// In en, this message translates to:
+  /// **'Likes'**
+  String get contributionLikes;
+
+  /// No description provided for @contributionShares.
+  ///
+  /// In en, this message translates to:
+  /// **'Shares'**
+  String get contributionShares;
+
+  /// No description provided for @contributionQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Quality'**
+  String get contributionQuality;
+
+  /// No description provided for @contributionTopContributions.
+  ///
+  /// In en, this message translates to:
+  /// **'Top contributions'**
+  String get contributionTopContributions;
+
+  /// No description provided for @contributionNoAchievements.
+  ///
+  /// In en, this message translates to:
+  /// **'No achievements yet'**
+  String get contributionNoAchievements;
+
+  /// No description provided for @contributionNoContributions.
+  ///
+  /// In en, this message translates to:
+  /// **'No contributions yet'**
+  String get contributionNoContributions;
+
+  /// No description provided for @contributionArchiveLinkMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'This contribution has no archive link'**
+  String get contributionArchiveLinkMissing;
+
+  /// No description provided for @contributionArchiveItemNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not find the archive item'**
+  String get contributionArchiveItemNotFound;
+
+  /// No description provided for @contributionPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Published'**
+  String get contributionPublished;
+
+  /// No description provided for @contributionPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get contributionPending;
+
+  /// No description provided for @contributionRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get contributionRejected;
+
+  /// No description provided for @contributionWaitingForReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for admin review'**
+  String get contributionWaitingForReview;
+
+  /// No description provided for @contributionRejectedDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribution was rejected'**
+  String get contributionRejectedDefault;
+
+  /// No description provided for @bookingAdultsAgeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'12+ years'**
+  String get bookingAdultsAgeSubtitle;
+
+  /// No description provided for @bookingChildrenAgeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Under 12 years'**
+  String get bookingChildrenAgeSubtitle;
+
+  /// No description provided for @bookingDateTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Date & Time'**
+  String get bookingDateTimeTitle;
+
+  /// No description provided for @bookingSelectDateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a date'**
+  String get bookingSelectDateError;
+
+  /// No description provided for @bookingConfirmedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking confirmed!'**
+  String get bookingConfirmedMessage;
+
+  /// No description provided for @bookingChildFreeLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Child (Free)'**
+  String bookingChildFreeLine(int count);
+
+  /// No description provided for @bookingChildPriceLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Child x {price}'**
+  String bookingChildPriceLine(int count, String price);
+
+  /// No description provided for @bookingAdultPriceLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Adults x {price}'**
+  String bookingAdultPriceLine(int count, String price);
+
+  /// No description provided for @bookingPeopleSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{adults} Adults, {children} Children'**
+  String bookingPeopleSummary(int adults, int children);
+
+  /// No description provided for @bookingViewPendingGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'You have a new booking request that needs your review.'**
+  String get bookingViewPendingGuide;
+
+  /// No description provided for @bookingViewPendingTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'Your booking is currently under review. You will be notified once the status changes.'**
+  String get bookingViewPendingTourist;
+
+  /// No description provided for @bookingViewApprovedGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'You confirmed this booking. Contact the tourist using their details below.'**
+  String get bookingViewApprovedGuide;
+
+  /// No description provided for @bookingViewApprovedTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking confirmed. You can contact the Guide using their details below.'**
+  String get bookingViewApprovedTourist;
+
+  /// No description provided for @bookingViewRejectedGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'You rejected this request.'**
+  String get bookingViewRejectedGuide;
+
+  /// No description provided for @bookingViewRejectedTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorry, this booking was rejected. You can try another date or a different trip.'**
+  String get bookingViewRejectedTourist;
+
+  /// No description provided for @bookingViewCancelledGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'The tourist cancelled this request before your approval.'**
+  String get bookingViewCancelledGuide;
+
+  /// No description provided for @bookingViewCancelledTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'This booking has been cancelled.'**
+  String get bookingViewCancelledTourist;
+
+  /// No description provided for @bookingViewCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'This trip has been completed successfully.'**
+  String get bookingViewCompleted;
+
+  /// No description provided for @bookingCancelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Booking?'**
+  String get bookingCancelTitle;
+
+  /// No description provided for @cancelBookingConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to cancel this booking?'**
+  String get cancelBookingConfirmation;
+
+  /// No description provided for @bookingCancelNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get bookingCancelNo;
+
+  /// No description provided for @bookingCancelYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Cancel'**
+  String get bookingCancelYes;
+
+  /// No description provided for @bookingCancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Booking'**
+  String get bookingCancelButton;
+
+  /// No description provided for @bookingTripDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip Details'**
+  String get bookingTripDetailsTitle;
+
+  /// No description provided for @bookingPriceSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Price Summary'**
+  String get bookingPriceSummaryTitle;
+
+  /// No description provided for @bookingTouristLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourist'**
+  String get bookingTouristLabel;
+
+  /// No description provided for @bookingGuideLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide'**
+  String get bookingGuideLabel;
+
+  /// No description provided for @bookingAvailableSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Available soon'**
+  String get bookingAvailableSoon;
+
+  /// No description provided for @bookingPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get bookingPhoneLabel;
+
+  /// No description provided for @bookingShownAfterConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown after confirmation'**
+  String get bookingShownAfterConfirmation;
+
+  /// No description provided for @tripAdultsPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Adults'**
+  String get tripAdultsPriceLabel;
+
+  /// No description provided for @tripChildrenPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Children'**
+  String get tripChildrenPriceLabel;
+
+  /// No description provided for @tripGuideUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No guide info available'**
+  String get tripGuideUnavailable;
+
+  /// No description provided for @tripReviewsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'({count} reviews)'**
+  String tripReviewsCount(int count);
+
+  /// No description provided for @tripCardDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get tripCardDetails;
+
+  /// No description provided for @tripCardViewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get tripCardViewDetails;
+
+  /// No description provided for @tripAccessibilityWheelchairShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessible'**
+  String get tripAccessibilityWheelchairShort;
+
+  /// No description provided for @tripAccessibilityFamilyShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Family Friendly'**
+  String get tripAccessibilityFamilyShort;
+
+  /// No description provided for @tripManagementGuidesOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is for guides only'**
+  String get tripManagementGuidesOnly;
+
+  /// No description provided for @tripManagementVerifyPhoneFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your phone number first to add trips'**
+  String get tripManagementVerifyPhoneFirst;
+
+  /// No description provided for @tripManagementCompleteVerificationFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete verification first to add trips'**
+  String get tripManagementCompleteVerificationFirst;
+
+  /// No description provided for @tripManagementCompleteProfileFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile (bio & languages) to add trips'**
+  String get tripManagementCompleteProfileFirst;
+
+  /// No description provided for @tripStatusApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get tripStatusApproved;
+
+  /// No description provided for @tripStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get tripStatusRejected;
+
+  /// No description provided for @tripStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get tripStatusPending;
+
+  /// No description provided for @tripDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Trip'**
+  String get tripDeleteTitle;
+
+  /// No description provided for @tripDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{title}\"?\nThis action cannot be undone.'**
+  String tripDeleteConfirm(String title);
+
+  /// No description provided for @tripDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip deleted successfully'**
+  String get tripDeletedSuccess;
+
+  /// No description provided for @tripAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Trip'**
+  String get tripAddButton;
+
+  /// No description provided for @tripNoTripsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No trips yet'**
+  String get tripNoTripsYet;
+
+  /// No description provided for @tripTapToAddFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + to add your first trip'**
+  String get tripTapToAddFirst;
+
+  /// No description provided for @tripNoBookingsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings yet'**
+  String get tripNoBookingsYet;
+
+  /// No description provided for @tripEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get tripEdit;
+
+  /// No description provided for @tripDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get tripDelete;
+
+  /// No description provided for @addTripImageRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please add a trip image'**
+  String get addTripImageRequired;
+
+  /// No description provided for @addTripDailyTimesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select the daily tour start and end time'**
+  String get addTripDailyTimesRequired;
+
+  /// No description provided for @addTripAvailabilityDatesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select trip availability dates'**
+  String get addTripAvailabilityDatesRequired;
+
+  /// No description provided for @addTripUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip updated! It will be reviewed again by admin.'**
+  String get addTripUpdatedSuccess;
+
+  /// No description provided for @addTripSubmittedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip submitted! It will appear in the marketplace after admin approval.'**
+  String get addTripSubmittedSuccess;
+
+  /// No description provided for @addTripTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Trip'**
+  String get addTripTitle;
+
+  /// No description provided for @addTripAccountUnverifiedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account not verified'**
+  String get addTripAccountUnverifiedTitle;
+
+  /// No description provided for @addTripAccountUnverifiedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You must verify your account before adding trips.\nComplete credential verification from your profile.'**
+  String get addTripAccountUnverifiedBody;
+
+  /// No description provided for @addTripEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Trip'**
+  String get addTripEditTitle;
+
+  /// No description provided for @addTripNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Trip'**
+  String get addTripNewTitle;
+
+  /// No description provided for @addTripAvailabilityPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip Availability Period'**
+  String get addTripAvailabilityPeriod;
+
+  /// No description provided for @addTripStartTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Time'**
+  String get addTripStartTime;
+
+  /// No description provided for @addTripEndTime.
+  ///
+  /// In en, this message translates to:
+  /// **'End Time'**
+  String get addTripEndTime;
+
+  /// No description provided for @addTripCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get addTripCity;
+
+  /// No description provided for @addTripCredentialExpiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'License expired'**
+  String get addTripCredentialExpiredTitle;
+
+  /// No description provided for @addTripCredentialExpiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You cannot add trips with an expired license.\nRenew your license and verify again to continue.'**
+  String get addTripCredentialExpiredBody;
+
+  /// No description provided for @addTripLicenseExpiringSoonWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Your license will expire soon. Please renew it before the expiry date.'**
+  String get addTripLicenseExpiringSoonWarning;
+
+  /// No description provided for @addTripTimingDurationSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Timing and Duration'**
+  String get addTripTimingDurationSection;
+
+  /// No description provided for @addTripTitleSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip Title'**
+  String get addTripTitleSection;
+
+  /// No description provided for @addTripShortDescriptionSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Short Description'**
+  String get addTripShortDescriptionSection;
+
+  /// No description provided for @addTripDetailedDescriptionSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed Description'**
+  String get addTripDetailedDescriptionSection;
+
+  /// No description provided for @addTripLocationSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get addTripLocationSection;
+
+  /// No description provided for @addTripPricingCapacitySection.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing and Capacity'**
+  String get addTripPricingCapacitySection;
+
+  /// No description provided for @addTripTripLanguagesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Tour Languages'**
+  String get addTripTripLanguagesSection;
+
+  /// No description provided for @addTripImagePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to add a trip image'**
+  String get addTripImagePrompt;
+
+  /// No description provided for @addTripChangeImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Change image'**
+  String get addTripChangeImage;
+
+  /// No description provided for @addTripPickAvailabilityPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose availability period'**
+  String get addTripPickAvailabilityPeriod;
+
+  /// No description provided for @addTripDailyStartEndHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily tour start and end time'**
+  String get addTripDailyStartEndHint;
+
+  /// No description provided for @addTripMultiDayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-day trip'**
+  String get addTripMultiDayTitle;
+
+  /// No description provided for @addTripMultiDaySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'One booking extends over more than one consecutive day, such as camping trips.'**
+  String get addTripMultiDaySubtitle;
+
+  /// No description provided for @addTripDurationDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of trip days'**
+  String get addTripDurationDaysLabel;
+
+  /// No description provided for @addTripDurationDaysMinError.
+  ///
+  /// In en, this message translates to:
+  /// **'The number must be 2 or more'**
+  String get addTripDurationDaysMinError;
+
+  /// No description provided for @addTripTitleArLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title in Arabic'**
+  String get addTripTitleArLabel;
+
+  /// No description provided for @addTripTitleEnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title in English'**
+  String get addTripTitleEnLabel;
+
+  /// No description provided for @addTripShortDescArLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Short description in Arabic'**
+  String get addTripShortDescArLabel;
+
+  /// No description provided for @addTripShortDescEnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Short description in English'**
+  String get addTripShortDescEnLabel;
+
+  /// No description provided for @addTripDescArLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description in Arabic'**
+  String get addTripDescArLabel;
+
+  /// No description provided for @addTripDescEnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Full description in English'**
+  String get addTripDescEnLabel;
+
+  /// No description provided for @addTripDescTemplateAr.
+  ///
+  /// In en, this message translates to:
+  /// **'## ما تشمله الجولة\n- \n\n## الجدول الزمني\n- \n\n## ما يجب إحضاره\n- '**
+  String get addTripDescTemplateAr;
+
+  /// No description provided for @addTripDescTemplateEn.
+  ///
+  /// In en, this message translates to:
+  /// **'## What\'s Included\n- \n\n## Schedule\n- \n\n## What to Bring\n- '**
+  String get addTripDescTemplateEn;
+
+  /// No description provided for @addTripCityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a city'**
+  String get addTripCityRequired;
+
+  /// No description provided for @addTripAdultPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Adult price'**
+  String get addTripAdultPriceLabel;
+
+  /// No description provided for @addTripAllowsChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Children allowed'**
+  String get addTripAllowsChildren;
+
+  /// No description provided for @addTripChildPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Child price (0 = free)'**
+  String get addTripChildPriceLabel;
+
+  /// No description provided for @addTripChildrenCapacityNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: 2 children count as 1 adult seat in capacity calculation.'**
+  String get addTripChildrenCapacityNote;
+
+  /// No description provided for @addTripMaxCapacityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum capacity (adults count)'**
+  String get addTripMaxCapacityLabel;
+
+  /// No description provided for @addTripValidNumberError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number'**
+  String get addTripValidNumberError;
+
+  /// No description provided for @addTripValidIntegerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid whole number'**
+  String get addTripValidIntegerError;
+
+  /// No description provided for @addTripRequiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get addTripRequiredField;
+
+  /// No description provided for @addTripSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get addTripSaveChanges;
+
+  /// No description provided for @addTripSubmitForReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for Review'**
+  String get addTripSubmitForReview;
+
+  /// No description provided for @addTripGuideName.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide: {name}'**
+  String addTripGuideName(String name);
+
+  /// No description provided for @addTripLicenseValue.
+  ///
+  /// In en, this message translates to:
+  /// **'License: {value}'**
+  String addTripLicenseValue(String value);
+
+  /// No description provided for @addTripCompanyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Company: {name}'**
+  String addTripCompanyName(String name);
+
+  /// No description provided for @addTripTourismLicenseValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourism license: {value}'**
+  String addTripTourismLicenseValue(String value);
+
+  /// No description provided for @addTripBackToProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to profile'**
+  String get addTripBackToProfile;
+
+  /// No description provided for @bookingRejectedExploreMore.
+  ///
+  /// In en, this message translates to:
+  /// **'You can go back and explore other trips or choose a different date.'**
+  String get bookingRejectedExploreMore;
+
+  /// No description provided for @tripManagementTouristHint.
+  ///
+  /// In en, this message translates to:
+  /// **'View and manage your bookings from the Bookings tab in your profile'**
+  String get tripManagementTouristHint;
+
+  /// No description provided for @rawiImageQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Rawi, what does this image represent?'**
+  String get rawiImageQuestion;
+
+  /// No description provided for @rawiGeneralCouncil.
+  ///
+  /// In en, this message translates to:
+  /// **'Rawi General Council'**
+  String get rawiGeneralCouncil;
+
+  /// No description provided for @rawiStoryAboutRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Story about {region}'**
+  String rawiStoryAboutRegion(String region);
+
+  /// No description provided for @rawiWelcomeGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Rawi\'s Council.. Which region would you like to explore today?'**
+  String get rawiWelcomeGeneral;
+
+  /// No description provided for @rawiPickRegionStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Rawi\'s Council.. Pick a region to start:'**
+  String get rawiPickRegionStart;
+
+  /// No description provided for @rawiAskHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Rawi...'**
+  String get rawiAskHint;
+
+  /// No description provided for @rawiTyping.
+  ///
+  /// In en, this message translates to:
+  /// **'Rawi is typing...'**
+  String get rawiTyping;
+
+  /// No description provided for @rawiAttachmentFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get rawiAttachmentFile;
+
+  /// No description provided for @rawiAttachmentCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get rawiAttachmentCamera;
+
+  /// No description provided for @rawiAttachmentImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Image'**
+  String get rawiAttachmentImage;
+
+  /// No description provided for @rawiGeneralCouncilTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'General Council'**
+  String get rawiGeneralCouncilTitle;
+
+  /// No description provided for @rawiUserLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get rawiUserLabel;
+
+  /// No description provided for @rawiBotLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rawi'**
+  String get rawiBotLabel;
+
+  /// No description provided for @rawiHistoryHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous Conversation History:'**
+  String get rawiHistoryHeader;
+
+  /// No description provided for @rawiGeneralSystemInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'You are Rawi, a general Saudi cultural assistant. Reply in the user\'s language and be friendly.'**
+  String get rawiGeneralSystemInstruction;
+
+  /// No description provided for @adminUsersTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get adminUsersTab;
+
+  /// No description provided for @adminGuidesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Guides'**
+  String get adminGuidesTab;
+
+  /// No description provided for @adminSearchUsersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or email...'**
+  String get adminSearchUsersHint;
+
+  /// No description provided for @adminNoUsersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No users found'**
+  String get adminNoUsersFound;
+
+  /// No description provided for @adminNoResultsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'No results for \"{query}\"'**
+  String adminNoResultsFor(String query);
+
+  /// No description provided for @adminNoGuidesForStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'No {status} guides'**
+  String adminNoGuidesForStatus(String status);
+
+  /// No description provided for @adminStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get adminStatusPending;
+
+  /// No description provided for @adminStatusApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get adminStatusApproved;
+
+  /// No description provided for @adminStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get adminStatusRejected;
+
+  /// No description provided for @adminStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get adminStatusExpired;
+
+  /// No description provided for @adminRoleTutor.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutor'**
+  String get adminRoleTutor;
+
+  /// No description provided for @adminRoleAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get adminRoleAdmin;
+
+  /// No description provided for @adminRoleTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourist'**
+  String get adminRoleTourist;
+
+  /// No description provided for @adminGuideTypeIndividual.
+  ///
+  /// In en, this message translates to:
+  /// **'Individual'**
+  String get adminGuideTypeIndividual;
+
+  /// No description provided for @adminGuideTypeCompany.
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get adminGuideTypeCompany;
+
+  /// No description provided for @adminNoBookings.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings yet'**
+  String get adminNoBookings;
+
+  /// No description provided for @adminBookingPeopleSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{adults} adults, {children} children'**
+  String adminBookingPeopleSummary(int adults, int children);
+
+  /// No description provided for @adminTouristId.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourist: {id}'**
+  String adminTouristId(String id);
+
+  /// No description provided for @adminTutorId.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutor: {id}'**
+  String adminTutorId(String id);
+
+  /// No description provided for @adminNoTripsPending.
+  ///
+  /// In en, this message translates to:
+  /// **'No trips pending approval'**
+  String get adminNoTripsPending;
+
+  /// No description provided for @adminGuideLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide'**
+  String get adminGuideLabel;
+
+  /// No description provided for @adminCompanyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get adminCompanyLabel;
+
+  /// No description provided for @adminPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get adminPriceLabel;
+
+  /// No description provided for @adminLicenseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'License'**
+  String get adminLicenseLabel;
+
+  /// No description provided for @adminTutorIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutor ID'**
+  String get adminTutorIdLabel;
+
+  /// No description provided for @adminTripRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip rejected'**
+  String get adminTripRejected;
+
+  /// No description provided for @adminTripApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip approved'**
+  String get adminTripApproved;
+
+  /// No description provided for @adminReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get adminReject;
+
+  /// No description provided for @adminApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get adminApprove;
+
+  /// No description provided for @adminEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get adminEdit;
+
+  /// No description provided for @adminDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get adminDelete;
+
+  /// No description provided for @adminCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get adminCancel;
+
+  /// No description provided for @adminAddAttraction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Attraction'**
+  String get adminAddAttraction;
+
+  /// No description provided for @adminEditAttraction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Attraction'**
+  String get adminEditAttraction;
+
+  /// No description provided for @adminNoAttractions.
+  ///
+  /// In en, this message translates to:
+  /// **'No attractions yet. Tap + to add one.'**
+  String get adminNoAttractions;
+
+  /// No description provided for @adminDeleteAttraction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Attraction'**
+  String get adminDeleteAttraction;
+
+  /// No description provided for @adminDeleteAttractionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\"? This cannot be undone.'**
+  String adminDeleteAttractionConfirm(String name);
+
+  /// No description provided for @adminAttractionDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Attraction deleted'**
+  String get adminAttractionDeleted;
+
+  /// No description provided for @adminAddItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Item'**
+  String get adminAddItem;
+
+  /// No description provided for @adminEditArchiveItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Archive Item'**
+  String get adminEditArchiveItem;
+
+  /// No description provided for @adminAddArchiveItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Archive Item'**
+  String get adminAddArchiveItem;
+
+  /// No description provided for @adminUpdateItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Item'**
+  String get adminUpdateItem;
+
+  /// No description provided for @adminAddToArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Archive'**
+  String get adminAddToArchive;
+
+  /// No description provided for @adminItemUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Item updated successfully'**
+  String get adminItemUpdated;
+
+  /// No description provided for @adminCulturalItemAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Cultural item added successfully'**
+  String get adminCulturalItemAdded;
+
+  /// No description provided for @adminMapCoordinatesOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Map Coordinates (optional)'**
+  String get adminMapCoordinatesOptional;
+
+  /// No description provided for @adminLatitudeExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude (e.g. 24.68)'**
+  String get adminLatitudeExample;
+
+  /// No description provided for @adminLongitudeExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Longitude (e.g. 46.72)'**
+  String get adminLongitudeExample;
+
+  /// No description provided for @adminNoCulturalItems.
+  ///
+  /// In en, this message translates to:
+  /// **'No cultural items yet'**
+  String get adminNoCulturalItems;
+
+  /// No description provided for @adminDeleteItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Item'**
+  String get adminDeleteItem;
+
+  /// No description provided for @adminDeleteItemConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\"? This cannot be undone.'**
+  String adminDeleteItemConfirm(String name);
+
+  /// No description provided for @adminItemDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Item deleted'**
+  String get adminItemDeleted;
+
+  /// No description provided for @adminByContributor.
+  ///
+  /// In en, this message translates to:
+  /// **'By: {name}'**
+  String adminByContributor(String name);
+
+  /// No description provided for @adminSelectRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a region'**
+  String get adminSelectRegion;
+
+  /// No description provided for @adminSelectCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a city'**
+  String get adminSelectCity;
+
+  /// No description provided for @adminSelectMainImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a main image'**
+  String get adminSelectMainImage;
+
+  /// No description provided for @adminCoordinatesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter coordinates (lat & lng)'**
+  String get adminCoordinatesRequired;
+
+  /// No description provided for @adminAttractionUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Attraction updated!'**
+  String get adminAttractionUpdated;
+
+  /// No description provided for @adminAttractionAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Attraction added! AI tagging will run shortly.'**
+  String get adminAttractionAdded;
+
+  /// No description provided for @adminMainImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Main Image *'**
+  String get adminMainImage;
+
+  /// No description provided for @adminNameDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Name & Description'**
+  String get adminNameDescription;
+
+  /// No description provided for @adminClassification.
+  ///
+  /// In en, this message translates to:
+  /// **'Classification'**
+  String get adminClassification;
+
+  /// No description provided for @adminNameArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (Arabic)'**
+  String get adminNameArabic;
+
+  /// No description provided for @adminNameEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (English)'**
+  String get adminNameEnglish;
+
+  /// No description provided for @adminNameArabicHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the Arabic name'**
+  String get adminNameArabicHint;
+
+  /// No description provided for @adminNameEnglishHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter attraction name in English'**
+  String get adminNameEnglishHint;
+
+  /// No description provided for @adminDescriptionArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (Arabic)'**
+  String get adminDescriptionArabic;
+
+  /// No description provided for @adminDescriptionEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (English)'**
+  String get adminDescriptionEnglish;
+
+  /// No description provided for @adminDescriptionArabicHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the Arabic description'**
+  String get adminDescriptionArabicHint;
+
+  /// No description provided for @adminDescriptionEnglishHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter description in English'**
+  String get adminDescriptionEnglishHint;
+
+  /// No description provided for @adminLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get adminLocation;
+
+  /// No description provided for @adminCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get adminCategory;
+
+  /// No description provided for @adminRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Region'**
+  String get adminRegion;
+
+  /// No description provided for @adminCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get adminCity;
+
+  /// No description provided for @adminSelectRegionFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a region first'**
+  String get adminSelectRegionFirst;
+
+  /// No description provided for @adminAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get adminAddress;
+
+  /// No description provided for @adminAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Full address'**
+  String get adminAddressHint;
+
+  /// No description provided for @adminMapCoordinates.
+  ///
+  /// In en, this message translates to:
+  /// **'Map Coordinates'**
+  String get adminMapCoordinates;
+
+  /// No description provided for @adminLatitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude'**
+  String get adminLatitude;
+
+  /// No description provided for @adminLongitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Longitude'**
+  String get adminLongitude;
+
+  /// No description provided for @adminHoursFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours & Fees'**
+  String get adminHoursFees;
+
+  /// No description provided for @adminAlwaysOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Always Open (24/7)'**
+  String get adminAlwaysOpen;
+
+  /// No description provided for @adminOpeningHoursArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Hours (Arabic)'**
+  String get adminOpeningHoursArabic;
+
+  /// No description provided for @adminOpeningHoursEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Hours (English)'**
+  String get adminOpeningHoursEnglish;
+
+  /// No description provided for @adminOpeningHoursArabicHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: 9 AM - 10 PM'**
+  String get adminOpeningHoursArabicHint;
+
+  /// No description provided for @adminOpeningHoursEnglishHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: 9 AM - 10 PM'**
+  String get adminOpeningHoursEnglishHint;
+
+  /// No description provided for @adminEntryFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry Fee'**
+  String get adminEntryFee;
+
+  /// No description provided for @adminEntryFeeSar.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry Fee (SAR) - 0 means free'**
+  String get adminEntryFeeSar;
+
+  /// No description provided for @adminFreeFeeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'0 = Free'**
+  String get adminFreeFeeHint;
+
+  /// No description provided for @adminValidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number'**
+  String get adminValidNumber;
+
+  /// No description provided for @adminGalleryImages.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery Images'**
+  String get adminGalleryImages;
+
+  /// No description provided for @adminNoGalleryImages.
+  ///
+  /// In en, this message translates to:
+  /// **'No gallery images added yet.'**
+  String get adminNoGalleryImages;
+
+  /// No description provided for @adminMaxGalleryImages.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum 8 images reached.'**
+  String get adminMaxGalleryImages;
+
+  /// No description provided for @adminVideoOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Video (Optional)'**
+  String get adminVideoOptional;
+
+  /// No description provided for @adminOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get adminOptional;
+
+  /// No description provided for @adminTicketBookingUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket Booking URL'**
+  String get adminTicketBookingUrl;
+
+  /// No description provided for @adminUpdateAttraction.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Attraction'**
+  String get adminUpdateAttraction;
+
+  /// No description provided for @adminTapToChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change'**
+  String get adminTapToChange;
+
+  /// No description provided for @adminTapPickMainImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to pick main image'**
+  String get adminTapPickMainImage;
+
+  /// No description provided for @adminVideoSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Video saved'**
+  String get adminVideoSaved;
+
+  /// No description provided for @adminTapPickVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to pick a video'**
+  String get adminTapPickVideo;
+
+  /// No description provided for @adminAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get adminAdd;
+
+  /// No description provided for @adminImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Image'**
+  String get adminImage;
+
+  /// No description provided for @adminEventAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Event added successfully'**
+  String get adminEventAdded;
+
+  /// No description provided for @adminSelectEventDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select an event date'**
+  String get adminSelectEventDate;
+
+  /// No description provided for @adminPickImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please pick an image'**
+  String get adminPickImage;
+
+  /// No description provided for @adminEventCoordinatesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude and longitude are required for events'**
+  String get adminEventCoordinatesRequired;
+
+  /// No description provided for @adminImageUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Image upload failed'**
+  String get adminImageUploadFailed;
+
+  /// No description provided for @adminTitleArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (Arabic)'**
+  String get adminTitleArabic;
+
+  /// No description provided for @adminTitleEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (English)'**
+  String get adminTitleEnglish;
+
+  /// No description provided for @adminTitleArabicHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Arabic title'**
+  String get adminTitleArabicHint;
+
+  /// No description provided for @adminTitleEnglishHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter English title'**
+  String get adminTitleEnglishHint;
+
+  /// No description provided for @adminEventDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Date'**
+  String get adminEventDate;
+
+  /// No description provided for @adminSelectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get adminSelectDate;
+
+  /// No description provided for @adminEndDateOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'End Date (optional)'**
+  String get adminEndDateOptional;
+
+  /// No description provided for @adminSelectEndDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select end date (leave empty for single-day)'**
+  String get adminSelectEndDate;
+
+  /// No description provided for @adminTimeArabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Time (Arabic)'**
+  String get adminTimeArabic;
+
+  /// No description provided for @adminTimeEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'Time (English)'**
+  String get adminTimeEnglish;
+
+  /// No description provided for @adminEventType.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Type'**
+  String get adminEventType;
+
+  /// No description provided for @adminAdmission.
+  ///
+  /// In en, this message translates to:
+  /// **'Admission'**
+  String get adminAdmission;
+
+  /// No description provided for @adminFreeEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Free Entry'**
+  String get adminFreeEntry;
+
+  /// No description provided for @adminPaidEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid Entry'**
+  String get adminPaidEntry;
+
+  /// No description provided for @adminTicketUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket URL'**
+  String get adminTicketUrl;
+
+  /// No description provided for @adminAddEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Event'**
+  String get adminAddEvent;
+
+  /// No description provided for @adminMigrationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Content Migration'**
+  String get adminMigrationTitle;
+
+  /// No description provided for @adminMigrateAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Migrate All Content'**
+  String get adminMigrateAllTitle;
+
+  /// No description provided for @adminMigrateAllBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will classify all attractions, trips, events, and cultural items using Gemini AI. Takes 3-7 minutes. Make sure you have a stable internet connection. Continue?'**
+  String get adminMigrateAllBody;
+
+  /// No description provided for @adminRunMigration.
+  ///
+  /// In en, this message translates to:
+  /// **'Run Migration'**
+  String get adminRunMigration;
+
+  /// No description provided for @adminMigrationHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Content Classification'**
+  String get adminMigrationHeading;
+
+  /// No description provided for @adminMigrationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Generates interestIds and embedding vectors for all attractions, trips, events, and cultural items.'**
+  String get adminMigrationDescription;
+
+  /// No description provided for @adminMigratingProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Migrating... (3-7 minutes)'**
+  String get adminMigratingProgress;
+
+  /// No description provided for @adminEmbeddingProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating embeddings...'**
+  String get adminEmbeddingProgress;
+
+  /// No description provided for @adminGenerateMissingEmbeddings.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate missing embeddings'**
+  String get adminGenerateMissingEmbeddings;
+
+  /// No description provided for @adminMigrationComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Migration Complete'**
+  String get adminMigrationComplete;
+
+  /// No description provided for @adminMigrationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Migration Failed'**
+  String get adminMigrationFailed;
+
+  /// No description provided for @adminOperationComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation complete'**
+  String get adminOperationComplete;
+
+  /// No description provided for @adminEmbeddingStatsLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{collection}: processed {processed} | skipped {skipped} | failed {failed}'**
+  String adminEmbeddingStatsLine(
+      String collection, String processed, String skipped, String failed);
+
+  /// No description provided for @adminDocumentShapes.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Shapes'**
+  String get adminDocumentShapes;
+
+  /// No description provided for @adminInspectDataShape.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect data shape'**
+  String get adminInspectDataShape;
+
+  /// No description provided for @adminTranslationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation failed: {message}'**
+  String adminTranslationFailed(String message);
+
+  /// No description provided for @adminApproveContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve Contribution'**
+  String get adminApproveContribution;
+
+  /// No description provided for @adminApproveContributionConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve \"{title}\" by {name}?\n\nThis will award {points} points to the tourist.'**
+  String adminApproveContributionConfirm(String title, String name, int points);
+
+  /// No description provided for @adminFillEnglishBeforeApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill English title and description before approving.'**
+  String get adminFillEnglishBeforeApprove;
+
+  /// No description provided for @adminFillArabicBeforeApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill Arabic title and description before approving.'**
+  String get adminFillArabicBeforeApprove;
+
+  /// No description provided for @adminContributionApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribution approved successfully'**
+  String get adminContributionApproved;
+
+  /// No description provided for @adminRejectContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Contribution'**
+  String get adminRejectContribution;
+
+  /// No description provided for @adminRejectContributionHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Provide a reason so the tourist knows what to improve.'**
+  String get adminRejectContributionHelp;
+
+  /// No description provided for @adminRejectReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Image quality is too low, please resubmit with a clearer photo.'**
+  String get adminRejectReasonHint;
+
+  /// No description provided for @adminPleaseEnterReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a reason.'**
+  String get adminPleaseEnterReason;
+
+  /// No description provided for @adminContributionRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribution rejected'**
+  String get adminContributionRejected;
+
+  /// No description provided for @adminReviewContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Contribution'**
+  String get adminReviewContribution;
+
+  /// No description provided for @adminVideoContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Contribution'**
+  String get adminVideoContribution;
+
+  /// No description provided for @adminTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourist'**
+  String get adminTourist;
+
+  /// No description provided for @adminName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get adminName;
+
+  /// No description provided for @adminEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get adminEmail;
+
+  /// No description provided for @adminSubmissionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Details'**
+  String get adminSubmissionDetails;
+
+  /// No description provided for @adminSubmittedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted in'**
+  String get adminSubmittedIn;
+
+  /// No description provided for @adminDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get adminDate;
+
+  /// No description provided for @adminRejectionReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection reason'**
+  String get adminRejectionReason;
+
+  /// No description provided for @adminArabicByTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic (by tourist)'**
+  String get adminArabicByTourist;
+
+  /// No description provided for @adminEnglishByTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'English (by tourist)'**
+  String get adminEnglishByTourist;
+
+  /// No description provided for @adminEnglishAdminFills.
+  ///
+  /// In en, this message translates to:
+  /// **'English (admin fills)'**
+  String get adminEnglishAdminFills;
+
+  /// No description provided for @adminArabicAdminFills.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic (admin fills)'**
+  String get adminArabicAdminFills;
+
+  /// No description provided for @adminTranslating.
+  ///
+  /// In en, this message translates to:
+  /// **'Translating...'**
+  String get adminTranslating;
+
+  /// No description provided for @adminAutoTranslate.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-translate with AI'**
+  String get adminAutoTranslate;
+
+  /// No description provided for @adminTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get adminTitle;
+
+  /// No description provided for @adminDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get adminDescription;
+
+  /// No description provided for @adminVerifyGuideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Guide'**
+  String get adminVerifyGuideTitle;
+
+  /// No description provided for @adminVerifyGuideConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify \"{name}\"?\nThey can add trips until their license expires.'**
+  String adminVerifyGuideConfirm(String name);
+
+  /// No description provided for @adminVerifyGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get adminVerifyGuide;
+
+  /// No description provided for @adminGuideVerifiedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide verified successfully'**
+  String get adminGuideVerifiedSuccess;
+
+  /// No description provided for @adminRejectRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject request'**
+  String get adminRejectRequest;
+
+  /// No description provided for @adminRejectRequestHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'This will be shown to the guide so they know what needs correction.'**
+  String get adminRejectRequestHelp;
+
+  /// No description provided for @adminRejectRequestHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Example: The license expiry date is incorrect'**
+  String get adminRejectRequestHint;
+
+  /// No description provided for @adminRequestRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Request rejected'**
+  String get adminRequestRejected;
+
+  /// No description provided for @adminReviewVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Verification'**
+  String get adminReviewVerification;
+
+  /// No description provided for @adminLicenseData.
+  ///
+  /// In en, this message translates to:
+  /// **'License Data'**
+  String get adminLicenseData;
+
+  /// No description provided for @adminCompanyData.
+  ///
+  /// In en, this message translates to:
+  /// **'Company Data'**
+  String get adminCompanyData;
+
+  /// No description provided for @adminLicenseNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'License Number'**
+  String get adminLicenseNumber;
+
+  /// No description provided for @adminLicenseExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'License Expiry Date'**
+  String get adminLicenseExpiry;
+
+  /// No description provided for @adminCompanyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Company Name'**
+  String get adminCompanyName;
+
+  /// No description provided for @adminCommercialRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial Registration No.'**
+  String get adminCommercialRegistration;
+
+  /// No description provided for @adminCommercialRegistrationExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial Registration Expiry'**
+  String get adminCommercialRegistrationExpiry;
+
+  /// No description provided for @adminTourismActivityLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourism Activity License'**
+  String get adminTourismActivityLicense;
+
+  /// No description provided for @adminTourismLicenseNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourism License No.'**
+  String get adminTourismLicenseNumber;
+
+  /// No description provided for @adminTourismLicenseExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourism License Expiry'**
+  String get adminTourismLicenseExpiry;
+
+  /// No description provided for @adminExpiringSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring soon'**
+  String get adminExpiringSoon;
+
+  /// No description provided for @adminRejectionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection Details'**
+  String get adminRejectionDetails;
+
+  /// No description provided for @adminVerificationDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Details'**
+  String get adminVerificationDetails;
+
+  /// No description provided for @adminBy.
+  ///
+  /// In en, this message translates to:
+  /// **'By'**
+  String get adminBy;
+
+  /// No description provided for @adminVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get adminVerify;
 }
 
 class _AppLocalizationsDelegate

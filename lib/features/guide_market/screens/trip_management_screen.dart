@@ -18,6 +18,7 @@ class TripManagementScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(authNotifierProvider).value;
 
     if (user is TutorModel) {
@@ -33,7 +34,7 @@ class TripManagementScreen extends ConsumerWidget {
         bottom: false,
         child: Center(
           child: Text(
-            isAr ? 'هذه الميزة للمرشدين فقط' : 'This feature is for guides only',
+            l10n.tripManagementGuidesOnly,
             style: theme.textTheme.bodyLarge,
           ),
         ),
@@ -82,17 +83,15 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
   bool get _canAdd => tutor.canPublishTrips;
 
   String _blockingHint() {
+    final l10n = AppLocalizations.of(context);
     final missing = tutor.missingTripRequirements;
     if (missing.contains('phone_verification')) {
-      return isAr ? 'تحقق من رقم هاتفك أولاً لتتمكن من إضافة رحلات'
-                  : 'Verify your phone number first to add trips';
+      return l10n.tripManagementVerifyPhoneFirst;
     }
     if (missing.contains('guide_verification')) {
-      return isAr ? 'أكمل التوثيق أولاً لتتمكن من إضافة رحلات'
-                  : 'Complete verification first to add trips';
+      return l10n.tripManagementCompleteVerificationFirst;
     }
-    return isAr ? 'أكمل ملفك الشخصي (النبذة واللغات) لتتمكن من إضافة رحلات'
-                : 'Complete your profile (bio & languages) to add trips';
+    return l10n.tripManagementCompleteProfileFirst;
   }
 
   Color _statusColor(String status) {
@@ -107,36 +106,34 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
   }
 
   String _statusLabel(String status) {
+    final l10n = AppLocalizations.of(context);
     switch (status) {
       case 'approved':
-        return isAr ? 'مقبول' : 'Approved';
+        return l10n.tripStatusApproved;
       case 'rejected':
-        return isAr ? 'مرفوض' : 'Rejected';
+        return l10n.tripStatusRejected;
       default:
-        return isAr ? 'قيد المراجعة' : 'Pending';
+        return l10n.tripStatusPending;
     }
   }
 
   Future<void> _confirmDelete(BuildContext context, TripModel trip) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        title: Text(isAr ? 'حذف الرحلة' : 'Delete Trip'),
-        content: Text(
-          isAr
-              ? 'هل أنت متأكد أنك تريد حذف "${trip.titleAr}"؟\nلا يمكن التراجع عن هذه العملية.'
-              : 'Are you sure you want to delete "${trip.titleEn}"?\nThis action cannot be undone.',
-        ),
+        title: Text(l10n.tripDeleteTitle),
+        content: Text(l10n.tripDeleteConfirm(isAr ? trip.titleAr : trip.titleEn)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(isAr ? 'إلغاء' : 'Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             onPressed: () => Navigator.pop(context, true),
-            child: Text(isAr ? 'حذف' : 'Delete'),
+            child: Text(l10n.tripDelete),
           ),
         ],
       ),
@@ -149,7 +146,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(isAr ? 'تم حذف الرحلة بنجاح' : 'Trip deleted successfully'),
+            content: Text(l10n.tripDeletedSuccess),
             backgroundColor: Colors.green,
           ),
         );
@@ -157,7 +154,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
@@ -174,7 +171,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
                 MaterialPageRoute(builder: (_) => const AddTripScreen()),
               ),
               icon: const Icon(Icons.add_rounded),
-              label: Text(isAr ? 'إضافة رحلة' : 'Add Trip'),
+              label: Text(l10n.tripAddButton),
             )
           : null,
       body: SafeArea(
@@ -184,7 +181,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
             TabBar(
               controller: _tabController,
               tabs: [
-                Tab(text: isAr ? 'رحلاتي' : 'My Trips'),
+                Tab(text: l10n.myTrips),
                 Tab(text: l10n.profileTabBooking),
               ],
             ),
@@ -192,7 +189,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  _buildTripsTab(),
+                  _buildTripsTab(l10n),
                   _buildBookingsTab(l10n),
                 ],
               ),
@@ -203,7 +200,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
     );
   }
 
-  Widget _buildTripsTab() {
+  Widget _buildTripsTab(AppLocalizations l10n) {
     return StreamBuilder<List<TripModel>>(
       stream: ref.read(marketplaceRepositoryProvider).fetchTutorTrips(tutor.uId),
       builder: (context, snapshot) {
@@ -211,7 +208,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text(l10n.commonErrorWithMessage(snapshot.error.toString())));
         }
         final trips = snapshot.data ?? [];
 
@@ -226,7 +223,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
                       color: theme.colorScheme.primary.withValues(alpha: 0.3)),
                   const SizedBox(height: 16),
                   Text(
-                    isAr ? 'لا توجد رحلات بعد' : 'No trips yet',
+                    l10n.tripNoTripsYet,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
@@ -235,7 +232,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
                   const SizedBox(height: 8),
                   Text(
                     _canAdd
-                        ? (isAr ? 'اضغط على + لإضافة أول رحلة' : 'Tap + to add your first trip')
+                        ? l10n.tripTapToAddFirst
                         : _blockingHint(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
@@ -254,6 +251,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
           itemBuilder: (ctx, i) => _TripCard(
             trip: trips[i],
             theme: theme,
+            l10n: l10n,
             isAr: isAr,
             statusColor: _statusColor(trips[i].status),
             statusLabel: _statusLabel(trips[i].status),
@@ -278,13 +276,13 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(child: Text(l10n.commonErrorWithMessage(snapshot.error.toString())));
         }
         final bookings = snapshot.data ?? [];
         if (bookings.isEmpty) {
           return Center(
             child: Text(
-              isAr ? 'لا توجد حجوزات بعد' : 'No bookings yet',
+              l10n.tripNoBookingsYet,
               style: theme.textTheme.bodyLarge
                   ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
@@ -429,6 +427,7 @@ class _TripCard extends StatelessWidget {
   const _TripCard({
     required this.trip,
     required this.theme,
+    required this.l10n,
     required this.isAr,
     required this.statusColor,
     required this.statusLabel,
@@ -438,6 +437,7 @@ class _TripCard extends StatelessWidget {
 
   final TripModel trip;
   final ThemeData theme;
+  final AppLocalizations l10n;
   final bool isAr;
   final Color statusColor;
   final String statusLabel;
@@ -558,7 +558,7 @@ class _TripCard extends StatelessWidget {
                       child: OutlinedButton.icon(
                         onPressed: onEdit,
                         icon: const Icon(Icons.edit_outlined, size: 17),
-                        label: Text(isAr ? 'تعديل' : 'Edit'),
+                        label: Text(l10n.tripEdit),
                         style: OutlinedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -573,7 +573,7 @@ class _TripCard extends StatelessWidget {
                       child: OutlinedButton.icon(
                         onPressed: onDelete,
                         icon: const Icon(Icons.delete_outline, size: 17),
-                        label: Text(isAr ? 'حذف' : 'Delete'),
+                        label: Text(l10n.tripDelete),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.red,
                           side: const BorderSide(color: Colors.red),
@@ -606,6 +606,7 @@ class _TouristPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -622,15 +623,13 @@ class _TouristPlaceholder extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Text(
-                isAr ? 'رحلاتي' : 'My Trips',
+                l10n.myTrips,
                 style: theme.textTheme.headlineSmall
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               Text(
-                isAr
-                    ? 'يمكنك عرض حجوزاتك وإدارة رحلاتك من تبويب "الحجوزات" في ملفك الشخصي'
-                    : 'View and manage your bookings from the "Bookings" tab in your profile',
+                l10n.tripManagementTouristHint,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color:
                       theme.colorScheme.onSurface.withValues(alpha: 0.55),

@@ -9,6 +9,7 @@ import 'package:athar_app/core/constants/region_city_constants.dart';
 import 'package:athar_app/core/models/attractions/attraction_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class AddAttractionScreen extends ConsumerStatefulWidget {
   final AttractionModel? editAttraction;
@@ -191,25 +192,26 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
   // ── Submit ────────────────────────────────────────────────────────────────────
 
   Future<void> _submit() async {
+    final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) return;
 
     if (_selectedRegionId == null) {
-      _showSnackBar('Please select a region', isError: true);
+      _showSnackBar(l10n.adminSelectRegion, isError: true);
       return;
     }
     if (_selectedCityId == null) {
-      _showSnackBar('Please select a city', isError: true);
+      _showSnackBar(l10n.adminSelectCity, isError: true);
       return;
     }
     if (_mainImageFile == null && _existingMainImageUrl == null) {
-      _showSnackBar('Please select a main image', isError: true);
+      _showSnackBar(l10n.adminSelectMainImage, isError: true);
       return;
     }
 
     final latText = _latController.text.trim();
     final lngText = _lngController.text.trim();
     if (latText.isEmpty || lngText.isEmpty) {
-      _showSnackBar('Please enter coordinates (lat & lng)', isError: true);
+      _showSnackBar(l10n.adminCoordinatesRequired, isError: true);
       return;
     }
 
@@ -272,18 +274,18 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
             .read(adminRepositoryProvider)
             .updateAttraction(widget.editAttraction!.id, data);
         if (mounted) {
-          _showSnackBar('Attraction updated!');
+          _showSnackBar(l10n.adminAttractionUpdated);
           Navigator.pop(context);
         }
       } else {
         await ref.read(adminRepositoryProvider).addAttraction(data);
         if (mounted) {
-          _showSnackBar('Attraction added! AI tagging will run shortly.');
+          _showSnackBar(l10n.adminAttractionAdded);
           _resetForm();
         }
       }
     } catch (e) {
-      if (mounted) _showSnackBar('Error: $e', isError: true);
+      if (mounted) _showSnackBar(l10n.commonErrorWithMessage(e.toString()), isError: true);
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -335,11 +337,12 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _isEditing ? 'Edit Attraction' : 'Add Attraction',
+          _isEditing ? l10n.adminEditAttraction : l10n.adminAddAttraction,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.primary,
@@ -354,7 +357,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── Main Image ─────────────────────────────────────────────
-              _SectionHeader('Main Image *'),
+              _SectionHeader(l10n.adminMainImage),
               _ImagePickerTile(
                 file: _mainImageFile,
                 existingUrl: _existingMainImageUrl,
@@ -364,40 +367,40 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
               const SizedBox(height: 24),
 
               // ── Identity ───────────────────────────────────────────────
-              _SectionHeader('Name & Description'),
+              _SectionHeader(l10n.adminNameDescription),
               _FormField(
                 controller: _nameArController,
-                hint: 'الاسم بالعربي',
-                label: 'Name (Arabic)',
+                hint: l10n.adminNameArabicHint,
+                label: l10n.adminNameArabic,
                 textDirection: TextDirection.rtl,
               ),
               const SizedBox(height: 12),
               _FormField(
                 controller: _nameEnController,
-                hint: 'Enter attraction name in English',
-                label: 'Name (English)',
+                hint: l10n.adminNameEnglishHint,
+                label: l10n.adminNameEnglish,
               ),
               const SizedBox(height: 12),
               _FormField(
                 controller: _descArController,
-                hint: 'الوصف بالعربي',
-                label: 'Description (Arabic)',
+                hint: l10n.adminDescriptionArabicHint,
+                label: l10n.adminDescriptionArabic,
                 maxLines: 4,
                 textDirection: TextDirection.rtl,
               ),
               const SizedBox(height: 12),
               _FormField(
                 controller: _descEnController,
-                hint: 'Enter description in English',
-                label: 'Description (English)',
+                hint: l10n.adminDescriptionEnglishHint,
+                label: l10n.adminDescriptionEnglish,
                 maxLines: 4,
               ),
 
               const SizedBox(height: 24),
 
               // ── Classification ─────────────────────────────────────────
-              _SectionHeader('Classification'),
-              _Label('Category'),
+              _SectionHeader(l10n.adminClassification),
+              _Label(l10n.adminCategory),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
                 decoration: _inputDecoration(),
@@ -416,11 +419,11 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
               const SizedBox(height: 24),
 
               // ── Location ───────────────────────────────────────────────
-              _SectionHeader('Location'),
-              _Label('Region *'),
+              _SectionHeader(l10n.adminLocation),
+              _Label('${l10n.adminRegion} *'),
               DropdownButtonFormField<String>(
                 value: _selectedRegionId,
-                decoration: _inputDecoration(hint: 'Select a region'),
+                decoration: _inputDecoration(hint: l10n.adminSelectRegion),
                 items: regionsData
                     .map((r) => DropdownMenuItem(
                         value: r.regionId, child: Text(r.nameEn)))
@@ -429,16 +432,16 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                   _selectedRegionId = v;
                   _selectedCityId = null;
                 }),
-                validator: (v) => v == null ? 'Required' : null,
+                validator: (v) => v == null ? l10n.requiredField : null,
               ),
               const SizedBox(height: 12),
-              _Label('City *'),
+              _Label('${l10n.adminCity} *'),
               DropdownButtonFormField<String>(
                 value: _selectedCityId,
                 decoration: _inputDecoration(
                   hint: _selectedRegionId == null
-                      ? 'Select a region first'
-                      : 'Select a city',
+                      ? l10n.adminSelectRegionFirst
+                      : l10n.adminSelectCity,
                 ),
                 items: _availableCities
                     .map((cityId) => DropdownMenuItem(
@@ -449,13 +452,13 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                 onChanged: _selectedRegionId == null
                     ? null
                     : (v) => setState(() => _selectedCityId = v),
-                validator: (v) => v == null ? 'Required' : null,
+                validator: (v) => v == null ? l10n.requiredField : null,
               ),
               const SizedBox(height: 12),
               _FormField(
                 controller: _addressController,
-                hint: 'Full address',
-                label: 'Address',
+                hint: l10n.adminAddressHint,
+                label: l10n.adminAddress,
                 maxLines: 2,
               ),
               const SizedBox(height: 12),
@@ -466,11 +469,11 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                       controller: _latController,
                       keyboardType: const TextInputType.numberWithOptions(
                           decimal: true, signed: true),
-                      decoration: _inputDecoration(hint: 'Latitude'),
+                      decoration: _inputDecoration(hint: l10n.adminLatitude),
                       validator: (v) {
-                        if (v == null || v.trim().isEmpty) return 'Required';
+                        if (v == null || v.trim().isEmpty) return l10n.requiredField;
                         if (double.tryParse(v.trim()) == null) {
-                          return 'Invalid number';
+                          return l10n.adminValidNumber;
                         }
                         return null;
                       },
@@ -482,11 +485,11 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                       controller: _lngController,
                       keyboardType: const TextInputType.numberWithOptions(
                           decimal: true, signed: true),
-                      decoration: _inputDecoration(hint: 'Longitude'),
+                      decoration: _inputDecoration(hint: l10n.adminLongitude),
                       validator: (v) {
-                        if (v == null || v.trim().isEmpty) return 'Required';
+                        if (v == null || v.trim().isEmpty) return l10n.requiredField;
                         if (double.tryParse(v.trim()) == null) {
-                          return 'Invalid number';
+                          return l10n.adminValidNumber;
                         }
                         return null;
                       },
@@ -498,10 +501,10 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
               const SizedBox(height: 24),
 
               // ── Hours & Fees ───────────────────────────────────────────
-              _SectionHeader('Opening Hours & Entry Fee'),
+              _SectionHeader(l10n.adminHoursFees),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Always Open (24/7)',
+                title: Text(l10n.adminAlwaysOpen,
                     style: TextStyle(fontWeight: FontWeight.w600)),
                 value: _isAlwaysOpen,
                 activeThumbColor: AppColors.primary,
@@ -511,42 +514,42 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                 const SizedBox(height: 8),
                 _FormField(
                   controller: _hoursArController,
-                  hint: 'مثال: 9 صباحاً – 10 مساءً',
-                  label: 'Opening Hours (Arabic)',
+                  hint: l10n.adminOpeningHoursArabicHint,
+                  label: l10n.adminOpeningHoursArabic,
                   textDirection: TextDirection.rtl,
                   required: false,
                 ),
                 const SizedBox(height: 12),
                 _FormField(
                   controller: _hoursEnController,
-                  hint: 'e.g. 9 AM – 10 PM',
-                  label: 'Opening Hours (English)',
+                  hint: l10n.adminOpeningHoursEnglishHint,
+                  label: l10n.adminOpeningHoursEnglish,
                   required: false,
                 ),
               ],
               const SizedBox(height: 12),
               _FormField(
                 controller: _feeController,
-                hint: '0 = Free',
-                label: 'Entry Fee (SAR) — 0 means free',
+                hint: l10n.adminFreeFeeHint,
+                label: l10n.adminEntryFeeSar,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
                 validator: (v) =>
                     (double.tryParse(v?.trim() ?? '') == null)
-                        ? 'Enter a valid number'
+                        ? l10n.adminValidNumber
                         : null,
               ),
 
               const SizedBox(height: 24),
 
               // ── Gallery Images ─────────────────────────────────────────
-              _SectionHeader('Gallery Images'),
+              _SectionHeader(l10n.adminGalleryImages),
               _buildGallerySection(theme),
 
               const SizedBox(height: 24),
 
               // ── Video ──────────────────────────────────────────────────
-              _SectionHeader('Video (Optional)'),
+              _SectionHeader(l10n.adminVideoOptional),
               _VideoPickerTile(
                 file: _videoFile,
                 existingUrl: _existingVideoUrl,
@@ -560,11 +563,11 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
               const SizedBox(height: 24),
 
               // ── Optional ───────────────────────────────────────────────
-              _SectionHeader('Optional'),
+              _SectionHeader(l10n.adminOptional),
               _FormField(
                 controller: _ticketUrlController,
                 hint: 'https://tickets.example.com',
-                label: 'Ticket Booking URL',
+                label: l10n.adminTicketBookingUrl,
                 keyboardType: TextInputType.url,
                 required: false,
               ),
@@ -591,7 +594,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                               color: Colors.white, strokeWidth: 2.5),
                         )
                       : Text(
-                          _isEditing ? 'Update Attraction' : 'Add Attraction',
+                          _isEditing ? l10n.adminUpdateAttraction : l10n.adminAddAttraction,
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
@@ -607,6 +610,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
   }
 
   Widget _buildGallerySection(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -614,7 +618,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
-              'No gallery images added yet.',
+              l10n.adminNoGalleryImages,
               style: theme.textTheme.bodySmall
                   ?.copyWith(color: Colors.grey.shade500),
             ),
@@ -641,7 +645,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              'Maximum 8 images reached.',
+              l10n.adminMaxGalleryImages,
               style: theme.textTheme.bodySmall
                   ?.copyWith(color: Colors.grey.shade500),
             ),
@@ -750,6 +754,7 @@ class _FormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -762,7 +767,7 @@ class _FormField extends StatelessWidget {
           validator: validator ??
               (required
                   ? (v) => (v == null || v.trim().isEmpty)
-                      ? 'This field is required'
+                      ? l10n.requiredField
                       : null
                   : null),
           decoration: InputDecoration(
@@ -804,6 +809,7 @@ class _ImagePickerTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final hasContent = file != null || existingUrl != null;
 
     return GestureDetector(
@@ -845,9 +851,9 @@ class _ImagePickerTile extends StatelessWidget {
                         color: Colors.black54,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Text('Tap to change',
+                      child: Text(l10n.adminTapToChange,
                           style:
-                              TextStyle(color: Colors.white, fontSize: 11)),
+                              const TextStyle(color: Colors.white, fontSize: 11)),
                     ),
                   ),
                 ],
@@ -862,7 +868,7 @@ class _ImagePickerTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Tap to pick main image',
+                    l10n.adminTapPickMainImage,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppColors.primary.withValues(alpha: 0.6),
                         ),
@@ -909,15 +915,16 @@ class _VideoPickerTile extends StatelessWidget {
           ),
         ),
         clipBehavior: Clip.antiAlias,
-        child: _hasVideo ? _buildContent() : _buildPlaceholder(),
+        child: _hasVideo ? _buildContent(context) : _buildPlaceholder(context),
       ),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final label = file != null
         ? (file!.path.split('/').last.split('\\').last)
-        : 'Video saved';
+        : l10n.adminVideoSaved;
 
     return Stack(
       children: [
@@ -950,8 +957,8 @@ class _VideoPickerTile extends StatelessWidget {
             decoration: BoxDecoration(
                 color: Colors.black54,
                 borderRadius: BorderRadius.circular(8)),
-            child: const Text('Tap to change',
-                style: TextStyle(color: Colors.white, fontSize: 11)),
+            child: Text(l10n.adminTapToChange,
+                style: const TextStyle(color: Colors.white, fontSize: 11)),
           ),
         ),
         Positioned(
@@ -971,7 +978,8 @@ class _VideoPickerTile extends StatelessWidget {
     );
   }
 
-  Widget _buildPlaceholder() {
+  Widget _buildPlaceholder(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -979,7 +987,7 @@ class _VideoPickerTile extends StatelessWidget {
             size: 40, color: AppColors.primary.withValues(alpha: 0.5)),
         const SizedBox(height: 8),
         Text(
-          'Tap to pick a video',
+          l10n.adminTapPickVideo,
           style: TextStyle(
               color: AppColors.primary.withValues(alpha: 0.6), fontSize: 13),
         ),
@@ -1085,6 +1093,7 @@ class _AddGalleryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -1106,7 +1115,7 @@ class _AddGalleryTile extends StatelessWidget {
                 color: AppColors.primary.withValues(alpha: 0.5)),
             const SizedBox(height: 4),
             Text(
-              'Add',
+              l10n.adminAdd,
               style: TextStyle(
                   fontSize: 11,
                   color: AppColors.primary.withValues(alpha: 0.6)),

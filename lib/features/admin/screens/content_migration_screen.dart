@@ -11,6 +11,7 @@ import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'dart:convert';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class ContentMigrationScreen extends ConsumerStatefulWidget {
   const ContentMigrationScreen({super.key});
@@ -28,23 +29,20 @@ class _ContentMigrationScreenState
   String? _error;
 
   Future<void> _runMigration() async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Migrate All Content'),
-        content: const Text(
-          'This will classify all attractions, trips, events, and cultural items '
-          'using Gemini AI. Takes 3-7 minutes. Make sure you have a stable internet '
-          'connection. Continue?',
-        ),
+        title: Text(l10n.adminMigrateAllTitle),
+        content: Text(l10n.adminMigrateAllBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.adminCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Run Migration'),
+            child: Text(l10n.adminRunMigration),
           ),
         ],
       ),
@@ -77,6 +75,7 @@ class _ContentMigrationScreenState
   }
 
   Future<void> _runEmbedMissing() async {
+  final l10n = AppLocalizations.of(context);
   setState(() => _isEmbedding = true);
   try {
     final callable = FirebaseFunctions.instanceFor(region: 'us-central1')
@@ -95,7 +94,7 @@ class _ContentMigrationScreenState
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('اكتملت العملية ✨'),
+          title: Text(l10n.adminOperationComplete),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +103,12 @@ class _ContentMigrationScreenState
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Text(
-                  '${e.key}: تم ${s['processed']} | متخطى ${s['skipped']} | فشل ${s['failed']}',
+                  l10n.adminEmbeddingStatsLine(
+                    e.key,
+                    (s['processed'] ?? 0).toString(),
+                    (s['skipped'] ?? 0).toString(),
+                    (s['failed'] ?? 0).toString(),
+                  ),
                 ),
               );
             }).toList(),
@@ -112,7 +116,7 @@ class _ContentMigrationScreenState
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('حسناً'),
+              child: Text(l10n.commonOk),
             ),
           ],
         ),
@@ -121,7 +125,7 @@ class _ContentMigrationScreenState
   } catch (e) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('خطأ: $e'), backgroundColor: Colors.red),
+        SnackBar(content: Text(l10n.commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
       );
     }
   } finally {
@@ -132,10 +136,11 @@ class _ContentMigrationScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Content Migration'),
+        title: Text(l10n.adminMigrationTitle),
         backgroundColor: theme.colorScheme.surface,
       ),
       body: Padding(
@@ -147,15 +152,14 @@ class _ContentMigrationScreenState
                 size: 64, color: theme.colorScheme.primary),
             const SizedBox(height: 16),
             Text(
-              'AI Content Classification',
+              l10n.adminMigrationHeading,
               style: theme.textTheme.headlineSmall
                   ?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
-              'Generates interestIds and embedding vectors for all '
-              'attractions, trips, events, and cultural items.',
+              l10n.adminMigrationDescription,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
               ),
@@ -178,8 +182,8 @@ class _ContentMigrationScreenState
                   : const Icon(Icons.play_arrow),
               label: Text(
                 _isMigrating
-                    ? 'Migrating... (3-7 minutes)'
-                    : 'Run Migration',
+                    ? l10n.adminMigratingProgress
+                    : l10n.adminRunMigration,
                 style: const TextStyle(
                     fontWeight: FontWeight.bold, color: Colors.white),
               ),
@@ -195,7 +199,7 @@ class _ContentMigrationScreenState
                     )
                   : const Icon(Icons.auto_awesome),
               label: Text(
-                _isEmbedding ? 'جاري توليد الـ Embeddings...' : 'توليد الـ Embeddings الناقصة',
+                _isEmbedding ? l10n.adminEmbeddingProgress : l10n.adminGenerateMissingEmbeddings,
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
@@ -219,7 +223,7 @@ class _ContentMigrationScreenState
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            title: const Text('Document Shapes'),
+            title: Text(l10n.adminDocumentShapes),
             content: SizedBox(
               width: double.maxFinite,
               child: SingleChildScrollView(
@@ -232,7 +236,7 @@ class _ContentMigrationScreenState
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('حسناً'),
+                child: Text(l10n.commonOk),
               ),
             ],
           ),
@@ -241,13 +245,13 @@ class _ContentMigrationScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('خطأ: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
   },
   icon: const Icon(Icons.bug_report_outlined),
-  label: const Text('فحص شكل البيانات'),
+  label: Text(l10n.adminInspectDataShape),
 ),
 
             // Results
@@ -275,7 +279,7 @@ class _ContentMigrationScreenState
               const Icon(Icons.check_circle, color: Colors.green),
               const SizedBox(width: 8),
               Text(
-                'Migration Complete',
+                AppLocalizations.of(context).adminMigrationComplete,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Colors.green.shade900,
@@ -322,7 +326,7 @@ class _ContentMigrationScreenState
               const Icon(Icons.error_outline, color: Colors.red),
               const SizedBox(width: 8),
               Text(
-                'Migration Failed',
+                AppLocalizations.of(context).adminMigrationFailed,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Colors.red.shade900,

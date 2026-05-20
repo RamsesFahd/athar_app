@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/features/interactive_map/logic/map_notifier.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class MapFilterChips extends ConsumerWidget {
   final MapFilter activeFilter;
@@ -15,22 +15,22 @@ class MapFilterChips extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isAr = ref.watch(settingsProvider).locale.languageCode == 'ar';
+    final l10n = AppLocalizations.of(context);
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          _chip(context, isAr ? 'الكل' : 'All', MapFilter.all),
+          _chip(context, l10n.filterAll, MapFilter.all),
           const SizedBox(width: 8),
-          _chip(context, isAr ? 'المعالم الثقافية' : 'Landmarks', MapFilter.landmarks),
+          _chip(context, l10n.mapLandmarks, MapFilter.landmarks),
           const SizedBox(width: 8),
-          _chip(context, isAr ? 'المعالم السياحية' : 'Attractions', MapFilter.attractions),
+          _chip(context, l10n.mapAttractions, MapFilter.attractions),
           const SizedBox(width: 8),
-          _chip(context, isAr ? 'الفعاليات' : 'Events', MapFilter.events),
+          _chip(context, l10n.mapEvents, MapFilter.events),
           const SizedBox(width: 8),
-          _chip(context, isAr ? 'قريب مني' : 'Near Me', MapFilter.nearMe),
+          _chip(context, l10n.mapNearMe, MapFilter.nearMe),
         ],
       ),
     );

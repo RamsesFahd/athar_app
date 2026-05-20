@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:athar_app/core/models/attractions/attraction_model.dart';
 import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/services/tts_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -64,13 +65,13 @@ class AttractionDetailsScreen extends ConsumerWidget {
     }
   }
 
-  void _share(BuildContext context, bool isAr) {
+  void _share(BuildContext context, AppLocalizations l10n) {
     final url =
         'https://maps.google.com/?q=${attraction.coordinates.latitude},${attraction.coordinates.longitude}';
     Clipboard.setData(ClipboardData(text: url));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(isAr ? 'تم نسخ الرابط' : 'Link copied'),
+        content: Text(l10n.commonLinkCopied),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -79,6 +80,7 @@ class AttractionDetailsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final accent = _hexColor(attraction.categoryColorCode);
     final gallery = attraction.gallery;
@@ -126,9 +128,9 @@ class AttractionDetailsScreen extends ConsumerWidget {
                           Expanded(
                             child: _InfoCard(
                               icon: Icons.schedule_outlined,
-                              title: isAr ? 'ساعات العمل' : 'Hours',
+                              title: l10n.attractionHours,
                               value: Text(attraction.isAlwaysOpen
-                                  ? (isAr ? 'مفتوح 24/7' : 'Always Open')
+                                  ? l10n.attractionAlwaysOpen
                                   : attraction.getOpeningHours(isAr)),
                               color: accent,
                               isAr: isAr,
@@ -138,9 +140,9 @@ class AttractionDetailsScreen extends ConsumerWidget {
                           Expanded(
                             child: _InfoCard(
                               icon: Icons.payments_outlined,
-                              title: isAr ? 'رسوم الدخول' : 'Entry Fee',
+                              title: l10n.attractionEntryFee,
                               value: attraction.entryFee == 0
-                                  ? Text(isAr ? 'مجاني' : 'Free')
+                                  ? Text(l10n.commonFree)
                                   : CurrencyFormatter.format(attraction.entryFee),
                               color: attraction.entryFee == 0
                                   ? Colors.green.shade600
@@ -156,7 +158,7 @@ class AttractionDetailsScreen extends ConsumerWidget {
 
                       // ── Description ──────────────────────────────────
                       Text(
-                        isAr ? 'الوصف' : 'About',
+                        l10n.attractionAbout,
                         style: _sectionTitleStyle(isAr, theme),
                       ),
                       const SizedBox(height: 10),
@@ -169,7 +171,7 @@ class AttractionDetailsScreen extends ConsumerWidget {
                       // ── Location ─────────────────────────────────────
                       const SizedBox(height: 24),
                       Text(
-                        isAr ? 'الموقع' : 'Location',
+                        l10n.locationLabel,
                         style: _sectionTitleStyle(isAr, theme),
                       ),
                       const SizedBox(height: 10),
@@ -199,7 +201,7 @@ class AttractionDetailsScreen extends ConsumerWidget {
                                   color: accent, size: 18),
                               const SizedBox(width: 8),
                               Text(
-                                isAr ? 'احجز تذاكرك هنا' : 'Get tickets here',
+                                l10n.attractionTicketLink,
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: accent,
                                   fontWeight: FontWeight.w700,
@@ -252,7 +254,7 @@ class AttractionDetailsScreen extends ConsumerWidget {
 
         _CircleNavButton(
           icon: Icons.share_outlined,
-          onTap: () => _share(context, isAr),
+          onTap: () => _share(context, l10n),
         ),
       ],
     ),
@@ -285,7 +287,7 @@ class AttractionDetailsScreen extends ConsumerWidget {
                 child: ElevatedButton.icon(
                   onPressed: _openDirections,
                   icon: const Icon(Icons.directions_outlined),
-                  label: Text(isAr ? 'احصل على الاتجاهات' : 'Get Directions'),
+                  label: Text(l10n.attractionGetDirections),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accent,
                     foregroundColor: Colors.white,

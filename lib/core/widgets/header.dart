@@ -16,7 +16,7 @@ class Header extends ConsumerWidget implements PreferredSizeWidget {
     this.title,
     this.isHome = false,
   });
-
+  
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);

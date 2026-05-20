@@ -11,6 +11,7 @@ import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/contributions/widgets/badge_card.dart';
 import 'package:athar_app/features/profile/widgets/tourist_profile.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 // Stream provider family — keyed by touristId
 final _touristContributionsProvider = StreamProvider.autoDispose
@@ -64,14 +65,15 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isArabic = Directionality.of(context) == TextDirection.rtl;
     final authState = ref.watch(authNotifierProvider);
 
     return authState.when(
       data: (user) {
         if (user == null || user.role == UserRole.guest) {
-          return const Scaffold(
-            body: Center(child: Text('User not available')),
+          return Scaffold(
+            body: Center(child: Text(l10n.contributionUserUnavailable)),
           );
         }
 
@@ -99,7 +101,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
             final repo = ref.read(contributionRepositoryProvider);
             final stats = repo.computeStats(contributions);
             final achievements = repo.computeAchievements(contributions);
-            final badges = _buildBadges(achievements, isArabic, theme);
+            final badges = _buildBadges(achievements, isArabic, theme, l10n);
 
             return Scaffold(
               floatingActionButton: FloatingActionButton(
@@ -145,6 +147,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
                             _buildLevelCard(
                               theme,
                               isArabic,
+                              l10n: l10n,
                               currentPoints: stats.totalPoints,
                               maxPoints: _nextLevelPoints,
                             ),
@@ -153,6 +156,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
                             _buildStatsRow(
                               theme,
                               isArabic,
+                              l10n: l10n,
                               contributionsCount: stats.contributionsCount,
                               totalFavorites: stats.totalLikes,
                               totalShares: stats.totalShares,
@@ -162,24 +166,24 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
 
                             _buildSectionTitle(
                               theme,
-                              isArabic ? 'الإنجازات' : 'Achievements',
+                              l10n.contributionAchievementsSection,
                             ),
                             const SizedBox(height: 12),
 
                             badges.isEmpty
-                                ? _buildBadgesEmptyMessage(theme, isArabic)
+                                ? _buildBadgesEmptyMessage(theme, l10n)
                                 : _buildAchievementsRow(badges),
 
                             const SizedBox(height: 24),
 
                             _buildSectionTitle(
                               theme,
-                              isArabic ? 'مساهماتي' : 'My Contributions',
+                              l10n.contributionMyContributionsSection,
                             ),
                             const SizedBox(height: 12),
 
                             if (contributions.isEmpty)
-                              _buildContributionsEmptyMessage(theme, isArabic)
+                              _buildContributionsEmptyMessage(theme, l10n)
                             else
                               ...contributions.map(
                                 (item) => Padding(
@@ -211,19 +215,16 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
   }
 
   void _showPhoneGuardDialog(BuildContext context, bool isArabic) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(isArabic
-            ? 'التحقق من الجوال مطلوب'
-            : 'Phone Verification Required'),
-        content: Text(isArabic
-            ? 'يجب التحقق من رقم جوالك أولاً لإضافة مساهمة. توجّه إلى الملف الشخصي لإكمال التحقق.'
-            : 'You must verify your phone number before adding a contribution. Go to your profile to complete verification.'),
+        title: Text(l10n.contributionPhoneVerificationRequiredTitle),
+        content: Text(l10n.contributionPhoneVerificationRequiredBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(isArabic ? 'حسناً' : 'OK'),
+            child: Text(l10n.commonOk),
           ),
         ],
       ),
@@ -235,6 +236,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
     List<AchievementData> achievements,
     bool isArabic,
     ThemeData theme,
+    AppLocalizations l10n,
   ) {
     final defs = [
       (
@@ -281,7 +283,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
             id: def.id, isEarned: false, current: 0, target: 1),
       );
       final progressLabel = data.isEarned
-          ? (isArabic ? 'مكتمل' : 'Completed')
+          ? l10n.contributionCompleted
           : '${data.current}/${data.target}';
 
       return _BadgeUiModel(
@@ -334,6 +336,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
   Widget _buildLevelCard(
     ThemeData theme,
     bool isArabic, {
+    required AppLocalizations l10n,
     required int currentPoints,
     required int maxPoints,
   }) {
@@ -362,13 +365,13 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            isArabic ? 'مستوى المساهم' : 'Contributor Level',
+            l10n.contributionContributorLevel,
             style: theme.textTheme.titleSmall
                 ?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 12),
           Text(
-            isArabic ? 'مساهم نشط' : 'Active Contributor',
+            l10n.contributionActiveContributor,
             style: theme.textTheme.bodyLarge
                 ?.copyWith(fontWeight: FontWeight.w700),
           ),
@@ -385,7 +388,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 3),
                 child: Text(
-                  isArabic ? 'نقطة' : 'pts',
+                  l10n.contributionPointsUnit,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: theme.textTheme.bodySmall?.color
@@ -444,6 +447,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
   Widget _buildStatsRow(
     ThemeData theme,
     bool isArabic, {
+    required AppLocalizations l10n,
     required int contributionsCount,
     required int totalFavorites,
     required int totalShares,
@@ -452,20 +456,20 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
     final stats = [
       _StatItem(
           value: '$contributionsCount',
-          label: isArabic ? 'مساهمات' : 'Contributions',
+          label: l10n.contributions,
           icon: Icons.edit_note_rounded),
       _StatItem(
           value: '$totalFavorites',
-          label: isArabic ? 'إعجابات' : 'Likes',
+          label: l10n.contributionLikes,
           icon: Icons.favorite_rounded),
       _StatItem(
           value: '$totalShares',
-          label: isArabic ? 'مشاركات' : 'Shares',
+          label: l10n.contributionShares,
           icon: Icons.share_outlined),
       _StatItem(
           value: '$qualityBonusCount',
-          label: isArabic ? 'جودة عالية' : 'Quality',
-          subtitle: isArabic ? 'مساهمات متميزة' : 'Top contributions',
+          label: l10n.contributionQuality,
+          subtitle: l10n.contributionTopContributions,
           icon: Icons.stars_rounded),
     ];
 
@@ -538,7 +542,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
             ?.copyWith(fontWeight: FontWeight.w800));
   }
 
-  Widget _buildBadgesEmptyMessage(ThemeData theme, bool isArabic) {
+  Widget _buildBadgesEmptyMessage(ThemeData theme, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -548,14 +552,14 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
             Border.all(color: theme.dividerColor.withValues(alpha: 0.08)),
       ),
       child: Text(
-        isArabic ? 'لا توجد إنجازات بعد' : 'No achievements yet',
+        l10n.contributionNoAchievements,
         style:
             theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
       ),
     );
   }
 
-  Widget _buildContributionsEmptyMessage(ThemeData theme, bool isArabic) {
+  Widget _buildContributionsEmptyMessage(ThemeData theme, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -565,7 +569,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
             Border.all(color: theme.dividerColor.withValues(alpha: 0.08)),
       ),
       child: Text(
-        isArabic ? 'لا توجد مساهمات بعد' : 'No contributions yet',
+        l10n.contributionNoContributions,
         style:
             theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
       ),
@@ -604,6 +608,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
     ContributionModel item,
     bool isArabic,
   ) async {
+    final l10n = AppLocalizations.of(context);
     if (item.status == ContributionStatus.rejected) {
       Navigator.push(
         context,
@@ -620,9 +625,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
       if (archiveId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(isArabic
-                ? 'هذه المساهمة لا تحتوي على رابط للأرشيف'
-                : 'This contribution has no archive link yet'),
+            content: Text(l10n.contributionArchiveLinkMissing),
           ),
         );
         return;
@@ -634,9 +637,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
       if (culturalItem == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(isArabic
-                ? 'تعذّر العثور على العنصر في الأرشيف'
-                : 'Archive item not found'),
+            content: Text(l10n.contributionArchiveItemNotFound),
           ),
         );
         return;
@@ -657,22 +658,23 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
     ContributionModel item,
     bool isArabic,
   ) {
+    final l10n = AppLocalizations.of(context);
     // Map approved → published label
     final (statusBg, statusColor, statusLabel) = switch (item.status) {
       ContributionStatus.approved => (
           theme.colorScheme.primary.withValues(alpha: 0.10),
           theme.colorScheme.primary,
-          isArabic ? 'منشور' : 'Published',
+          l10n.contributionPublished,
         ),
       ContributionStatus.pending => (
           theme.colorScheme.tertiary.withValues(alpha: 0.12),
           theme.colorScheme.tertiary,
-          isArabic ? 'قيد المراجعة' : 'Pending',
+          l10n.contributionPending,
         ),
       ContributionStatus.rejected => (
           theme.colorScheme.error.withValues(alpha: 0.10),
           theme.colorScheme.error,
-          isArabic ? 'مرفوض' : 'Rejected',
+          l10n.contributionRejected,
         ),
     };
 
@@ -688,10 +690,10 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
 
     final helperText = switch (item.status) {
       ContributionStatus.pending =>
-        isArabic ? 'بانتظار مراجعة المشرف' : 'Waiting for admin review',
+        l10n.contributionWaitingForReview,
       ContributionStatus.rejected =>
         item.rejectionReason ??
-            (isArabic ? 'تم رفض المساهمة' : 'Contribution was rejected'),
+            l10n.contributionRejectedDefault,
       ContributionStatus.approved => '',
     };
 
@@ -745,7 +747,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
                             child: Text(
                               item.displayTitle.isNotEmpty
                                   ? item.displayTitle
-                                  : (isArabic ? 'بلا عنوان' : 'No title'),
+                                  : l10n.commonNoTitle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.titleSmall

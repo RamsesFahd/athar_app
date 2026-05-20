@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
 import 'package:athar_app/features/notifications/widgets/notification_card.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
@@ -11,16 +12,16 @@ class NotificationsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final l10n = AppLocalizations.of(context);
     final user = ref.watch(authNotifierProvider).valueOrNull;
 
     if (user == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(isAr ? 'التنبيهات' : 'Notifications'),
+          title: Text(l10n.notificationsTitle),
         ),
         body: Center(
-          child: Text(isAr ? 'يرجى تسجيل الدخول' : 'Please sign in'),
+          child: Text(l10n.notificationsSignInRequired),
         ),
       );
     }
@@ -32,7 +33,7 @@ class NotificationsScreen extends ConsumerWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          isAr ? 'التنبيهات' : 'Notifications',
+          l10n.notificationsTitle,
           style: theme.textTheme.titleLarge,
         ),
         centerTitle: true,
@@ -46,25 +47,25 @@ class NotificationsScreen extends ConsumerWidget {
         ),
         error: (e, _) => Center(
           child: Text(
-            isAr ? 'حدث خطأ أثناء تحميل التنبيهات' : 'Failed to load notifications',
+            l10n.notificationsLoadError,
             style: theme.textTheme.bodyMedium,
           ),
         ),
         data: (notifications) {
-  if (notifications.isEmpty) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Text(
-          isAr ? 'لا توجد تنبيهات حتى الآن' : 'No notifications yet',
-          textAlign: TextAlign.center,
-          style: theme.textTheme.bodyLarge,
-        ),
-      ),
-    );
-  }
+          if (notifications.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  l10n.notificationsEmptyState,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyLarge,
+                ),
+              ),
+            );
+          }
 
-            return ListView.separated(
+          return ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: notifications.length,
             separatorBuilder: (_, __) => const SizedBox(height: 12),

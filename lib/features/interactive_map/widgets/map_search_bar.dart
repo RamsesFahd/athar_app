@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class MapSearchBar extends ConsumerStatefulWidget {
   final ValueChanged<String> onChanged;
@@ -39,6 +40,7 @@ class _MapSearchBarState extends ConsumerState<MapSearchBar> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     final isAr = ref.watch(settingsProvider).locale.languageCode == 'ar';
     final textDir = isAr ? TextDirection.rtl : TextDirection.ltr;
 
@@ -50,9 +52,7 @@ class _MapSearchBarState extends ConsumerState<MapSearchBar> {
         onChanged: widget.onChanged,
         textDirection: textDir,
         decoration: InputDecoration(
-          hintText: isAr
-              ? 'ابحث عن معالم أو فعاليات...'
-              : 'Search landmarks or events...',
+          hintText: l10n.mapSearchHint,
           hintTextDirection: textDir,
           prefixIcon: Icon(Icons.search, color: colorScheme.primary),
           suffixIcon: _hasText

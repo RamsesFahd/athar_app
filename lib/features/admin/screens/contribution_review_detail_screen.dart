@@ -10,6 +10,7 @@ import 'package:athar_app/services/gemini_service.dart';
 import 'package:athar_app/features/contributions/logic/contribution_repository.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_repository.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class ContributionReviewDetailScreen extends ConsumerStatefulWidget {
   final ContributionModel contribution;
@@ -82,7 +83,7 @@ class _ContributionReviewDetailScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Translation failed: $e'),
+          content: Text(AppLocalizations.of(context).adminTranslationFailed(e.toString())),
           backgroundColor: Colors.red,
         ),
       );
@@ -94,6 +95,7 @@ class _ContributionReviewDetailScreenState
   // ── Approve ─────────────────────────────────────────────────────────────────
 
   Future<void> _showApproveDialog() async {
+    final l10n = AppLocalizations.of(context);
     final targetTitle = _targetTitleController.text.trim();
     final targetDesc = _targetDescController.text.trim();
 
@@ -102,8 +104,8 @@ class _ContributionReviewDetailScreenState
         SnackBar(
           content: Text(
             _submittedInAr
-                ? 'Please fill English title and description before approving.'
-                : 'Please fill Arabic title and description before approving.',
+                ? l10n.adminFillEnglishBeforeApprove
+                : l10n.adminFillArabicBeforeApprove,
           ),
           backgroundColor: Colors.orange,
         ),
@@ -114,20 +116,21 @@ class _ContributionReviewDetailScreenState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Approve Contribution'),
-        content: Text(
-          'Approve "${c.displayTitle}" by ${c.touristName}?\n\n'
-          'This will award ${ContributionRepository.getPoints(c.category, c.mediaType)} points to the tourist.',
-        ),
+        title: Text(l10n.adminApproveContribution),
+        content: Text(l10n.adminApproveContributionConfirm(
+          c.displayTitle,
+          c.touristName,
+          ContributionRepository.getPoints(c.category, c.mediaType),
+        )),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.adminCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(backgroundColor: Colors.green),
-            child: const Text('Approve'),
+            child: Text(l10n.adminApprove),
           ),
         ],
       ),
@@ -165,8 +168,8 @@ class _ContributionReviewDetailScreenState
       ref.invalidate(culturalNotifierProvider);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Contribution approved successfully'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).adminContributionApproved),
           backgroundColor: Colors.green,
         ),
       );
@@ -174,7 +177,7 @@ class _ContributionReviewDetailScreenState
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -184,6 +187,7 @@ class _ContributionReviewDetailScreenState
   // ── Reject ──────────────────────────────────────────────────────────────────
 
   Future<void> _showRejectSheet() async {
+    final l10n = AppLocalizations.of(context);
     final reasonController = TextEditingController();
     await showModalBottomSheet(
       context: context,
@@ -203,23 +207,22 @@ class _ContributionReviewDetailScreenState
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Reject Contribution',
-                style: TextStyle(
+              Text(
+                l10n.adminRejectContribution,
+                style: const TextStyle(
                     fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'Provide a reason so the tourist knows what to improve.',
-                style: TextStyle(color: Colors.grey),
+              Text(
+                l10n.adminRejectContributionHelp,
+                style: const TextStyle(color: Colors.grey),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: reasonController,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  hintText:
-                      'e.g. Image quality is too low, please resubmit with a clearer photo.',
+                  hintText: l10n.adminRejectReasonHint,
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12)),
                 ),
@@ -234,15 +237,15 @@ class _ContributionReviewDetailScreenState
                     final reason = reasonController.text.trim();
                     if (reason.isEmpty) {
                       ScaffoldMessenger.of(ctx).showSnackBar(
-                        const SnackBar(
-                            content: Text('Please enter a reason.')),
+                        SnackBar(
+                            content: Text(l10n.adminPleaseEnterReason)),
                       );
                       return;
                     }
                     Navigator.pop(ctx);
                     await _reject(reason);
                   },
-                  child: const Text('Reject'),
+                  child: Text(l10n.adminReject),
                 ),
               ),
             ],
@@ -266,13 +269,13 @@ class _ContributionReviewDetailScreenState
           );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Contribution rejected')),
+        SnackBar(content: Text(AppLocalizations.of(context).adminContributionRejected)),
       );
       Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -284,11 +287,12 @@ class _ContributionReviewDetailScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isPending = c.status == ContributionStatus.pending;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Review Contribution'),
+        title: Text(l10n.adminReviewContribution),
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -318,6 +322,7 @@ class _ContributionReviewDetailScreenState
   }
 
   Widget _buildMediaPreview(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: c.mediaType == 'image'
@@ -342,8 +347,8 @@ class _ContributionReviewDetailScreenState
                       size: 56,
                       color: theme.colorScheme.primary),
                   const SizedBox(height: 8),
-                  const Text('Video Contribution',
-                      style: TextStyle(fontWeight: FontWeight.w600)),
+                  Text(l10n.adminVideoContribution,
+                      style: const TextStyle(fontWeight: FontWeight.w600)),
                 ],
               ),
             ),
@@ -351,16 +356,18 @@ class _ContributionReviewDetailScreenState
   }
 
   Widget _buildTouristInfo(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     return _InfoCard(
-      title: 'Tourist',
+      title: l10n.adminTourist,
       children: [
-        _InfoRow(icon: Icons.person_outline, label: 'Name', value: c.touristName),
-        _InfoRow(icon: Icons.email_outlined, label: 'Email', value: c.touristEmail),
+        _InfoRow(icon: Icons.person_outline, label: l10n.adminName, value: c.touristName),
+        _InfoRow(icon: Icons.email_outlined, label: l10n.adminEmail, value: c.touristEmail),
       ],
     );
   }
 
   Widget _buildSubmissionInfo(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     final region = regionLabel(c.regionId, isArabic: false);
     final regionAr = regionLabel(c.regionId, isArabic: true);
     final city = cityLabel(c.cityId, isArabic: false);
@@ -368,30 +375,30 @@ class _ContributionReviewDetailScreenState
     final date = DateFormat('MMM d, yyyy – HH:mm').format(c.createdAt);
 
     return _InfoCard(
-      title: 'Submission Details',
+      title: l10n.adminSubmissionDetails,
       children: [
         _InfoRow(
             icon: Icons.category_outlined,
-            label: 'Category',
+            label: l10n.adminCategory,
             value: c.category.replaceAll('_', ' ').toUpperCase()),
         _InfoRow(
             icon: Icons.location_on_outlined,
-            label: 'Region',
+            label: l10n.adminRegion,
             value: '$regionAr / $region'),
         _InfoRow(
             icon: Icons.location_city_outlined,
-            label: 'City',
+            label: l10n.adminCity,
             value: '$cityAr / $city'),
         _InfoRow(
             icon: Icons.language,
-            label: 'Submitted in',
-            value: c.submissionLanguage == 'ar' ? 'Arabic' : 'English'),
-        _InfoRow(icon: Icons.calendar_today_outlined, label: 'Date', value: date),
+            label: l10n.adminSubmittedIn,
+            value: c.submissionLanguage == 'ar' ? l10n.arabic : l10n.english),
+        _InfoRow(icon: Icons.calendar_today_outlined, label: l10n.adminDate, value: date),
         if (c.status == ContributionStatus.rejected &&
             c.rejectionReason != null)
           _InfoRow(
               icon: Icons.cancel_outlined,
-              label: 'Rejection reason',
+              label: l10n.adminRejectionReason,
               value: c.rejectionReason!,
               valueColor: Colors.red),
       ],
@@ -401,15 +408,16 @@ class _ContributionReviewDetailScreenState
   Widget _buildSourceContent(ThemeData theme) {
     final sourceTitle = _submittedInAr ? c.titleAr : c.titleEn;
     final sourceDesc = _submittedInAr ? c.descriptionAr : c.descriptionEn;
-    final langLabel = _submittedInAr ? 'Arabic (by tourist)' : 'English (by tourist)';
+    final l10n = AppLocalizations.of(context);
+    final langLabel = _submittedInAr ? l10n.adminArabicByTourist : l10n.adminEnglishByTourist;
 
     return _InfoCard(
       title: langLabel,
       children: [
-        _InfoRow(icon: Icons.title, label: 'Title', value: sourceTitle),
+        _InfoRow(icon: Icons.title, label: l10n.adminTitle, value: sourceTitle),
         _InfoRow(
             icon: Icons.notes_rounded,
-            label: 'Description',
+            label: l10n.adminDescription,
             value: sourceDesc,
             maxLines: 6),
       ],
@@ -417,8 +425,9 @@ class _ContributionReviewDetailScreenState
   }
 
   Widget _buildTargetContent(ThemeData theme, bool isPending) {
+    final l10n = AppLocalizations.of(context);
     final targetLangLabel =
-        _submittedInAr ? 'English (admin fills)' : 'Arabic (admin fills)';
+        _submittedInAr ? l10n.adminEnglishAdminFills : l10n.adminArabicAdminFills;
 
     return _InfoCard(
       title: targetLangLabel,
@@ -436,7 +445,7 @@ class _ContributionReviewDetailScreenState
                           child: CircularProgressIndicator(strokeWidth: 2))
                       : const Icon(Icons.auto_fix_high_rounded, size: 18),
                   label: Text(
-                      _isTranslating ? 'Translating…' : 'Auto-translate with AI'),
+                      _isTranslating ? l10n.adminTranslating : l10n.adminAutoTranslate),
                 ),
               ),
             ],
@@ -447,7 +456,7 @@ class _ContributionReviewDetailScreenState
           controller: _targetTitleController,
           readOnly: !isPending,
           decoration: InputDecoration(
-            labelText: 'Title',
+            labelText: l10n.adminTitle,
             prefixIcon: const Icon(Icons.title),
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12)),
@@ -459,7 +468,7 @@ class _ContributionReviewDetailScreenState
           readOnly: !isPending,
           maxLines: 5,
           decoration: InputDecoration(
-            labelText: 'Description',
+            labelText: l10n.adminDescription,
             prefixIcon: const Icon(Icons.notes_rounded),
             alignLabelWithHint: true,
             border: OutlineInputBorder(
@@ -471,14 +480,15 @@ class _ContributionReviewDetailScreenState
   }
 
   Widget _buildActionRow(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         Expanded(
           child: OutlinedButton.icon(
             onPressed: _isLoading ? null : _showRejectSheet,
             icon: const Icon(Icons.cancel_outlined, color: Colors.red),
-            label: const Text('Reject',
-                style: TextStyle(color: Colors.red)),
+            label: Text(l10n.adminReject,
+                style: const TextStyle(color: Colors.red)),
             style: OutlinedButton.styleFrom(
               side: const BorderSide(color: Colors.red),
               padding: const EdgeInsets.symmetric(vertical: 14),
@@ -492,7 +502,7 @@ class _ContributionReviewDetailScreenState
           child: FilledButton.icon(
             onPressed: _isLoading ? null : _showApproveDialog,
             icon: const Icon(Icons.check_circle_outline),
-            label: const Text('Approve'),
+            label: Text(l10n.adminApprove),
             style: FilledButton.styleFrom(
               backgroundColor: Colors.green,
               padding: const EdgeInsets.symmetric(vertical: 14),
