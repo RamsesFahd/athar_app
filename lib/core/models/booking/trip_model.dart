@@ -1,4 +1,5 @@
 import 'package:athar_app/core/utils/currency_formatter.dart';
+import 'package:athar_app/features/home/models/hero_ai_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TripModel {
@@ -22,6 +23,7 @@ class TripModel {
   final String tutorType; // 'individual' | 'company'
   final List<String> accessibilityFeatures;
   final List<String> interestIds;
+  final HeroAiText? heroCopy;
 
   // ── Guide snapshot ────────────────────────────────────────────────────────
   final String? guideBio;
@@ -84,6 +86,7 @@ class TripModel {
     this.guideReviewsCount,
     this.tripLanguages,
     this.interestIds = const [],
+    this.heroCopy,
     this.allowsKids = false,
     this.maxCapacity,
     this.startTime,
@@ -174,6 +177,9 @@ class TripModel {
       startDate: (map['startDate'] as Timestamp?)?.toDate(),
       endDate: (map['endDate'] as Timestamp?)?.toDate(),
       availableSeats: map['availableSeats'] as int?,
+      heroCopy: map['heroCopy'] is Map
+          ? HeroAiText.fromMap(Map<String, dynamic>.from(map['heroCopy'] as Map))
+          : null,
     );
   }
 

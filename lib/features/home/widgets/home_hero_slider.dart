@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +16,7 @@ import 'package:athar_app/features/cultural_archive/widgets/cultural_item_detail
 import 'package:athar_app/features/events/logic/events_repository.dart';
 import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
 import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
-import 'package:athar_app/services/gemini_service.dart';
+import 'package:athar_app/features/home/models/hero_ai_text.dart';
 
 class HomeHeroSlider extends ConsumerStatefulWidget {
   const HomeHeroSlider({super.key});
@@ -32,9 +31,6 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
   int _currentIndex = 0;
   int _lastLength = 0;
   late final int _rotationSeed;
-
-  String? _lastSignature;
-  Map<int, _AiHeroText> _aiTexts = {};
 
   T _pickByRotation<T>(List<T> items, int offset) {
   final index = (_rotationSeed + offset) % items.length;
@@ -77,74 +73,6 @@ void initState() {
   });
 }
 
-  Future<void> _generateAiTexts(List<_HeroSlideData> slides) async {
-    final signature = slides.map((s) => '${s.kind}-${s.titleEn}').join('|');
-    if (_lastSignature == signature) return;
-    _lastSignature = signature;
-
-    try {
-      final gemini = ref.read(geminiServiceProvider);
-
-      final items = slides.asMap().entries.map((entry) {
-        final s = entry.value;
-        return {
-          'index': entry.key,
-          'type': s.kind.name,
-          'titleAr': s.titleAr,
-          'titleEn': s.titleEn,
-          'subtitleAr': s.subtitleAr,
-          'subtitleEn': s.subtitleEn,
-        };
-      }).toList();
-
-      final response = await gemini.getResponse(
-        systemInstruction:
-            'You are Rawi, Athar app cultural storytelling assistant. Write premium cinematic promotional hero banner copy for a Saudi cultural heritage app. Return ONLY valid JSON. No markdown.',
-        prompt: '''
-Generate bilingual hero slider copy for these items.
-
-Rules:
-- Return JSON array only.
-- Each item must include: index, titleAr, subtitleAr, titleEn, subtitleEn.
-- Arabic should feel elegant, emotional, Saudi-friendly, and promotional.
-- English should be short, polished, and premium.
-- Do NOT mention AI.
-- Do NOT use generic phrases.
-- Title max 7 words.
-- Subtitle max 12 words.
-
-Items:
-${jsonEncode(items)}
-''',
-      );
-
-      final cleaned =
-          response.replaceAll('```json', '').replaceAll('```', '').trim();
-
-      final parsed = jsonDecode(cleaned);
-      if (parsed is! List) return;
-
-      final result = <int, _AiHeroText>{};
-
-      for (final item in parsed) {
-        if (item is Map<String, dynamic>) {
-          final index = item['index'];
-          if (index is int) {
-            result[index] = _AiHeroText(
-              titleAr: item['titleAr']?.toString() ?? '',
-              subtitleAr: item['subtitleAr']?.toString() ?? '',
-              titleEn: item['titleEn']?.toString() ?? '',
-              subtitleEn: item['subtitleEn']?.toString() ?? '',
-            );
-          }
-        }
-      }
-
-      if (!mounted) return;
-      setState(() => _aiTexts = result);
-    } catch (_) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
@@ -179,14 +107,10 @@ ${jsonEncode(items)}
     );
 
     if (slides.isNotEmpty) {
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    _startTimer(slides.length);
-
-    if (_aiTexts.isEmpty) {
-      _generateAiTexts(slides);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _startTimer(slides.length);
+      });
     }
-  });
-}
 
     if (slides.isEmpty) return _StaticHeroFallback(isAr: isAr);
 
@@ -203,22 +127,22 @@ ${jsonEncode(items)}
 },
             itemBuilder: (context, index) {
               final slide = slides[index];
-              final ai = _aiTexts[index];
+              final heroCopy = slide.heroCopy;
 
               final title = isAr
-                  ? (ai?.titleAr.isNotEmpty == true
-                      ? ai!.titleAr
+                  ? (heroCopy?.titleAr.isNotEmpty == true
+                      ? heroCopy!.titleAr
                       : slide.titleAr)
-                  : (ai?.titleEn.isNotEmpty == true
-                      ? ai!.titleEn
+                  : (heroCopy?.titleEn.isNotEmpty == true
+                      ? heroCopy!.titleEn
                       : slide.titleEn);
 
               final subtitle = isAr
-                  ? (ai?.subtitleAr.isNotEmpty == true
-                      ? ai!.subtitleAr
+                  ? (heroCopy?.subtitleAr.isNotEmpty == true
+                      ? heroCopy!.subtitleAr
                       : slide.subtitleAr)
-                  : (ai?.subtitleEn.isNotEmpty == true
-                      ? ai!.subtitleEn
+                  : (heroCopy?.subtitleEn.isNotEmpty == true
+                      ? heroCopy!.subtitleEn
                       : slide.subtitleEn);
 
               return _CinematicHeroSlide(
@@ -258,6 +182,14 @@ ${jsonEncode(items)}
     );
   }
 
+  // Picks up to [n] items from [items] using a seeded Random for reproducible
+  // hourly rotation shared across all users with the same seed.
+  List<T> _pickN<T>(List<T> items, int n, Random rng) {
+    if (items.isEmpty || n <= 0) return [];
+    final copy = List<T>.from(items)..shuffle(rng);
+    return copy.take(n).toList();
+  }
+
   List<_HeroSlideData> _buildSlides({
     required BuildContext context,
     required List<AttractionModel> attractions,
@@ -266,6 +198,119 @@ ${jsonEncode(items)}
     required List<TripModel> trips,
     required List<String> interests,
   }) {
+    // ── Branch 1: tourist with interests ──────────────────────────────────────
+    // Filter each collection to items matching at least one of the user's
+    // interests, then pick with a seeded Random so all tourists with the same
+    // interests see identical slides within the same hour.
+    if (interests.isNotEmpty) {
+      final rng = Random(_rotationSeed);
+
+      final filteredCultural = culturalItems
+          .where((c) => c.interestIds.any(interests.contains))
+          .toList();
+      final filteredTrips = trips
+          .where((t) => t.interestIds.any(interests.contains))
+          .toList();
+      final filteredEvents = events
+          .where((e) => e.interestIds.any(interests.contains))
+          .toList();
+      final filteredAttractions = attractions
+          .where((a) => a.interestIds.any(interests.contains))
+          .toList();
+
+      // Fixed pick order so the seed always resolves to the same 5 items.
+      final pickedCultural     = _pickN(filteredCultural, 1, rng);
+      final pickedTrips        = _pickN(filteredTrips, 2, rng);
+      final pickedEvents       = _pickN(filteredEvents, 1, rng);
+      final pickedAttractions  = _pickN(filteredAttractions, 1, rng);
+
+      final slides = <_HeroSlideData>[];
+
+      for (final item in pickedCultural) {
+        slides.add(_HeroSlideData(
+          kind: item.isContribution ? _HeroKind.community : _HeroKind.archive,
+          imageUrl: item.imageUrl,
+          heroCopy: item.heroCopy,
+          badgeAr: '',
+          badgeEn: '',
+          titleAr: item.titleAr,
+          titleEn: item.titleEn,
+          subtitleAr: item.descriptionAr,
+          subtitleEn: item.descriptionEn,
+          ctaAr: item.isContribution ? 'شارك الأثر' : 'افتح الأرشيف',
+          ctaEn: item.isContribution ? 'Share Athar' : 'Open Archive',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => CulturalItemDetails(item: item)),
+          ),
+        ));
+      }
+
+      for (final trip in pickedTrips) {
+        slides.add(_HeroSlideData(
+          kind: _HeroKind.trip,
+          imageUrl: trip.imageUrl,
+          heroCopy: trip.heroCopy,
+          badgeAr: 'رحلة المنطاد',
+          badgeEn: 'Balloon Experience',
+          titleAr: trip.getTitle(true),
+          titleEn: trip.getTitle(false),
+          subtitleAr: 'حلّق فوق التفاصيل التي لا تُنسى',
+          subtitleEn: 'Rise above a landscape made for memory',
+          ctaAr: 'احجز التجربة',
+          ctaEn: 'Book Experience',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => TripDetailsScreen(trip: trip)),
+          ),
+        ));
+      }
+
+      for (final event in pickedEvents) {
+        slides.add(_HeroSlideData(
+          kind: _HeroKind.event,
+          imageUrl: event.imageUrl,
+          heroCopy: event.heroCopy,
+          badgeAr: 'العد التنازلي بدأ',
+          badgeEn: 'The Countdown Begins',
+          titleAr: event.titleAr,
+          titleEn: event.titleEn,
+          subtitleAr: 'فعالية ثقافية تقترب من لحظتها',
+          subtitleEn: 'A cultural moment is almost here',
+          countdownDate: event.eventDate,
+          ctaAr: 'استعد للتجربة',
+          ctaEn: 'Get Ready',
+          onTap: null,
+        ));
+      }
+
+      for (final attraction in pickedAttractions) {
+        slides.add(_HeroSlideData(
+          kind: _HeroKind.attraction,
+          imageUrl: attraction.mainImage,
+          heroCopy: attraction.heroCopy,
+          badgeAr: '',
+          badgeEn: '',
+          titleAr: attraction.getName(true),
+          titleEn: attraction.getName(false),
+          subtitleAr: attraction.getDescription(true),
+          subtitleEn: attraction.getDescription(false),
+          ctaAr: 'استكشف المعلم',
+          ctaEn: 'Explore Landmark',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AttractionDetailsScreen(attraction: attraction),
+            ),
+          ),
+        ));
+      }
+
+      return slides.take(5).toList();
+    }
+
+    // ── Branch 2: guide, visitor, or tourist with no interests ─────────────
+    // Existing hourly-rotation behaviour — unchanged.
     final slides = <_HeroSlideData>[];
 
     if (events.isNotEmpty) {
@@ -274,6 +319,7 @@ ${jsonEncode(items)}
         _HeroSlideData(
           kind: _HeroKind.event,
           imageUrl: event.imageUrl,
+          heroCopy: event.heroCopy,
           badgeAr: 'العد التنازلي بدأ',
           badgeEn: 'The Countdown Begins',
           titleAr: event.titleAr,
@@ -287,100 +333,101 @@ ${jsonEncode(items)}
         ),
       );
     }
-if (attractions.isNotEmpty) {
-  final attraction = _pickByRotation(attractions, 1);
 
-  slides.add(
-    _HeroSlideData(
-      kind: _HeroKind.attraction,
-      imageUrl: attraction.mainImage,
-      badgeAr: '',
-      badgeEn: '',
-      titleAr: attraction.getName(true),
-      titleEn: attraction.getName(false),
-      subtitleAr: attraction.getDescription(true),
-      subtitleEn: attraction.getDescription(false),
-      ctaAr: 'استكشف المعلم',
-      ctaEn: 'Explore Landmark',
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => AttractionDetailsScreen(attraction: attraction),
-          ),
-        );
-      },
-    ),
-  );
-}
+    if (attractions.isNotEmpty) {
+      final attraction = _pickByRotation(attractions, 1);
+      slides.add(
+        _HeroSlideData(
+          kind: _HeroKind.attraction,
+          imageUrl: attraction.mainImage,
+          heroCopy: attraction.heroCopy,
+          badgeAr: '',
+          badgeEn: '',
+          titleAr: attraction.getName(true),
+          titleEn: attraction.getName(false),
+          subtitleAr: attraction.getDescription(true),
+          subtitleEn: attraction.getDescription(false),
+          ctaAr: 'استكشف المعلم',
+          ctaEn: 'Explore Landmark',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => AttractionDetailsScreen(attraction: attraction),
+              ),
+            );
+          },
+        ),
+      );
+    }
 
-   final contributionItems =
-    culturalItems.where((item) => item.isContribution).toList();
+    final contributionItems =
+        culturalItems.where((item) => item.isContribution).toList();
 
-if (contributionItems.isNotEmpty) {
-  final item = _pickByRotation(contributionItems, 2);
+    if (contributionItems.isNotEmpty) {
+      final item = _pickByRotation(contributionItems, 2);
+      slides.add(
+        _HeroSlideData(
+          kind: _HeroKind.community,
+          imageUrl: item.imageUrl,
+          heroCopy: item.heroCopy,
+          badgeAr: '',
+          badgeEn: '',
+          titleAr: item.titleAr,
+          titleEn: item.titleEn,
+          subtitleAr: item.descriptionAr,
+          subtitleEn: item.descriptionEn,
+          ctaAr: 'شارك الأثر',
+          ctaEn: 'Share Athar',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => CulturalItemDetails(item: item),
+              ),
+            );
+          },
+        ),
+      );
+    }
 
-  slides.add(
-    _HeroSlideData(
-      kind: _HeroKind.community,
-      imageUrl: item.imageUrl,
-      badgeAr: '',
-      badgeEn: '',
-      titleAr: item.titleAr,
-      titleEn: item.titleEn,
-      subtitleAr: item.descriptionAr,
-      subtitleEn: item.descriptionEn,
-      ctaAr: 'شارك الأثر',
-      ctaEn: 'Share Athar',
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => CulturalItemDetails(item: item),
-          ),
-        );
-      },
-    ),
-  );
-}
+    final archiveItems =
+        culturalItems.where((item) => !item.isContribution).toList();
 
-final archiveItems =
-    culturalItems.where((item) => !item.isContribution).toList();
-
-if (archiveItems.isNotEmpty) {
-  final item = _pickByRotation(archiveItems, 3);
-
-  slides.add(
-    _HeroSlideData(
-      kind: _HeroKind.archive,
-      imageUrl: item.imageUrl,
-      badgeAr: '',
-      badgeEn: '',
-      titleAr: item.titleAr,
-      titleEn: item.titleEn,
-      subtitleAr: item.descriptionAr,
-      subtitleEn: item.descriptionEn,
-      ctaAr: 'افتح الأرشيف',
-      ctaEn: 'Open Archive',
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => CulturalItemDetails(item: item),
-          ),
-        );
-      },
-    ),
-  );
+    if (archiveItems.isNotEmpty) {
+      final item = _pickByRotation(archiveItems, 3);
+      slides.add(
+        _HeroSlideData(
+          kind: _HeroKind.archive,
+          imageUrl: item.imageUrl,
+          heroCopy: item.heroCopy,
+          badgeAr: '',
+          badgeEn: '',
+          titleAr: item.titleAr,
+          titleEn: item.titleEn,
+          subtitleAr: item.descriptionAr,
+          subtitleEn: item.descriptionEn,
+          ctaAr: 'افتح الأرشيف',
+          ctaEn: 'Open Archive',
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => CulturalItemDetails(item: item),
+              ),
+            );
+          },
+        ),
+      );
     }
 
     if (trips.isNotEmpty) {
       final trip = _pickByRotation(trips, 4);
-
       slides.add(
         _HeroSlideData(
           kind: _HeroKind.trip,
           imageUrl: trip.imageUrl,
+          heroCopy: trip.heroCopy,
           badgeAr: 'رحلة المنطاد',
           badgeEn: 'Balloon Experience',
           titleAr: trip.getTitle(true),
@@ -417,6 +464,7 @@ class _HeroSlideData {
   final _HeroKind kind;
   final String imageUrl;
   final String? imageUrlEn;
+  final HeroAiText? heroCopy;
   final String badgeAr;
   final String badgeEn;
   final String titleAr;
@@ -432,6 +480,7 @@ class _HeroSlideData {
     required this.kind,
     required this.imageUrl,
     this.imageUrlEn,
+    this.heroCopy,
     required this.badgeAr,
     required this.badgeEn,
     required this.titleAr,
@@ -445,19 +494,6 @@ class _HeroSlideData {
   });
 }
 
-class _AiHeroText {
-  final String titleAr;
-  final String subtitleAr;
-  final String titleEn;
-  final String subtitleEn;
-
-  const _AiHeroText({
-    required this.titleAr,
-    required this.subtitleAr,
-    required this.titleEn,
-    required this.subtitleEn,
-  });
-}
 
 class _CinematicHeroSlide extends StatelessWidget {
   final _HeroSlideData slide;
@@ -495,6 +531,11 @@ class _CinematicHeroSlide extends StatelessWidget {
               return Transform.scale(scale: scale, child: child);
             },
             child: _HeroImage(
+              key: ValueKey(
+                !isAr && slide.imageUrlEn != null
+                    ? slide.imageUrlEn!
+                    : slide.imageUrl,
+              ),
               imageUrl: !isAr && slide.imageUrlEn != null
                   ? slide.imageUrlEn!
                   : slide.imageUrl,
@@ -595,7 +636,7 @@ class _AdContent extends StatelessWidget {
 class _HeroImage extends StatelessWidget {
   final String imageUrl;
 
-  const _HeroImage({required this.imageUrl});
+  const _HeroImage({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {

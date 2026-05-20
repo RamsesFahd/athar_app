@@ -1,3 +1,4 @@
+import 'package:athar_app/features/home/models/hero_ai_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum EventType { festival, exhibition, workshop, performance, other }
@@ -87,6 +88,7 @@ class EventModel {
   final DateTime? createdAt;
   final String? createdBy;
   final List<String> interestIds;
+  final HeroAiText? heroCopy;
 
   EventModel({
     required this.id,
@@ -111,6 +113,7 @@ class EventModel {
     this.createdAt,
     this.createdBy,
     this.interestIds = const [],
+    this.heroCopy,
   });
 
   String getTitle(bool isAr) => isAr ? titleAr : titleEn;
@@ -173,6 +176,9 @@ class EventModel {
           : null,
       createdBy: map['createdBy'] ?? 'Admin',
       interestIds: List<String>.from(map['interestIds'] ?? []),
+      heroCopy: map['heroCopy'] is Map
+          ? HeroAiText.fromMap(Map<String, dynamic>.from(map['heroCopy'] as Map))
+          : null,
     );
   }
 }
