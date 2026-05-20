@@ -18,6 +18,7 @@ class TripModel {
   final String license;
   final String shortDescriptionAr;
   final String shortDescriptionEn;
+  final String regionId;
   final String? tutorId;
   final String status; // 'pending' | 'approved' | 'rejected'
   final String tutorType; // 'individual' | 'company'
@@ -76,6 +77,7 @@ class TripModel {
     required this.license,
     required this.shortDescriptionAr,
     required this.shortDescriptionEn,
+    this.regionId = '',
     this.tutorId,
     this.status = 'pending',
     this.tutorType = 'individual',
@@ -154,6 +156,7 @@ class TripModel {
       license: map['license'] ?? '',
       shortDescriptionAr: map['shortDescriptionAr'] ?? '',
       shortDescriptionEn: map['shortDescriptionEn'] ?? '',
+      regionId: map['regionId'] ?? '',
       tutorId: map['tutorId'],
       status: map['status'] ?? 'pending',
       tutorType: map['tutorType'] ?? 'individual',
@@ -199,6 +202,7 @@ class TripModel {
       'license': license,
       'shortDescriptionAr': shortDescriptionAr,
       'shortDescriptionEn': shortDescriptionEn,
+      'regionId': regionId,
       'tutorId': tutorId,
       'status': status,
       'tutorType': tutorType,

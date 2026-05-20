@@ -38,7 +38,15 @@ class _GoogleRoleSelectionScreenState
           );
         },
         data: (user) {
-          if (user != null) Navigator.pushReplacementNamed(context, AppRoutes.home);
+          if (user != null) {
+            final tourist = user is TouristModel ? user : null;
+            final hasInterests = tourist?.culturalInterests.isNotEmpty ?? false;
+            if (tourist != null && !hasInterests) {
+              Navigator.pushReplacementNamed(context, AppRoutes.userPreferences);
+            } else {
+              Navigator.pushReplacementNamed(context, AppRoutes.home);
+            }
+          }
         },
       );
     });

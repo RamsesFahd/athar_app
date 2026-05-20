@@ -73,7 +73,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
       next.when(
         data: (user) {
-          if (user != null) {
+          if (user != null && user.emailVerified) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                   content: Text("تم تفعيل حسابك بنجاح! أهلاً بك في أثر"),

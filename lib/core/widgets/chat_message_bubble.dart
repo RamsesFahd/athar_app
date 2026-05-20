@@ -8,6 +8,7 @@ class ChatMessageBubble extends StatelessWidget {
   final bool showQuickReplies;
   final bool isAr;
   final ValueChanged<String> onTapQuickReply;
+  final void Function(String entityName)? onEntityTap;
 
   const ChatMessageBubble({
     super.key,
@@ -16,6 +17,7 @@ class ChatMessageBubble extends StatelessWidget {
     required this.showQuickReplies,
     required this.isAr,
     required this.onTapQuickReply,
+    this.onEntityTap,
   });
 
   ({String mainText, List<String> quickReplies}) _splitMessageContent(
@@ -61,7 +63,7 @@ class ChatMessageBubble extends StatelessWidget {
               constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.75),
               decoration: BoxDecoration(
-                color: isMe ? AppColors.primary : const Color(0xFF2D3A2A),
+                color: isMe ? AppColors.primary : Colors.grey[200],
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
@@ -81,21 +83,20 @@ class ChatMessageBubble extends StatelessWidget {
                 child: SmartTextContent(
                   text: parts.mainText,
                   isMe: isMe,
+                  onEntityTap: onEntityTap,
                 ),
               ),
             ),
           ),
         if (!isMe && visibleQuickReplies.isNotEmpty)
-          Directionality(
-            textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-                padding: const EdgeInsetsDirectional.only(
-                    start: 6, end: 6, bottom: 10),
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 6, right: 6, bottom: 10),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                alignment: WrapAlignment.start,
                   children: visibleQuickReplies.map((reply) {
                     return GestureDetector(
                       onTap: () => onTapQuickReply(reply),
@@ -134,7 +135,6 @@ class ChatMessageBubble extends StatelessWidget {
                 ),
               ),
             ),
-          ),
       ],
     );
   }

@@ -11,12 +11,14 @@ class SmartTextContent extends ConsumerWidget {
   final String text;
   final bool isMe;
   final Function(String)? onTapQuickReply;
+  final void Function(String entityName)? onEntityTap;
 
   const SmartTextContent({
     super.key,
     required this.text,
     required this.isMe,
     this.onTapQuickReply,
+    this.onEntityTap,
   });
 
   @override
@@ -73,19 +75,71 @@ class SmartTextContent extends ConsumerWidget {
     );
   }
 
+  // Parses **bold**, *italic*, and "quoted" entities into clickable styled spans.
+  // Only called for Rawi (isMe == false) messages.
+  List<InlineSpan> _parseInlineEntities(String segment) {
+    final entityExp = RegExp(r'\*\*(.*?)\*\*|\*(.*?)\*|"([^"]+)"');
+    final matches = entityExp.allMatches(segment);
+
+    if (matches.isEmpty) return [TextSpan(text: segment)];
+
+    final List<InlineSpan> spans = [];
+    int last = 0;
+
+    for (final match in matches) {
+      if (match.start > last) {
+        spans.add(TextSpan(text: segment.substring(last, match.start)));
+      }
+      final entityText =
+          match.group(1) ?? match.group(2) ?? match.group(3) ?? '';
+      spans.add(
+        TextSpan(
+          text: entityText,
+          style: GoogleFonts.cairo(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: AppColors.primary,
+            decoration: TextDecoration.underline,
+            height: 1.5,
+          ),
+          // Recognizer lifecycle intentionally matches the existing #tag# pattern.
+          // Convert to StatefulWidget if explicit dispose() is required.
+          recognizer: TapGestureRecognizer()
+            ..onTap = () => onEntityTap?.call(entityText),
+        ),
+      );
+      last = match.end;
+    }
+
+    if (last < segment.length) {
+      spans.add(TextSpan(text: segment.substring(last)));
+    }
+
+    return spans;
+  }
+
   Widget _buildRichTextWithTags(String content, BuildContext context, bool isAr,
       List<CulturalItemModel> allItems) {
     final RegExp tagExp = RegExp(r"#[^#]+#");
     final Iterable<RegExpMatch> matches = tagExp.allMatches(content);
 
-    if (matches.isEmpty) return Text(content, style: _textStyle());
+    if (matches.isEmpty) {
+      if (isMe) return Text(content, style: _textStyle());
+      final spans = _parseInlineEntities(content);
+      return RichText(text: TextSpan(style: _textStyle(), children: spans));
+    }
 
     List<InlineSpan> spans = [];
     int lastIndex = 0;
 
     for (var match in matches) {
       if (match.start > lastIndex) {
-        spans.add(TextSpan(text: content.substring(lastIndex, match.start)));
+        final segment = content.substring(lastIndex, match.start);
+        if (isMe) {
+          spans.add(TextSpan(text: segment));
+        } else {
+          spans.addAll(_parseInlineEntities(segment));
+        }
       }
 
       final String fullTag = content.substring(match.start, match.end);
@@ -97,7 +151,7 @@ class SmartTextContent extends ConsumerWidget {
           style: GoogleFonts.cairo(
             fontSize: 15,
             fontWeight: FontWeight.w700,
-            color: Colors.white,
+            color: isMe ? Colors.white : AppColors.primary,
           ),
           recognizer: TapGestureRecognizer()
             ..onTap = () {
@@ -135,7 +189,12 @@ class SmartTextContent extends ConsumerWidget {
     }
 
     if (lastIndex < content.length) {
-      spans.add(TextSpan(text: content.substring(lastIndex)));
+      final segment = content.substring(lastIndex);
+      if (isMe) {
+        spans.add(TextSpan(text: segment));
+      } else {
+        spans.addAll(_parseInlineEntities(segment));
+      }
     }
 
     return RichText(text: TextSpan(style: _textStyle(), children: spans));
@@ -175,7 +234,7 @@ class SmartTextContent extends ConsumerWidget {
   }
 
   TextStyle _textStyle() => GoogleFonts.cairo(
-        color: Colors.white,
+        color: isMe ? Colors.white : Colors.black87,
         fontSize: 15,
         height: 1.5,
       );

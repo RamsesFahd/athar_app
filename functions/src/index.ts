@@ -567,7 +567,14 @@ function extractDocMeta(
   const emb = data.embedding;
   if (!Array.isArray(emb) || emb.length === 0) return null;
 
-  const type = collection as "attraction" | "trip" | "event" | "cultural_item";
+  const typeMap: Record<string, CachedEmbedding["type"]> = {
+    attractions: "attraction",
+    trips: "trip",
+    events: "event",
+    cultural_items: "cultural_item",
+  };
+  const type = typeMap[collection];
+  if (!type) return null;
 
   let titleAr = "";
   let titleEn = "";
@@ -659,11 +666,12 @@ export const askRawi = onCall(
   async (request) => {
     if (!GEMINI_KEY) throw new HttpsError("failed-precondition", "GEMINI_API_KEY is not set");
 
-    const { conversationId, userMessage, recentMessages, locale } = request.data as {
+    const { conversationId, userMessage, recentMessages, locale, regionId } = request.data as {
       conversationId: string;
       userMessage: string;
       recentMessages: Array<{ role: "user" | "assistant"; content: string }>;
       locale: "ar" | "en";
+      regionId?: string;
     };
 
     if (!userMessage?.trim()) throw new HttpsError("invalid-argument", "userMessage is required");
@@ -673,12 +681,15 @@ export const askRawi = onCall(
     // 1. Embed the user query
     const queryEmbedding = await generateEmbedding(userMessage);
 
-    // 2. Load cached embeddings
+    // 2. Load cached embeddings and strictly filter by region when provided
     const cache = await loadEmbeddingCache();
+    const filteredCache = regionId
+      ? new Map([...cache.entries()].filter(([, meta]) => meta.region === regionId))
+      : cache;
 
-    // 3. Cosine similarity → top-K
+    // 3. Cosine similarity → top-K (region-filtered)
     const scored: Array<{ key: string; score: number; meta: CachedEmbedding }> = [];
-    for (const [key, meta] of cache.entries()) {
+    for (const [key, meta] of filteredCache.entries()) {
       const score = cosineSimilarity(queryEmbedding, meta.embedding);
       if (score >= SIMILARITY_THRESHOLD) {
         scored.push({ key, score, meta });
@@ -687,13 +698,28 @@ export const askRawi = onCall(
     scored.sort((a, b) => b.score - a.score);
     const topDocs = scored.slice(0, TOP_K);
 
-    // 4. Build retrieved context
+    // 4. Build retrieved context (top-K semantic matches)
     const contextLines = topDocs.map((d) => {
       const m = d.meta;
       const title = locale === "ar" ? (m.titleAr || m.titleEn) : (m.titleEn || m.titleAr);
-      const desc = locale === "ar" ? m.description : m.description;
-      return `• [${m.type}] ${title} — ${desc.slice(0, 200)}${m.region ? ` (${m.region})` : ""}`;
+      return `• [${m.type}] ${title} (id:${m.docId}) — ${m.description.slice(0, 200)}`;
     }).join("\n");
+
+    // 4b. Build full archive inventory from the region-filtered cache
+    //     Group by type so the model can reason about categories (e.g. "food items")
+    const archiveByType = new Map<string, Array<{ id: string; titleAr: string; titleEn: string }>>();
+    for (const meta of filteredCache.values()) {
+      if (!archiveByType.has(meta.type)) archiveByType.set(meta.type, []);
+      archiveByType.get(meta.type)!.push({ id: meta.docId, titleAr: meta.titleAr, titleEn: meta.titleEn });
+    }
+    const archiveLines: string[] = [];
+    for (const [type, entries] of archiveByType.entries()) {
+      const names = entries
+        .map((e) => `${e.titleAr || e.titleEn} / ${e.titleEn || e.titleAr} (id:${e.id})`)
+        .join(", ");
+      archiveLines.push(`[${type}]: ${names}`);
+    }
+    const archiveSummary = archiveLines.join("\n");
 
     // 5. System prompt
     const langInstruction = locale === "ar"
@@ -704,14 +730,22 @@ export const askRawi = onCall(
 
 ${langInstruction}
 
-Your knowledge is grounded in the following real content from the Athar platform. ONLY recommend items listed here — do not invent places, events, or cultural items:
+--- Available Archive Items ---
+These are ALL the real items available in the Athar database for this region. Use them as your source of truth:
 
-${contextLines || (locale === "ar" ? "لم يتم العثور على محتوى مطابق." : "No matching content found.")}
+${archiveSummary || (locale === "ar" ? "لا توجد عناصر مسجّلة لهذه المنطقة حالياً." : "No items registered for this region yet.")}
+
+--- Best Semantic Matches for this Query ---
+The following items are the closest matches to the user's specific query:
+
+${contextLines || (locale === "ar" ? "لم يتم العثور على تطابق دقيق — استخدم قائمة الأرشيف أعلاه." : "No close match found — refer to the archive list above.")}
 
 Rules:
 - Respond warmly but not casually.
-- If the user's question matches items above, mention them specifically.
-- At the END of your response, append a JSON block with up to ${MAX_SUGGESTED_ITEMS} item IDs of the most relevant items from the context. Use exactly this format (no other text after it):
+- ONLY recommend items that appear in the archive lists above — never invent places, events, or cultural items.
+- If the user asks about a broad topic (like food, heritage, or music), you MUST scan the Available Archive Items and mention the specific relevant items by name (e.g., العريكة, المرسة) even if they did not appear in the semantic matches.
+- If the user's question closely matches items in the Semantic Matches section, prioritise those and describe them specifically.
+- At the END of your response, append a JSON block with up to ${MAX_SUGGESTED_ITEMS} item IDs of the most relevant items. Use exactly this format (no other text after it):
 <<<RECOMMENDED>>>{"itemIds":["docId1","docId2"]}<<<END>>>
 - If no items are relevant, append: <<<RECOMMENDED>>>{"itemIds":[]}<<<END>>>`;
 

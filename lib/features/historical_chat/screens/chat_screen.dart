@@ -5,6 +5,9 @@ import 'package:athar_app/features/historical_chat/logic/chat_notifier.dart';
 import 'package:athar_app/features/historical_chat/logic/chat_repository.dart';
 import 'package:athar_app/features/historical_chat/widgets/rawi_suggestion_card.dart';
 import 'package:athar_app/features/auth/logic/auth_repository.dart';
+import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
+import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
+import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
@@ -150,8 +153,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: _buildAppBar(userId, isAr, l10n),
-      body: SafeArea(
-        child: Column(
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        behavior: HitTestBehavior.opaque,
+        child: SafeArea(
+          child: Column(
           children: [
             Expanded(
               child: StreamBuilder<List<ChatMessageModel>>(
@@ -182,6 +188,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   return ListView.builder(
                     controller: _scrollController,
                     reverse: true,
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
                     padding: const EdgeInsets.all(16),
                     itemCount: messages.length,
                     itemBuilder: (context, index) {
@@ -219,6 +227,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
             _buildTypingIndicator(isAr, l10n),
             _buildInputArea(theme, isAr, l10n),
           ],
+        ),
         ),
       ),
     );
@@ -345,6 +354,33 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     return null;
   }
 
+  CulturalItemModel? _findCulturalItem(
+      List<CulturalItemModel> items, String query) {
+    String normalize(String t) => t
+        .trim()
+        .toLowerCase()
+        .replaceAll(RegExp(r'^(ال)'), '')
+        .replaceAll(RegExp(r'[أإآ]'), 'ا')
+        .replaceAll('ة', 'ه')
+        .replaceAll('ى', 'ي')
+        .replaceAll(RegExp(r'\s+'), ' ');
+
+    final cleanQuery = normalize(query);
+    try {
+      return items.firstWhere((item) {
+        final nameAr = normalize(item.titleAr);
+        final nameEn = item.titleEn.toLowerCase().trim();
+        final qEn = query.toLowerCase().trim();
+        return nameAr.contains(cleanQuery) ||
+            cleanQuery.contains(nameAr) ||
+            nameEn.contains(qEn) ||
+            qEn.contains(nameEn);
+      });
+    } catch (_) {
+      return null;
+    }
+  }
+
   Widget _buildMessageBubble({
     required String message,
     required bool isMe,
@@ -363,6 +399,31 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               sessionId: _sessionId,
             );
       },
+      onEntityTap: (entityName) {
+        final allItems =
+            ref.read(culturalNotifierProvider).value?.allItems ?? [];
+        final item = _findCulturalItem(allItems, entityName);
+        if (item != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => CulturalItemDetails(item: item),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                isAr
+                    ? 'لم نجد "$entityName" في الأرشيف'
+                    : 'No record for "$entityName"',
+              ),
+              backgroundColor: const Color(0xFF1B5E20),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
     );
   }
 
@@ -373,26 +434,26 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
       reverse: true,
       padding: const EdgeInsets.all(16),
       children: [
-        Directionality(
-          textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
-          child: Align(
-            alignment: isAr ? Alignment.centerRight : Alignment.centerLeft,
-            child: Padding(
-              padding: const EdgeInsetsDirectional.only(
-                  start: 6, end: 6, bottom: 10),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: topRegions.map((region) {
-                  final regionName = isAr ? region.nameAr : region.nameEn;
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ChatScreen(region: region)),
-                      );
-                    },
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 6, right: 6, bottom: 10),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              alignment: WrapAlignment.start,
+              children: topRegions.map((region) {
+                final regionName = isAr ? region.nameAr : region.nameEn;
+                return GestureDetector(
+                  onTap: () async {
+                    await ref
+                        .read(chatNotifierProvider.notifier)
+                        .sendUserMessage(
+                          region: null,
+                          text: regionName,
+                          sessionId: _sessionId,
+                        );
+                  },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 9),
@@ -428,7 +489,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               ),
             ),
           ),
-        ),
         Align(
           alignment: Alignment.centerLeft,
           child: Container(
