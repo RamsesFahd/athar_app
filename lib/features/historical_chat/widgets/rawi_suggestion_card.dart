@@ -24,6 +24,8 @@ class RawiSuggestionsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    final rowExtra = ((textScale - 1.0).clamp(0.0, 1.0) * 34).toDouble();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -39,7 +41,7 @@ class RawiSuggestionsRow extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 130,
+          height: 130 + rowExtra,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -152,23 +154,27 @@ class RawiSuggestionCard extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => Padding(
+      builder: (_) => SingleChildScrollView(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              isAr ? (event.titleAr.isNotEmpty ? event.titleAr : event.titleEn) : (event.titleEn.isNotEmpty ? event.titleEn : event.titleAr),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
               isAr ? (event.descriptionAr.isNotEmpty ? event.descriptionAr : event.descriptionEn) : (event.descriptionEn.isNotEmpty ? event.descriptionEn : event.descriptionAr),
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
-            ),
-            const SizedBox(height: 16),
-          ],
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                isAr ? (event.titleAr.isNotEmpty ? event.titleAr : event.titleEn) : (event.titleEn.isNotEmpty ? event.titleEn : event.titleAr),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                isAr ? (event.descriptionAr.isNotEmpty ? event.descriptionAr : event.descriptionEn) : (event.descriptionEn.isNotEmpty ? event.descriptionEn : event.descriptionAr),
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
@@ -214,8 +220,12 @@ class RawiSuggestionCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(_typeIcon, size: 12, color: AppColors.primary),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Icon(_typeIcon, size: 12, color: AppColors.primary),
+                  ),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(

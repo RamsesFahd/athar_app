@@ -40,6 +40,15 @@ class HomeScreen extends StatelessWidget {
   static const double _headerToContent = 16;
   static const double _homeCardListHeight = 285;
 
+  static double _largeTextExtra(BuildContext context, double maxExtra) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    return ((textScale - 1.0).clamp(0.0, 1.0) * maxExtra).toDouble();
+  }
+
+  static double _homeCardListHeightFor(BuildContext context) {
+    return _homeCardListHeight + _largeTextExtra(context, 58);
+  }
+
   static String _translateCategory(String id, AppLocalizations l10n) {
     switch (id.toLowerCase()) {
       case 'food':
@@ -126,6 +135,7 @@ class _YouMayLikeSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final listHeight = HomeScreen._homeCardListHeightFor(context);
 
     final user = ref.watch(authNotifierProvider.select((a) => a.valueOrNull));
     if (user is TutorModel) return const SizedBox.shrink();
@@ -144,7 +154,7 @@ class _YouMayLikeSection extends ConsumerWidget {
             if (items.isEmpty) return const SizedBox.shrink();
 
             return SizedBox(
-              height: HomeScreen._homeCardListHeight,
+              height: listHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: HomeScreen._pageH),
@@ -159,8 +169,8 @@ class _YouMayLikeSection extends ConsumerWidget {
               ),
             );
           },
-          loading: () => const SizedBox(
-            height: HomeScreen._homeCardListHeight,
+          loading: () => SizedBox(
+            height: listHeight,
             child: Center(child: CircularProgressIndicator.adaptive()),
           ),
           error: (_, __) => const SizedBox.shrink(),
@@ -235,6 +245,7 @@ class _HeritageSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final listHeight = HomeScreen._homeCardListHeightFor(context);
     final culturalAsync = ref.watch(culturalNotifierProvider);
 
     return Column(
@@ -256,7 +267,7 @@ class _HeritageSection extends ConsumerWidget {
             if (items.isEmpty) return const SizedBox.shrink();
 
             return SizedBox(
-              height: HomeScreen._homeCardListHeight,
+              height: listHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(
@@ -285,12 +296,12 @@ class _HeritageSection extends ConsumerWidget {
               ),
             );
           },
-          loading: () => const SizedBox(
-            height: HomeScreen._homeCardListHeight,
+          loading: () => SizedBox(
+            height: listHeight,
             child: Center(child: CircularProgressIndicator.adaptive()),
           ),
-          error: (_, __) => const SizedBox(
-            height: 245,
+          error: (_, __) => SizedBox(
+            height: listHeight,
             child: Center(child: Icon(Icons.error_outline)),
           ),
         ),
@@ -310,6 +321,7 @@ class _AttractionsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final l10n = AppLocalizations.of(context);
+    final listHeight = HomeScreen._homeCardListHeightFor(context);
     final attractionsAsync = ref.watch(attractionsStreamProvider);
 
     return Column(
@@ -330,7 +342,7 @@ class _AttractionsSection extends ConsumerWidget {
             if (shown.isEmpty) return const SizedBox.shrink();
 
             return SizedBox(
-              height: HomeScreen._homeCardListHeight,
+              height: listHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(
@@ -359,8 +371,8 @@ class _AttractionsSection extends ConsumerWidget {
               ),
             );
           },
-          loading: () => const SizedBox(
-            height: HomeScreen._homeCardListHeight,
+          loading: () => SizedBox(
+            height: listHeight,
             child: Center(child: CircularProgressIndicator.adaptive()),
           ),
           error: (_, __) => const SizedBox.shrink(),
@@ -380,6 +392,7 @@ class _TripsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final l10n = AppLocalizations.of(context);
+    final listHeight = HomeScreen._homeCardListHeightFor(context);
     final tripsAsync = ref.watch(allTripsStreamProvider);
 
     return Column(
@@ -399,7 +412,7 @@ class _TripsSection extends ConsumerWidget {
             if (shown.isEmpty) return const SizedBox.shrink();
 
             return SizedBox(
-              height: HomeScreen._homeCardListHeight,
+              height: listHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(
@@ -427,8 +440,8 @@ class _TripsSection extends ConsumerWidget {
               ),
             );
           },
-          loading: () => const SizedBox(
-            height: HomeScreen._homeCardListHeight,
+          loading: () => SizedBox(
+            height: listHeight,
             child: Center(child: CircularProgressIndicator.adaptive()),
           ),
           error: (_, __) => const SizedBox.shrink(),
@@ -449,6 +462,7 @@ class _EventsSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final l10n = AppLocalizations.of(context);
+    final listHeight = HomeScreen._homeCardListHeightFor(context);
     final eventsAsync = ref.watch(upcomingEventsStreamProvider);
 
     return Column(
@@ -465,7 +479,7 @@ class _EventsSection extends ConsumerWidget {
             if (shown.isEmpty) return const SizedBox.shrink();
 
             return SizedBox(
-              height: HomeScreen._homeCardListHeight,
+              height: listHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(
@@ -489,8 +503,8 @@ class _EventsSection extends ConsumerWidget {
               ),
             );
           },
-          loading: () => const SizedBox(
-            height: HomeScreen._homeCardListHeight,
+          loading: () => SizedBox(
+            height: listHeight,
             child: Center(child: CircularProgressIndicator.adaptive()),
           ),
           error: (_, __) => const SizedBox.shrink(),
@@ -517,14 +531,21 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: HomeScreen._pageH),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w800,
-              color: theme.colorScheme.onSurface,
+          Expanded(
+            child: Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: theme.colorScheme.onSurface,
+              ),
             ),
           ),
+          if (onTap != null)
+            const SizedBox(width: 10),
           if (onTap != null)
             InkWell(
               onTap: onTap,
@@ -534,12 +555,21 @@ class _SectionHeader extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      l10n.seeAllLabel,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w700,
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.25,
+                      ),
+                      child: Text(
+                        l10n.seeAllLabel,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.end,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 6),

@@ -109,13 +109,19 @@ class BookingFormScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(20),
               child: SizedBox(
                 width: double.infinity,
-                height: 62,
-                child: ElevatedButton(
-                  onPressed: () => _onContinue(context, ref, form, isAr, l10n),
-                  child: Text(
-                    l10n.continue_btn,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 62),
+                  child: ElevatedButton(
+                    onPressed: () =>
+                        _onContinue(context, ref, form, isAr, l10n),
+                    child: Text(
+                      l10n.continue_btn,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
               ),
@@ -138,7 +144,7 @@ class BookingFormScreen extends ConsumerWidget {
           child: Icon(icon, color: theme.colorScheme.primary, size: 24),
         ),
         const SizedBox(width: 16),
-        Text(title, style: theme.textTheme.titleLarge),
+        Expanded(child: Text(title, style: theme.textTheme.titleLarge)),
       ],
     );
   }
@@ -153,20 +159,23 @@ class BookingFormScreen extends ConsumerWidget {
     bool canIncrement = true,
   }) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: theme.textTheme.bodyLarge
-                  ?.copyWith(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            const SizedBox(height: 4),
-            Text(subtitle, style: theme.textTheme.bodyMedium),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: theme.textTheme.bodyLarge
+                    ?.copyWith(fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              const SizedBox(height: 4),
+              Text(subtitle, style: theme.textTheme.bodyMedium),
+            ],
+          ),
         ),
-        const Spacer(),
+        const SizedBox(width: 12),
         _counterButton(Icons.remove, onRemove, theme, isEnabled: count > 1),
         SizedBox(
           width: 60,
@@ -239,16 +248,24 @@ class BookingFormScreen extends ConsumerWidget {
               color: theme.colorScheme.primary.withValues(alpha: 0.12)),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, color: theme.colorScheme.primary, size: 24),
             const SizedBox(width: 16),
-            Text(label, style: theme.textTheme.bodyLarge),
-            const Spacer(),
-            Text(
-              value,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.bold,
+            Expanded(
+              child: Text(label, style: theme.textTheme.bodyLarge),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+              child: Text(
+                value,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.end,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(width: 10),

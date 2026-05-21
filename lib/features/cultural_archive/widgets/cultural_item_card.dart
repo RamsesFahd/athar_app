@@ -34,6 +34,7 @@ class CulturalItemCard extends StatelessWidget {
     final isHighContrast =
     theme.colorScheme.primary == Colors.black;
     final l10n = AppLocalizations.of(context);
+    final largeText = MediaQuery.textScalerOf(context).scale(1.0) > 1.2;
 
     final String displayTitle = title;
     final String displayDescription = description;
@@ -47,13 +48,13 @@ class CulturalItemCard extends StatelessWidget {
       },
       child: layout == CardLayout.horizontal
           ? _buildHorizontalLayout(
-              displayTitle, displayDescription, isArabic, theme, l10n,isHighContrast,)
-          : _buildVerticalLayout(displayTitle, isArabic, theme, l10n,isHighContrast,),
+              displayTitle, displayDescription, isArabic, theme, l10n,isHighContrast,largeText,)
+          : _buildVerticalLayout(displayTitle, isArabic, theme, l10n,isHighContrast,largeText,),
     );
   }
 
   Widget _buildVerticalLayout(
-      String title, bool isAr, ThemeData theme, AppLocalizations l10n, bool isHighContrast,) {
+      String title, bool isAr, ThemeData theme, AppLocalizations l10n, bool isHighContrast, bool largeText,) {
     return Container(
       width: 180,
       margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -91,7 +92,7 @@ class CulturalItemCard extends StatelessWidget {
           Text(
             title,
             style: theme.textTheme.titleLarge?.copyWith(fontSize: 14),
-            maxLines: 1,
+            maxLines: largeText ? 2 : 1,
             overflow: TextOverflow.ellipsis,
           ),
         ],
@@ -100,7 +101,7 @@ class CulturalItemCard extends StatelessWidget {
   }
 
   Widget _buildHorizontalLayout(String title, String desc, bool isAr,
-      ThemeData theme, AppLocalizations l10n,bool isHighContrast, ) {
+      ThemeData theme, AppLocalizations l10n,bool isHighContrast, bool largeText,) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       padding: const EdgeInsets.all(12),
@@ -157,7 +158,7 @@ class CulturalItemCard extends StatelessWidget {
                 Text(
                   title,
                   style: theme.textTheme.titleLarge?.copyWith(fontSize: 16),
-                  maxLines: 1, // يمنع النص من القفز لسطر جديد وتخريب الارتفاع
+                  maxLines: largeText ? 2 : 1, // يمنع النص من القفز لسطر جديد وتخريب الارتفاع
                   overflow:
                       TextOverflow.ellipsis, // يضيف نقاط (...) لو النص طويل
                 ),
@@ -179,6 +180,7 @@ class CulturalItemCard extends StatelessWidget {
   Widget _buildBadges(ThemeData theme, AppLocalizations l10n) {
     return Wrap(
       spacing: 4,
+      runSpacing: 4,
       children: [
         _badgeTemplate(
           _getTranslatedCategory(categoryId, l10n),
@@ -201,6 +203,8 @@ class CulturalItemCard extends StatelessWidget {
           BoxDecoration(color: bg, borderRadius: BorderRadius.circular(8)),
       child: Text(
         text,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
             fontSize: 10, fontWeight: FontWeight.w600, color: textColor),
       ),

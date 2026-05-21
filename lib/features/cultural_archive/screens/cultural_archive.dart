@@ -13,6 +13,7 @@ class CulturalArchive extends ConsumerWidget {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final largeText = MediaQuery.textScalerOf(context).scale(1.0) > 1.2;
 
     final viewMode = ref.watch(viewModeProvider);
     final showFilters = ref.watch(showFiltersProvider);
@@ -30,12 +31,13 @@ class CulturalArchive extends ConsumerWidget {
               children: [
                 // Search
                 Expanded(
-                  child: SizedBox(
-                    height: 44,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 44),
                     child: TextField(
                       onChanged: (val) => ref
                           .read(culturalNotifierProvider.notifier)
                           .setSearchQuery(val),
+                      textAlignVertical: TextAlignVertical.center,
                       decoration: InputDecoration(
                         hintText: l10n.searchHint,
                         hintStyle: theme.textTheme.bodyMedium
@@ -44,6 +46,10 @@ class CulturalArchive extends ConsumerWidget {
                             Icon(Icons.search, color: AppColors.primary),
                         filled: true,
                         fillColor: AppColors.surface,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
@@ -77,7 +83,7 @@ class CulturalArchive extends ConsumerWidget {
                   onTap: () => ref.read(showFiltersProvider.notifier).state =
                       !showFilters,
                   child: Container(
-                    height: 44,
+                    constraints: const BoxConstraints(minHeight: 44),
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     decoration: BoxDecoration(
                       color: showFilters
@@ -98,12 +104,21 @@ class CulturalArchive extends ConsumerWidget {
                           color: showFilters ? Colors.white : AppColors.primary,
                         ),
                         const SizedBox(width: 6),
-                        Text(
-                          l10n.filter,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color:
-                                showFilters ? Colors.white : AppColors.primary,
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth:
+                                MediaQuery.of(context).size.width * 0.22,
+                          ),
+                          child: Text(
+                            l10n.filter,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: showFilters
+                                  ? Colors.white
+                                  : AppColors.primary,
+                            ),
                           ),
                         ),
                       ],
@@ -114,8 +129,8 @@ class CulturalArchive extends ConsumerWidget {
                 const SizedBox(width: 8),
 
                 // display
-                SizedBox(
-                  height: 44,
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 44),
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -150,7 +165,7 @@ class CulturalArchive extends ConsumerWidget {
                     )
                   : viewMode == CardLayout.horizontal
                       ? _buildListView(filteredItems.filteredItems)
-                      : _buildGridView(filteredItems.filteredItems),
+                      : _buildGridView(filteredItems.filteredItems, largeText),
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) =>
                   const Center(child: Text('Error loading items')),
@@ -163,7 +178,7 @@ class CulturalArchive extends ConsumerWidget {
 
   Widget _buildHeader(bool isAr, ThemeData theme, AppLocalizations l10n) {
     return Container(
-      height: 180,
+      constraints: const BoxConstraints(minHeight: 180),
       width: double.infinity,
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -190,6 +205,8 @@ class CulturalArchive extends ConsumerWidget {
           children: [
             Text(
               l10n.culturalArchiveTitle,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
               style: theme.textTheme.displayLarge?.copyWith(
                 color: Colors.white,
                 height: isAr ? 1.4 : 1.1,
@@ -200,6 +217,8 @@ class CulturalArchive extends ConsumerWidget {
               isAr
                   ? 'اكتشف الثقافة السعودية الغنية'
                   : 'Discover Saudi heritage',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: Colors.white.withValues(alpha: 0.8),
                 height: isAr ? 1.4 : 1.1,
@@ -285,12 +304,12 @@ class CulturalArchive extends ConsumerWidget {
     );
   }
 
-  Widget _buildGridView(List filteredItems) {
+  Widget _buildGridView(List filteredItems, bool largeText) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.8,
+        childAspectRatio: largeText ? 0.68 : 0.8,
         mainAxisSpacing: 12,
         crossAxisSpacing: 12,
       ),

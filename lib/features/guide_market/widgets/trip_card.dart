@@ -59,6 +59,8 @@ class TripCard extends ConsumerWidget {
   ) {
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    final contentExtra = ((textScale - 1.0).clamp(0.0, 1.0) * 34).toDouble();
 
     return Stack(
       children: [
@@ -135,7 +137,7 @@ class TripCard extends ConsumerWidget {
           right: 12,
           bottom: 12,
           child: SizedBox(
-            height: 110,
+            height: 110 + contentExtra,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -263,9 +265,12 @@ class TripCard extends ConsumerWidget {
   ) {
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    final cardExtra = ((textScale - 1.0).clamp(0.0, 1.0) * 42).toDouble();
+    final cardHeight = 150 + cardExtra;
 
     return SizedBox(
-      height: 150,
+      height: cardHeight,
       child: Row(
         children: [
           // Image
@@ -495,7 +500,9 @@ class TripCard extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
+
           isFullyBooked ? l10n.tripFullyBooked : l10n.tripCardViewDetails,
+
           style: theme.textTheme.labelSmall?.copyWith(
             color: isFullyBooked
                 ? theme.colorScheme.onSurface.withValues(alpha: 0.4)
@@ -515,12 +522,7 @@ class TripCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: theme.colorScheme.primary.withValues(alpha: 0.2),
-        ),
       ),
-      child: Text(
-        text,
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: theme.colorScheme.primary,
           fontWeight: FontWeight.w600,
         ),
       ),

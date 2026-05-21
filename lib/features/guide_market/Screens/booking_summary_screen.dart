@@ -148,16 +148,24 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
             // زر إتمام الحجز
             SizedBox(
               width: double.infinity,
-              height: 58,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _handleConfirmBooking,
-                child: _isLoading
-                    ? const SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
-                      )
-                    : Text(l10n.complete_booking),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 58),
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _handleConfirmBooking,
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                              color: Colors.white, strokeWidth: 3),
+                        )
+                      : Text(
+                          l10n.complete_booking,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                        ),
+                ),
               ),
             ),
           ],

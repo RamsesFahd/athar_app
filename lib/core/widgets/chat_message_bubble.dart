@@ -111,6 +111,9 @@ class ChatMessageBubble extends StatelessWidget {
                   return GestureDetector(
                     onTap: () => onTapQuickReply(reply),
                     child: Container(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.82,
+                      ),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 9),
                       decoration: BoxDecoration(
@@ -122,6 +125,7 @@ class ChatMessageBubble extends StatelessWidget {
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Icon(
                             Icons.auto_awesome_rounded,
@@ -129,12 +133,20 @@ class ChatMessageBubble extends StatelessWidget {
                             color: AppColors.primary,
                           ),
                           const SizedBox(width: 6),
-                          Text(
-                            reply,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.primary,
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  MediaQuery.of(context).size.width * 0.66,
+                            ),
+                            child: Text(
+                              reply,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.primary,
+                              ),
                             ),
                           ),
                         ],

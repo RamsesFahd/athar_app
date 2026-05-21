@@ -110,6 +110,8 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final l10n = AppLocalizations.of(context);
     final attractionsAsync = ref.watch(attractionsStreamProvider);
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    final largeText = textScale > 1.2;
 
     return Scaffold(
       appBar: AppBar(
@@ -145,10 +147,11 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: SizedBox(
-                        height: 44,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: 44),
                         child: TextField(
                           onChanged: (v) => setState(() => _searchQuery = v),
+                          textAlignVertical: TextAlignVertical.center,
                           decoration: InputDecoration(
                             hintText: l10n.attractionsSearchHint,
                             hintStyle: theme.textTheme.bodyMedium?.copyWith(
@@ -161,7 +164,7 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
                             filled: true,
                             fillColor: theme.colorScheme.surface,
                             contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 16),
+                                vertical: 12, horizontal: 16),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
@@ -182,8 +185,8 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    SizedBox(
-                      height: 44,
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 44),
                       child: OutlinedButton(
                         onPressed: () =>
                             setState(() => _isGridView = !_isGridView),
@@ -206,8 +209,8 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    SizedBox(
-                      height: 44,
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 44),
                       child: OutlinedButton(
                         onPressed: () =>
                             setState(() => _showFilters = !_showFilters),
@@ -279,11 +282,11 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 16),
                           gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
+                              SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             crossAxisSpacing: 8,
                             mainAxisSpacing: 12,
-                            childAspectRatio: 0.72,
+                            childAspectRatio: largeText ? 0.62 : 0.72,
                           ),
                           itemCount: filtered.length,
                           itemBuilder: (context, index) => AttractionCard(
@@ -330,8 +333,10 @@ class _FilterRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    final rowExtra = ((textScale - 1.0).clamp(0.0, 1.0) * 18).toDouble();
     return SizedBox(
-      height: 40,
+      height: 40 + rowExtra,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         scrollDirection: Axis.horizontal,
@@ -359,6 +364,8 @@ class _FilterRow extends StatelessWidget {
               ),
               child: Text(
                 labelFor?.call(value) ?? (value == 'All' ? allLabel : value),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: isSelected
                       ? theme.colorScheme.onPrimary

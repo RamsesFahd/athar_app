@@ -74,6 +74,7 @@ class BookingCard extends StatelessWidget {
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -83,17 +84,30 @@ class BookingCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        OutlinedButton(
-                          onPressed: onDetails,
-                          style: OutlinedButton.styleFrom(
-                            visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
+                        const SizedBox(width: 12),
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            minHeight: 36,
+                            maxWidth: 128,
                           ),
-                          child: Text(detailsLabel,
-                              style: const TextStyle(fontSize: 12)),
+                          child: OutlinedButton(
+                              onPressed: onDetails,
+                              style: OutlinedButton.styleFrom(
+                                visualDensity: VisualDensity.compact,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                detailsLabel,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(fontSize: 12),
+                              ),
+                            ),
                         ),
                       ],
                     ),
@@ -106,11 +120,12 @@ class BookingCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    Row(
+                    Wrap(
+                      spacing: 16,
+                      runSpacing: 8,
                       children: [
                         _buildInfoItem(
                             theme, Icons.calendar_today_outlined, dateText),
-                        const SizedBox(width: 16),
                         _buildInfoItem(
                             theme, Icons.access_time, "$timeText ($duration)"),
                       ],
@@ -127,14 +142,21 @@ class BookingCard extends StatelessWidget {
 
   Widget _buildInfoItem(ThemeData theme, IconData icon, String text) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Icon(icon,
             size: 14, color: theme.colorScheme.primary.withValues(alpha: 0.08)),
         const SizedBox(width: 6),
-        Text(
-          text,
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 180),
+          child: Text(
+            text,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
           ),
         ),
       ],

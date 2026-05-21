@@ -1056,18 +1056,29 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
     final l10n = AppLocalizations.of(context);
     return SizedBox(
       width: double.infinity,
-      height: 56,
-      child: ElevatedButton(
-        onPressed: (_isSubmitting || tutor == null) ? null : () => _submit(tutor),
-        child: _isSubmitting
-            ? const SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                    color: Colors.white, strokeWidth: 2.5),
-              )
-            : Text(_isEditing ? l10n.addTripSaveChanges : l10n.addTripSubmitForReview,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 56),
+        child: ElevatedButton(
+          onPressed:
+              (_isSubmitting || tutor == null) ? null : () => _submit(tutor),
+          child: _isSubmitting
+              ? const SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                      color: Colors.white, strokeWidth: 2.5),
+                )
+              : Text(
+                  _isEditing
+                      ? l10n.addTripSaveChanges
+                      : l10n.addTripSubmitForReview,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+        ),
       ),
     );
   }

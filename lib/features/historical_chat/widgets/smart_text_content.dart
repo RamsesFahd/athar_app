@@ -73,12 +73,19 @@ class SmartTextContent extends ConsumerWidget {
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 backgroundColor: Colors.grey[100],
                 side: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
-                label: Text(
-                  cleanText,
-                  style: GoogleFonts.cairo(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
+                label: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.72,
+                  ),
+                  child: Text(
+                    cleanText,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.cairo(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
                 onPressed: () => onTapQuickReply?.call(cleanText),

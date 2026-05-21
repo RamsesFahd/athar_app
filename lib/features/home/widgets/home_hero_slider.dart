@@ -78,6 +78,7 @@ void initState() {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
     final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final heroHeight = 430 + _largeTextExtra(context, 78);
 
     final userAsync = ref.watch(authNotifierProvider);
     final attractionsAsync = ref.watch(attractionsStreamProvider);
@@ -115,7 +116,7 @@ void initState() {
     if (slides.isEmpty) return _StaticHeroFallback(isAr: isAr);
 
     return SizedBox(
-      height: 430,
+      height: heroHeight,
       width: double.infinity,
       child: Stack(
         children: [
@@ -514,6 +515,7 @@ class _CinematicHeroSlide extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final cta = isAr ? slide.ctaAr : slide.ctaEn;
+    final bottomInset = 58 + _largeTextExtra(context, 16);
 
     return GestureDetector(
       onTap: slide.onTap,
@@ -548,7 +550,7 @@ class _CinematicHeroSlide extends StatelessWidget {
           PositionedDirectional(
             start: 24,
             end: 24,
-            bottom: 58,
+            bottom: bottomInset,
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 450),
               child: _AdContent(
@@ -588,6 +590,8 @@ class _AdContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final largeText = MediaQuery.textScalerOf(context).scale(1.0) > 1.2;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -600,7 +604,7 @@ class _AdContent extends StatelessWidget {
         ],
         Text(
           title,
-          maxLines: 2,
+          maxLines: largeText ? 3 : 2,
           overflow: TextOverflow.ellipsis,
           style: theme.textTheme.displayLarge?.copyWith(
             color: Colors.white,
@@ -615,7 +619,7 @@ class _AdContent extends StatelessWidget {
         const SizedBox(height: 10),
         Text(
           subtitle,
-          maxLines: 2,
+          maxLines: largeText ? 3 : 2,
           overflow: TextOverflow.ellipsis,
           style: theme.textTheme.bodyLarge?.copyWith(
             color: Colors.white.withValues(alpha: 0.94),
@@ -713,6 +717,9 @@ class _PremiumBadge extends StatelessWidget {
       ),
       child: Text(
         text,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.center,
         style: const TextStyle(
           color: Colors.white,
           fontSize: 11,
@@ -738,12 +745,13 @@ class _LargeCountdown extends StatelessWidget {
     final days = diff.inDays.clamp(0, 999);
     final hours = diff.inHours.remainder(24).clamp(0, 23);
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
+      spacing: 18,
+      runSpacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         _CountdownUnit(value: '$days', label: isAr ? 'يوم' : 'Days'),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 18),
           height: 42,
           width: 1,
           color: Colors.white.withValues(alpha: 0.38),
@@ -822,6 +830,9 @@ class _HeroCta extends StatelessWidget {
       ),
       child: Text(
         text,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.center,
         style: TextStyle(
           color: isHighContrast ? Colors.black : const Color(0xFF344235),
           fontWeight: FontWeight.w900,
@@ -840,7 +851,7 @@ class _StaticHeroFallback extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 430,
+      height: 430 + _largeTextExtra(context, 78),
       width: double.infinity,
       child: Stack(
         fit: StackFit.expand,
@@ -858,6 +869,8 @@ class _StaticHeroFallback extends StatelessWidget {
             bottom: 58,
             child: Text(
               isAr ? 'اكتشف تراث المملكة' : 'Discover Saudi Heritage',
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 34,
@@ -869,4 +882,9 @@ class _StaticHeroFallback extends StatelessWidget {
       ),
     );
   }
+}
+
+double _largeTextExtra(BuildContext context, double maxExtra) {
+  final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+  return ((textScale - 1.0).clamp(0.0, 1.0) * maxExtra).toDouble();
 }

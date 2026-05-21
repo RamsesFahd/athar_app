@@ -86,9 +86,12 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
         color: theme.scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // drag handle
           Center(
@@ -113,6 +116,7 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
+            runSpacing: 8,
             children: [
               ChoiceChip(
                 label: Text(l10n.priceLowToHigh),
@@ -253,20 +257,24 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
           // 4. Apply filters button
           SizedBox(
             width: double.infinity,
-            height: 54,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context, {
-                  'priceRange': _priceRange,
-                  'cities': _selectedCities,
-                  'ascending': _ascending,
-                });
-              },
-              child: Text(l10n.showResults),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 54),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, {
+                    'priceRange': _priceRange,
+                    'cities': _selectedCities,
+                    'ascending': _ascending,
+                  });
+                },
+                child: Text(l10n.showResults),
+              ),
             ),
           ),
           const SizedBox(height: 16),
         ],
+          ),
+        ),
       ),
     );
   }
