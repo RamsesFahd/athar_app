@@ -196,7 +196,9 @@ class _AddCulturalContentScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text(l10n.commonErrorWithMessage(e.toString())),
+              backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -270,8 +272,7 @@ class _AddCulturalContentScreenState
                                     ),
                                     child: Text(l10n.adminTapToChange,
                                         style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 11)),
+                                            color: Colors.white, fontSize: 11)),
                                   ),
                                 ),
                               ],
@@ -336,8 +337,7 @@ class _AddCulturalContentScreenState
                   .map((c) =>
                       DropdownMenuItem(value: c.id, child: Text(c.label)))
                   .toList(),
-              onChanged: (v) =>
-                  setState(() => _selectedCategory = v ?? 'food'),
+              onChanged: (v) => setState(() => _selectedCategory = v ?? 'food'),
             ),
 
             const SizedBox(height: 16),
@@ -351,8 +351,7 @@ class _AddCulturalContentScreenState
                       value: r.regionId, child: Text(r.nameEn)))
                   .toList(),
               onChanged: (v) => setState(() => _selectedRegionId = v),
-              validator: (v) =>
-                  v == null ? l10n.adminSelectRegion : null,
+              validator: (v) => v == null ? l10n.adminSelectRegion : null,
             ),
 
             const SizedBox(height: 16),
@@ -423,7 +422,9 @@ class _AddCulturalContentScreenState
                             color: Colors.white, strokeWidth: 2.5),
                       )
                     : Text(
-                        _isEditMode ? l10n.adminUpdateItem : l10n.adminAddToArchive,
+                        _isEditMode
+                            ? l10n.adminUpdateItem
+                            : l10n.adminAddToArchive,
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -438,7 +439,8 @@ class _AddCulturalContentScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditMode ? l10n.adminEditArchiveItem : l10n.adminAddArchiveItem),
+        title: Text(
+            _isEditMode ? l10n.adminEditArchiveItem : l10n.adminAddArchiveItem),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -448,19 +450,23 @@ class _AddCulturalContentScreenState
   }
 
   InputDecoration _inputDecoration({String? hint}) {
+    final theme = Theme.of(context);
     return InputDecoration(
       hintText: hint,
       filled: true,
-      fillColor: Colors.white,
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      fillColor: theme.colorScheme.surface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade300),
+        borderSide: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.35),
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade300),
+        borderSide: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.35),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -503,6 +509,7 @@ class _FormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
@@ -512,16 +519,20 @@ class _FormField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: theme.colorScheme.surface,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(
+            color: theme.colorScheme.outline.withValues(alpha: 0.35),
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(
+            color: theme.colorScheme.outline.withValues(alpha: 0.35),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

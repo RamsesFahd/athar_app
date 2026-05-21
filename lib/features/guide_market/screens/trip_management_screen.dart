@@ -124,7 +124,8 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         title: Text(l10n.tripDeleteTitle),
-        content: Text(l10n.tripDeleteConfirm(isAr ? trip.titleAr : trip.titleEn)),
+        content:
+            Text(l10n.tripDeleteConfirm(isAr ? trip.titleAr : trip.titleEn)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -154,7 +155,9 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text(l10n.commonErrorWithMessage(e.toString())),
+              backgroundColor: Colors.red),
         );
       }
     }
@@ -202,13 +205,16 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
 
   Widget _buildTripsTab(AppLocalizations l10n) {
     return StreamBuilder<List<TripModel>>(
-      stream: ref.read(marketplaceRepositoryProvider).fetchTutorTrips(tutor.uId),
+      stream:
+          ref.read(marketplaceRepositoryProvider).fetchTutorTrips(tutor.uId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(child: Text(l10n.commonErrorWithMessage(snapshot.error.toString())));
+          return Center(
+              child:
+                  Text(l10n.commonErrorWithMessage(snapshot.error.toString())));
         }
         final trips = snapshot.data ?? [];
 
@@ -219,21 +225,21 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.route_outlined, size: 72,
+                  Icon(Icons.route_outlined,
+                      size: 72,
                       color: theme.colorScheme.primary.withValues(alpha: 0.3)),
                   const SizedBox(height: 16),
                   Text(
                     l10n.tripNoTripsYet,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
+                      color:
+                          theme.colorScheme.onSurface.withValues(alpha: 0.55),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    _canAdd
-                        ? l10n.tripTapToAddFirst
-                        : _blockingHint(),
+                    _canAdd ? l10n.tripTapToAddFirst : _blockingHint(),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                     ),
@@ -257,7 +263,8 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
             statusLabel: _statusLabel(trips[i].status),
             onEdit: () => Navigator.push(
               ctx,
-              MaterialPageRoute(builder: (_) => AddTripScreen(initialTrip: trips[i])),
+              MaterialPageRoute(
+                  builder: (_) => AddTripScreen(initialTrip: trips[i])),
             ),
             onDelete: () => _confirmDelete(ctx, trips[i]),
           ),
@@ -276,7 +283,9 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(child: Text(l10n.commonErrorWithMessage(snapshot.error.toString())));
+          return Center(
+              child:
+                  Text(l10n.commonErrorWithMessage(snapshot.error.toString())));
         }
         final bookings = snapshot.data ?? [];
         if (bookings.isEmpty) {
@@ -303,14 +312,20 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
     );
   }
 
-  Widget _buildBookingCard(BuildContext context, BookingModel b, AppLocalizations l10n) {
+  Widget _buildBookingCard(
+      BuildContext context, BookingModel b, AppLocalizations l10n) {
     Color statusColor(BookingStatus s) {
       switch (s) {
-        case BookingStatus.approved: return Colors.green;
-        case BookingStatus.rejected: return Colors.red;
-        case BookingStatus.cancelled: return theme.colorScheme.onSurfaceVariant;
-        case BookingStatus.completed: return theme.colorScheme.primary;
-        case BookingStatus.pending: return Colors.amber.shade700;
+        case BookingStatus.approved:
+          return Colors.green;
+        case BookingStatus.rejected:
+          return Colors.red;
+        case BookingStatus.cancelled:
+          return theme.colorScheme.onSurfaceVariant;
+        case BookingStatus.completed:
+          return theme.colorScheme.primary;
+        case BookingStatus.pending:
+          return Colors.amber.shade700;
       }
     }
 
@@ -321,8 +336,14 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.08)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 14, offset: const Offset(0, 6))],
+        border: Border.all(
+            color: theme.colorScheme.primary.withValues(alpha: 0.08)),
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 14,
+              offset: const Offset(0, 6))
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -335,13 +356,21 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
                   borderRadius: BorderRadius.circular(12),
                   child: CachedNetworkImage(
                     imageUrl: b.imageUrl,
-                    width: 64, height: 64, fit: BoxFit.cover, memCacheWidth: 200,
+                    width: 64,
+                    height: 64,
+                    fit: BoxFit.cover,
+                    memCacheWidth: 200,
                     fadeInDuration: const Duration(milliseconds: 200),
-                    placeholder: (_, __) => Container(width: 64, height: 64,
+                    placeholder: (_, __) => Container(
+                        width: 64,
+                        height: 64,
                         color: theme.colorScheme.surfaceContainerHighest),
-                    errorWidget: (_, __, ___) => Container(width: 64, height: 64,
+                    errorWidget: (_, __, ___) => Container(
+                        width: 64,
+                        height: 64,
                         color: theme.colorScheme.surfaceContainerHighest,
-                        child: const Icon(Icons.image_not_supported_outlined, size: 28)),
+                        child: const Icon(Icons.image_not_supported_outlined,
+                            size: 28)),
                   ),
                 ),
               const SizedBox(width: 12),
@@ -349,28 +378,42 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(b.tripTitle, maxLines: 2, overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800, height: 1.25)),
+                    Text(b.tripTitle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w800, height: 1.25)),
                     if (b.tripCity.isNotEmpty) ...[
                       const SizedBox(height: 6),
                       Row(children: [
-                        Icon(Icons.location_on_outlined, size: 15, color: theme.colorScheme.primary),
+                        Icon(Icons.location_on_outlined,
+                            size: 15, color: theme.colorScheme.primary),
                         const SizedBox(width: 4),
-                        Expanded(child: Text(b.tripCity, maxLines: 1, overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodySmall)),
+                        Expanded(
+                            child: Text(b.tripCity,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.bodySmall)),
                       ]),
                     ],
                     const SizedBox(height: 6),
                     TextButton(
-                      onPressed: () => Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => BookingViewScreen(booking: b))),
-                      style: TextButton.styleFrom(padding: EdgeInsets.zero,
-                          minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => BookingViewScreen(booking: b))),
+                      style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
-                        Text(l10n.view_details, style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.primary, fontWeight: FontWeight.w700)),
+                        Text(l10n.view_details,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.w700)),
                         const SizedBox(width: 4),
-                        Icon(Icons.arrow_forward_ios, size: 12, color: theme.colorScheme.primary),
+                        Icon(Icons.arrow_forward_ios,
+                            size: 12, color: theme.colorScheme.primary),
                       ]),
                     ),
                   ],
@@ -378,11 +421,16 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
               ),
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(color: sc.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(999)),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                    color: sc.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(999)),
                 child: Text(
-                  bookingStatusLabel(status: b.status, isGuide: true, l10n: l10n),
-                  style: theme.textTheme.labelSmall?.copyWith(color: sc, fontWeight: FontWeight.w700),
+                  bookingStatusLabel(
+                      status: b.status, isGuide: true, l10n: l10n),
+                  style: theme.textTheme.labelSmall
+                      ?.copyWith(color: sc, fontWeight: FontWeight.w700),
                 ),
               ),
             ],
@@ -393,10 +441,13 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
               Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green, foregroundColor: Colors.white,
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                  onPressed: () => ref.read(marketplaceRepositoryProvider)
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12))),
+                  onPressed: () => ref
+                      .read(marketplaceRepositoryProvider)
                       .acceptBooking(b.bookingId, b.touristId),
                   child: Text(l10n.accept_booking),
                 ),
@@ -407,10 +458,14 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
                   style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       side: const BorderSide(color: Colors.red),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                  onPressed: () => ref.read(marketplaceRepositoryProvider)
-                      .updateBookingStatus(b.bookingId, BookingStatus.rejected, b.touristId),
-                  child: Text(l10n.reject_booking, style: const TextStyle(color: Colors.red)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12))),
+                  onPressed: () => ref
+                      .read(marketplaceRepositoryProvider)
+                      .updateBookingStatus(
+                          b.bookingId, BookingStatus.rejected, b.touristId),
+                  child: Text(l10n.reject_booking,
+                      style: const TextStyle(color: Colors.red)),
                 ),
               ),
             ]),
@@ -480,8 +535,9 @@ class _TripCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   memCacheWidth: 600,
                   fadeInDuration: const Duration(milliseconds: 150),
-                  placeholder: (_, __) =>
-                      const ColoredBox(color: Color(0xFFEEEEEE)),
+                  placeholder: (_, __) => ColoredBox(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                  ),
                   errorWidget: (_, __, ___) => Container(
                     color: theme.colorScheme.surfaceContainerHighest,
                     child: Icon(
@@ -563,8 +619,7 @@ class _TripCard extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 10),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
                         ),
                       ),
                     ),
@@ -580,8 +635,7 @@ class _TripCard extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding:
-                              const EdgeInsets.symmetric(vertical: 10),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
                         ),
                       ),
                     ),
@@ -615,31 +669,30 @@ class _TouristPlaceholder extends StatelessWidget {
             padding: const EdgeInsets.all(40),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.luggage_outlined,
-                size: 72,
-                color: theme.colorScheme.primary.withValues(alpha: 0.35),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                l10n.myTrips,
-                style: theme.textTheme.headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.tripManagementTouristHint,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color:
-                      theme.colorScheme.onSurface.withValues(alpha: 0.55),
-                  height: 1.5,
+              children: [
+                Icon(
+                  Icons.luggage_outlined,
+                  size: 72,
+                  color: theme.colorScheme.primary.withValues(alpha: 0.35),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+                const SizedBox(height: 20),
+                Text(
+                  l10n.myTrips,
+                  style: theme.textTheme.headlineSmall
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  l10n.tripManagementTouristHint,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
-        ),
         ),
       ),
     );

@@ -25,8 +25,7 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
   Widget build(BuildContext context) {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
-    final isHighContrast =
-    theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.colorScheme.primary == Colors.black;
     final l10n = AppLocalizations.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
 
@@ -35,60 +34,60 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
     final settings = ref.watch(settingsProvider);
     final ttsService = ref.read(ttsServiceProvider);
 
-    final titleText =
-    isAr ? currentItem.titleAr : currentItem.titleEn;
+    final titleText = isAr ? currentItem.titleAr : currentItem.titleEn;
 
     final descriptionText =
-    isAr ? currentItem.descriptionAr : currentItem.descriptionEn;
+        isAr ? currentItem.descriptionAr : currentItem.descriptionEn;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildHeroHeader(screenHeight, isAr, currentItem.imageUrl, isHighContrast, ),
+            _buildHeroHeader(
+              screenHeight,
+              isAr,
+              currentItem.imageUrl,
+              isHighContrast,
+              theme,
+            ),
             Transform.translate(
               offset: const Offset(0, -40),
               child: Container(
                 width: double.infinity,
-               decoration: BoxDecoration(
-  color: theme.colorScheme.surface,
-
-  borderRadius:
-      const BorderRadius.vertical(
-    top: Radius.circular(40),
-  ),
-
-  border: isHighContrast
-      ? Border.all(
-          color: Colors.black,
-          width: 2,
-        )
-      : null,
-
-  boxShadow: isHighContrast
-      ? []
-      : [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
-          )
-        ],
-),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(40),
+                  ),
+                  border: isHighContrast
+                      ? Border.all(
+                          color: Colors.black,
+                          width: 2,
+                        )
+                      : null,
+                  boxShadow: isHighContrast
+                      ? []
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 20,
+                            offset: const Offset(0, -5),
+                          )
+                        ],
+                ),
                 padding: const EdgeInsets.fromLTRB(24, 32, 24, 100),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildTitleSection(
-                    theme,
-                    isAr,
-                    titleText,
-                    settings.isTtsEnabled
-                    ? () => ttsService.speak(
-                    '$titleText. $descriptionText'
-                     )
-                      : null,
+                      theme,
+                      isAr,
+                      titleText,
+                      settings.isTtsEnabled
+                          ? () =>
+                              ttsService.speak('$titleText. $descriptionText')
+                          : null,
                     ),
                     if (currentItem.isContribution) ...[
                       const SizedBox(height: 10),
@@ -110,10 +109,10 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
                     ),
                     const SizedBox(height: 24),
                     _buildCategoryBadge(
-                     theme,
-                     _localizedCategory(currentItem.categoryId, l10n, isAr),
+                      theme,
+                      _localizedCategory(currentItem.categoryId, l10n, isAr),
                       l10n,
-                      ),
+                    ),
                     if (currentItem.isContribution &&
                         currentItem.contributorName != null &&
                         currentItem.contributorName!.isNotEmpty) ...[
@@ -131,7 +130,13 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
     );
   }
 
-  Widget _buildHeroHeader(double height, bool isAr, String imageUrl,bool isHighContrast, ) {
+  Widget _buildHeroHeader(
+    double height,
+    bool isAr,
+    String imageUrl,
+    bool isHighContrast,
+    ThemeData theme,
+  ) {
     return Stack(
       children: [
         CachedNetworkImage(
@@ -141,15 +146,15 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
           fit: BoxFit.cover,
           memCacheWidth: 1080,
           fadeInDuration: const Duration(milliseconds: 150),
-          placeholder: (_, __) => const ColoredBox(color: Color(0xFFEEEEEE)),
+          placeholder: (_, __) => ColoredBox(
+            color: theme.colorScheme.surfaceContainerHighest,
+          ),
         ),
         SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: CircleAvatar(
-              backgroundColor: isHighContrast
-    ? Colors.black
-    : Colors.black26,
+              backgroundColor: isHighContrast ? Colors.black : Colors.black26,
               child: IconButton(
                 icon: Icon(isAr ? Icons.chevron_right : Icons.chevron_left,
                     color: Colors.white),
@@ -162,7 +167,8 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
     );
   }
 
-  Widget _buildTitleSection(ThemeData theme, bool isAr, String title,VoidCallback? onSpeak) {
+  Widget _buildTitleSection(
+      ThemeData theme, bool isAr, String title, VoidCallback? onSpeak) {
     final isFavAsync = ref.watch(isFavoriteProvider(widget.item.id));
     final isFav = isFavAsync.valueOrNull ?? false;
 
@@ -180,13 +186,13 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
         Row(
           children: [
             if (onSpeak != null)
-            IconButton(
-            onPressed: onSpeak,
-            icon: Icon(
-            Icons.volume_up_rounded,
-            color: theme.colorScheme.primary,
-            ),
-          ),
+              IconButton(
+                onPressed: onSpeak,
+                icon: Icon(
+                  Icons.volume_up_rounded,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
             IconButton(
               onPressed: () => ShareUtils.shareCulturalItem(
                 context: context,
@@ -198,8 +204,8 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
                 descriptionEn: widget.item.descriptionEn,
                 isAr: isAr,
               ),
-              icon: Icon(Icons.share_outlined,
-                  color: theme.colorScheme.primary),
+              icon:
+                  Icon(Icons.share_outlined, color: theme.colorScheme.primary),
             ),
             IconButton(
               onPressed: () => ref
@@ -263,14 +269,13 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
 
   Widget _buildCategoryBadge(
       ThemeData theme, String categoryLabel, AppLocalizations l10n) {
-        final isHighContrast =
-    theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.colorScheme.primary == Colors.black;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
-       color: isHighContrast
-    ? Colors.white
-    : AppColors.secondary.withValues(alpha: 0.1),
+        color: isHighContrast
+            ? Colors.white
+            : AppColors.secondary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
@@ -309,35 +314,36 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
   Widget _bodyText(String text, ThemeData theme) {
     return Text(text, style: theme.textTheme.bodyLarge?.copyWith(height: 1.6));
   }
+
   String _localizedCategory(
-  String category,
-  AppLocalizations l10n,
-  bool isAr,
-) {
-  switch (category.toLowerCase()) {
-    case 'architecture':
-      return isAr ? 'عمارة' : 'Architecture';
+    String category,
+    AppLocalizations l10n,
+    bool isAr,
+  ) {
+    switch (category.toLowerCase()) {
+      case 'architecture':
+        return isAr ? 'عمارة' : 'Architecture';
 
-    case 'clothing':
-      return isAr ? 'ملابس تقليدية' : 'Traditional Clothing';
+      case 'clothing':
+        return isAr ? 'ملابس تقليدية' : 'Traditional Clothing';
 
-    case 'food':
-    case 'traditional_food':
-      return isAr ? ' طعام تقليدي' : 'Traditional Food';
+      case 'food':
+      case 'traditional_food':
+        return isAr ? ' طعام تقليدي' : 'Traditional Food';
 
-    case 'craft':
-    case 'handicraft':
-    case 'crafts':
-      return isAr ? 'حرفة يدوية' : 'Handicrafts';
+      case 'craft':
+      case 'handicraft':
+      case 'crafts':
+        return isAr ? 'حرفة يدوية' : 'Handicrafts';
 
-    case 'music':
-      return isAr ? 'موسيقى' : 'Music';
+      case 'music':
+        return isAr ? 'موسيقى' : 'Music';
 
-    case 'dance':
-      return isAr ? 'رقص' : 'Traditional Dance';
+      case 'dance':
+        return isAr ? 'رقص' : 'Traditional Dance';
 
-    default:
-      return category;
+      default:
+        return category;
+    }
   }
-}
 }

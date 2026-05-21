@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
-
 class AccessibilityControls extends ConsumerWidget {
   const AccessibilityControls({super.key});
 
@@ -27,11 +26,16 @@ class AccessibilityControls extends ConsumerWidget {
               children: [
                 Text(
                   l10n.accessibilityOptionsTitle,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Colors.grey),
-                  onPressed: () => Navigator.of(context).pop(), // close the dialog
+                  icon: Icon(
+                    Icons.close,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  onPressed: () =>
+                      Navigator.of(context).pop(), // close the dialog
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -40,42 +44,90 @@ class AccessibilityControls extends ConsumerWidget {
             const SizedBox(height: 20),
 
             // Font Size Section
-            _buildSectionHeader(Icons.text_fields, l10n.accessibilityFontSize, theme.colorScheme.primary),
+            _buildSectionHeader(
+              Icons.text_fields,
+              l10n.accessibilityFontSize,
+              theme,
+            ),
             Row(
               children: [
-                Expanded(child: _buildOptionButton(l10n.accessibilitySmall, settings.fontSize == AppFontSize.small, () => notifier.setFontSize(AppFontSize.small), theme.colorScheme.primary)),
-                Expanded(child: _buildOptionButton(l10n.accessibilityMedium, settings.fontSize == AppFontSize.medium, () => notifier.setFontSize(AppFontSize.medium), theme.colorScheme.primary)),
-                Expanded(child: _buildOptionButton(l10n.accessibilityLarge, settings.fontSize == AppFontSize.large, () => notifier.setFontSize(AppFontSize.large), theme.colorScheme.primary)),
+                Expanded(
+                    child: _buildOptionButton(
+                        l10n.accessibilitySmall,
+                        settings.fontSize == AppFontSize.small,
+                        () => notifier.setFontSize(AppFontSize.small),
+                        theme)),
+                Expanded(
+                    child: _buildOptionButton(
+                        l10n.accessibilityMedium,
+                        settings.fontSize == AppFontSize.medium,
+                        () => notifier.setFontSize(AppFontSize.medium),
+                        theme)),
+                Expanded(
+                    child: _buildOptionButton(
+                        l10n.accessibilityLarge,
+                        settings.fontSize == AppFontSize.large,
+                        () => notifier.setFontSize(AppFontSize.large),
+                        theme)),
               ],
             ),
             const SizedBox(height: 16),
 
             // Language Section
-            _buildSectionHeader(Icons.language, l10n.accessibilityLanguage, theme.colorScheme.primary),
+            _buildSectionHeader(
+              Icons.language,
+              l10n.accessibilityLanguage,
+              theme,
+            ),
             Row(
               children: [
-                Expanded(child: _buildOptionButton(l10n.accessibilityEnglish, settings.locale.languageCode == 'en', () => notifier.setLocale(const Locale('en')), theme.colorScheme.primary)),
-                Expanded(child: _buildOptionButton(l10n.accessibilityArabic, settings.locale.languageCode == 'ar', () => notifier.setLocale(const Locale('ar')), theme.colorScheme.primary)),
+                Expanded(
+                    child: _buildOptionButton(
+                        l10n.accessibilityEnglish,
+                        settings.locale.languageCode == 'en',
+                        () => notifier.setLocale(const Locale('en')),
+                        theme)),
+                Expanded(
+                    child: _buildOptionButton(
+                        l10n.accessibilityArabic,
+                        settings.locale.languageCode == 'ar',
+                        () => notifier.setLocale(const Locale('ar')),
+                        theme)),
               ],
             ),
             const SizedBox(height: 16),
 
             // Contrast Section
-            _buildSectionHeader(Icons.brightness_6, l10n.accessibilityContrast, theme.colorScheme.primary),
+            _buildSectionHeader(
+              Icons.brightness_6,
+              l10n.accessibilityContrast,
+              theme,
+            ),
             Row(
               children: [
-                Expanded(child: _buildOptionButton(l10n.accessibilityRegular, !settings.highContrast, () { if(settings.highContrast) notifier.toggleContrast(); }, theme.colorScheme.primary)),
-                Expanded(child: _buildOptionButton(l10n.accessibilityHighContrast, settings.highContrast, () { if(!settings.highContrast) notifier.toggleContrast(); }, theme.colorScheme.primary)),
+                Expanded(
+                    child: _buildOptionButton(
+                        l10n.accessibilityRegular, !settings.highContrast, () {
+                  if (settings.highContrast) notifier.toggleContrast();
+                }, theme)),
+                Expanded(
+                    child: _buildOptionButton(
+                        l10n.accessibilityHighContrast, settings.highContrast,
+                        () {
+                  if (!settings.highContrast) notifier.toggleContrast();
+                }, theme)),
               ],
             ),
-            
+
             const Divider(height: 32),
 
             // Text-to-Speech Section
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildSectionHeader(Icons.volume_up, l10n.accessibilityTextReader, theme.colorScheme.primary, padding: 0),
+                _buildSectionHeader(
+                    Icons.volume_up, l10n.accessibilityTextReader, theme,
+                    padding: 0),
                 Switch(
                   value: settings.isTtsEnabled,
                   onChanged: (_) => notifier.toggleTts(),
@@ -91,36 +143,61 @@ class AccessibilityControls extends ConsumerWidget {
 
   // helper widgets for consistent styling
   // section header with icon and title
-  Widget _buildSectionHeader(IconData icon, String title, Color color, {double padding = 8}) {
+  Widget _buildSectionHeader(
+    IconData icon,
+    String title,
+    ThemeData theme, {
+    double padding = 8,
+  }) {
     return Padding(
       padding: EdgeInsets.only(bottom: padding),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: color),
+          Icon(icon, size: 18, color: theme.colorScheme.primary),
           const SizedBox(width: 8),
-          Text(title, style: TextStyle(fontSize: 14, color: Colors.grey.shade700)),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
   }
+
 // option button with selected state
-  Widget _buildOptionButton(String text, bool isSelected, VoidCallback onTap, Color activeColor) {
+  Widget _buildOptionButton(
+    String text,
+    bool isSelected,
+    VoidCallback onTap,
+    ThemeData theme,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 4),
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor : Colors.grey.shade100,
+          color: isSelected
+              ? theme.colorScheme.primary
+              : theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: isSelected ? activeColor : Colors.grey.shade300),
+          border: Border.all(
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.outline.withValues(alpha: 0.35),
+          ),
         ),
         alignment: Alignment.center,
         child: Text(
           text,
           style: TextStyle(
             fontSize: 12,
-            color: isSelected ? Colors.white : Colors.black87,
+            color: isSelected
+                ? theme.colorScheme.onPrimary
+                : theme.colorScheme.onSurface,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
           textAlign: TextAlign.center,

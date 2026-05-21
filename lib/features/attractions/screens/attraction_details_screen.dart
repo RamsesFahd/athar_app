@@ -125,31 +125,32 @@ class AttractionDetailsScreen extends ConsumerWidget {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                          Expanded(
-                            child: _InfoCard(
-                              icon: Icons.schedule_outlined,
-                              title: l10n.attractionHours,
-                              value: Text(attraction.isAlwaysOpen
-                                  ? l10n.attractionAlwaysOpen
-                                  : attraction.getOpeningHours(isAr)),
-                              color: accent,
-                              isAr: isAr,
+                            Expanded(
+                              child: _InfoCard(
+                                icon: Icons.schedule_outlined,
+                                title: l10n.attractionHours,
+                                value: Text(attraction.isAlwaysOpen
+                                    ? l10n.attractionAlwaysOpen
+                                    : attraction.getOpeningHours(isAr)),
+                                color: accent,
+                                isAr: isAr,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _InfoCard(
-                              icon: Icons.payments_outlined,
-                              title: l10n.attractionEntryFee,
-                              value: attraction.entryFee == 0
-                                  ? Text(l10n.commonFree)
-                                  : CurrencyFormatter.format(attraction.entryFee),
-                              color: attraction.entryFee == 0
-                                  ? Colors.green.shade600
-                                  : accent,
-                              isAr: isAr,
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _InfoCard(
+                                icon: Icons.payments_outlined,
+                                title: l10n.attractionEntryFee,
+                                value: attraction.entryFee == 0
+                                    ? Text(l10n.commonFree)
+                                    : CurrencyFormatter.format(
+                                        attraction.entryFee),
+                                color: attraction.entryFee == 0
+                                    ? Colors.green.shade600
+                                    : accent,
+                                isAr: isAr,
+                              ),
                             ),
-                          ),
                           ],
                         ),
                       ),
@@ -166,7 +167,6 @@ class AttractionDetailsScreen extends ConsumerWidget {
                         attraction.getDescription(isAr),
                         style: _bodyStyle(isAr, theme),
                       ),
-
 
                       // ── Location ─────────────────────────────────────
                       const SizedBox(height: 24),
@@ -230,36 +230,32 @@ class AttractionDetailsScreen extends ConsumerWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    _CircleNavButton(
-      icon: Icons.arrow_back,
-      onTap: () => Navigator.pop(context),
-    ),
-
-    Row(
-      children: [
-        if (settings.isTtsEnabled)
-          _CircleNavButton(
-            icon: Icons.volume_up_rounded,
-            onTap: () {
-              ttsService.speak(
-                '$titleText. $descriptionText',
-              );
-            },
-          ),
-
-        if (settings.isTtsEnabled)
-          const SizedBox(width: 8),
-
-        _CircleNavButton(
-          icon: Icons.share_outlined,
-          onTap: () => _share(context, l10n),
-        ),
-      ],
-    ),
-  ],
-),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _CircleNavButton(
+                      icon: Icons.arrow_back,
+                      onTap: () => Navigator.pop(context),
+                    ),
+                    Row(
+                      children: [
+                        if (settings.isTtsEnabled)
+                          _CircleNavButton(
+                            icon: Icons.volume_up_rounded,
+                            onTap: () {
+                              ttsService.speak(
+                                '$titleText. $descriptionText',
+                              );
+                            },
+                          ),
+                        if (settings.isTtsEnabled) const SizedBox(width: 8),
+                        _CircleNavButton(
+                          icon: Icons.share_outlined,
+                          onTap: () => _share(context, l10n),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -367,24 +363,23 @@ class _InfoCard extends StatelessWidget {
                     .copyWith(
                   fontWeight: FontWeight.w700,
                   fontSize: 11,
-                  color:
-                      theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 6),
           DefaultTextStyle(
-          style: (isAr
-                  ? GoogleFonts.ibmPlexSansArabic()
-                  : GoogleFonts.playfairDisplay())
-              .copyWith(
-            fontWeight: FontWeight.w700,
-            fontSize: 14,
-            color: color,
+            style: (isAr
+                    ? GoogleFonts.ibmPlexSansArabic()
+                    : GoogleFonts.playfairDisplay())
+                .copyWith(
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+              color: color,
+            ),
+            child: value,
           ),
-          child: value,
-        ),
         ],
       ),
     );
@@ -468,7 +463,9 @@ class _HeroCarouselState extends State<_HeroCarousel> {
                 fit: BoxFit.cover,
                 memCacheWidth: 1080,
                 fadeInDuration: const Duration(milliseconds: 150),
-                placeholder: (_, __) => const ColoredBox(color: Color(0xFFEEEEEE)),
+                placeholder: (_, __) => ColoredBox(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                ),
                 errorWidget: (_, __, ___) => Container(
                   color: theme.colorScheme.surfaceContainerHighest,
                   child: Icon(
@@ -494,11 +491,13 @@ class _HeroCarouselState extends State<_HeroCarousel> {
             ),
             // Dot indicators — IgnorePointer so swipes reach the PageView
             if (widget.images.length > 1)
-              Positioned( // <-- اجعل Positioned هي الحاوية الخارجية
+              Positioned(
+                // <-- اجعل Positioned هي الحاوية الخارجية
                 bottom: 16,
                 left: 0,
                 right: 0,
-                child: IgnorePointer( // <-- ضع IgnorePointer بداخلها
+                child: IgnorePointer(
+                  // <-- ضع IgnorePointer بداخلها
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(

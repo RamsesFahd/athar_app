@@ -28,12 +28,11 @@ class TripApprovalsScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.card_travel_outlined,
-                    size: 72,
-                    color: AppColors.primary.withValues(alpha: 0.15)),
+                    size: 72, color: AppColors.primary.withValues(alpha: 0.15)),
                 const SizedBox(height: 16),
                 Text(l10n.adminNoTripsPending,
                     style: theme.textTheme.bodyLarge
-                        ?.copyWith(color: Colors.grey.shade500)),
+                        ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
               ],
             ),
           );
@@ -77,9 +76,12 @@ class _TripApprovalCard extends ConsumerWidget {
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => Container(
                 height: 160,
-                color: Colors.grey.shade200,
-                child: const Icon(Icons.image_not_supported_outlined,
-                    size: 40, color: Colors.grey),
+                color: theme.colorScheme.surfaceContainerHighest,
+                child: Icon(
+                  Icons.image_not_supported_outlined,
+                  size: 40,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
 
@@ -150,7 +152,8 @@ class _TripApprovalCard extends ConsumerWidget {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: () async {
-                          await repo.rejectTrip(trip.id, tutorId: trip.tutorId ?? '');
+                          await repo.rejectTrip(trip.id,
+                              tutorId: trip.tutorId ?? '');
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -173,7 +176,8 @@ class _TripApprovalCard extends ConsumerWidget {
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () async {
-                          await repo.approveTrip(trip.id, tutorId: trip.tutorId ?? '');
+                          await repo.approveTrip(trip.id,
+                              tutorId: trip.tutorId ?? '');
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

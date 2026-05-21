@@ -174,7 +174,6 @@ class _PinDetail extends ConsumerWidget {
                   child: IconButton(
                     icon: const Icon(
                       Icons.close,
-                      color: Color.fromARGB(255, 64, 64, 64),
                     ),
                     tooltip: l10n.profileClose,
                     onPressed: () =>
@@ -194,7 +193,6 @@ class _PinDetail extends ConsumerWidget {
                 IconButton(
                   icon: const Icon(
                     Icons.share_outlined,
-                    color: Color.fromARGB(255, 64, 64, 64),
                   ),
                   tooltip: l10n.mapShareTooltip,
                   onPressed: () => _share(context),
@@ -214,16 +212,18 @@ class _PinDetail extends ConsumerWidget {
                   fit: BoxFit.cover,
                   memCacheWidth: 720,
                   fadeInDuration: const Duration(milliseconds: 150),
-                  placeholder: (_, __) =>
-                      const SizedBox(height: 200, child: ColoredBox(color: Color(0xFFEEEEEE))),
+                  placeholder: (_, __) => SizedBox(
+                    height: 200,
+                    child: ColoredBox(color: cs.surfaceContainerHighest),
+                  ),
                   errorWidget: (_, __, ___) => Container(
                     height: 200,
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      color: cs.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Icon(Icons.image_not_supported,
-                        color: Colors.grey[400], size: 40),
+                        color: cs.onSurfaceVariant, size: 40),
                   ),
                 ),
               ),
@@ -522,13 +522,14 @@ class _DragHandle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: Container(
         margin: const EdgeInsets.only(top: 10, bottom: 8),
         width: 40,
         height: 4,
         decoration: BoxDecoration(
-          color: Colors.grey[300],
+          color: colorScheme.onSurface.withValues(alpha: 0.18),
           borderRadius: BorderRadius.circular(2),
         ),
       ),

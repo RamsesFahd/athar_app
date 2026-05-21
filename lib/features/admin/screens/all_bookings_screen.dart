@@ -33,7 +33,7 @@ class AllBookingsScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
                 Text(l10n.adminNoBookings,
                     style: theme.textTheme.bodyLarge
-                        ?.copyWith(color: Colors.grey.shade500)),
+                        ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
               ],
             ),
           );
@@ -79,9 +79,11 @@ class _BookingTile extends StatelessWidget {
                 errorBuilder: (_, __, ___) => Container(
                   width: 70,
                   height: 70,
-                  color: Colors.grey.shade200,
-                  child: const Icon(Icons.image_not_supported_outlined,
-                      color: Colors.grey),
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  child: Icon(
+                    Icons.image_not_supported_outlined,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
             ),
@@ -131,11 +133,11 @@ class _BookingTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(l10n.adminTouristId(booking.touristId),
                       style: theme.textTheme.labelSmall
-                          ?.copyWith(color: Colors.grey.shade500),
+                          ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                       overflow: TextOverflow.ellipsis),
                   Text(l10n.adminTutorId(booking.tutorId),
                       style: theme.textTheme.labelSmall
-                          ?.copyWith(color: Colors.grey.shade500),
+                          ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                       overflow: TextOverflow.ellipsis),
                 ],
               ),

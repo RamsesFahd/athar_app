@@ -26,7 +26,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context); 
+    final l10n = AppLocalizations.of(context);
 
     ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
       next.whenOrNull(
@@ -74,7 +74,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         const SizedBox(height: 40),
         Text(
           l10n.forgotPassword,
-          style: theme.textTheme.displayLarge, 
+          style: theme.textTheme.displayLarge,
         ),
         const SizedBox(height: 12),
         Text(
@@ -85,7 +85,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         Text(
           l10n.emailLabel,
           style: theme.textTheme.titleLarge?.copyWith(
-            fontSize: theme.textTheme.bodyLarge?.fontSize, // يتبع الحجم الأساسي للثيم
+            fontSize:
+                theme.textTheme.bodyLarge?.fontSize, // يتبع الحجم الأساسي للثيم
           ),
         ),
         const SizedBox(height: 8),
@@ -95,22 +96,28 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           style: theme.textTheme.bodyLarge,
           decoration: InputDecoration(
             hintText: l10n.emailHint,
-            hintStyle: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
-            prefixIcon: Icon(Icons.mail_outline, size: 20, color: theme.colorScheme.primary),
+            hintStyle: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            prefixIcon: Icon(Icons.mail_outline,
+                size: 20, color: theme.colorScheme.primary),
             filled: true,
             fillColor: theme.colorScheme.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade200),
+              borderSide: BorderSide(
+                color: theme.colorScheme.outline.withValues(alpha: 0.35),
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade200),
+              borderSide: BorderSide(
+                color: theme.colorScheme.outline.withValues(alpha: 0.35),
+              ),
             ),
           ),
         ),
         const SizedBox(height: 32),
-
         AtharButton(
           label: l10n.sendLinkButton,
           isLoading: isLoading,
@@ -141,7 +148,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             l10n.emailSentTitle,
             textAlign: TextAlign.center,
             style: theme.textTheme.displayLarge?.copyWith(
-              fontSize: (theme.textTheme.displayLarge?.fontSize ?? 32) * 0.8, // نسبة وتناسب مع حجم الثيم
+              fontSize: (theme.textTheme.displayLarge?.fontSize ?? 32) *
+                  0.8, // نسبة وتناسب مع حجم الثيم
             ),
           ),
           const SizedBox(height: 12),
@@ -151,7 +159,6 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             style: theme.textTheme.bodyMedium,
           ),
           const SizedBox(height: 40),
-
           AtharButton(
             label: l10n.backToSignInButton,
             variant: ButtonVariant.outline,

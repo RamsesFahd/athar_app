@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/core/models/attractions/attraction_model.dart';
 import 'package:athar_app/features/attractions/logic/attractions_repository.dart';
 import 'package:athar_app/features/attractions/widgets/attraction_card.dart';
@@ -14,8 +13,7 @@ class AttractionsListScreen extends ConsumerStatefulWidget {
       _AttractionsListScreenState();
 }
 
-class _AttractionsListScreenState
-    extends ConsumerState<AttractionsListScreen> {
+class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
   bool _isGridView = true;
   bool _showFilters = false;
   String _selectedRegion = 'All';
@@ -52,55 +50,63 @@ class _AttractionsListScreenState
     // and from listenManual (ref.watch in build triggers the rebuild, so
     // setState is also not needed for subsequent emissions).
     _allItems = items;
-    _regions = ['All', ...{...items.map((i) => i.region)}];
-    _categories = ['All', ...{...items.map((i) => i.category)}];
+    _regions = [
+      'All',
+      ...{...items.map((i) => i.region)}
+    ];
+    _categories = [
+      'All',
+      ...{...items.map((i) => i.category)}
+    ];
     _categoryColors = {
-      for (final item in items) item.category: _hexColor(item.categoryColorCode),
+      for (final item in items)
+        item.category: _hexColor(item.categoryColorCode),
     };
   }
 
-String _translateCategory(String value, bool isAr) {
-  if (!isAr) return value;
+  String _translateCategory(String value, bool isAr) {
+    if (!isAr) return value;
 
-  switch (value.toLowerCase()) {
-    case 'heritage':
-      return 'تراث';
-    case 'nature':
-      return 'طبيعة';
-    case 'arts':
-      return 'فنون';
-    case 'modern':
-      return 'عصري';
-    case 'all':
-      return 'الكل';
-    default:
-      return value;
+    switch (value.toLowerCase()) {
+      case 'heritage':
+        return 'تراث';
+      case 'nature':
+        return 'طبيعة';
+      case 'arts':
+        return 'فنون';
+      case 'modern':
+        return 'عصري';
+      case 'all':
+        return 'الكل';
+      default:
+        return value;
+    }
   }
-}
 
-String _translateRegion(String value, bool isAr) {
-  if (!isAr) return value;
+  String _translateRegion(String value, bool isAr) {
+    if (!isAr) return value;
 
-  switch (value.toLowerCase()) {
-    case 'central_region':
-      return 'المنطقة الوسطى';
-    case 'northern_region':
-      return 'المنطقة الشمالية';
-    case 'western_region':
-      return 'المنطقة الغربية';
-    case 'southern_region':
-      return 'المنطقة الجنوبية';
-    case 'eastern_region':
-      return 'المنطقة الشرقية';
-    case 'all':
-      return 'الكل';
-    default:
-      return value;
+    switch (value.toLowerCase()) {
+      case 'central_region':
+        return 'المنطقة الوسطى';
+      case 'northern_region':
+        return 'المنطقة الشمالية';
+      case 'western_region':
+        return 'المنطقة الغربية';
+      case 'southern_region':
+        return 'المنطقة الجنوبية';
+      case 'eastern_region':
+        return 'المنطقة الشرقية';
+      case 'all':
+        return 'الكل';
+      default:
+        return value;
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final l10n = AppLocalizations.of(context);
     final attractionsAsync = ref.watch(attractionsStreamProvider);
@@ -145,33 +151,29 @@ String _translateRegion(String value, bool isAr) {
                           onChanged: (v) => setState(() => _searchQuery = v),
                           decoration: InputDecoration(
                             hintText: l10n.attractionsSearchHint,
-                            hintStyle: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color:
-                                      AppColors.sage800.withValues(alpha: 0.4),
-                                ),
-                            prefixIcon: const Icon(Icons.search,
-                                color: AppColors.primary),
+                            hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: theme.colorScheme.primary,
+                            ),
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: theme.colorScheme.surface,
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 0, horizontal: 16),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .outline
+                                color: theme.colorScheme.outline
                                     .withValues(alpha: 0.3),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
-                                color:
-                                    AppColors.primary.withValues(alpha: 0.7),
+                                color: theme.colorScheme.primary
+                                    .withValues(alpha: 0.7),
                                 width: 1.5,
                               ),
                             ),
@@ -186,23 +188,20 @@ String _translateRegion(String value, bool isAr) {
                         onPressed: () =>
                             setState(() => _isGridView = !_isGridView),
                         style: OutlinedButton.styleFrom(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           side: BorderSide(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .outline
+                            color: theme.colorScheme.outline
                                 .withValues(alpha: 0.3),
                           ),
-                          backgroundColor: Colors.white,
+                          backgroundColor: theme.colorScheme.surface,
                         ),
                         child: Icon(
                           _isGridView ? Icons.grid_view : Icons.view_list,
                           size: 20,
-                          color: AppColors.primary,
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                     ),
@@ -213,27 +212,26 @@ String _translateRegion(String value, bool isAr) {
                         onPressed: () =>
                             setState(() => _showFilters = !_showFilters),
                         style: OutlinedButton.styleFrom(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           side: BorderSide(
                             color: _showFilters
-                                ? AppColors.primary.withValues(alpha: 0.7)
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .outline
+                                ? theme.colorScheme.primary
+                                    .withValues(alpha: 0.7)
+                                : theme.colorScheme.outline
                                     .withValues(alpha: 0.3),
                           ),
                           backgroundColor: _showFilters
-                              ? AppColors.primary.withValues(alpha: 0.08)
-                              : Colors.white,
+                              ? theme.colorScheme.primary
+                                  .withValues(alpha: 0.08)
+                              : theme.colorScheme.surface,
                         ),
                         child: Icon(
                           Icons.tune,
                           size: 20,
-                          color: AppColors.primary,
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                     ),
@@ -243,23 +241,23 @@ String _translateRegion(String value, bool isAr) {
               if (_showFilters) ...[
                 const SizedBox(height: 12),
                 _FilterRow(
-  label: l10n.locationLabel,
-  options: _regions,
-  selected: _selectedRegion,
-  onSelected: (v) => setState(() => _selectedRegion = v),
-  allLabel: l10n.filterAll,
-  labelFor: (v) => _translateRegion(v, isAr),
-),
+                  label: l10n.locationLabel,
+                  options: _regions,
+                  selected: _selectedRegion,
+                  onSelected: (v) => setState(() => _selectedRegion = v),
+                  allLabel: l10n.filterAll,
+                  labelFor: (v) => _translateRegion(v, isAr),
+                ),
                 const SizedBox(height: 6),
                 _FilterRow(
-  label: l10n.categoryLabel,
-  options: _categories,
-  selected: _selectedCategory,
-  onSelected: (v) => setState(() => _selectedCategory = v),
-  allLabel: l10n.filterAll,
-  colorFor: (v) => v == 'All' ? null : _categoryColors[v],
-  labelFor: (v) => _translateCategory(v, isAr),
-),
+                  label: l10n.categoryLabel,
+                  options: _categories,
+                  selected: _selectedCategory,
+                  onSelected: (v) => setState(() => _selectedCategory = v),
+                  allLabel: l10n.filterAll,
+                  colorFor: (v) => v == 'All' ? null : _categoryColors[v],
+                  labelFor: (v) => _translateCategory(v, isAr),
+                ),
               ],
               const SizedBox(height: 12),
               if (filtered.isEmpty)
@@ -269,10 +267,8 @@ String _translateRegion(String value, bool isAr) {
                       _allItems.isEmpty
                           ? l10n.attractionsNoAvailable
                           : l10n.attractionsNoResults,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge
-                          ?.copyWith(color: Colors.grey.shade500),
+                      style: theme.textTheme.bodyLarge
+                          ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                     ),
                   ),
                 )
@@ -333,6 +329,7 @@ class _FilterRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return SizedBox(
       height: 40,
       child: ListView.separated(
@@ -343,35 +340,31 @@ class _FilterRow extends StatelessWidget {
         itemBuilder: (context, index) {
           final value = options[index];
           final isSelected = value == selected;
-          final accent =
-              colorFor?.call(value) ?? Theme.of(context).colorScheme.primary;
+          final accent = colorFor?.call(value) ?? theme.colorScheme.primary;
 
           return GestureDetector(
             onTap: () => onSelected(value),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: isSelected ? accent : Colors.white,
+                color: isSelected ? accent : theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isSelected
                       ? accent
-                      : Theme.of(context)
-                          .colorScheme
-                          .outline
-                          .withValues(alpha: 0.3),
+                      : theme.colorScheme.outline.withValues(alpha: 0.3),
                   width: isSelected ? 1.5 : 1.0,
                 ),
               ),
               child: Text(
-                labelFor?.call(value) ??
-                (value == 'All' ? allLabel : value),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: isSelected ? Colors.white : AppColors.sage800,
-                      fontWeight: FontWeight.w600,
-                    ),
+                labelFor?.call(value) ?? (value == 'All' ? allLabel : value),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: isSelected
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           );

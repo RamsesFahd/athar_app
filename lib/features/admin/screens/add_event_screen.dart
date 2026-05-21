@@ -269,7 +269,9 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             const SizedBox(height: 16),
 
             _SectionLabel(l10n.adminTitleEnglish),
-            _FormField(controller: _titleEnController, hint: l10n.adminTitleEnglishHint),
+            _FormField(
+                controller: _titleEnController,
+                hint: l10n.adminTitleEnglishHint),
             const SizedBox(height: 16),
 
             _SectionLabel(l10n.adminDescriptionArabic),
@@ -294,11 +296,14 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             GestureDetector(
               onTap: _pickDate,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(
+                    color: theme.colorScheme.outline.withValues(alpha: 0.35),
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -312,7 +317,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: _selectedDate != null
                             ? null
-                            : Colors.grey.shade500,
+                            : theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -326,11 +331,14 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             GestureDetector(
               onTap: _pickEndDate,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(
+                    color: theme.colorScheme.outline.withValues(alpha: 0.35),
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -345,14 +353,18 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: _selectedEndDate != null
                               ? null
-                              : Colors.grey.shade500,
+                              : theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
                     if (_selectedEndDate != null)
                       GestureDetector(
                         onTap: () => setState(() => _selectedEndDate = null),
-                        child: Icon(Icons.close, size: 16, color: Colors.grey.shade500),
+                        child: Icon(
+                          Icons.close,
+                          size: 16,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
                       ),
                   ],
                 ),
@@ -403,8 +415,9 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                     keyboardType: const TextInputType.numberWithOptions(
                         decimal: true, signed: true),
                     decoration: _inputDecoration(hint: l10n.adminLatitude),
-                    validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? l10n.requiredField : null,
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? l10n.requiredField
+                        : null,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -414,8 +427,9 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                     keyboardType: const TextInputType.numberWithOptions(
                         decimal: true, signed: true),
                     decoration: _inputDecoration(hint: l10n.adminLongitude),
-                    validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? l10n.requiredField : null,
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? l10n.requiredField
+                        : null,
                   ),
                 ),
               ],
@@ -433,7 +447,8 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                         child: Text(t.labelEn),
                       ))
                   .toList(),
-              onChanged: (v) => setState(() => _selectedEventType = v ?? EventType.other),
+              onChanged: (v) =>
+                  setState(() => _selectedEventType = v ?? EventType.other),
             ),
             const SizedBox(height: 16),
 
@@ -443,7 +458,8 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
               value: _selectedCategory,
               decoration: _inputDecoration(),
               items: _categories
-                  .map((c) => DropdownMenuItem(value: c.id, child: Text(c.label)))
+                  .map((c) =>
+                      DropdownMenuItem(value: c.id, child: Text(c.label)))
                   .toList(),
               onChanged: (v) => setState(() => _selectedCategory = v ?? 'food'),
             ),
@@ -455,7 +471,8 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
               value: _selectedRegionId,
               decoration: _inputDecoration(hint: l10n.adminSelectRegion),
               items: regionsData
-                  .map((r) => DropdownMenuItem(value: r.regionId, child: Text(r.nameEn)))
+                  .map((r) => DropdownMenuItem(
+                      value: r.regionId, child: Text(r.nameEn)))
                   .toList(),
               onChanged: (v) => setState(() => _selectedRegionId = v),
               validator: (v) => v == null ? l10n.adminSelectRegion : null,
@@ -519,18 +536,23 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
   }
 
   InputDecoration _inputDecoration({String? hint}) {
+    final theme = Theme.of(context);
     return InputDecoration(
       hintText: hint,
       filled: true,
-      fillColor: Colors.white,
+      fillColor: theme.colorScheme.surface,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade300),
+        borderSide: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.35),
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade300),
+        borderSide: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.35),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -575,6 +597,7 @@ class _FormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
@@ -585,15 +608,20 @@ class _FormField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        fillColor: theme.colorScheme.surface,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(
+            color: theme.colorScheme.outline.withValues(alpha: 0.35),
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(
+            color: theme.colorScheme.outline.withValues(alpha: 0.35),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

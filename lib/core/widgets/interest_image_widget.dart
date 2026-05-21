@@ -108,10 +108,11 @@ class _InterestImageState extends State<InterestImage> {
   }
 
   Widget _buildShimmer() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: widget.width,
       height: widget.height,
-      color: Colors.grey.shade200,
+      color: colorScheme.surfaceContainerHighest,
       child: const Center(
         child: SizedBox(
           width: 20,
@@ -123,13 +124,14 @@ class _InterestImageState extends State<InterestImage> {
   }
 
   Widget _buildFallback() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: widget.width,
       height: widget.height,
-      color: Colors.grey.shade100,
+      color: colorScheme.surfaceContainerHighest,
       child: Icon(
         Icons.image_not_supported_outlined,
-        color: Colors.grey.shade400,
+        color: colorScheme.onSurfaceVariant,
         size: 32,
       ),
     );

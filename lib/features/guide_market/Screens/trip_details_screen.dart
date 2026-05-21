@@ -25,7 +25,7 @@ class TripDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     //acc
     final settings = ref.watch(settingsProvider);
     final ttsService = ref.read(ttsServiceProvider);
@@ -49,8 +49,9 @@ class TripDetailsScreen extends ConsumerWidget {
                   fit: BoxFit.cover,
                   memCacheWidth: 1080,
                   fadeInDuration: const Duration(milliseconds: 150),
-                  placeholder: (_, __) =>
-                      const ColoredBox(color: Color(0xFFEEEEEE)),
+                  placeholder: (_, __) => ColoredBox(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                  ),
                 ),
 
                 Padding(
@@ -99,8 +100,8 @@ class TripDetailsScreen extends ConsumerWidget {
                                 .snapshots()
                             : const Stream.empty(),
                         builder: (context, snap) {
-                          final data = snap.data?.data()
-                              as Map<String, dynamic>?;
+                          final data =
+                              snap.data?.data() as Map<String, dynamic>?;
                           final liveName =
                               data?['fullName'] as String? ?? trip.guide;
                           return _buildInfoRow(
@@ -108,11 +109,11 @@ class TripDetailsScreen extends ConsumerWidget {
                             Icons.person_outline,
                             '${l10n.guide}: $liveName',
                             trailing: GestureDetector(
-                              onTap: () => _showGuideDetailsPopUp(
-                                  context, l10n, isAr),
+                              onTap: () =>
+                                  _showGuideDetailsPopUp(context, l10n, isAr),
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 4.0),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
                                 child: Icon(
                                   Icons.info_outline,
                                   size: 18,
@@ -149,18 +150,18 @@ class TripDetailsScreen extends ConsumerWidget {
                 ),
                 Row(
                   children: [
-                     if (settings.isTtsEnabled)
-                     CircleAvatar(
-                     backgroundColor: Colors.black54,
-                     child: IconButton(
-                     icon: const Icon(Icons.volume_up_rounded, color: Colors.white),
-                     onPressed: () {
-                     ttsService.speak('$titleText. $descriptionText');
-                     },
-                 ),
-             ),
-            if (settings.isTtsEnabled)
-            const SizedBox(width: 8),
+                    if (settings.isTtsEnabled)
+                      CircleAvatar(
+                        backgroundColor: Colors.black54,
+                        child: IconButton(
+                          icon: const Icon(Icons.volume_up_rounded,
+                              color: Colors.white),
+                          onPressed: () {
+                            ttsService.speak('$titleText. $descriptionText');
+                          },
+                        ),
+                      ),
+                    if (settings.isTtsEnabled) const SizedBox(width: 8),
                     Consumer(
                       builder: (ctx, consumerRef, _) {
                         final isFavAsync =
@@ -223,8 +224,7 @@ class TripDetailsScreen extends ConsumerWidget {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    final currentUser =
-                        ref.read(authNotifierProvider).value;
+                    final currentUser = ref.read(authNotifierProvider).value;
                     if (currentUser is TouristModel &&
                         (currentUser.phoneNumber == null ||
                             currentUser.phoneNumber!.isEmpty)) {
@@ -280,7 +280,6 @@ class TripDetailsScreen extends ConsumerWidget {
             icon: Icons.person_outline,
           ),
 
-        
           Container(
             height: 30,
             width: 1,
@@ -293,8 +292,8 @@ class TripDetailsScreen extends ConsumerWidget {
             theme,
             label: l10n.tripChildrenPriceLabel,
             price: trip.childPrice == 0
-              ? Text(l10n.commonFree)
-              : CurrencyFormatter.format(trip.childPrice),
+                ? Text(l10n.commonFree)
+                : CurrencyFormatter.format(trip.childPrice),
             icon: Icons.child_care_outlined,
           ),
         ],
@@ -302,17 +301,14 @@ class TripDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPriceItem(
-    ThemeData theme,
-    {required String label,
-    required Widget price,
-    required IconData icon}
-    ) {
+  Widget _buildPriceItem(ThemeData theme,
+      {required String label, required Widget price, required IconData icon}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 20, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
+        Icon(icon,
+            size: 20, color: theme.colorScheme.primary.withValues(alpha: 0.7)),
         const SizedBox(width: 10),
         Flexible(
           child: Column(
@@ -321,7 +317,7 @@ class TripDetailsScreen extends ConsumerWidget {
               Text(
                 label,
                 style: theme.textTheme.labelSmall?.copyWith(
-                  color: Colors.grey[500],
+                  color: theme.colorScheme.onSurfaceVariant,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -342,12 +338,8 @@ class TripDetailsScreen extends ConsumerWidget {
 
   Widget _buildAccessibilityBadges(ThemeData theme, AppLocalizations l10n) {
     const badgeInfo = {
-      'wheelchair': (
-        icon: Icons.accessible_forward_rounded,
-      ),
-      'family': (
-        icon: Icons.family_restroom_rounded,
-      ),
+      'wheelchair': (icon: Icons.accessible_forward_rounded,),
+      'family': (icon: Icons.family_restroom_rounded,),
     };
 
     final badges =
@@ -447,18 +439,21 @@ class TripDetailsScreen extends ConsumerWidget {
                   final liveName = data?['fullName'] as String? ?? trip.guide;
                   final bio = data?['bio'] as String? ?? trip.guideBio ?? '';
                   final languages =
-                      (data?['languages'] as List<dynamic>?)
-                          ?.cast<String>() ??
-                      trip.guideLanguages ??
-                      [];
+                      (data?['languages'] as List<dynamic>?)?.cast<String>() ??
+                          trip.guideLanguages ??
+                          [];
 
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Align(
-                        alignment: isAr ? Alignment.topLeft : Alignment.topRight,
+                        alignment:
+                            isAr ? Alignment.topLeft : Alignment.topRight,
                         child: IconButton(
-                          icon: const Icon(Icons.close, color: Colors.grey),
+                          icon: Icon(
+                            Icons.close,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
                           onPressed: () => Navigator.pop(context),
                         ),
                       ),
@@ -503,7 +498,10 @@ class TripDetailsScreen extends ConsumerWidget {
                                     Text(
                                       l10n.tripReviewsCount(reviews),
                                       style: TextStyle(
-                                          color: Colors.grey[500], fontSize: 13),
+                                        color:
+                                            theme.colorScheme.onSurfaceVariant,
+                                        fontSize: 13,
+                                      ),
                                     ),
                                   ],
                                 ],
@@ -520,7 +518,7 @@ class TripDetailsScreen extends ConsumerWidget {
                                   textAlign:
                                       isAr ? TextAlign.right : TextAlign.left,
                                   style: TextStyle(
-                                    color: Colors.grey[600],
+                                    color: theme.colorScheme.onSurfaceVariant,
                                     height: 1.6,
                                     fontSize: 14,
                                     fontFamily: 'Tajawal',

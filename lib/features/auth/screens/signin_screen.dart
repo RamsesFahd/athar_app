@@ -33,7 +33,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       next.whenOrNull(
         error: (error, stack) {
           if (error.toString() == 'needsRoleSelection') {
-            Navigator.pushReplacementNamed(context, AppRoutes.googleRoleSelection);
+            Navigator.pushReplacementNamed(
+                context, AppRoutes.googleRoleSelection);
             return;
           }
           ScaffoldMessenger.of(context).showSnackBar(
@@ -52,9 +53,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             // redirecting to email verification screen if the user's email is not verified
             if (!user.emailVerified && user.role != UserRole.guest) {
               Navigator.pushReplacementNamed(
-                context, 
-                AppRoutes.verifyEmail, 
-                arguments: _email.text, 
+                context,
+                AppRoutes.verifyEmail,
+                arguments: _email.text,
               );
             } else {
               Navigator.pushReplacementNamed(context, AppRoutes.home);
@@ -111,15 +112,20 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     // Sign in button
                     AtharButton(
                       label: l10n.continueButton,
-                      isLoading:_isLoginLoading,
-                      onPressed: authState.isLoading ? null : () async {
-                        setState(() => _isLoginLoading = true);
-                        await ref.read(authNotifierProvider.notifier).signIn(
-                          email: _email.text.trim(),
-                          password: _password.text.trim(),
-                        );
-                        if (mounted) setState(() => _isLoginLoading = false);
-                      },
+                      isLoading: _isLoginLoading,
+                      onPressed: authState.isLoading
+                          ? null
+                          : () async {
+                              setState(() => _isLoginLoading = true);
+                              await ref
+                                  .read(authNotifierProvider.notifier)
+                                  .signIn(
+                                    email: _email.text.trim(),
+                                    password: _password.text.trim(),
+                                  );
+                              if (mounted)
+                                setState(() => _isLoginLoading = false);
+                            },
                     ),
                     const SizedBox(height: 25),
                     AuthUtils.buildDivider(l10n),
@@ -146,15 +152,21 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
         filled: true,
         fillColor: theme.colorScheme.surface,
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade200)),
+            borderSide: BorderSide(
+              color: theme.colorScheme.outline.withValues(alpha: 0.35),
+            )),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade200)),
+            borderSide: BorderSide(
+              color: theme.colorScheme.outline.withValues(alpha: 0.35),
+            )),
         suffixIcon: isPassword
             ? IconButton(
                 icon: Icon(
@@ -208,11 +220,15 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       const SizedBox(width: 12),
       _socialBtn(null, theme.colorScheme.surface, theme.colorScheme.onSurface,
           isGoogle: true,
-          onTap: authState.isLoading ? null : () async {
-            setState(() => _isGoogleLoading = true);
-            await ref.read(authNotifierProvider.notifier).signInWithGoogle();
-            if (mounted) setState(() => _isGoogleLoading = false);
-          }),
+          onTap: authState.isLoading
+              ? null
+              : () async {
+                  setState(() => _isGoogleLoading = true);
+                  await ref
+                      .read(authNotifierProvider.notifier)
+                      .signInWithGoogle();
+                  if (mounted) setState(() => _isGoogleLoading = false);
+                }),
     ]);
   }
 
@@ -226,7 +242,10 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           decoration: BoxDecoration(
             color: bg,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(
+              color:
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.35),
+            ),
           ),
           child: Center(
             child: isGoogle
@@ -260,7 +279,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         ),
       ]),
       TextButton(
-        onPressed: isLoading ? null : () => ref.read(authNotifierProvider.notifier).guestLogin(),
+        onPressed: isLoading
+            ? null
+            : () => ref.read(authNotifierProvider.notifier).guestLogin(),
         child: Text(
           l10n.continueAsGuest,
           style: theme.textTheme.bodyMedium?.copyWith(

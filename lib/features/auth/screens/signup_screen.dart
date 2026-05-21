@@ -50,7 +50,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       next.whenOrNull(
         error: (error, stack) {
           if (error.toString() == 'needsRoleSelection') {
-            Navigator.pushReplacementNamed(context, AppRoutes.googleRoleSelection);
+            Navigator.pushReplacementNamed(
+                context, AppRoutes.googleRoleSelection);
             return;
           }
           ScaffoldMessenger.of(context).showSnackBar(
@@ -117,9 +118,11 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       const SizedBox(height: 12),
                       Row(
                         children: [
-                          _tutorTypeOption(TutorType.individual, l10n.guideTypeIndependent, theme),
+                          _tutorTypeOption(TutorType.individual,
+                              l10n.guideTypeIndependent, theme),
                           const SizedBox(width: 12),
-                          _tutorTypeOption(TutorType.company, l10n.guideTypeCompany, theme),
+                          _tutorTypeOption(
+                              TutorType.company, l10n.guideTypeCompany, theme),
                         ],
                       ),
                       const SizedBox(height: 25),
@@ -150,8 +153,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         Checkbox(
                           value: _privacyPolicyAccepted,
                           activeColor: theme.colorScheme.primary,
-                          onChanged: (v) =>
-                              setState(() => _privacyPolicyAccepted = v ?? false),
+                          onChanged: (v) => setState(
+                              () => _privacyPolicyAccepted = v ?? false),
                         ),
                         Text(
                           l10n.privacyPolicyAgreePrefix,
@@ -229,8 +232,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 : theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(15),
             border: Border.all(
-              color:
-                  isSelected ? theme.colorScheme.primary : Colors.grey.shade300,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.outline.withValues(alpha: 0.35),
               width: 2,
             ),
             boxShadow: isSelected
@@ -332,16 +336,22 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         hintText: hint,
-        hintStyle: theme.textTheme.bodyMedium?.copyWith(color: Colors.grey),
+        hintStyle: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
         filled: true,
         fillColor: theme.colorScheme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(
+            color: theme.colorScheme.outline.withValues(alpha: 0.35),
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(
+            color: theme.colorScheme.outline.withValues(alpha: 0.35),
+          ),
         ),
         suffixIcon: isPassword
             ? IconButton(
@@ -366,18 +376,23 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     final theme = Theme.of(context);
     final authState = ref.watch(authNotifierProvider);
     return Row(children: [
-      _socialBtn(Icons.apple, theme.colorScheme.onSurface, theme.colorScheme.surface),
+      _socialBtn(
+          Icons.apple, theme.colorScheme.onSurface, theme.colorScheme.surface),
       const SizedBox(width: 12),
       _socialBtn(
         null,
         theme.colorScheme.surface,
         theme.colorScheme.onSurface,
         isGoogle: true,
-        onTap: authState.isLoading ? null : () async {
-          setState(() => _isGoogleLoading = true);
-          await ref.read(authNotifierProvider.notifier).signInWithGoogle();
-          if (mounted) setState(() => _isGoogleLoading = false);
-        },
+        onTap: authState.isLoading
+            ? null
+            : () async {
+                setState(() => _isGoogleLoading = true);
+                await ref
+                    .read(authNotifierProvider.notifier)
+                    .signInWithGoogle();
+                if (mounted) setState(() => _isGoogleLoading = false);
+              },
       ),
     ]);
   }
@@ -392,7 +407,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           decoration: BoxDecoration(
             color: bg,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(
+              color:
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.35),
+            ),
           ),
           child: Center(
             child: isGoogle
@@ -445,18 +463,25 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       ),
     ]);
   }
+
   Widget _tutorTypeOption(TutorType type, String label, ThemeData theme) {
-  final isSelected = _selectedTutorType == type;
-  return Expanded(
-    child: OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        backgroundColor: isSelected ? theme.colorScheme.primary : Colors.transparent,
-        side: BorderSide(color: isSelected ? theme.colorScheme.primary : Colors.grey.shade300),
-        foregroundColor: isSelected ? Colors.white : theme.colorScheme.primary,
+    final isSelected = _selectedTutorType == type;
+    return Expanded(
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(
+          backgroundColor:
+              isSelected ? theme.colorScheme.primary : Colors.transparent,
+          side: BorderSide(
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.outline.withValues(alpha: 0.35),
+          ),
+          foregroundColor:
+              isSelected ? Colors.white : theme.colorScheme.primary,
+        ),
+        onPressed: () => setState(() => _selectedTutorType = type),
+        child: Text(label),
       ),
-      onPressed: () => setState(() => _selectedTutorType = type),
-      child: Text(label),
-    ),
-  );
-}
+    );
+  }
 }

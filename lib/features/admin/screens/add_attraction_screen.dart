@@ -163,8 +163,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
   }
 
   Future<void> _pickVideo() async {
-    final picked =
-        await ImagePicker().pickVideo(source: ImageSource.gallery);
+    final picked = await ImagePicker().pickVideo(source: ImageSource.gallery);
     if (picked != null) setState(() => _videoFile = File(picked.path));
   }
 
@@ -285,7 +284,8 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
         }
       }
     } catch (e) {
-      if (mounted) _showSnackBar(l10n.commonErrorWithMessage(e.toString()), isError: true);
+      if (mounted)
+        _showSnackBar(l10n.commonErrorWithMessage(e.toString()), isError: true);
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -471,7 +471,8 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                           decimal: true, signed: true),
                       decoration: _inputDecoration(hint: l10n.adminLatitude),
                       validator: (v) {
-                        if (v == null || v.trim().isEmpty) return l10n.requiredField;
+                        if (v == null || v.trim().isEmpty)
+                          return l10n.requiredField;
                         if (double.tryParse(v.trim()) == null) {
                           return l10n.adminValidNumber;
                         }
@@ -487,7 +488,8 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                           decimal: true, signed: true),
                       decoration: _inputDecoration(hint: l10n.adminLongitude),
                       validator: (v) {
-                        if (v == null || v.trim().isEmpty) return l10n.requiredField;
+                        if (v == null || v.trim().isEmpty)
+                          return l10n.requiredField;
                         if (double.tryParse(v.trim()) == null) {
                           return l10n.adminValidNumber;
                         }
@@ -534,10 +536,9 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                 label: l10n.adminEntryFeeSar,
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
-                validator: (v) =>
-                    (double.tryParse(v?.trim() ?? '') == null)
-                        ? l10n.adminValidNumber
-                        : null,
+                validator: (v) => (double.tryParse(v?.trim() ?? '') == null)
+                    ? l10n.adminValidNumber
+                    : null,
               ),
 
               const SizedBox(height: 24),
@@ -594,7 +595,9 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                               color: Colors.white, strokeWidth: 2.5),
                         )
                       : Text(
-                          _isEditing ? l10n.adminUpdateAttraction : l10n.adminAddAttraction,
+                          _isEditing
+                              ? l10n.adminUpdateAttraction
+                              : l10n.adminAddAttraction,
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
@@ -620,7 +623,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
             child: Text(
               l10n.adminNoGalleryImages,
               style: theme.textTheme.bodySmall
-                  ?.copyWith(color: Colors.grey.shade500),
+                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),
         Wrap(
@@ -638,7 +641,8 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                 file: _galleryFiles[i],
                 onRemove: () => setState(() => _galleryFiles.removeAt(i)),
               ),
-            if (_totalGalleryCount < 8) _AddGalleryTile(onTap: _addGalleryImage),
+            if (_totalGalleryCount < 8)
+              _AddGalleryTile(onTap: _addGalleryImage),
           ],
         ),
         if (_totalGalleryCount >= 8)
@@ -647,7 +651,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
             child: Text(
               l10n.adminMaxGalleryImages,
               style: theme.textTheme.bodySmall
-                  ?.copyWith(color: Colors.grey.shade500),
+                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),
       ],
@@ -655,19 +659,23 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
   }
 
   InputDecoration _inputDecoration({String? hint}) {
+    final theme = Theme.of(context);
     return InputDecoration(
       hintText: hint,
       filled: true,
-      fillColor: Colors.white,
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      fillColor: theme.colorScheme.surface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade300),
+        borderSide: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.35),
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.grey.shade300),
+        borderSide: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.35),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -722,10 +730,10 @@ class _Label extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 6),
       child: Text(
         text,
-        style: Theme.of(context)
-            .textTheme
-            .bodySmall
-            ?.copyWith(fontWeight: FontWeight.w600, color: Colors.grey[700]),
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
       ),
     );
   }
@@ -755,6 +763,7 @@ class _FormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -773,16 +782,20 @@ class _FormField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hint,
             filled: true,
-            fillColor: Colors.white,
+            fillColor: theme.colorScheme.surface,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: BorderSide(
+                color: theme.colorScheme.outline.withValues(alpha: 0.35),
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: BorderSide(
+                color: theme.colorScheme.outline.withValues(alpha: 0.35),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -836,9 +849,16 @@ class _ImagePickerTile extends StatelessWidget {
                           existingUrl!,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => Container(
-                            color: Colors.grey.shade200,
-                            child: const Icon(Icons.broken_image_outlined,
-                                size: 36),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .surfaceContainerHighest,
+                            child: Icon(
+                              Icons.broken_image_outlined,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                              size: 36,
+                            ),
                           ),
                         ),
                   Positioned(
@@ -852,8 +872,8 @@ class _ImagePickerTile extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(l10n.adminTapToChange,
-                          style:
-                              const TextStyle(color: Colors.white, fontSize: 11)),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 11)),
                     ),
                   ),
                 ],
@@ -941,8 +961,7 @@ class _VideoPickerTile extends StatelessWidget {
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style:
-                      const TextStyle(color: Colors.white70, fontSize: 12),
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
                 ),
               ),
             ],
@@ -952,11 +971,9 @@ class _VideoPickerTile extends StatelessWidget {
           bottom: 8,
           right: 8,
           child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(8)),
+                color: Colors.black54, borderRadius: BorderRadius.circular(8)),
             child: Text(l10n.adminTapToChange,
                 style: const TextStyle(color: Colors.white, fontSize: 11)),
           ),
@@ -1019,8 +1036,11 @@ class _GalleryNetworkTile extends StatelessWidget {
               errorBuilder: (_, __, ___) => Container(
                 width: 90,
                 height: 90,
-                color: Colors.grey.shade200,
-                child: const Icon(Icons.broken_image_outlined),
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: Icon(
+                  Icons.broken_image_outlined,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ),
@@ -1033,8 +1053,7 @@ class _GalleryNetworkTile extends StatelessWidget {
                 padding: const EdgeInsets.all(3),
                 decoration: const BoxDecoration(
                     color: Colors.red, shape: BoxShape.circle),
-                child:
-                    const Icon(Icons.close, size: 12, color: Colors.white),
+                child: const Icon(Icons.close, size: 12, color: Colors.white),
               ),
             ),
           ),
@@ -1075,8 +1094,7 @@ class _GalleryFileTile extends StatelessWidget {
                 padding: const EdgeInsets.all(3),
                 decoration: const BoxDecoration(
                     color: Colors.red, shape: BoxShape.circle),
-                child:
-                    const Icon(Icons.close, size: 12, color: Colors.white),
+                child: const Icon(Icons.close, size: 12, color: Colors.white),
               ),
             ),
           ),
@@ -1111,8 +1129,7 @@ class _AddGalleryTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.add_photo_alternate_outlined,
-                size: 28,
-                color: AppColors.primary.withValues(alpha: 0.5)),
+                size: 28, color: AppColors.primary.withValues(alpha: 0.5)),
             const SizedBox(height: 4),
             Text(
               l10n.adminAdd,
