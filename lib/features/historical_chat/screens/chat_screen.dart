@@ -503,7 +503,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     }
   }
 
-  Widget _buildGeneralWelcomeWithRegionChips(bool isAr) {
+  Widget _buildGeneralWelcomeWithRegionChips(bool isAr, AppLocalizations l10n) {
     final topRegions = regionsData.take(5).toList();
 
     return ListView(
