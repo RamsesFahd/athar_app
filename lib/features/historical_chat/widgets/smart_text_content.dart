@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../cultural_archive/widgets/cultural_item_details.dart';
 import '../../cultural_archive/logic/cultural_notifier.dart';
 import '../../../core/models/cultural/cultural_item_model.dart';
@@ -25,6 +24,7 @@ class SmartTextContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final culturalState = ref.watch(culturalNotifierProvider);
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
 
@@ -32,8 +32,10 @@ class SmartTextContent extends ConsumerWidget {
     // Only names in this set will be rendered as tappable entities.
     final Set<String> validEntityNames = {};
     for (final item in culturalState.value?.allItems ?? []) {
-      if (item.titleAr.trim().isNotEmpty) validEntityNames.add(item.titleAr.trim());
-      if (item.titleEn.trim().isNotEmpty) validEntityNames.add(item.titleEn.trim());
+      if (item.titleAr.trim().isNotEmpty)
+        validEntityNames.add(item.titleAr.trim());
+      if (item.titleEn.trim().isNotEmpty)
+        validEntityNames.add(item.titleEn.trim());
     }
     for (final item in suggestedItems ?? []) {
       final ar = item['titleAr']?.toString().trim() ?? '';
@@ -56,10 +58,8 @@ class SmartTextContent extends ConsumerWidget {
       crossAxisAlignment:
           isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        _buildRichTextWithTags(
-            mainText, context, isAr, culturalState.value?.allItems ?? [],
-            validEntityNames),
-
+        _buildRichTextWithTags(mainText, context, isAr,
+            culturalState.value?.allItems ?? [], validEntityNames, colorScheme),
         if (quickReplyLines.isNotEmpty && !isMe) ...[
           const SizedBox(height: 16),
           Wrap(
@@ -71,8 +71,9 @@ class SmartTextContent extends ConsumerWidget {
                 elevation: 2,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                backgroundColor: Colors.grey[100],
-                side: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
+                backgroundColor: colorScheme.surfaceContainerHighest,
+                side: BorderSide(
+                    color: colorScheme.primary.withValues(alpha: 0.3)),
                 label: ConstrainedBox(
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.of(context).size.width * 0.72,
@@ -84,7 +85,7 @@ class SmartTextContent extends ConsumerWidget {
                     style: GoogleFonts.cairo(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
+                      color: colorScheme.primary,
                     ),
                   ),
                 ),
@@ -104,7 +105,9 @@ class SmartTextContent extends ConsumerWidget {
     final normalized = _normalize(name);
     return validNames.any((v) {
       final nv = _normalize(v);
-      return nv == normalized || nv.contains(normalized) || normalized.contains(nv);
+      return nv == normalized ||
+          nv.contains(normalized) ||
+          normalized.contains(nv);
     });
   }
 
@@ -121,7 +124,10 @@ class SmartTextContent extends ConsumerWidget {
   // known platform item) or a non-interactive bold span (if not). Also handles
   // *italic* emphasis by stripping the asterisks and rendering as plain text.
   List<InlineSpan> _parseInlineEntities(
-      String segment, Set<String> validEntityNames) {
+    String segment,
+    Set<String> validEntityNames,
+    ColorScheme colorScheme,
+  ) {
     // Only match **bold** and *italic* — quoted strings are not entity markers.
     final entityExp = RegExp(r'\*\*(.*?)\*\*|\*(.*?)\*');
     final matches = entityExp.allMatches(segment);
@@ -149,7 +155,9 @@ class SmartTextContent extends ConsumerWidget {
             // Clickable entities use the primary brand color; unrecognised bold
             // text stays in the default message color so it is not misleadingly
             // interactive.
-            color: isKnown ? AppColors.primary : null,
+            color: isKnown
+                ? (isMe ? colorScheme.onPrimary : colorScheme.primary)
+                : null,
             height: 1.5,
           ),
           recognizer: isKnown
@@ -178,14 +186,17 @@ class SmartTextContent extends ConsumerWidget {
     bool isAr,
     List<CulturalItemModel> allItems,
     Set<String> validEntityNames,
+    ColorScheme colorScheme,
   ) {
     final RegExp tagExp = RegExp(r"#[^#]+#");
     final Iterable<RegExpMatch> matches = tagExp.allMatches(content);
 
     if (matches.isEmpty) {
-      if (isMe) return Text(content, style: _textStyle());
-      final spans = _parseInlineEntities(content, validEntityNames);
-      return RichText(text: TextSpan(style: _textStyle(), children: spans));
+      if (isMe) return Text(content, style: _textStyle(colorScheme));
+      final spans =
+          _parseInlineEntities(content, validEntityNames, colorScheme);
+      return RichText(
+          text: TextSpan(style: _textStyle(colorScheme), children: spans));
     }
 
     List<InlineSpan> spans = [];
@@ -197,7 +208,8 @@ class SmartTextContent extends ConsumerWidget {
         if (isMe) {
           spans.add(TextSpan(text: segment));
         } else {
-          spans.addAll(_parseInlineEntities(segment, validEntityNames));
+          spans.addAll(
+              _parseInlineEntities(segment, validEntityNames, colorScheme));
         }
       }
 
@@ -210,7 +222,7 @@ class SmartTextContent extends ConsumerWidget {
           style: GoogleFonts.cairo(
             fontSize: 15,
             fontWeight: FontWeight.w700,
-            color: isMe ? Colors.white : AppColors.primary,
+            color: isMe ? colorScheme.onPrimary : colorScheme.primary,
           ),
           recognizer: TapGestureRecognizer()
             ..onTap = () {
@@ -252,11 +264,13 @@ class SmartTextContent extends ConsumerWidget {
       if (isMe) {
         spans.add(TextSpan(text: segment));
       } else {
-        spans.addAll(_parseInlineEntities(segment, validEntityNames));
+        spans.addAll(
+            _parseInlineEntities(segment, validEntityNames, colorScheme));
       }
     }
 
-    return RichText(text: TextSpan(style: _textStyle(), children: spans));
+    return RichText(
+        text: TextSpan(style: _textStyle(colorScheme), children: spans));
   }
 
   CulturalItemModel? _searchForItem(
@@ -279,8 +293,8 @@ class SmartTextContent extends ConsumerWidget {
     }
   }
 
-  TextStyle _textStyle() => GoogleFonts.cairo(
-        color: isMe ? Colors.white : Colors.black87,
+  TextStyle _textStyle(ColorScheme colorScheme) => GoogleFonts.cairo(
+        color: isMe ? colorScheme.onPrimary : colorScheme.onSurface,
         fontSize: 15,
         height: 1.5,
       );

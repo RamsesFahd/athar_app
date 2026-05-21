@@ -1,6 +1,5 @@
 import 'package:athar_app/core/constants/region_data.dart';
 import 'package:athar_app/core/models/chat/chat_session_model.dart';
-import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/auth/logic/auth_repository.dart';
 import 'package:athar_app/features/historical_chat/logic/chat_repository.dart';
 import 'package:athar_app/features/historical_chat/screens/chat_screen.dart';
@@ -30,10 +29,8 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
   @override
   void initState() {
     super.initState();
-    _userId =
-        ref.read(authRepositoryProvider).currentUser?.uid ?? 'guest_user';
-    _sessionsStream =
-        ref.read(chatRepositoryProvider).getChatSessions(_userId);
+    _userId = ref.read(authRepositoryProvider).currentUser?.uid ?? 'guest_user';
+    _sessionsStream = ref.read(chatRepositoryProvider).getChatSessions(_userId);
   }
 
   @override
@@ -230,6 +227,7 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
   }
 
   Widget _buildStoriesRow(bool isAr) {
+    final theme = Theme.of(context);
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
     final extraHeight = ((textScale - 1.0).clamp(0.0, 1.0) * 34).toDouble();
 
@@ -253,7 +251,10 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.primary, width: 2),
+                        border: Border.all(
+                          color: theme.colorScheme.primary,
+                          width: 2,
+                        ),
                       ),
                       child: CircleAvatar(
                         radius: 28,
@@ -300,31 +301,32 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
                 decoration: InputDecoration(
                   hintText: l10n.rawiSearchHistoryHint,
                   hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.sage800,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
-                  prefixIcon: Icon(Icons.search, color: AppColors.primary),
+                  prefixIcon:
+                      Icon(Icons.search, color: theme.colorScheme.primary),
                   filled: true,
-                  fillColor: AppColors.surface,
+                  fillColor: theme.colorScheme.surface,
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: AppColors.primary,
+                      color: theme.colorScheme.primary,
                       width: 0.9,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: AppColors.primary,
+                      color: theme.colorScheme.primary,
                       width: 1.1,
                     ),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: AppColors.primary,
+                      color: theme.colorScheme.primary,
                       width: 0.9,
                     ),
                   ),
@@ -336,7 +338,10 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
           IconButton(
             tooltip: l10n.rawiDeleteAllChats,
             onPressed: () => _confirmDeleteAllSessions(userId, sessions, l10n),
-            icon: Icon(Icons.delete_sweep_rounded, color: AppColors.primary),
+            icon: Icon(
+              Icons.delete_sweep_rounded,
+              color: theme.colorScheme.primary,
+            ),
           ),
         ],
       ),
@@ -350,33 +355,69 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
     AppLocalizations l10n,
     String userId,
   ) {
+    final theme = Theme.of(context);
     return Container(
-      margin: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
+      margin: const EdgeInsets.only(bottom: 14, left: 12, right: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: AppColors.primary,
-          width: 0.9,
+          color: theme.colorScheme.primary.withValues(alpha: 0.12),
+          width: 1,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.shadow.withValues(alpha: 0.04),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: ListTile(
+        onTap: () => _openSession(session),
         contentPadding: const EdgeInsetsDirectional.only(
-            start: 16, end: 8, top: 2, bottom: 2),
+          start: 14,
+          end: 6,
+          top: 8,
+          bottom: 8,
+        ),
+        leading: CircleAvatar(
+          radius: 23,
+          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.10),
+          child: Icon(
+            Icons.auto_stories_rounded,
+            color: theme.colorScheme.primary,
+            size: 23,
+          ),
+        ),
         title: Text(
           _displayTitle(session, isAr, l10n),
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w800,
+            fontSize: 14.5,
+            color: theme.colorScheme.onSurface,
+            height: 1.3,
+          ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
-        isThreeLine: true,
-        subtitle: Text(
-          DateFormat('yyyy/MM/dd').format(session.lastMessageTime),
-          style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 6),
+          child: Text(
+            DateFormat('yyyy/MM/dd').format(session.lastMessageTime),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
         trailing: PopupMenuButton<String>(
-          color: const Color(0xCC1F1F1F),
-          iconColor: AppColors.primary,
+          color: theme.colorScheme.surface,
+          icon: Icon(
+            Icons.more_vert_rounded,
+            color: theme.colorScheme.primary,
+          ),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
           onSelected: (value) async {
@@ -395,28 +436,18 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
           itemBuilder: (context) => [
             PopupMenuItem<String>(
               value: 'open',
-              child: Text(
-                l10n.rawiOpenChat,
-                style: const TextStyle(color: Colors.white),
-              ),
+              child: Text(l10n.rawiOpenChat),
             ),
             PopupMenuItem<String>(
               value: 'rename',
-              child: Text(
-                l10n.rawiRenameChat,
-                style: const TextStyle(color: Colors.white),
-              ),
+              child: Text(l10n.rawiRenameChat),
             ),
             PopupMenuItem<String>(
               value: 'delete',
-              child: Text(
-                l10n.rawiDeleteChat,
-                style: const TextStyle(color: Colors.white),
-              ),
+              child: Text(l10n.rawiDeleteChat),
             ),
           ],
         ),
-        onTap: () => _openSession(session),
       ),
     );
   }
@@ -429,14 +460,14 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
           Icon(
             Icons.forum_outlined,
             size: 80,
-            color: AppColors.primary.withValues(alpha: 0.1),
+            color: theme.colorScheme.primary.withValues(alpha: 0.1),
           ),
           const SizedBox(height: 16),
           Text(
             l10n.rawiEmptyState,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyLarge?.copyWith(
-              color: Colors.grey.shade500,
+              color: theme.colorScheme.onSurfaceVariant,
               height: 1.5,
             ),
           ),
@@ -450,7 +481,9 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
       child: Text(
         l10n.rawiNoMatchingChats,
         textAlign: TextAlign.center,
-        style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey.shade600),
+        style: theme.textTheme.bodyLarge?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
       ),
     );
   }
@@ -488,8 +521,8 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
                                 ? _buildEmptyState(theme, l10n)
                                 : _buildNoSearchResult(theme, l10n))
                             : ListView.builder(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 itemCount: filtered.length,
                                 itemBuilder: (context, index) =>
                                     _buildSessionTile(
@@ -516,15 +549,20 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
             MaterialPageRoute(builder: (context) => const ChatScreen()),
           );
         },
-        backgroundColor: AppColors.primary,
-        icon: const Icon(Icons.add_comment_rounded, color: Colors.white),
+        backgroundColor: theme.colorScheme.primary,
+        icon: Icon(
+          Icons.add_comment_rounded,
+          color: theme.colorScheme.onPrimary,
+        ),
         label: Text(
           l10n.rawiNewChat,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
-          style:
-              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: theme.colorScheme.onPrimary,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

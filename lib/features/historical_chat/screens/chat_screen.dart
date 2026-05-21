@@ -15,7 +15,6 @@ import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/chat_message_bubble.dart';
 import 'package:athar_app/core/constants/region_data.dart';
 import 'dart:typed_data';
@@ -119,7 +118,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     );
   }
 
-  Future<void> _pickAndSendImage(ImageSource source, AppLocalizations l10n) async {
+  Future<void> _pickAndSendImage(
+      ImageSource source, AppLocalizations l10n) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: source);
 
@@ -161,80 +161,81 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
         behavior: HitTestBehavior.opaque,
         child: SafeArea(
           child: Column(
-          children: [
-            Expanded(
-              child: StreamBuilder<List<ChatMessageModel>>(
-                stream: ref
-                    .watch(chatRepositoryProvider)
-                    .getMessages(userId, _sessionId),
-                builder: (context, snapshot) {
-                  final messages = snapshot.data ?? const <ChatMessageModel>[];
+            children: [
+              Expanded(
+                child: StreamBuilder<List<ChatMessageModel>>(
+                  stream: ref
+                      .watch(chatRepositoryProvider)
+                      .getMessages(userId, _sessionId),
+                  builder: (context, snapshot) {
+                    final messages =
+                        snapshot.data ?? const <ChatMessageModel>[];
 
-                  if (snapshot.connectionState == ConnectionState.waiting &&
-                      messages.isEmpty) {
-                    if (widget.region == null) {
-                      return _buildGeneralWelcomeWithRegionChips(isAr, l10n);
+                    if (snapshot.connectionState == ConnectionState.waiting &&
+                        messages.isEmpty) {
+                      if (widget.region == null) {
+                        return _buildGeneralWelcomeWithRegionChips(isAr, l10n);
+                      }
+                      return const SizedBox.shrink();
                     }
-                    return const SizedBox.shrink();
-                  }
 
-                  if (messages.isEmpty) {
-                    if (widget.region == null) {
-                      return _buildGeneralWelcomeWithRegionChips(isAr, l10n);
+                    if (messages.isEmpty) {
+                      if (widget.region == null) {
+                        return _buildGeneralWelcomeWithRegionChips(isAr, l10n);
+                      }
+                      return _buildEmptyState(isAr, l10n);
                     }
-                    return _buildEmptyState(isAr, l10n);
-                  }
 
-                  final firstBotMessageWithSuggestionsId =
-                      _findFirstBotMessageWithSuggestions(messages);
+                    final firstBotMessageWithSuggestionsId =
+                        _findFirstBotMessageWithSuggestions(messages);
 
-                  return ListView.builder(
-                    controller: _scrollController,
-                    reverse: true,
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      final msg = messages[index];
-                      final showQuickReplies = widget.region != null &&
-                          !msg.isUser &&
-                          msg.id != null &&
-                          msg.id == firstBotMessageWithSuggestionsId;
+                    return ListView.builder(
+                      controller: _scrollController,
+                      reverse: true,
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      padding: const EdgeInsets.all(16),
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final msg = messages[index];
+                        final showQuickReplies = widget.region != null &&
+                            !msg.isUser &&
+                            msg.id != null &&
+                            msg.id == firstBotMessageWithSuggestionsId;
 
-                      final hasSuggestions = !msg.isUser &&
-                          msg.suggestedItems != null &&
-                          msg.suggestedItems!.isNotEmpty;
+                        final hasSuggestions = !msg.isUser &&
+                            msg.suggestedItems != null &&
+                            msg.suggestedItems!.isNotEmpty;
 
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildMessageBubble(
-                            message: msg.text,
-                            isMe: msg.isUser,
-                            showQuickReplies: showQuickReplies,
-                            isAr: isAr,
-                            suggestedItems: msg.suggestedItems,
-                          ),
-                          if (hasSuggestions)
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: RawiSuggestionsRow(
-                                items: msg.suggestedItems!,
-                                isAr: isAr,
-                              ),
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildMessageBubble(
+                              message: msg.text,
+                              isMe: msg.isUser,
+                              showQuickReplies: showQuickReplies,
+                              isAr: isAr,
+                              suggestedItems: msg.suggestedItems,
                             ),
-                        ],
-                      );
-                    },
-                  );
-                },
+                            if (hasSuggestions)
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: RawiSuggestionsRow(
+                                  items: msg.suggestedItems!,
+                                  isAr: isAr,
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
-            ),
-            _buildTypingIndicator(isAr, l10n),
-            _buildInputArea(theme, isAr, l10n),
-          ],
-        ),
+              _buildTypingIndicator(isAr, l10n),
+              _buildInputArea(theme, isAr, l10n),
+            ],
+          ),
         ),
       ),
     );
@@ -282,8 +283,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     AppLocalizations l10n,
   ) {
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
-    final toolbarExtra =
-        ((textScale - 1.0).clamp(0.0, 1.0) * 16).toDouble();
+    final toolbarExtra = ((textScale - 1.0).clamp(0.0, 1.0) * 16).toDouble();
     final defaultTitle = isAr
         ? (widget.region?.nameAr ?? l10n.rawiGeneralCouncil)
         : (widget.region?.nameEn ?? l10n.rawiGeneralCouncil);
@@ -301,16 +301,22 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
             title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-                fontWeight: FontWeight.bold, color: Colors.black),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           );
         },
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      foregroundColor: Theme.of(context).colorScheme.onSurface,
       elevation: 0.5,
       centerTitle: true,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+        icon: Icon(
+          Icons.arrow_back_ios,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         onPressed: () => Navigator.pop(context),
       ),
     );
@@ -318,13 +324,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
 
   Widget _buildEmptyState(bool isAr, AppLocalizations l10n) {
     if (widget.region == null) {
+      final theme = Theme.of(context);
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
           child: Text(
             l10n.rawiWelcomeGeneral,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey[600], fontSize: 16),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontSize: 16,
+            ),
           ),
         ),
       );
@@ -400,23 +410,32 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
         case 'attraction':
           final doc = await db.collection('attractions').doc(id).get();
           if (!doc.exists || doc.data() == null || !mounted) return;
-          Navigator.push(context, MaterialPageRoute(
-            builder: (_) => AttractionDetailsScreen(attraction: AttractionModel.fromMap(doc.data()!, doc.id)),
-          ));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => AttractionDetailsScreen(
+                    attraction: AttractionModel.fromMap(doc.data()!, doc.id)),
+              ));
           break;
         case 'trip':
           final doc = await db.collection('trips').doc(id).get();
           if (!doc.exists || doc.data() == null || !mounted) return;
-          Navigator.push(context, MaterialPageRoute(
-            builder: (_) => TripDetailsScreen(trip: TripModel.fromMap(doc.data()!, doc.id)),
-          ));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => TripDetailsScreen(
+                    trip: TripModel.fromMap(doc.data()!, doc.id)),
+              ));
           break;
         case 'cultural_item':
           final doc = await db.collection('cultural_items').doc(id).get();
           if (!doc.exists || doc.data() == null || !mounted) return;
-          Navigator.push(context, MaterialPageRoute(
-            builder: (_) => CulturalItemDetails(item: CulturalItemModel.fromMap(doc.data()!, doc.id)),
-          ));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => CulturalItemDetails(
+                    item: CulturalItemModel.fromMap(doc.data()!, doc.id)),
+              ));
           break;
       }
     } catch (_) {}
@@ -495,7 +514,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     try {
       return items.firstWhere((item) {
         final titleAr = normalize(item['titleAr']?.toString() ?? '');
-        final titleEn = (item['titleEn']?.toString() ?? '').toLowerCase().trim();
+        final titleEn =
+            (item['titleEn']?.toString() ?? '').toLowerCase().trim();
         final qEn = query.toLowerCase().trim();
         return titleAr.contains(cleanQuery) ||
             cleanQuery.contains(titleAr) ||
@@ -508,6 +528,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   }
 
   Widget _buildGeneralWelcomeWithRegionChips(bool isAr, AppLocalizations l10n) {
+    final theme = Theme.of(context);
     final topRegions = regionsData.take(5).toList();
 
     return ListView(
@@ -534,53 +555,53 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                           sessionId: _sessionId,
                         );
                   },
-                    child: Container(
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.8,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 9),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: AppColors.primary.withValues(alpha: 0.35),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.explore_rounded,
-                            size: 14,
-                            color: AppColors.primary,
-                          ),
-                          const SizedBox(width: 6),
-                          ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth:
-                                  MediaQuery.of(context).size.width * 0.6,
-                            ),
-                            child: Text(
-                              regionName,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ),
-                        ],
+                  child: Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.8,
+                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color:
+                            theme.colorScheme.primary.withValues(alpha: 0.35),
                       ),
                     ),
-                  );
-                }).toList(),
-              ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.explore_rounded,
+                          size: 14,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 6),
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.6,
+                          ),
+                          child: Text(
+                            regionName,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
+        ),
         Align(
           alignment: Alignment.centerLeft,
           child: Container(
@@ -589,7 +610,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
             constraints: BoxConstraints(
                 maxWidth: MediaQuery.of(context).size.width * 0.75),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.colorScheme.surface,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
@@ -598,7 +619,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
+                  color: theme.colorScheme.shadow.withValues(alpha: 0.05),
                   blurRadius: 5,
                   offset: const Offset(0, 2),
                 ),
@@ -608,8 +629,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
               child: Text(
                 l10n.rawiPickRegionStart,
-                style: const TextStyle(
-                  color: Colors.black87,
+                style: TextStyle(
+                  color: theme.colorScheme.onSurface,
                   fontSize: 15,
                   height: 1.5,
                 ),
@@ -627,15 +648,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade200)),
+        color: theme.colorScheme.surface,
+        border: Border(
+          top: BorderSide(
+            color: theme.colorScheme.outline.withValues(alpha: 0.25),
+          ),
+        ),
       ),
       child: Row(
         children: [
           // زر الزائد (+) لإضافة الوسائط
           IconButton(
             icon: Icon(Icons.add_circle_outline,
-                color: AppColors.primary, size: 28),
+                color: theme.colorScheme.primary, size: 28),
             onPressed: () => _showAttachmentMenu(context, l10n),
           ),
           // حقل الإدخال النصي
@@ -644,12 +669,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               controller: _messageController,
               textAlign: isAr ? TextAlign.right : TextAlign.left,
               textDirection: TextDirection.rtl,
-              style: const TextStyle(
-                color: Colors.black87,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
                 fontSize: 16,
                 height: 1.3,
               ),
-              cursorColor: AppColors.primary,
+              cursorColor: theme.colorScheme.primary,
               autofocus: true,
               enableSuggestions: true,
               autocorrect: true,
@@ -669,15 +694,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                     );
               },
               decoration: InputDecoration(
-                hintText: _isListening
-                    ? l10n.rawiMicListening
-                    : l10n.rawiAskHint,
+                hintText:
+                    _isListening ? l10n.rawiMicListening : l10n.rawiAskHint,
                 hintStyle: TextStyle(
-                  color: _isListening ? AppColors.primary : Colors.black45,
+                  color: _isListening
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurfaceVariant,
                   fontSize: 14,
                 ),
                 filled: true,
-                fillColor: Colors.grey[100],
+                fillColor: theme.colorScheme.surfaceContainerHighest,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(25),
                   borderSide: BorderSide.none,
@@ -700,16 +726,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   _isListening ? Icons.mic_rounded : Icons.mic_none_rounded,
                   color: _isListening
                       ? Color.lerp(
-                          AppColors.primary,
+                          theme.colorScheme.primary,
                           Colors.red,
                           _micPulse.value,
                         )!
-                      : AppColors.primary,
+                      : theme.colorScheme.primary,
                   size: 26,
                 ),
-                onPressed: isLoading
-                    ? null
-                    : () => _toggleListening(isAr, l10n),
+                onPressed:
+                    isLoading ? null : () => _toggleListening(isAr, l10n),
               );
             },
           ),
@@ -717,9 +742,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
           // زر الإرسال أو مؤشر التحميل
           CircleAvatar(
             radius: 20,
-            backgroundColor: isLoading ? Colors.grey[300] : AppColors.primary,
+            backgroundColor: isLoading
+                ? theme.colorScheme.surfaceContainerHighest
+                : theme.colorScheme.primary,
             child: IconButton(
-              icon: const Icon(Icons.send, color: Colors.white, size: 18),
+              icon: Icon(
+                Icons.send,
+                color: isLoading
+                    ? theme.colorScheme.onSurfaceVariant
+                    : theme.colorScheme.onPrimary,
+                size: 18,
+              ),
               onPressed: isLoading
                   ? null
                   : () async {
@@ -749,6 +782,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     final isLoading = ref.watch(chatNotifierProvider);
 
     if (!isLoading) return const SizedBox.shrink();
+    final theme = Theme.of(context);
 
     return Align(
       alignment: Alignment.centerLeft,
@@ -756,7 +790,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.colorScheme.surface,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(16),
             topRight: Radius.circular(16),
@@ -765,7 +799,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: theme.colorScheme.shadow.withValues(alpha: 0.05),
               blurRadius: 5,
               offset: const Offset(0, 2),
             ),
@@ -775,9 +809,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
           textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
           child: Text(
             l10n.rawiTyping,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: Colors.grey,
+              color: theme.colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -803,8 +837,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               _buildAttachmentOption(Icons.insert_drive_file,
                   l10n.rawiAttachmentFile, Colors.blue, () {}),
               _buildAttachmentOption(
-                  Icons.camera_alt, l10n.rawiAttachmentCamera, Colors.red,
-                  () {
+                  Icons.camera_alt, l10n.rawiAttachmentCamera, Colors.red, () {
                 Navigator.pop(context);
                 _pickAndSendImage(ImageSource.camera, l10n);
               }),

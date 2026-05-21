@@ -65,6 +65,7 @@ class _RegionStoryScreenState extends State<RegionStoryScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
@@ -88,41 +89,31 @@ class _RegionStoryScreenState extends State<RegionStoryScreen>
               itemBuilder: (context, index) {
                 final region = regionsData[index];
                 final isAr =
-    Localizations.localeOf(context).languageCode == 'ar';
+                    Localizations.localeOf(context).languageCode == 'ar';
 
-final imagePath = switch (region.regionId) {
-  'central_region' =>
-    isAr
-        ? 'assets/images/central_ar.png'
-        : 'assets/images/central_en.png',
+                final imagePath = switch (region.regionId) {
+                  'central_region' => isAr
+                      ? 'assets/images/central_ar.png'
+                      : 'assets/images/central_en.png',
+                  'western_region' => isAr
+                      ? 'assets/images/western_ar.png'
+                      : 'assets/images/western_en.png',
+                  'northern_region' => isAr
+                      ? 'assets/images/northern_ar.png'
+                      : 'assets/images/northern_en.png',
+                  'eastern_region' => isAr
+                      ? 'assets/images/eastern_ar.png'
+                      : 'assets/images/eastern_en.png',
+                  'southern_region' => isAr
+                      ? 'assets/images/southern_ar.png'
+                      : 'assets/images/southern_en.png',
+                  _ => region.storyImage,
+                };
 
-  'western_region' =>
-    isAr
-        ? 'assets/images/western_ar.png'
-        : 'assets/images/western_en.png',
-
-  'northern_region' =>
-    isAr
-        ? 'assets/images/northern_ar.png'
-        : 'assets/images/northern_en.png',
-
-  'eastern_region' =>
-    isAr
-        ? 'assets/images/eastern_ar.png'
-        : 'assets/images/eastern_en.png',
-
-  'southern_region' =>
-    isAr
-        ? 'assets/images/southern_ar.png'
-        : 'assets/images/southern_en.png',
-
-  _ => region.storyImage,
-};
-
-return Image.asset(
-  imagePath,
-  fit: BoxFit.cover,
-);
+                return Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover,
+                );
               },
             ),
 
@@ -136,8 +127,10 @@ return Image.asset(
                 child: LinearProgressIndicator(
                   // يأخذ القيمة الحالية للأنيميشن مباشرة (من 0 إلى 1)
                   value: _animController.value,
-                  backgroundColor: Colors.white.withValues(alpha: 0.2),
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                  backgroundColor:
+                      theme.colorScheme.onPrimary.withValues(alpha: 0.2),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      theme.colorScheme.onPrimary),
                   minHeight: 3, // سمك الشريط
                 ),
               ),
@@ -160,6 +153,7 @@ return Image.asset(
 
   Widget _buildGlassButton(dynamic region) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 26),
       child: ClipRRect(
@@ -171,7 +165,9 @@ return Image.asset(
             decoration: BoxDecoration(
               color: const Color(0xFF354431).withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+              border: Border.all(
+                color: theme.colorScheme.onPrimary.withValues(alpha: 0.1),
+              ),
             ),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -193,8 +189,8 @@ return Image.asset(
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                    color: Colors.white,
+                style: TextStyle(
+                    color: theme.colorScheme.onPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
