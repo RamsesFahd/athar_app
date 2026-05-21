@@ -156,7 +156,6 @@ class RawiSuggestionCard extends StatelessWidget {
       ),
       builder: (_) => SingleChildScrollView(
         padding: const EdgeInsets.all(24),
-              isAr ? (event.descriptionAr.isNotEmpty ? event.descriptionAr : event.descriptionEn) : (event.descriptionEn.isNotEmpty ? event.descriptionEn : event.descriptionAr),
         child: SafeArea(
           top: false,
           child: Column(
