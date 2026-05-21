@@ -221,43 +221,50 @@ class TripDetailsScreen extends ConsumerWidget {
               ),
               child: SizedBox(
                 width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {
-                    final currentUser = ref.read(authNotifierProvider).value;
-                    if (currentUser is TouristModel &&
-                        (currentUser.phoneNumber == null ||
-                            currentUser.phoneNumber!.isEmpty)) {
-                      showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          title: Text(l10n.completeProfileTitle),
-                          content: Text(l10n.phoneRequiredForTourist),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(l10n.cancel),
-                            ),
-                            ElevatedButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(l10n.editProfile),
-                            ),
-                          ],
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 56),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final currentUser = ref.read(authNotifierProvider).value;
+                      if (currentUser is TouristModel &&
+                          (currentUser.phoneNumber == null ||
+                              currentUser.phoneNumber!.isEmpty)) {
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: Text(l10n.completeProfileTitle),
+                            content: Text(l10n.phoneRequiredForTourist),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text(l10n.cancel),
+                              ),
+                              ElevatedButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text(l10n.editProfile),
+                              ),
+                            ],
+                          ),
+                        );
+                        return;
+                      }
+                      ref
+                          .read(bookingNotifierProvider.notifier)
+                          .startBooking(trip);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookingFormScreen(trip: trip),
                         ),
                       );
-                      return;
-                    }
-                    ref
-                        .read(bookingNotifierProvider.notifier)
-                        .startBooking(trip);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BookingFormScreen(trip: trip),
-                      ),
-                    );
-                  },
-                  child: Text(l10n.book_now),
+                    },
+                    child: Text(
+                      l10n.book_now,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ),
               ),
             ),

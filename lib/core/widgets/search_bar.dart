@@ -36,34 +36,33 @@ class CustomSearchBar extends StatelessWidget {
         children: [
           // 1. A search field that expands to fill the available space
           Expanded(
-            child: SizedBox(
-              height: 44, 
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 44),
               child: TextField(
                 onChanged: onChanged,
+                textAlignVertical: TextAlignVertical.center,
                 decoration: InputDecoration(
                   hintText: hintText,
                   hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.sage800.withValues(alpha: 0.4), 
+                    color: AppColors.sage800.withValues(alpha: 0.4),
                   ),
                   prefixIcon: Icon(Icons.search, color: AppColors.primary),
                   filled: true,
                   fillColor: AppColors.surface,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-                  
-                  
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
                       color: defaultBorderColor,
-                      width: 1.0, 
+                      width: 1.0,
                     ),
                   ),
-                  
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
                       color: focusedBorderColor,
-                      width: 1.5, 
+                      width: 1.5,
                     ),
                   ),
                 ),
@@ -74,10 +73,12 @@ class CustomSearchBar extends StatelessWidget {
           const SizedBox(width: 8),
 
           // 2. `Filter` button that opens a filter panel when tapped
-          GestureDetector(
-            onTap: onFilterTap,
-            child: Container(
-              height: 44,
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 148),
+            child: GestureDetector(
+              onTap: onFilterTap,
+              child: Container(
+              constraints: const BoxConstraints(minHeight: 44),
               padding: const EdgeInsets.symmetric(horizontal: 14),
               decoration: BoxDecoration(
                 color: isFilterActive ? AppColors.primary : AppColors.surface,
@@ -96,23 +97,32 @@ class CustomSearchBar extends StatelessWidget {
                     color: isFilterActive ? Colors.white : AppColors.primary,
                   ),
                   const SizedBox(width: 6),
-                  Text(
-                    l10n.filter,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: isFilterActive ? Colors.white : AppColors.primary,
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.22,
+                    ),
+                    child: Text(
+                      l10n.filter,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color:
+                            isFilterActive ? Colors.white : AppColors.primary,
+                      ),
                     ),
                   ),
                 ],
               ),
+            ),
             ),
           ),
 
           const SizedBox(width: 8),
 
           // 3. A toggle button that switches between grid and list views of the search results
-          SizedBox(
-            height: 44,
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 44),
             child: OutlinedButton(
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(horizontal: 12),

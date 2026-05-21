@@ -146,7 +146,11 @@ return Image.asset(
             // زر الانتقال للشات
             Align(
               alignment: Alignment.bottomCenter,
-              child: _buildGlassButton(regionsData[_currentIndex]),
+              child: SafeArea(
+                top: false,
+                minimum: const EdgeInsets.only(bottom: 24),
+                child: _buildGlassButton(regionsData[_currentIndex]),
+              ),
             ),
           ],
         ),
@@ -157,7 +161,7 @@ return Image.asset(
   Widget _buildGlassButton(dynamic region) {
     final l10n = AppLocalizations.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 0, 24, 50),
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 26),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
         child: BackdropFilter(
@@ -174,6 +178,8 @@ return Image.asset(
                 backgroundColor: Colors.transparent,
                 shadowColor: Colors.transparent,
                 minimumSize: const Size(double.infinity, 60),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               ),
               onPressed: () {
                 Navigator.pushReplacement(
@@ -184,7 +190,10 @@ return Image.asset(
               },
               child: Text(
                 l10n.rawiStoryStartChat,
-                style: TextStyle(
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),

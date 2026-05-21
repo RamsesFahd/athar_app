@@ -24,6 +24,7 @@ class _TripsListScreenState extends ConsumerState<TripsListScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final largeText = MediaQuery.textScalerOf(context).scale(1.0) > 1.2;
 
     // Issue V fix: watch the StreamProvider instead of calling ref.read()
     // inside a StreamBuilder. The stream is now re-created reactively.
@@ -111,11 +112,11 @@ class _TripsListScreenState extends ConsumerState<TripsListScreen> {
                       ? GridView.builder(
                           padding: const EdgeInsets.all(16),
                           gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
+                              SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 16,
-                            childAspectRatio: 0.6,
+                            childAspectRatio: largeText ? 0.52 : 0.6,
                           ),
                           itemCount: displayedTrips.length,
                           itemBuilder: (context, index) => TripCard(

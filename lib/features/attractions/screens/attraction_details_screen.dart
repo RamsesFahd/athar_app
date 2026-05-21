@@ -279,16 +279,23 @@ class AttractionDetailsScreen extends ConsumerWidget {
               ),
               child: SizedBox(
                 width: double.infinity,
-                height: 52,
-                child: ElevatedButton.icon(
-                  onPressed: _openDirections,
-                  icon: const Icon(Icons.directions_outlined),
-                  label: Text(l10n.attractionGetDirections),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: accent,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 52),
+                  child: ElevatedButton.icon(
+                    onPressed: _openDirections,
+                    icon: const Icon(Icons.directions_outlined),
+                    label: Text(
+                      l10n.attractionGetDirections,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: accent,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
                   ),
                 ),

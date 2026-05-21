@@ -77,6 +77,7 @@ class AttractionCard extends StatelessWidget {
 
 Widget _buildGrid(
     BuildContext context, bool isAr, ThemeData theme, Color accent) {
+  final largeText = MediaQuery.textScalerOf(context).scale(1.0) > 1.2;
   return InkWell(
     onTap: () => _openDetails(context),
     child: Column(
@@ -128,7 +129,7 @@ Widget _buildGrid(
                   attraction.getName(isAr),
 
                   // ✨ اسم المعلم صار أصغر
-                  maxLines: 1,
+                  maxLines: largeText ? 2 : 1,
 
                   overflow: TextOverflow.ellipsis,
                   style: isAr
@@ -190,8 +191,12 @@ Widget _buildGrid(
 }
   Widget _buildList(
       BuildContext context, bool isAr, ThemeData theme, Color accent) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    final cardExtra = ((textScale - 1.0).clamp(0.0, 1.0) * 34).toDouble();
+    final cardHeight = 130 + cardExtra;
+
     return SizedBox(
-      height: 130,
+      height: cardHeight,
       child: InkWell(
         onTap: () => _openDetails(context),
         child: Row(
@@ -207,18 +212,18 @@ Widget _buildGrid(
                 child: CachedNetworkImage(
                   imageUrl: attraction.mainImage,
                   width: 120,
-                  height: 130,
+                  height: cardHeight,
                   fit: BoxFit.cover,
                   memCacheWidth: 400,
                   fadeInDuration: const Duration(milliseconds: 200),
                   placeholder: (_, __) => Container(
                     width: 120,
-                    height: 130,
+                    height: cardHeight,
                     color: theme.colorScheme.surfaceContainerHighest,
                   ),
                   errorWidget: (_, __, ___) => Container(
                     width: 120,
-                    height: 130,
+                    height: cardHeight,
                     color: theme.colorScheme.surfaceContainerHighest,
                     child: Icon(
                       Icons.image_not_supported_outlined,

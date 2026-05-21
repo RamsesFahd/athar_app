@@ -103,51 +103,56 @@ String _statusMessage(BookingStatus status, bool isGuide, AppLocalizations l10n)
           if (isTourist && booking.status == BookingStatus.pending)
             SizedBox(
               width: double.infinity,
-              height: 52,
-              child: OutlinedButton.icon(
-                onPressed: () async {
-                  final confirmed = await showDialog<bool>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: Text(l10n.bookingCancelTitle),
-                      content: Text(l10n.cancelBookingConfirmation),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, false),
-                          child: Text(l10n.bookingCancelNo),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, true),
-                          child: Text(
-                            l10n.bookingCancelYes,
-                            style: const TextStyle(color: Colors.red),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 52),
+                child: OutlinedButton.icon(
+                  onPressed: () async {
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: Text(l10n.bookingCancelTitle),
+                        content: Text(l10n.cancelBookingConfirmation),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(ctx, false),
+                            child: Text(l10n.bookingCancelNo),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
+                          TextButton(
+                            onPressed: () => Navigator.pop(ctx, true),
+                            child: Text(
+                              l10n.bookingCancelYes,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
 
-                  if (confirmed == true && context.mounted) {
-                    // Issue H fix: delegate to BookingNotifier instead of
-                    // calling the repository directly from the screen.
-                    await ref
-                        .read(bookingNotifierProvider.notifier)
-                        .cancelBooking(booking.bookingId);
+                    if (confirmed == true && context.mounted) {
+                      // Issue H fix: delegate to BookingNotifier instead of
+                      // calling the repository directly from the screen.
+                      await ref
+                          .read(bookingNotifierProvider.notifier)
+                          .cancelBooking(booking.bookingId);
 
-                    if (context.mounted) {
-                      Navigator.pop(context);
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
                     }
-                  }
-                },
-                icon: const Icon(Icons.cancel_outlined, color: Colors.red),
-                label: Text(
-                  l10n.bookingCancelButton,
-                  style: const TextStyle(color: Colors.red),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.red),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  },
+                  icon: const Icon(Icons.cancel_outlined, color: Colors.red),
+                  label: Text(
+                    l10n.bookingCancelButton,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Colors.red),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),

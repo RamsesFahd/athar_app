@@ -281,11 +281,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     bool isAr,
     AppLocalizations l10n,
   ) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    final toolbarExtra =
+        ((textScale - 1.0).clamp(0.0, 1.0) * 16).toDouble();
     final defaultTitle = isAr
         ? (widget.region?.nameAr ?? l10n.rawiGeneralCouncil)
         : (widget.region?.nameEn ?? l10n.rawiGeneralCouncil);
 
     return AppBar(
+      toolbarHeight: 56 + toolbarExtra,
       title: StreamBuilder<ChatSessionModel?>(
         stream:
             ref.watch(chatRepositoryProvider).watchSession(userId, _sessionId),
@@ -531,6 +535,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                         );
                   },
                     child: Container(
+                      constraints: BoxConstraints(
+                        maxWidth: MediaQuery.of(context).size.width * 0.8,
+                      ),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 9),
                       decoration: BoxDecoration(
@@ -542,6 +549,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Icon(
                             Icons.explore_rounded,
@@ -549,12 +557,20 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                             color: AppColors.primary,
                           ),
                           const SizedBox(width: 6),
-                          Text(
-                            regionName,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.primary,
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth:
+                                  MediaQuery.of(context).size.width * 0.6,
+                            ),
+                            child: Text(
+                              regionName,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.primary,
+                              ),
                             ),
                           ),
                         ],
@@ -639,6 +655,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               autocorrect: true,
               keyboardType: TextInputType.multiline,
               textInputAction: TextInputAction.send,
+              minLines: 1,
+              maxLines: 4,
+              textAlignVertical: TextAlignVertical.center,
               onSubmitted: (_) async {
                 if (_messageController.text.trim().isEmpty) return;
                 final text = _messageController.text;
@@ -776,8 +795,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
       builder: (context) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          child: Wrap(
+            alignment: WrapAlignment.spaceAround,
+            spacing: 12,
+            runSpacing: 16,
             children: [
               _buildAttachmentOption(Icons.insert_drive_file,
                   l10n.rawiAttachmentFile, Colors.blue, () {}),
@@ -803,17 +824,26 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
       IconData icon, String label, Color color, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: color.withValues(alpha: 0.1),
-            child: Icon(icon, color: color, size: 30),
-          ),
-          const SizedBox(height: 8),
-          Text(label, style: const TextStyle(fontSize: 14)),
-        ],
+      child: SizedBox(
+        width: 100,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: color.withValues(alpha: 0.1),
+              child: Icon(icon, color: color, size: 30),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 14),
+            ),
+          ],
+        ),
       ),
     );
   }

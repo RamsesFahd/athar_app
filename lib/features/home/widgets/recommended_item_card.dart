@@ -22,6 +22,7 @@ class RecommendedItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final largeText = MediaQuery.textScalerOf(context).scale(1.0) > 1.2;
 
     return GestureDetector(
       onTap: () {
@@ -80,18 +81,25 @@ class RecommendedItemCard extends StatelessWidget {
                 Positioned(
                   top: 8,
                   left: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      category,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                        fontWeight: FontWeight.w700,
+                  right: 8,
+                  child: Align(
+                    alignment: AlignmentDirectional.topStart,
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 200),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        category,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
                   ),
@@ -107,7 +115,7 @@ class RecommendedItemCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    maxLines: 1,
+                    maxLines: largeText ? 2 : 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontSize:
@@ -117,18 +125,28 @@ class RecommendedItemCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.location_on,
-                        size: 16,
-                        color: isHighContrast ? Colors.black : theme.colorScheme.primary,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: isHighContrast
+                              ? Colors.black
+                              : theme.colorScheme.primary,
+                        ),
                       ),
                       const SizedBox(width: 4),
-                      Text(
-                        location,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                       ),
+                      Expanded(
+                        child: Text(
+                          location,
+                          maxLines: largeText ? 2 : 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
                       ),
                     ],
                   ),

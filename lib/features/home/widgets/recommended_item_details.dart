@@ -78,35 +78,47 @@ class RecommendedItemDetails extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                      Icons.category,
-                      size: 18,
-                      color: isHighContrast
-                      ? Colors.black
-                      : theme.colorScheme.primary,
-                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Icon(
+                          Icons.category,
+                          size: 18,
+                          color: isHighContrast
+                              ? Colors.black
+                              : theme.colorScheme.primary,
+                        ),
+                      ),
                       const SizedBox(width: 6),
-                      Text(
-                        category,
-                        style: theme.textTheme.bodyMedium,
+                      Expanded(
+                        child: Text(
+                          category,
+                          style: theme.textTheme.bodyMedium,
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
                  Row(
-  children: [
-    Icon(
-      Icons.location_on,
-      size: 18,
-      color: isHighContrast
-          ? Colors.black
-          : theme.colorScheme.primary,
-    ),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Icon(
+                          Icons.location_on,
+                          size: 18,
+                          color: isHighContrast
+                              ? Colors.black
+                              : theme.colorScheme.primary,
+                        ),
+                      ),
                       const SizedBox(width: 6),
-                      Text(
-                        location,
-                        style: theme.textTheme.bodyMedium,
+                      Expanded(
+                        child: Text(
+                          location,
+                          style: theme.textTheme.bodyMedium,
+                        ),
                       ),
                     ],
                   ),

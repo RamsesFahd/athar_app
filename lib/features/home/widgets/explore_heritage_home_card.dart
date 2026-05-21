@@ -24,6 +24,8 @@ class ExploreHeritageHomeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    final largeText = textScale > 1.2;
 
     final cardColor = theme.colorScheme.surface;
     final borderColor = isHighContrast
@@ -92,60 +94,71 @@ class ExploreHeritageHomeCard extends StatelessWidget {
                     ),
                   ),
                 ),
-
-                Positioned(
+                PositionedDirectional(
                   top: 8,
-                  left: 8,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primary,
-                      borderRadius: BorderRadius.circular(24),
-                      border: isHighContrast
-                          ? Border.all(color: Colors.black, width: 1.5)
-                          : null,
-                    ),
-                    child: showRiyalIcon
-                        ? Directionality(
-                            textDirection: TextDirection.ltr,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/icons/saudi_riyal.svg',
-                                  width: 14,
-                                  height: 14,
-                                  colorFilter: ColorFilter.mode(
-                                    theme.colorScheme.onPrimary,
-                                    BlendMode.srcIn,
+                  start: 8,
+                  end: 8,
+                  child: Align(
+                    alignment: AlignmentDirectional.topStart,
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 230),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(24),
+                        border: isHighContrast
+                            ? Border.all(color: Colors.black, width: 1.5)
+                            : null,
+                      ),
+                      child: showRiyalIcon
+                          ? Directionality(
+                              textDirection: TextDirection.ltr,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/icons/saudi_riyal.svg',
+                                    width: 14,
+                                    height: 14,
+                                    colorFilter: ColorFilter.mode(
+                                      theme.colorScheme.onPrimary,
+                                      BlendMode.srcIn,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  categoryLabel,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: theme.colorScheme.onPrimary,
-                                    fontWeight: FontWeight.w800,
+                                  const SizedBox(width: 4),
+                                  Flexible(
+                                    child: Text(
+                                      categoryLabel,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                        color: theme.colorScheme.onPrimary,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
+                            )
+                          : Text(
+                              categoryLabel,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onPrimary,
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
-                          )
-                        : Text(
-                            categoryLabel,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onPrimary,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
+                    ),
                   ),
                 ),
               ],
             ),
-
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
               child: Column(
@@ -153,7 +166,7 @@ class ExploreHeritageHomeCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    maxLines: 1,
+                    maxLines: largeText ? 2 : 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontSize:
@@ -164,17 +177,21 @@ class ExploreHeritageHomeCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.location_on,
-                        size: 16,
-                        color: iconColor,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: iconColor,
+                        ),
                       ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           locationLabel,
-                          maxLines: 1,
+                          maxLines: largeText ? 2 : 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.onSurface,

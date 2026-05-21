@@ -230,8 +230,11 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
   }
 
   Widget _buildStoriesRow(bool isAr) {
+    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
+    final extraHeight = ((textScale - 1.0).clamp(0.0, 1.0) * 34).toDouble();
+
     return SizedBox(
-      height: 110,
+      height: 110 + extraHeight,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -242,26 +245,32 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
             onTap: () => _showStory(context, index),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.primary, width: 2),
+              child: SizedBox(
+                width: 72,
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.primary, width: 2),
+                      ),
+                      child: CircleAvatar(
+                        radius: 28,
+                        backgroundImage: AssetImage(region.logoImage),
+                      ),
                     ),
-                    child: CircleAvatar(
-                      radius: 28,
-                      backgroundImage: AssetImage(region.logoImage),
+                    const SizedBox(height: 4),
+                    Text(
+                      region.getName(isAr ? 'ar' : 'en'),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontSize: 11, fontWeight: FontWeight.w600),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    region.getName(isAr ? 'ar' : 'en'),
-                    style: const TextStyle(
-                        fontSize: 11, fontWeight: FontWeight.w600),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
@@ -277,11 +286,12 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
       child: Row(
         children: [
           Expanded(
-            child: SizedBox(
-              height: 48,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 48),
               child: TextField(
                 controller: _searchController,
                 textAlign: isAr ? TextAlign.right : TextAlign.left,
+                textAlignVertical: TextAlignVertical.center,
                 onChanged: (value) {
                   setState(() {
                     _searchQuery = value.trim();
@@ -295,7 +305,8 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
                   prefixIcon: Icon(Icons.search, color: AppColors.primary),
                   filled: true,
                   fillColor: AppColors.surface,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
@@ -358,6 +369,7 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
+        isThreeLine: true,
         subtitle: Text(
           DateFormat('yyyy/MM/dd').format(session.lastMessageTime),
           style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
@@ -508,6 +520,9 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
         icon: const Icon(Icons.add_comment_rounded, color: Colors.white),
         label: Text(
           l10n.rawiNewChat,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
           style:
               const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
