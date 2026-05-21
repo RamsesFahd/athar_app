@@ -65,7 +65,11 @@ class RawiSuggestionCard extends StatelessWidget {
 
   String get _id => item['id']?.toString() ?? '';
   String get _type => item['type']?.toString() ?? '';
-  String get _imageUrl => item['imageUrl']?.toString() ?? '';
+  String get _imageUrl {
+    final url = item['imageUrl']?.toString() ?? '';
+    if (url.isNotEmpty) return url;
+    return item['mainImage']?.toString() ?? '';
+  }
   String get _title {
     if (isAr) {
       return item['titleAr']?.toString().isNotEmpty == true

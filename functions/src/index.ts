@@ -591,7 +591,7 @@ function extractDocMeta(
       titleAr = name.ar || "";
       titleEn = name.en || "";
       description = (desc.ar || desc.en || "").slice(0, 200);
-      imageUrl = data.mainImageUrl || data.imageUrl || null;
+      imageUrl = data.mainImage || data.mainImageUrl || data.imageUrl || null;
       region = normalizeRegion(data.regionId || data.region || data.location);
       break;
     }
@@ -645,7 +645,7 @@ async function loadEmbeddingCache(): Promise<Map<string, CachedEmbedding>> {
   const cache = new Map<string, CachedEmbedding>();
 
   for (const col of collections) {
-    const snap = await db.collection(col).select("embedding", "name", "title", "titleAr", "titleEn", "descriptionAr", "descriptionEn", "description", "imageUrl", "mainImageUrl", "region", "regionId", "location", "category", "eventType").get();
+    const snap = await db.collection(col).select("embedding", "name", "title", "titleAr", "titleEn", "descriptionAr", "descriptionEn", "description", "imageUrl", "mainImage", "mainImageUrl", "region", "regionId", "location", "category", "eventType").get();
     for (const doc of snap.docs) {
       const meta = extractDocMeta(col, doc.id, doc.data());
       if (meta) cache.set(`${col}/${doc.id}`, meta);
@@ -751,7 +751,9 @@ export const askRawi = onCall(
       return `• [${m.type}] ${title} (id:${m.docId}) — ${m.description.slice(0, 200)}`;
     }).join("\n");
 
-    // 4b. Build full archive inventory from the region-filtered cache
+    // 4b. Build full archive inventory from the region-filtered cache.
+    // Only the locale-appropriate name is shown to prevent the model from
+    // mixing Arabic names into an English response (and vice-versa).
     const archiveByType = new Map<string, Array<{ id: string; titleAr: string; titleEn: string }>>();
     for (const meta of filteredCache.values()) {
       if (!archiveByType.has(meta.type)) archiveByType.set(meta.type, []);
@@ -760,17 +762,27 @@ export const askRawi = onCall(
     const archiveLines: string[] = [];
     for (const [type, entries] of archiveByType.entries()) {
       const names = entries
-        .map((e) => `${e.titleAr || e.titleEn} / ${e.titleEn || e.titleAr} (id:${e.id})`)
+        .map((e) => {
+          // Surface only the locale-matching name so the model wraps bold text
+          // in the correct script and never mixes languages in entity names.
+          const name = isAr ? (e.titleAr || e.titleEn) : (e.titleEn || e.titleAr);
+          return `${name} (id:${e.id})`;
+        })
         .join(", ");
       archiveLines.push(`[${type}]: ${names}`);
     }
     const archiveSummary = archiveLines.join("\n");
 
-    // ✦ FIX: set of all real names — any ** wrap around a name not here gets stripped
+    // Locale-gated allowedNames: only the locale-appropriate title is permitted
+    // inside ** markers. This prevents the model from bolding Arabic names in an
+    // English response (and vice-versa). Falls back to the other language when a
+    // locale-appropriate title is absent so rare untranslated items still link.
     const allowedNames = new Set<string>();
     for (const meta of filteredCache.values()) {
-      if (meta.titleAr) allowedNames.add(meta.titleAr.trim());
-      if (meta.titleEn) allowedNames.add(meta.titleEn.trim());
+      const preferred = isAr
+        ? (meta.titleAr?.trim() || meta.titleEn?.trim())
+        : (meta.titleEn?.trim() || meta.titleAr?.trim());
+      if (preferred) allowedNames.add(preferred);
     }
     const validIdSet = new Set([...filteredCache.values()].map((m) => m.docId));
 
@@ -788,6 +800,8 @@ ${langInstruction}
 --- PERSONA & TONE ---
 - You are an "Expert Companion" (رفيق خبير), warm but never casual.
 - NEVER use patronizing language like "my son", "يا ولدي", or "my child". Address the user as a respected Explorer (مستكشف) or Guest (ضيف).
+- Use measured, historically grounded language. NEVER use melodramatic words like "devastated", "heartbroken", "shattered", "مدمّر", or "محطّم" for minor matters.
+- For out-of-scope topics: respond with calm, welcoming redirection. Example: "That falls outside my area of expertise, but I'd love to tell you about..." — never apologise dramatically.
 
 --- CONVERSATION FLOW (CRITICAL) ---
 - This is an ONGOING dialogue. The 'Conversation context' below shows previous turns.
@@ -799,11 +813,13 @@ ${langInstruction}
 --- STRICT GROUNDING (NO INVENTION) ---
 - The "Available Archive Items" below are the ONLY real items. They are your single source of truth.
 - NEVER invent, assume, or mention any place, food, craft, dress, or item that is NOT in the archive list.
-- When you name a SPECIFIC item that EXISTS in the archive list, wrap it in double asterisks, e.g. **اسم العنصر**.
-- NEVER wrap an item in asterisks unless its name appears in the archive list. General descriptive words stay in plain text.
-- Do NOT use hashtags.
+- NEVER add qualifiers like "Beta", "Classic", "Old", or version numbers to item names — use the exact name from the list.
+- When you name a SPECIFIC item that EXISTS in the archive list, wrap ONLY that exact name in double asterisks: **Item Name**.
+- NEVER wrap a word in asterisks unless the exact name (or a very close form) appears in the archive list. Descriptive, generic, or contextual words must stay in plain text.
+- Do NOT use hashtags (#).
 - NEVER mention "database", "archive", "Athar", "the platform", "Vision 2030", or that you are an AI.
 - BANNED phrases: (للأسف، أعتذر، قاعدة بياناتي، لا تتوفر لدي معلومات).
+- REGION LOCK: You may ONLY reference items from the archive list below. If the user asks about heritage from a DIFFERENT region, acknowledge their curiosity politely then redirect: "My expertise is this region — let me tell you about..."
 
 --- Available Archive Items (this region only) ---
 ${hasArchive ? archiveSummary : (isAr
@@ -817,10 +833,16 @@ ${!hasArchive ? (isAr
     ? "بما أنه لا توجد عناصر لهذه المنطقة، تحدّث بدفء عن طابع المنطقة العام دون ذكر أي اسم محدد بين النجمتين، ودون اختلاق عناصر."
     : "Since there are no items for this region, speak warmly about the region's general character WITHOUT naming specific items in asterisks and WITHOUT inventing anything.") : ""}
 
---- OUTPUT TAIL ---
-At the END of your response, append a JSON block with up to ${MAX_SUGGESTED_ITEMS} item IDs from the archive list above (use the real id values). Format exactly:
+--- OUTPUT TAIL (REQUIRED) ---
+At the END of every response append EXACTLY one of the following JSON blocks:
+
+Append items ONLY when the user asked about a specific place, tradition, food, event, or craft — OR when you mentioned a specific archive item in your reply:
 <<<RECOMMENDED>>>{"itemIds":["docId1","docId2"]}<<<END>>>
-If none are relevant, append: <<<RECOMMENDED>>>{"itemIds":[]}<<<END>>>`;
+
+For greetings, clarifying questions, general chitchat, out-of-scope redirections, or any reply where you did NOT reference a specific archive item, append:
+<<<RECOMMENDED>>>{"itemIds":[]}<<<END>>>
+
+Maximum ${MAX_SUGGESTED_ITEMS} item IDs. Use only real id values from the archive list above.`;
 
     // 6. Build conversation turns
     const historyText = (recentMessages || [])
@@ -841,9 +863,26 @@ If none are relevant, append: <<<RECOMMENDED>>>{"itemIds":[]}<<<END>>>`;
     try {
       const result = await chatModel.generateContent(userPrompt);
       rawText = result.response.text()?.trim() ?? "";
-    } catch (err) {
-      logger.error("[askRawi] Gemini chat generation failed", { conversationId, error: err });
-      throw new HttpsError("internal", "AI assistant is temporarily unavailable. Please try again.");
+
+      // An empty string means the model returned a blocked/empty response.
+      // Treat it the same as a caught exception and use the persona fallback.
+      if (!rawText) {
+        logger.warn("[askRawi] Empty response from model", { conversationId });
+        rawText = isAr
+          ? "موضوعي التراث والثقافة السعودية. هل تودّ أن أحدّثك عن هذه المنطقة؟"
+          : "My focus is Saudi heritage and culture. Shall we explore this region together?";
+      }
+    } catch (err: any) {
+      // Graceful fallback instead of crashing the app. The model can reject
+      // out-of-scope or policy-violating prompts — return a persona-consistent
+      // redirect so the user sees Rawi's voice, not a system error.
+      logger.warn("[askRawi] Gemini generation issue — returning persona fallback", {
+        conversationId,
+        error: err?.message ?? String(err),
+      });
+      rawText = isAr
+        ? "أنا راوي، رفيقك في استكشاف التراث السعودي. هل لديك سؤال عن هذه المنطقة؟"
+        : "I'm Rawi, your guide to Saudi heritage. Is there something about this region you'd like to explore?";
     }
 
     // 8. Parse recommended IDs from JSON block

@@ -8,6 +8,11 @@ import 'package:athar_app/features/auth/logic/auth_repository.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
+import 'package:athar_app/core/models/attractions/attraction_model.dart';
+import 'package:athar_app/core/models/booking/trip_model.dart';
+import 'package:athar_app/features/attractions/screens/attraction_details_screen.dart';
+import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
@@ -211,11 +216,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                             isMe: msg.isUser,
                             showQuickReplies: showQuickReplies,
                             isAr: isAr,
+                            suggestedItems: msg.suggestedItems,
                           ),
                           if (hasSuggestions)
-                            RawiSuggestionsRow(
-                              items: msg.suggestedItems!,
-                              isAr: isAr,
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: RawiSuggestionsRow(
+                                items: msg.suggestedItems!,
+                                isAr: isAr,
+                              ),
                             ),
                         ],
                       );
@@ -381,17 +390,51 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     }
   }
 
+  Future<void> _navigateToSuggestedItem(Map<String, dynamic> item) async {
+    final id = item['id']?.toString() ?? '';
+    final type = item['type']?.toString() ?? '';
+    if (id.isEmpty || type.isEmpty) return;
+    final db = FirebaseFirestore.instance;
+    try {
+      switch (type) {
+        case 'attraction':
+          final doc = await db.collection('attractions').doc(id).get();
+          if (!doc.exists || doc.data() == null || !mounted) return;
+          Navigator.push(context, MaterialPageRoute(
+            builder: (_) => AttractionDetailsScreen(attraction: AttractionModel.fromMap(doc.data()!, doc.id)),
+          ));
+          break;
+        case 'trip':
+          final doc = await db.collection('trips').doc(id).get();
+          if (!doc.exists || doc.data() == null || !mounted) return;
+          Navigator.push(context, MaterialPageRoute(
+            builder: (_) => TripDetailsScreen(trip: TripModel.fromMap(doc.data()!, doc.id)),
+          ));
+          break;
+        case 'cultural_item':
+          final doc = await db.collection('cultural_items').doc(id).get();
+          if (!doc.exists || doc.data() == null || !mounted) return;
+          Navigator.push(context, MaterialPageRoute(
+            builder: (_) => CulturalItemDetails(item: CulturalItemModel.fromMap(doc.data()!, doc.id)),
+          ));
+          break;
+      }
+    } catch (_) {}
+  }
+
   Widget _buildMessageBubble({
     required String message,
     required bool isMe,
     required bool showQuickReplies,
     required bool isAr,
+    List<Map<String, dynamic>>? suggestedItems,
   }) {
     return ChatMessageBubble(
       message: message,
       isMe: isMe,
       showQuickReplies: showQuickReplies,
       isAr: isAr,
+      suggestedItems: suggestedItems,
       onTapQuickReply: (reply) async {
         await ref.read(chatNotifierProvider.notifier).sendUserMessage(
               region: widget.region,
@@ -402,29 +445,66 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
       onEntityTap: (entityName) {
         final allItems =
             ref.read(culturalNotifierProvider).value?.allItems ?? [];
-        final item = _findCulturalItem(allItems, entityName);
-        if (item != null) {
+        final archiveItem = _findCulturalItem(allItems, entityName);
+        if (archiveItem != null) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => CulturalItemDetails(item: item),
+              builder: (_) => CulturalItemDetails(item: archiveItem),
             ),
           );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                isAr
-                    ? 'لم نجد "$entityName" في الأرشيف'
-                    : 'No record for "$entityName"',
-              ),
-              backgroundColor: const Color(0xFF1B5E20),
-              duration: const Duration(seconds: 2),
-            ),
-          );
+          return;
         }
+
+        // Search in suggestedItems of this message
+        if (suggestedItems != null && suggestedItems.isNotEmpty) {
+          final match = _findInSuggestedItems(suggestedItems, entityName);
+          if (match != null) {
+            _navigateToSuggestedItem(match);
+            return;
+          }
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              isAr
+                  ? 'لم نجد "$entityName" في الأرشيف'
+                  : 'No record for "$entityName"',
+            ),
+            backgroundColor: const Color(0xFF1B5E20),
+            duration: const Duration(seconds: 2),
+          ),
+        );
       },
     );
+  }
+
+  Map<String, dynamic>? _findInSuggestedItems(
+      List<Map<String, dynamic>> items, String query) {
+    String normalize(String t) => t
+        .trim()
+        .toLowerCase()
+        .replaceAll(RegExp(r'^(ال)'), '')
+        .replaceAll(RegExp(r'[أإآ]'), 'ا')
+        .replaceAll('ة', 'ه')
+        .replaceAll('ى', 'ي')
+        .replaceAll(RegExp(r'\s+'), ' ');
+
+    final cleanQuery = normalize(query);
+    try {
+      return items.firstWhere((item) {
+        final titleAr = normalize(item['titleAr']?.toString() ?? '');
+        final titleEn = (item['titleEn']?.toString() ?? '').toLowerCase().trim();
+        final qEn = query.toLowerCase().trim();
+        return titleAr.contains(cleanQuery) ||
+            cleanQuery.contains(titleAr) ||
+            titleEn.contains(qEn) ||
+            qEn.contains(titleEn);
+      });
+    } catch (_) {
+      return null;
+    }
   }
 
   Widget _buildGeneralWelcomeWithRegionChips(bool isAr) {

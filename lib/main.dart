@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_app_check/firebase_app_check.dart'; // <-- 1. إضافة استدعاء حزمة App Check
 
 import 'firebase_options.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -24,6 +25,11 @@ void main() async {
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // <-- 2. تفعيل App Check مباشرة بعد تهيئة Firebase
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
   );
 
   if (kDebugMode) {

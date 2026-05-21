@@ -12,6 +12,7 @@ class SmartTextContent extends ConsumerWidget {
   final bool isMe;
   final Function(String)? onTapQuickReply;
   final void Function(String entityName)? onEntityTap;
+  final List<Map<String, dynamic>>? suggestedItems;
 
   const SmartTextContent({
     super.key,
@@ -19,27 +20,45 @@ class SmartTextContent extends ConsumerWidget {
     required this.isMe,
     this.onTapQuickReply,
     this.onEntityTap,
+    this.suggestedItems,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //  مراقبة الحالة لضمان تحديث الواجهة فور وصول البيانات
     final culturalState = ref.watch(culturalNotifierProvider);
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
 
+    // Build the set of valid entity names from both archive and message suggestions.
+    // Only names in this set will be rendered as tappable entities.
+    final Set<String> validEntityNames = {};
+    for (final item in culturalState.value?.allItems ?? []) {
+      if (item.titleAr.trim().isNotEmpty) validEntityNames.add(item.titleAr.trim());
+      if (item.titleEn.trim().isNotEmpty) validEntityNames.add(item.titleEn.trim());
+    }
+    for (final item in suggestedItems ?? []) {
+      final ar = item['titleAr']?.toString().trim() ?? '';
+      final en = item['titleEn']?.toString().trim() ?? '';
+      if (ar.isNotEmpty) validEntityNames.add(ar);
+      if (en.isNotEmpty) validEntityNames.add(en);
+    }
+
     final allLines = text.split('\n');
-    final quickReplyLines =
-        allLines.where((line) => line.trim().startsWith('*')).toList();
-    final mainText =
-        allLines.where((line) => !line.trim().startsWith('*')).join('\n');
+    final quickReplyLines = allLines.where((line) {
+      final t = line.trim();
+      return t.startsWith('*') && !t.startsWith('**');
+    }).toList();
+    final mainText = allLines.where((line) {
+      final t = line.trim();
+      return !t.startsWith('*') || t.startsWith('**');
+    }).join('\n');
 
     return Column(
       crossAxisAlignment:
           isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        //  تمرير البيانات المحملة (إن وجدت) للدالة
         _buildRichTextWithTags(
-            mainText, context, isAr, culturalState.value?.allItems ?? []),
+            mainText, context, isAr, culturalState.value?.allItems ?? [],
+            validEntityNames),
 
         if (quickReplyLines.isNotEmpty && !isMe) ...[
           const SizedBox(height: 16),
@@ -53,7 +72,7 @@ class SmartTextContent extends ConsumerWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 backgroundColor: Colors.grey[100],
-                side: BorderSide(color: AppColors.primary.withOpacity(0.3)),
+                side: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
                 label: Text(
                   cleanText,
                   style: GoogleFonts.cairo(
@@ -62,11 +81,7 @@ class SmartTextContent extends ConsumerWidget {
                     color: AppColors.primary,
                   ),
                 ),
-                onPressed: () {
-                  if (onTapQuickReply != null) {
-                    onTapQuickReply!(cleanText);
-                  }
-                },
+                onPressed: () => onTapQuickReply?.call(cleanText),
               );
             }).toList(),
           ),
@@ -75,10 +90,33 @@ class SmartTextContent extends ConsumerWidget {
     );
   }
 
-  // Parses **bold**, *italic*, and "quoted" entities into clickable styled spans.
-  // Only called for Rawi (isMe == false) messages.
-  List<InlineSpan> _parseInlineEntities(String segment) {
-    final entityExp = RegExp(r'\*\*(.*?)\*\*|\*(.*?)\*|"([^"]+)"');
+  // Checks whether an entity name matches a known platform item using
+  // Arabic-normalized fuzzy matching.
+  bool _isKnownEntity(String name, Set<String> validNames) {
+    if (validNames.isEmpty) return false;
+    final normalized = _normalize(name);
+    return validNames.any((v) {
+      final nv = _normalize(v);
+      return nv == normalized || nv.contains(normalized) || normalized.contains(nv);
+    });
+  }
+
+  String _normalize(String text) => text
+      .trim()
+      .toLowerCase()
+      .replaceAll(RegExp(r'^(ال)'), '')
+      .replaceAll(RegExp(r'[أإآ]'), 'ا')
+      .replaceAll('ة', 'ه')
+      .replaceAll('ى', 'ي')
+      .replaceAll(RegExp(r'\s+'), ' ');
+
+  // Parses **bold** text into either a clickable entity span (if the name is a
+  // known platform item) or a non-interactive bold span (if not). Also handles
+  // *italic* emphasis by stripping the asterisks and rendering as plain text.
+  List<InlineSpan> _parseInlineEntities(
+      String segment, Set<String> validEntityNames) {
+    // Only match **bold** and *italic* — quoted strings are not entity markers.
+    final entityExp = RegExp(r'\*\*(.*?)\*\*|\*(.*?)\*');
     final matches = entityExp.allMatches(segment);
 
     if (matches.isEmpty) return [TextSpan(text: segment)];
@@ -90,24 +128,33 @@ class SmartTextContent extends ConsumerWidget {
       if (match.start > last) {
         spans.add(TextSpan(text: segment.substring(last, match.start)));
       }
-      final entityText =
-          match.group(1) ?? match.group(2) ?? match.group(3) ?? '';
-      spans.add(
-        TextSpan(
+
+      final isBold = match.group(1) != null;
+      final entityText = (match.group(1) ?? match.group(2) ?? '').trim();
+
+      if (isBold && entityText.isNotEmpty) {
+        final isKnown = _isKnownEntity(entityText, validEntityNames);
+        spans.add(TextSpan(
           text: entityText,
           style: GoogleFonts.cairo(
             fontSize: 15,
             fontWeight: FontWeight.w700,
-            color: AppColors.primary,
-            decoration: TextDecoration.underline,
+            // Clickable entities use the primary brand color; unrecognised bold
+            // text stays in the default message color so it is not misleadingly
+            // interactive.
+            color: isKnown ? AppColors.primary : null,
             height: 1.5,
           ),
-          // Recognizer lifecycle intentionally matches the existing #tag# pattern.
-          // Convert to StatefulWidget if explicit dispose() is required.
-          recognizer: TapGestureRecognizer()
-            ..onTap = () => onEntityTap?.call(entityText),
-        ),
-      );
+          recognizer: isKnown
+              ? (TapGestureRecognizer()
+                ..onTap = () => onEntityTap?.call(entityText))
+              : null,
+        ));
+      } else {
+        // *italic* → strip asterisks, render as plain text
+        spans.add(TextSpan(text: entityText));
+      }
+
       last = match.end;
     }
 
@@ -118,14 +165,19 @@ class SmartTextContent extends ConsumerWidget {
     return spans;
   }
 
-  Widget _buildRichTextWithTags(String content, BuildContext context, bool isAr,
-      List<CulturalItemModel> allItems) {
+  Widget _buildRichTextWithTags(
+    String content,
+    BuildContext context,
+    bool isAr,
+    List<CulturalItemModel> allItems,
+    Set<String> validEntityNames,
+  ) {
     final RegExp tagExp = RegExp(r"#[^#]+#");
     final Iterable<RegExpMatch> matches = tagExp.allMatches(content);
 
     if (matches.isEmpty) {
       if (isMe) return Text(content, style: _textStyle());
-      final spans = _parseInlineEntities(content);
+      final spans = _parseInlineEntities(content, validEntityNames);
       return RichText(text: TextSpan(style: _textStyle(), children: spans));
     }
 
@@ -138,7 +190,7 @@ class SmartTextContent extends ConsumerWidget {
         if (isMe) {
           spans.add(TextSpan(text: segment));
         } else {
-          spans.addAll(_parseInlineEntities(segment));
+          spans.addAll(_parseInlineEntities(segment, validEntityNames));
         }
       }
 
@@ -193,7 +245,7 @@ class SmartTextContent extends ConsumerWidget {
       if (isMe) {
         spans.add(TextSpan(text: segment));
       } else {
-        spans.addAll(_parseInlineEntities(segment));
+        spans.addAll(_parseInlineEntities(segment, validEntityNames));
       }
     }
 
@@ -202,34 +254,21 @@ class SmartTextContent extends ConsumerWidget {
 
   CulturalItemModel? _searchForItem(
       List<CulturalItemModel> items, String query) {
-    /// Standardizes Arabic text by removing common variations to ensure consistent matching.
-    String normalize(String text) {
-      return text
-          .trim()
-          .toLowerCase()
-          .replaceAll(RegExp(r'^(ال)'), '')
-          .replaceAll(RegExp(r'[أإآ]'), 'ا')
-          .replaceAll('ة', 'ه')
-          .replaceAll('ى', 'ي')
-          .replaceAll(RegExp(r'\s+'), ' ');
-    }
-
-    final String cleanQuery = normalize(query);
+    final String cleanQuery = _normalize(query);
 
     try {
       return items.firstWhere((item) {
-        final String nameAr = normalize(item.titleAr);
+        final String nameAr = _normalize(item.titleAr);
         final String nameEn = item.titleEn.toLowerCase().trim();
         final String qEn = query.toLowerCase().trim();
 
-        /// Implements bi-directional fuzzy matching to handle descriptive titles and multi-language support.
         return nameAr.contains(cleanQuery) ||
             cleanQuery.contains(nameAr) ||
             nameEn.contains(qEn) ||
             qEn.contains(nameEn);
       });
     } catch (_) {
-      return null; // Gracefully handle cases where no cultural item matches the tag.
+      return null;
     }
   }
 
