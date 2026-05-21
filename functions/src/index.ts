@@ -596,12 +596,16 @@ function extractDocMeta(
       break;
     }
     case "trips": {
+      // TripModel stores flat titleAr/titleEn fields (NOT a nested `title` map).
+      // Fall back to a nested `title` map only if the flat fields are missing.
       const t = data.title || {};
-      const d = data.description || {};
-      titleAr = typeof t === "object" ? (t.ar || "") : String(t || "");
-      titleEn = typeof t === "object" ? (t.en || "") : "";
-      description = (typeof d === "object" ? (d.ar || d.en || "") : String(d || "")).slice(0, 200);
-      imageUrl = data.imageUrl || data.mainImageUrl || null;
+      titleAr = data.titleAr || (typeof t === "object" ? (t.ar || "") : String(t || ""));
+      titleEn = data.titleEn || (typeof t === "object" ? (t.en || "") : "");
+      description = (
+        data.descriptionAr || data.descriptionEn ||
+        data.shortDescriptionAr || data.shortDescriptionEn || ""
+      ).slice(0, 200);
+      imageUrl = data.imageUrl || data.mainImage || data.mainImageUrl || data.coverImage || data.image || null;
       region = normalizeRegion(data.regionId || data.region);
       break;
     }
@@ -609,7 +613,7 @@ function extractDocMeta(
       titleAr = data.titleAr || "";
       titleEn = data.titleEn || "";
       description = (data.descriptionAr || data.descriptionEn || "").slice(0, 200);
-      imageUrl = data.imageUrl || data.mainImageUrl || null;
+      imageUrl = data.imageUrl || data.mainImage || data.mainImageUrl || data.coverImage || data.image || null;
       region = normalizeRegion(data.regionId || data.region || data.location);
       break;
     }
@@ -640,15 +644,24 @@ async function loadEmbeddingCache(): Promise<Map<string, CachedEmbedding>> {
   if (embeddingCache && now - embeddingCachedAt < EMBEDDING_CACHE_TTL_MS) {
     return embeddingCache;
   }
-
+  
   const collections = ["attractions", "trips", "events", "cultural_items"];
   const cache = new Map<string, CachedEmbedding>();
 
   for (const col of collections) {
-    const snap = await db.collection(col).select("embedding", "name", "title", "titleAr", "titleEn", "descriptionAr", "descriptionEn", "description", "imageUrl", "mainImage", "mainImageUrl", "region", "regionId", "location", "category", "eventType").get();
+    const snap = await db.collection(col).select("embedding", "name", "title", "titleAr", "titleEn", "descriptionAr", "descriptionEn", "shortDescriptionAr", "shortDescriptionEn", "description", "imageUrl", "mainImage", "mainImageUrl", "coverImage", "image", "region", "regionId", "location", "category", "eventType").get();
     for (const doc of snap.docs) {
-      const meta = extractDocMeta(col, doc.id, doc.data());
-      if (meta) cache.set(`${col}/${doc.id}`, meta);
+      const data = doc.data();
+      const meta = extractDocMeta(col, doc.id, data);
+      if (meta) {
+        cache.set(`${col}/${doc.id}`, meta);
+        // TEMP DIAGNOSTIC: log every cached doc that has no imageUrl
+        if (!meta.imageUrl) {
+          logger.warn(`[cache] no imageUrl for ${col}/${doc.id}`, {
+            keys: Object.keys(data),
+          });
+        }
+      }
     }
   }
 
@@ -773,23 +786,22 @@ export const askRawi = onCall(
     }
     const archiveSummary = archiveLines.join("\n");
 
-    // Locale-gated allowedNames: only the locale-appropriate title is permitted
-    // inside ** markers. This prevents the model from bolding Arabic names in an
-    // English response (and vice-versa). Falls back to the other language when a
-    // locale-appropriate title is absent so rare untranslated items still link.
+    // allowedNames includes BOTH language variants. Primary purpose: preserve **
+    // markers when the model bolds the locale-appropriate name. Secondary safety
+    // net: if the model bolds the wrong-language name despite the langInstruction,
+    // ** markers are still kept so Flutter can match it via its bilingual
+    // validEntityNames set and render it as a clickable entity.
     const allowedNames = new Set<string>();
     for (const meta of filteredCache.values()) {
-      const preferred = isAr
-        ? (meta.titleAr?.trim() || meta.titleEn?.trim())
-        : (meta.titleEn?.trim() || meta.titleAr?.trim());
-      if (preferred) allowedNames.add(preferred);
+      if (meta.titleAr?.trim()) allowedNames.add(meta.titleAr.trim());
+      if (meta.titleEn?.trim()) allowedNames.add(meta.titleEn.trim());
     }
     const validIdSet = new Set([...filteredCache.values()].map((m) => m.docId));
 
     // 5. System prompt
     const langInstruction = isAr
-      ? "You MUST respond entirely in Arabic (العربية). Do not mix languages."
-      : "You MUST respond entirely in English. Do not mix languages.";
+      ? "LANGUAGE LAW: Every single word in your response MUST be in Arabic (العربية). Zero tolerance for English words, phrases, or item names. This applies to bolded entity names too — always bold the Arabic name."
+      : "LANGUAGE LAW: Every single word in your response MUST be in English. Zero tolerance for Arabic characters or words — this includes bolded entity names. You MUST bold the English name from the archive list, never the Arabic name. If an archive item has no English name, describe it generically in English without printing any Arabic characters.";
 
     const hasArchive = filteredCache.size > 0;
 
@@ -812,9 +824,11 @@ ${langInstruction}
 
 --- STRICT GROUNDING (NO INVENTION) ---
 - The "Available Archive Items" below are the ONLY real items. They are your single source of truth.
-- NEVER invent, assume, or mention any place, food, craft, dress, or item that is NOT in the archive list.
-- NEVER add qualifiers like "Beta", "Classic", "Old", or version numbers to item names — use the exact name from the list.
+- NEVER invent, assume, or mention any place, food, craft, dress, or item that is NOT in the archive list — even if it is a famous landmark you know from training data.
+- NEVER add qualifiers, suffixes, version numbers, or parenthetical notes to item names (e.g. "Beta", "Classic", "Old", "- Version 2"). Use the exact name from the list, character for character.
+- INVENTED NAMES ARE PROHIBITED: If a name is not in the archive list, do not use it in any form. Treat it as non-existent for this conversation.
 - When you name a SPECIFIC item that EXISTS in the archive list, wrap ONLY that exact name in double asterisks: **Item Name**.
+- The name inside ** MUST match the current response language: English name for English responses, Arabic name for Arabic responses. NEVER put an Arabic name inside ** in an English response, and NEVER put an English name inside ** in an Arabic response.
 - NEVER wrap a word in asterisks unless the exact name (or a very close form) appears in the archive list. Descriptive, generic, or contextual words must stay in plain text.
 - Do NOT use hashtags (#).
 - NEVER mention "database", "archive", "Athar", "the platform", "Vision 2030", or that you are an AI.
@@ -834,15 +848,20 @@ ${!hasArchive ? (isAr
     : "Since there are no items for this region, speak warmly about the region's general character WITHOUT naming specific items in asterisks and WITHOUT inventing anything.") : ""}
 
 --- OUTPUT TAIL (REQUIRED) ---
-At the END of every response append EXACTLY one of the following JSON blocks:
+At the END of EVERY response, append EXACTLY one of these JSON blocks.
 
-Append items ONLY when the user asked about a specific place, tradition, food, event, or craft — OR when you mentioned a specific archive item in your reply:
-<<<RECOMMENDED>>>{"itemIds":["docId1","docId2"]}<<<END>>>
-
-For greetings, clarifying questions, general chitchat, out-of-scope redirections, or any reply where you did NOT reference a specific archive item, append:
+DEFAULT — use this in ALL cases unless ALL THREE conditions below are simultaneously true:
 <<<RECOMMENDED>>>{"itemIds":[]}<<<END>>>
 
-Maximum ${MAX_SUGGESTED_ITEMS} item IDs. Use only real id values from the archive list above.`;
+Only switch to the non-empty block when ALL THREE conditions are met:
+  1. The user's message explicitly asked about a SPECIFIC named item (not a general topic, follow-up, or continuation).
+  2. You referenced that specific item by its exact archive name (wrapped in **) in your reply.
+  3. The item's id appears verbatim in the archive list above.
+
+If ANY condition is not met, use the empty block.
+Always-empty situations (non-exhaustive): greetings, "tell me more" / "continue", general cultural overviews, clarifying questions, out-of-scope redirections, follow-up questions on a topic already mentioned.
+
+Maximum ${MAX_SUGGESTED_ITEMS} item IDs. Never invent or guess an id.`;
 
     // 6. Build conversation turns
     const historyText = (recentMessages || [])
@@ -915,22 +934,63 @@ Maximum ${MAX_SUGGESTED_ITEMS} item IDs. Use only real id values from the archiv
       imageUrl: string | null;
     }> = [];
 
+    // Build a fast docId → meta lookup once (avoids the O(n) find() per id).
+    const metaByDocId = new Map<string, CachedEmbedding>();
+    for (const m of filteredCache.values()) {
+      metaByDocId.set(m.docId, m);
+    }
+
     for (const id of itemIds) {
       // ✦ FIX: reject any id not belonging to this region
       if (!validIdSet.has(id)) {
         logger.warn(`[askRawi] dropped invented/out-of-region itemId="${id}"`);
         continue;
       }
-      const meta = filteredCache.get([...filteredCache.entries()].find(([, m]) => m.docId === id)?.[0] ?? "");
+      const meta = metaByDocId.get(id);
       if (meta) {
         suggestedItems.push({
-          id,
+          id: meta.docId,
           type: meta.type,
           titleAr: meta.titleAr,
           titleEn: meta.titleEn,
           imageUrl: meta.imageUrl,
         });
       }
+    }
+
+    // ✦ FALLBACK: if the model returned no usable IDs (e.g. topDocs=0 and no
+    // <<<RECOMMENDED>>> block), fill from the best semantic matches we DO have,
+    // then from the region-filtered cache. All sources are CachedEmbedding, so
+    // imageUrl + titleEn are always populated correctly.
+    if (suggestedItems.length === 0) {
+      const seen = new Set<string>();
+      const pushMeta = (m: CachedEmbedding) => {
+        if (seen.has(m.docId)) return;
+        seen.add(m.docId);
+        suggestedItems.push({
+          id: m.docId,
+          type: m.type,
+          titleAr: m.titleAr,
+          titleEn: m.titleEn,
+          imageUrl: m.imageUrl,
+        });
+      };
+
+      // 1) any scored matches, even below threshold (already sorted desc)
+      for (const s of scored) {
+        if (suggestedItems.length >= MAX_SUGGESTED_ITEMS) break;
+        pushMeta(s.meta);
+      }
+      // 2) top of the region-filtered cache as a last resort
+      for (const m of filteredCache.values()) {
+        if (suggestedItems.length >= MAX_SUGGESTED_ITEMS) break;
+        pushMeta(m);
+      }
+    }
+
+    // TEMP DIAGNOSTIC: confirm exactly what reaches each card
+    for (const s of suggestedItems) {
+      logger.info(`[suggest] id=${s.id} type=${s.type} titleEn="${s.titleEn}" img=${s.imageUrl ? "yes" : "NULL"}`);
     }
 
     logger.info(`[askRawi] session=${conversationId} locale=${locale} region=${wantedRegion} topDocs=${topDocs.length} suggested=${suggestedItems.length}`);

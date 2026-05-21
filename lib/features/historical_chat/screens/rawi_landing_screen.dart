@@ -21,10 +21,35 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
+  // Resolved once in initState so build() never creates a new Stream/userId
+  // on each keystroke — the StreamBuilder would otherwise reset to
+  // ConnectionState.waiting, replacing the TextField and killing focus.
+  late final Stream<List<ChatSessionModel>> _sessionsStream;
+  late final String _userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _userId =
+        ref.read(authRepositoryProvider).currentUser?.uid ?? 'guest_user';
+    _sessionsStream =
+        ref.read(chatRepositoryProvider).getChatSessions(_userId);
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  List<ChatSessionModel> _filterSessions(
+      List<ChatSessionModel> sessions, String query) {
+    final q = query.trim().toLowerCase();
+    if (q.isEmpty) return sessions;
+    return sessions.where((s) {
+      final bucket = '${s.titleAr} ${s.titleEn} ${s.title}'.toLowerCase();
+      return bucket.contains(q);
+    }).toList();
   }
 
   String _displayTitle(
@@ -423,8 +448,6 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
-    final authRepo = ref.read(authRepositoryProvider);
-    final userId = authRepo.currentUser?.uid ?? 'guest_user';
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -434,66 +457,36 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
             _buildStoriesRow(isAr),
             Expanded(
               child: StreamBuilder<List<ChatSessionModel>>(
-                stream:
-                    ref.watch(chatRepositoryProvider).getChatSessions(userId),
+                stream: _sessionsStream,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+                  if (snapshot.connectionState == ConnectionState.waiting &&
+                      snapshot.data == null) {
                     return const Center(child: CircularProgressIndicator());
                   }
 
                   final sessions = snapshot.data ?? [];
+                  final filtered = _filterSessions(sessions, _searchQuery);
+
                   return Column(
                     children: [
-                      _buildSearchRow(theme, l10n, isAr, userId, sessions),
+                      _buildSearchRow(theme, l10n, isAr, _userId, sessions),
                       Expanded(
-                        child: _searchQuery.isEmpty
-                            ? (sessions.isEmpty
+                        child: filtered.isEmpty
+                            ? (_searchQuery.isEmpty
                                 ? _buildEmptyState(theme, l10n)
-                                : ListView.builder(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    itemCount: sessions.length,
-                                    itemBuilder: (context, index) =>
-                                        _buildSessionTile(
-                                      context,
-                                      sessions[index],
-                                      isAr,
-                                      l10n,
-                                      userId,
-                                    ),
-                                  ))
-                            : FutureBuilder<List<ChatSessionModel>>(
-                                future: ref
-                                    .read(chatRepositoryProvider)
-                                    .searchSessions(
-                                      userId,
-                                      _searchQuery,
-                                      cachedSessions: sessions,
-                                    ),
-                                builder: (context, searchSnapshot) {
-                                  if (searchSnapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  }
-                                  final filtered = searchSnapshot.data ?? [];
-                                  if (filtered.isEmpty) {
-                                    return _buildNoSearchResult(theme, l10n);
-                                  }
-                                  return ListView.builder(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
-                                    itemCount: filtered.length,
-                                    itemBuilder: (context, index) =>
-                                        _buildSessionTile(
-                                      context,
-                                      filtered[index],
-                                      isAr,
-                                      l10n,
-                                      userId,
-                                    ),
-                                  );
-                                },
+                                : _buildNoSearchResult(theme, l10n))
+                            : ListView.builder(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8),
+                                itemCount: filtered.length,
+                                itemBuilder: (context, index) =>
+                                    _buildSessionTile(
+                                  context,
+                                  filtered[index],
+                                  isAr,
+                                  l10n,
+                                  _userId,
+                                ),
                               ),
                       ),
                     ],

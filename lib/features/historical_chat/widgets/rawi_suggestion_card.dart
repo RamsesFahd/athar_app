@@ -28,7 +28,7 @@ class RawiSuggestionsRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 4),
+          padding: const EdgeInsetsDirectional.only(start: 12, end: 12, top: 6, bottom: 4),
           child: Text(
             l10n.rawiSuggestedItems,
             style: const TextStyle(
@@ -202,6 +202,10 @@ class RawiSuggestionCard extends StatelessWidget {
                       imageUrl: _imageUrl,
                       fit: BoxFit.cover,
                       width: double.infinity,
+                      // 2× physical pixels for the 140 px logical card width
+                      memCacheWidth: 280,
+                      fadeInDuration: const Duration(milliseconds: 150),
+                      placeholder: (_, __) => _placeholder(),
                       errorWidget: (_, __, ___) => _placeholder(),
                     )
                   : _placeholder(),
