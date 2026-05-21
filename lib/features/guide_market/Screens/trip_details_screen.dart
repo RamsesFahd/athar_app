@@ -25,7 +25,7 @@ class TripDetailsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     //acc
     final settings = ref.watch(settingsProvider);
     final ttsService = ref.read(ttsServiceProvider);
@@ -64,12 +64,12 @@ class TripDetailsScreen extends ConsumerWidget {
                       const SizedBox(height: 12),
 
                       // ── Price display ──────────────────────────────
-                      _buildPriceRow(theme, isAr),
+                      _buildPriceRow(theme, isAr, l10n),
                       const SizedBox(height: 16),
 
                       // ── Accessibility badges ───────────────────────
                       if (trip.accessibilityFeatures.isNotEmpty)
-                        _buildAccessibilityBadges(theme, isAr),
+                        _buildAccessibilityBadges(theme, l10n),
 
                       const SizedBox(height: 20),
 
@@ -267,7 +267,7 @@ class TripDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPriceRow(ThemeData theme, bool isAr) {
+  Widget _buildPriceRow(ThemeData theme, bool isAr, AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -275,7 +275,7 @@ class TripDetailsScreen extends ConsumerWidget {
           // قسم البالغين
           _buildPriceItem(
             theme,
-            label: isAr ? 'للبالغين' : 'Adults',
+            label: l10n.tripAdultsPriceLabel,
             price: CurrencyFormatter.format(trip.adultPrice),
             icon: Icons.person_outline,
           ),
@@ -291,9 +291,9 @@ class TripDetailsScreen extends ConsumerWidget {
           // قسم الأطفال
           _buildPriceItem(
             theme,
-            label: isAr ? 'للأطفال' : 'Children',
+            label: l10n.tripChildrenPriceLabel,
             price: trip.childPrice == 0
-              ? Text(isAr ? 'مجاناً' : 'Free')
+              ? Text(l10n.commonFree)
               : CurrencyFormatter.format(trip.childPrice),
             icon: Icons.child_care_outlined,
           ),
@@ -340,17 +340,13 @@ class TripDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAccessibilityBadges(ThemeData theme, bool isAr) {
+  Widget _buildAccessibilityBadges(ThemeData theme, AppLocalizations l10n) {
     const badgeInfo = {
       'wheelchair': (
         icon: Icons.accessible_forward_rounded,
-        labelEn: 'Accessible',
-        labelAr: ' لذوي الهمم',
       ),
       'family': (
         icon: Icons.family_restroom_rounded,
-        labelEn: 'Family Friendly',
-        labelAr: 'مناسب للعائلات',
       ),
     };
 
@@ -372,7 +368,9 @@ class TripDetailsScreen extends ConsumerWidget {
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             const SizedBox(width: 6),
             Text(
-              isAr ? info.labelAr : info.labelEn,
+              key == 'wheelchair'
+                  ? l10n.tripAccessibilityWheelchairShort
+                  : l10n.tripAccessibilityFamilyShort,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -437,7 +435,7 @@ class TripDetailsScreen extends ConsumerWidget {
         content: trip.tutorId == null
             ? Padding(
                 padding: const EdgeInsets.all(24),
-                child: Text(isAr ? 'لا تتوفر معلومات المرشد' : 'No guide info available'),
+                child: Text(l10n.tripGuideUnavailable),
               )
             : StreamBuilder<DocumentSnapshot>(
                 stream: FirebaseFirestore.instance
@@ -503,9 +501,7 @@ class TripDetailsScreen extends ConsumerWidget {
                                   if (reviews != null) ...[
                                     const SizedBox(width: 8),
                                     Text(
-                                      isAr
-                                          ? "($reviews تقييم)"
-                                          : "($reviews reviews)",
+                                      l10n.tripReviewsCount(reviews),
                                       style: TextStyle(
                                           color: Colors.grey[500], fontSize: 13),
                                     ),

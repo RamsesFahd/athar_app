@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/core/models/notification/app_notification_model.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class NotificationCard extends StatelessWidget {
   final AppNotificationModel notification;
@@ -14,24 +15,25 @@ class NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isHighContrast = theme.colorScheme.primary == Colors.black;
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
 
     final title = isAr
         ? (notification.titleAr.isNotEmpty
             ? notification.titleAr
-            : _fallbackTitle(notification.type, true))
+            : _fallbackTitle(notification.type, l10n))
         : (notification.titleEn.isNotEmpty
             ? notification.titleEn
-            : _fallbackTitle(notification.type, false));
+            : _fallbackTitle(notification.type, l10n));
 
     final body = isAr
         ? (notification.bodyAr.isNotEmpty
             ? notification.bodyAr
-            : _fallbackBody(notification.type, true))
+            : _fallbackBody(notification.type, l10n))
         : (notification.bodyEn.isNotEmpty
             ? notification.bodyEn
-            : _fallbackBody(notification.type, false));
+            : _fallbackBody(notification.type, l10n));
 
     return Material(
       color: Colors.transparent,
@@ -131,79 +133,65 @@ class NotificationCard extends StatelessWidget {
     );
   }
 
-  String _fallbackTitle(String type, bool isAr) {
+  String _fallbackTitle(String type, AppLocalizations l10n) {
     switch (type) {
       case 'contribution_approved':
-        return isAr ? 'تم قبول المساهمة' : 'Contribution Approved';
+        return l10n.notificationContributionApprovedTitle;
       case 'contribution_rejected':
-        return isAr ? 'تم رفض المساهمة' : 'Contribution Rejected';
+        return l10n.notificationContributionRejectedTitle;
       case 'contribution_submitted':
-        return isAr ? 'مساهمة جديدة بانتظار المراجعة' : 'New Contribution Awaiting Review';
+        return l10n.notificationContributionSubmittedTitle;
       case 'trip_submitted':
-        return isAr ? 'رحلة جديدة بانتظار المراجعة' : 'New Trip Awaiting Review';
+        return l10n.notificationTripSubmittedTitle;
       case 'trip_approved':
-        return isAr ? 'تم قبول رحلتك' : 'Trip Approved';
+        return l10n.notificationTripApprovedTitle;
       case 'trip_rejected':
-        return isAr ? 'تم رفض رحلتك' : 'Trip Rejected';
+        return l10n.notificationTripRejectedTitle;
       case 'booking_new':
-        return isAr ? 'حجز جديد' : 'New Booking';
+        return l10n.notificationBookingNewTitle;
       case 'booking_approved':
-        return isAr ? 'تم قبول الحجز' : 'Booking Approved';
+        return l10n.notificationBookingApprovedTitle;
       case 'booking_cancelled':
-        return isAr ? 'تم إلغاء الحجز' : 'Booking Cancelled';
+        return l10n.notificationBookingCancelledTitle;
       case 'guide_verified':
-        return isAr ? 'تم توثيق حسابك' : 'Account Verified';
+        return l10n.notificationGuideVerifiedTitle;
+      case 'guide_rejected':
+        return l10n.notificationGuideRejectedTitle;
       case 'points_awarded':
-        return isAr ? 'نقاط إضافية' : 'Bonus Points Awarded';
+        return l10n.notificationPointsAwardedTitle;
       default:
-        return isAr ? 'تنبيه جديد' : 'New Notification';
+        return l10n.notificationDefaultTitle;
     }
   }
 
-  String _fallbackBody(String type, bool isAr) {
+  String _fallbackBody(String type, AppLocalizations l10n) {
     switch (type) {
       case 'contribution_approved':
-        return isAr
-            ? 'تم قبول مساهمتك بنجاح.'
-            : 'Your contribution has been approved.';
+        return l10n.notificationContributionApprovedBody;
       case 'contribution_rejected':
-        return isAr
-            ? 'تم رفض مساهمتك. يرجى مراجعة السبب.'
-            : 'Your contribution was rejected.';
+        return l10n.notificationContributionRejectedBody;
       case 'contribution_submitted':
-        return isAr
-            ? 'قدّم سائح مساهمة جديدة تحتاج للمراجعة.'
-            : 'A tourist submitted a contribution for review.';
+        return l10n.notificationContributionSubmittedBody;
       case 'trip_submitted':
-        return isAr
-            ? 'قام مرشد بتقديم رحلة جديدة.'
-            : 'A guide submitted a new trip for review.';
+        return l10n.notificationTripSubmittedBody;
       case 'trip_approved':
-        return isAr
-            ? 'تهانينا! رحلتك متاحة الآن للحجز.'
-            : 'Congratulations! Your trip is now open for bookings.';
+        return l10n.notificationTripApprovedBody;
       case 'trip_rejected':
-        return isAr ? 'تم رفض رحلتك.' : 'Your trip was rejected.';
+        return l10n.notificationTripRejectedBody;
       case 'booking_new':
-        return isAr
-            ? 'لديك حجز جديد من سائح.'
-            : 'A tourist has booked your trip.';
+        return l10n.notificationBookingNewBody;
       case 'booking_approved':
-        return isAr
-            ? 'تم قبول حجزك بنجاح.'
-            : 'Your booking has been approved.';
+        return l10n.notificationBookingApprovedBody;
       case 'booking_cancelled':
-        return isAr ? 'تم إلغاء حجزك.' : 'Your booking has been cancelled.';
+        return l10n.notificationBookingCancelledBody;
       case 'guide_verified':
-        return isAr
-            ? 'تهانينا! تم توثيق حسابك كمرشد معتمد.'
-            : 'Your guide account has been verified.';
+        return l10n.notificationGuideVerifiedBody;
+      case 'guide_rejected':
+        return l10n.notificationGuideRejectedBody;
       case 'points_awarded':
-        return isAr
-            ? 'تم منحك نقاطاً إضافية.'
-            : 'Bonus points have been added to your account.';
+        return l10n.notificationPointsAwardedBody;
       default:
-        return isAr ? 'لديك تنبيه جديد.' : 'You have a new notification.';
+        return l10n.notificationDefaultBody;
     }
   }
 }

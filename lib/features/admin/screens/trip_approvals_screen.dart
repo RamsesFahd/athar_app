@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class TripApprovalsScreen extends ConsumerWidget {
   const TripApprovalsScreen({super.key});
@@ -10,6 +11,7 @@ class TripApprovalsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return StreamBuilder<List<TripModel>>(
       stream: ref.watch(adminRepositoryProvider).getPendingTrips(),
@@ -29,7 +31,7 @@ class TripApprovalsScreen extends ConsumerWidget {
                     size: 72,
                     color: AppColors.primary.withValues(alpha: 0.15)),
                 const SizedBox(height: 16),
-                Text('No trips pending approval',
+                Text(l10n.adminNoTripsPending,
                     style: theme.textTheme.bodyLarge
                         ?.copyWith(color: Colors.grey.shade500)),
               ],
@@ -57,6 +59,7 @@ class _TripApprovalCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final repo = ref.read(adminRepositoryProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Card(
       elevation: 2,
@@ -119,24 +122,24 @@ class _TripApprovalCard extends ConsumerWidget {
                 // Details
                 _InfoRow(
                     icon: Icons.person_outline,
-                    label: 'Guide',
+                    label: l10n.adminGuideLabel,
                     value: trip.guide),
                 _InfoRow(
                     icon: Icons.business_outlined,
-                    label: 'Company',
+                    label: l10n.adminCompanyLabel,
                     value: trip.company),
                 _InfoRow(
                     icon: Icons.payments_outlined,
-                    label: 'Price',
+                    label: l10n.adminPriceLabel,
                     value: trip.price),
                 _InfoRow(
                     icon: Icons.verified_outlined,
-                    label: 'License',
+                    label: l10n.adminLicenseLabel,
                     value: trip.license),
                 if (trip.tutorId != null)
                   _InfoRow(
                       icon: Icons.fingerprint,
-                      label: 'Tutor ID',
+                      label: l10n.adminTutorIdLabel,
                       value: trip.tutorId!),
 
                 const SizedBox(height: 16),
@@ -150,14 +153,14 @@ class _TripApprovalCard extends ConsumerWidget {
                           await repo.rejectTrip(trip.id, tutorId: trip.tutorId ?? '');
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Trip rejected'),
+                              SnackBar(
+                                  content: Text(l10n.adminTripRejected),
                                   backgroundColor: Colors.red),
                             );
                           }
                         },
                         icon: const Icon(Icons.close, size: 18),
-                        label: const Text('Reject'),
+                        label: Text(l10n.adminReject),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.red,
                           side: const BorderSide(color: Colors.red),
@@ -173,14 +176,14 @@ class _TripApprovalCard extends ConsumerWidget {
                           await repo.approveTrip(trip.id, tutorId: trip.tutorId ?? '');
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Trip approved'),
+                              SnackBar(
+                                  content: Text(l10n.adminTripApproved),
                                   backgroundColor: Colors.green),
                             );
                           }
                         },
                         icon: const Icon(Icons.check, size: 18),
-                        label: const Text('Approve'),
+                        label: Text(l10n.adminApprove),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                           foregroundColor: Colors.white,

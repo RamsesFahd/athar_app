@@ -87,7 +87,42 @@ class _RegionStoryScreenState extends State<RegionStoryScreen>
               },
               itemBuilder: (context, index) {
                 final region = regionsData[index];
-                return Image.asset(region.storyImage, fit: BoxFit.cover);
+                final isAr =
+    Localizations.localeOf(context).languageCode == 'ar';
+
+final imagePath = switch (region.regionId) {
+  'central_region' =>
+    isAr
+        ? 'assets/images/central_ar.png'
+        : 'assets/images/central_en.png',
+
+  'western_region' =>
+    isAr
+        ? 'assets/images/western_ar.png'
+        : 'assets/images/western_en.png',
+
+  'northern_region' =>
+    isAr
+        ? 'assets/images/northern_ar.png'
+        : 'assets/images/northern_en.png',
+
+  'eastern_region' =>
+    isAr
+        ? 'assets/images/eastern_ar.png'
+        : 'assets/images/eastern_en.png',
+
+  'southern_region' =>
+    isAr
+        ? 'assets/images/southern_ar.png'
+        : 'assets/images/southern_en.png',
+
+  _ => region.storyImage,
+};
+
+return Image.asset(
+  imagePath,
+  fit: BoxFit.cover,
+);
               },
             ),
 

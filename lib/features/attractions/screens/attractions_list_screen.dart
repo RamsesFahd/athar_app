@@ -4,6 +4,7 @@ import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/core/models/attractions/attraction_model.dart';
 import 'package:athar_app/features/attractions/logic/attractions_repository.dart';
 import 'package:athar_app/features/attractions/widgets/attraction_card.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class AttractionsListScreen extends ConsumerStatefulWidget {
   const AttractionsListScreen({super.key});
@@ -101,12 +102,13 @@ String _translateRegion(String value, bool isAr) {
   @override
   Widget build(BuildContext context) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final l10n = AppLocalizations.of(context);
     final attractionsAsync = ref.watch(attractionsStreamProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          isAr ? 'المعالم السياحية' : 'Attractions',
+          l10n.attractionsTitle,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -142,9 +144,7 @@ String _translateRegion(String value, bool isAr) {
                         child: TextField(
                           onChanged: (v) => setState(() => _searchQuery = v),
                           decoration: InputDecoration(
-                            hintText: isAr
-                                ? 'ابحث عن معلم سياحي...'
-                                : 'Search attractions...',
+                            hintText: l10n.attractionsSearchHint,
                             hintStyle: Theme.of(context)
                                 .textTheme
                                 .bodyMedium
@@ -243,20 +243,20 @@ String _translateRegion(String value, bool isAr) {
               if (_showFilters) ...[
                 const SizedBox(height: 12),
                 _FilterRow(
-  label: isAr ? 'المنطقة' : 'Region',
+  label: l10n.locationLabel,
   options: _regions,
   selected: _selectedRegion,
   onSelected: (v) => setState(() => _selectedRegion = v),
-  isAr: isAr,
+  allLabel: l10n.filterAll,
   labelFor: (v) => _translateRegion(v, isAr),
 ),
                 const SizedBox(height: 6),
                 _FilterRow(
-  label: isAr ? 'التصنيف' : 'Category',
+  label: l10n.categoryLabel,
   options: _categories,
   selected: _selectedCategory,
   onSelected: (v) => setState(() => _selectedCategory = v),
-  isAr: isAr,
+  allLabel: l10n.filterAll,
   colorFor: (v) => v == 'All' ? null : _categoryColors[v],
   labelFor: (v) => _translateCategory(v, isAr),
 ),
@@ -267,10 +267,8 @@ String _translateRegion(String value, bool isAr) {
                   child: Center(
                     child: Text(
                       _allItems.isEmpty
-                          ? (isAr
-                              ? 'لا توجد معالم سياحية'
-                              : 'No attractions available')
-                          : (isAr ? 'لا توجد نتائج' : 'No results found'),
+                          ? l10n.attractionsNoAvailable
+                          : l10n.attractionsNoResults,
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge
@@ -319,7 +317,7 @@ class _FilterRow extends StatelessWidget {
   final List<String> options;
   final String selected;
   final ValueChanged<String> onSelected;
-  final bool isAr;
+  final String allLabel;
   final Color? Function(String)? colorFor;
   final String Function(String)? labelFor;
 
@@ -328,7 +326,7 @@ class _FilterRow extends StatelessWidget {
     required this.options,
     required this.selected,
     required this.onSelected,
-    required this.isAr,
+    required this.allLabel,
     this.colorFor,
     this.labelFor,
   });
@@ -369,7 +367,7 @@ class _FilterRow extends StatelessWidget {
               ),
               child: Text(
                 labelFor?.call(value) ??
-                (value == 'All' ? (isAr ? 'الكل' : 'All') : value),
+                (value == 'All' ? allLabel : value),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: isSelected ? Colors.white : AppColors.sage800,
                       fontWeight: FontWeight.w600,

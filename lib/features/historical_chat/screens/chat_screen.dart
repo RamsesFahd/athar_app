@@ -119,7 +119,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     );
   }
 
-  Future<void> _pickAndSendImage(ImageSource source, bool isAr) async {
+  Future<void> _pickAndSendImage(ImageSource source, AppLocalizations l10n) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: source);
 
@@ -128,9 +128,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
 
       await ref.read(chatNotifierProvider.notifier).sendUserMessage(
             region: widget.region,
-            text: isAr
-                ? "يا راوي، وش تمثل الصورة؟"
-                : "Rawi, what does this image represent?",
+            text: l10n.rawiImageQuestion,
             sessionId: _sessionId,
             imageBytes: imageBytes,
           );
@@ -175,16 +173,16 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   if (snapshot.connectionState == ConnectionState.waiting &&
                       messages.isEmpty) {
                     if (widget.region == null) {
-                      return _buildGeneralWelcomeWithRegionChips(isAr);
+                      return _buildGeneralWelcomeWithRegionChips(isAr, l10n);
                     }
                     return const SizedBox.shrink();
                   }
 
                   if (messages.isEmpty) {
                     if (widget.region == null) {
-                      return _buildGeneralWelcomeWithRegionChips(isAr);
+                      return _buildGeneralWelcomeWithRegionChips(isAr, l10n);
                     }
-                    return _buildEmptyState(isAr);
+                    return _buildEmptyState(isAr, l10n);
                   }
 
                   final firstBotMessageWithSuggestionsId =
@@ -260,10 +258,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     final localizedTitle = session.localizedTitle(isAr ? 'ar' : 'en');
     final fallbackTitle = isAr
         ? (matchedRegion != null
-            ? 'سالفة عن ${matchedRegion.nameAr}'
+            ? l10n.rawiStoryAboutRegion(matchedRegion.nameAr)
             : l10n.rawiUntitledArabic)
         : (matchedRegion != null
-            ? 'Story about ${matchedRegion.nameEn}'
+            ? l10n.rawiStoryAboutRegion(matchedRegion.nameEn)
             : l10n.rawiUntitledEnglish);
 
     if (hasLocalizedTitle) {
@@ -284,8 +282,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     AppLocalizations l10n,
   ) {
     final defaultTitle = isAr
-        ? (widget.region?.nameAr ?? "مجلس راوي العام")
-        : (widget.region?.nameEn ?? "Rawi General Council");
+        ? (widget.region?.nameAr ?? l10n.rawiGeneralCouncil)
+        : (widget.region?.nameEn ?? l10n.rawiGeneralCouncil);
 
     return AppBar(
       title: StreamBuilder<ChatSessionModel?>(
@@ -314,15 +312,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     );
   }
 
-  Widget _buildEmptyState(bool isAr) {
+  Widget _buildEmptyState(bool isAr, AppLocalizations l10n) {
     if (widget.region == null) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
           child: Text(
-            isAr
-                ? "حياك الله في مجلس راوي.. وش المنطقة اللي ودك نسولف عنها اليوم؟"
-                : "Welcome to Rawi's Council.. Which region would you like to explore today?",
+            l10n.rawiWelcomeGeneral,
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey[600], fontSize: 16),
           ),
@@ -595,9 +591,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
             child: Directionality(
               textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
               child: Text(
-                isAr
-                    ? 'حياك الله في مجلس راوي.. اختر منطقة نبدأ منها:'
-                    : "Welcome to Rawi's Council.. Pick a region to start:",
+                l10n.rawiPickRegionStart,
                 style: const TextStyle(
                   color: Colors.black87,
                   fontSize: 15,
@@ -626,7 +620,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
           IconButton(
             icon: Icon(Icons.add_circle_outline,
                 color: AppColors.primary, size: 28),
-            onPressed: () => _showAttachmentMenu(context, isAr),
+            onPressed: () => _showAttachmentMenu(context, l10n),
           ),
           // حقل الإدخال النصي
           Expanded(
@@ -658,7 +652,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               decoration: InputDecoration(
                 hintText: _isListening
                     ? l10n.rawiMicListening
-                    : (isAr ? "اسأل راوي..." : "Ask Rawi..."),
+                    : l10n.rawiAskHint,
                 hintStyle: TextStyle(
                   color: _isListening ? AppColors.primary : Colors.black45,
                   fontSize: 14,
@@ -761,7 +755,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
         child: Directionality(
           textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
           child: Text(
-            isAr ? "راوي يكتب الآن..." : "Rawi is typing...",
+            l10n.rawiTyping,
             style: const TextStyle(
               fontSize: 13,
               color: Colors.grey,
@@ -773,7 +767,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     );
   }
 
-  void _showAttachmentMenu(BuildContext context, bool isAr) {
+  void _showAttachmentMenu(BuildContext context, AppLocalizations l10n) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -786,17 +780,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildAttachmentOption(Icons.insert_drive_file,
-                  isAr ? "ملف" : "File", Colors.blue, () {}),
+                  l10n.rawiAttachmentFile, Colors.blue, () {}),
               _buildAttachmentOption(
-                  Icons.camera_alt, isAr ? "كاميرا" : "Camera", Colors.red,
+                  Icons.camera_alt, l10n.rawiAttachmentCamera, Colors.red,
                   () {
                 Navigator.pop(context);
-                _pickAndSendImage(ImageSource.camera, isAr);
+                _pickAndSendImage(ImageSource.camera, l10n);
               }),
               _buildAttachmentOption(
-                  Icons.image, isAr ? "صورة" : "Image", Colors.purple, () {
+                  Icons.image, l10n.rawiAttachmentImage, Colors.purple, () {
                 Navigator.pop(context);
-                _pickAndSendImage(ImageSource.gallery, isAr);
+                _pickAndSendImage(ImageSource.gallery, l10n);
               }),
             ],
           ),

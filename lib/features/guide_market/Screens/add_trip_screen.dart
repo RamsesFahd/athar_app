@@ -12,6 +12,7 @@ import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class AddTripScreen extends ConsumerStatefulWidget {
   const AddTripScreen({super.key, this.initialTrip});
@@ -32,12 +33,8 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   final _titleEn = TextEditingController();
   final _shortDescAr = TextEditingController();
   final _shortDescEn = TextEditingController();
-  final _descAr = TextEditingController(
-    text: '## ما تشمله الجولة\n- \n\n## الجدول الزمني\n- \n\n## ما يجب إحضاره\n- ',
-  );
-  final _descEn = TextEditingController(
-    text: "## What's Included\n- \n\n## Schedule\n- \n\n## What to Bring\n- ",
-  );
+  final _descAr = TextEditingController();
+  final _descEn = TextEditingController();
   final _adultPrice = TextEditingController();
   final _childPrice = TextEditingController();
   final _maxCapacity = TextEditingController();
@@ -57,6 +54,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   final Set<String> _accessibilityFeatures = {};
 
   final Set<String> _tripLanguages = {};
+  bool _didApplyDefaultDescriptionTemplate = false;
 
   bool get _isEditing => widget.initialTrip != null;
 
@@ -72,20 +70,11 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
     {'ar': 'تبوك', 'en': 'Tabuk'},
   ];
 
-  static const _languageOptions = [
-    (key: 'ar', labelAr: 'العربية', labelEn: 'Arabic'),
-    (key: 'en', labelAr: 'الإنجليزية', labelEn: 'English'),
-    (key: 'fr', labelAr: 'الفرنسية', labelEn: 'French'),
-    (key: 'es', labelAr: 'الإسبانية', labelEn: 'Spanish'),
-    (key: 'de', labelAr: 'الألمانية', labelEn: 'German'),
-    (key: 'tr', labelAr: 'التركية', labelEn: 'Turkish'),
-    (key: 'ur', labelAr: 'الأردية', labelEn: 'Urdu'),
-    (key: 'zh', labelAr: 'الصينية', labelEn: 'Chinese'),
-  ];
+  static const _languageOptions = ['ar', 'en', 'fr', 'es', 'de', 'tr', 'ur', 'zh'];
 
   static const _accessibilityOptions = [
-    (key: 'wheelchair', labelEn: 'Wheelchair Accessible', icon: Icons.accessible),
-    (key: 'family', labelEn: 'Family / Child Friendly', icon: Icons.family_restroom),
+    (key: 'wheelchair', icon: Icons.accessible),
+    (key: 'family', icon: Icons.family_restroom),
   ];
 
   @override
@@ -159,6 +148,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   }
 
   Future<void> _pickTime({required bool isStart}) async {
+    final l10n = AppLocalizations.of(context);
     final current = isStart ? _startTime : _endTime;
     final initial = current ??
         (isStart
@@ -200,12 +190,12 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.of(ctx).pop(),
-                      child: Text('إلغاء',
+                      child: Text(l10n.cancel,
                           style:
                               TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
                     ),
                     Text(
-                      isStart ? 'وقت البداية' : 'وقت النهاية',
+                      isStart ? l10n.addTripStartTime : l10n.addTripEndTime,
                       style: theme.textTheme.titleSmall
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -222,7 +212,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
                         });
                         Navigator.of(ctx).pop();
                       },
-                      child: Text('تأكيد',
+                      child: Text(l10n.confirm,
                           style: TextStyle(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.bold)),
@@ -263,17 +253,18 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   // ── Submit ─────────────────────────────────────────────────────────────────
 
   Future<void> _submit(TutorModel tutor) async {
+    final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) return;
     if (_pickedImage == null && _existingImageUrl == null) {
-      _snack('الرجاء إضافة صورة للرحلة', isError: true);
+      _snack(l10n.addTripImageRequired, isError: true);
       return;
     }
     if (_startTime == null || _endTime == null) {
-      _snack('الرجاء تحديد وقت بداية ونهاية الجولة اليومية', isError: true);
+      _snack(l10n.addTripDailyTimesRequired, isError: true);
       return;
     }
     if (_startDate == null || _endDate == null) {
-      _snack('الرجاء تحديد تواريخ إتاحة الرحلة', isError: true);
+      _snack(l10n.addTripAvailabilityDatesRequired, isError: true);
       return;
     }
 
@@ -339,8 +330,8 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
       messenger.showSnackBar(
         SnackBar(
           content: Text(_isEditing
-              ? 'تم تحديث الرحلة! ستتم إعادة مراجعتها من قِبل الإدارة.'
-              : 'تم إرسال الرحلة! ستظهر في السوق بعد موافقة الإدارة.'),
+              ? l10n.addTripUpdatedSuccess
+              : l10n.addTripSubmittedSuccess),
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 4),
         ),
@@ -349,7 +340,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
     } catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
-          SnackBar(content: Text('خطأ: $e'), backgroundColor: Colors.red));
+          SnackBar(content: Text(l10n.commonErrorWithMessage(e.toString())), backgroundColor: Colors.red));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -376,18 +367,19 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final currentUser = ref.watch(authNotifierProvider).value;
     final tutor = currentUser is TutorModel ? currentUser : null;
 
     if (tutor != null && tutor.isCredentialExpired) {
       return Scaffold(
-        appBar: AppBar(title: const Text('إضافة رحلة')),
+        appBar: AppBar(title: Text(l10n.addTripTitle)),
         body: _BlockedView(
           theme: theme,
           icon: Icons.lock_outline,
           color: Colors.red,
-          title: 'رخصتك منتهية',
-          body: 'لا يمكنك إضافة رحلات برخصة منتهية.\nجدّد رخصتك وأعد التوثيق للمتابعة.',
+          title: l10n.addTripCredentialExpiredTitle,
+          body: l10n.addTripCredentialExpiredBody,
           onBack: () => Navigator.of(context).pop(),
         ),
       );
@@ -395,13 +387,13 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
 
     if (tutor != null && tutor.verificationStatus != VerificationStatus.verified) {
       return Scaffold(
-        appBar: AppBar(title: const Text('إضافة رحلة')),
+        appBar: AppBar(title: Text(l10n.addTripTitle)),
         body: _BlockedView(
           theme: theme,
           icon: Icons.verified_outlined,
           color: Colors.orange,
-          title: 'الحساب غير موثّق',
-          body: 'يجب توثيق حسابك أولاً قبل إضافة رحلات.\nأكمل بيانات التوثيق من الملف الشخصي.',
+          title: l10n.addTripAccountUnverifiedTitle,
+          body: l10n.addTripAccountUnverifiedBody,
           onBack: () => Navigator.of(context).pop(),
         ),
       );
@@ -409,7 +401,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
 
     return Scaffold(
       appBar: AppBar(
-          title: Text(_isEditing ? 'تعديل الرحلة' : 'إضافة رحلة جديدة')),
+          title: Text(_isEditing ? l10n.addTripEditTitle : l10n.addTripNewTitle)),
       body: Theme(
         data: Theme.of(context).copyWith(
           checkboxTheme: CheckboxThemeData(
@@ -455,33 +447,33 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
             if (tutor != null && tutor.isCredentialExpiringSoon)
               _WarningBanner(
                 theme: theme,
-                message: 'رخصتك ستنتهي قريباً — تأكد من تجديدها قبل انتهاء صلاحيتها',
+                message: l10n.addTripLicenseExpiringSoonWarning,
               ),
             _buildImagePicker(theme),
             const SizedBox(height: 24),
-            _SectionHeader(theme: theme, title: 'التوقيت والمدة'),
+            _SectionHeader(theme: theme, title: l10n.addTripTimingDurationSection),
             const SizedBox(height: 12),
             _buildAvailabilitySection(theme),
             const SizedBox(height: 20),
-            _SectionHeader(theme: theme, title: 'عنوان الرحلة'),
+            _SectionHeader(theme: theme, title: l10n.addTripTitleSection),
             const SizedBox(height: 12),
             _buildTitlesSection(),
             const SizedBox(height: 20),
-            _SectionHeader(theme: theme, title: 'وصف مختصر'),
+            _SectionHeader(theme: theme, title: l10n.addTripShortDescriptionSection),
             const SizedBox(height: 12),
             _buildShortDescSection(),
             const SizedBox(height: 20),
-            _SectionHeader(theme: theme, title: 'الوصف التفصيلي'),
+            _SectionHeader(theme: theme, title: l10n.addTripDetailedDescriptionSection),
             const SizedBox(height: 8),
             _buildDetailedDescSection(theme),
             const SizedBox(height: 20),
-            _SectionHeader(theme: theme, title: 'الموقع'),
+            _SectionHeader(theme: theme, title: l10n.addTripLocationSection),
             const SizedBox(height: 12),
             _buildCitySection(),
             const SizedBox(height: 20),
             _SectionHeader(
               theme: theme,
-              title: 'التسعير والسعة',
+              title: l10n.addTripPricingCapacitySection,
               trailing: SvgPicture.asset(
                 'assets/icons/saudi_riyal.svg',
                 width: 20,
@@ -495,12 +487,12 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
             const SizedBox(height: 12),
             _buildPricingSection(theme),
             const SizedBox(height: 20),
-            _SectionHeader(theme: theme, title: 'إمكانية الوصول'),
+            _SectionHeader(theme: theme, title: l10n.accessibility),
             const SizedBox(height: 8),
             _buildAccessibilitySection(theme),
             if (tutor != null && tutor.tutorType == TutorType.company) ...[
               const SizedBox(height: 20),
-              _SectionHeader(theme: theme, title: 'اللغات المتاحة في الجولة'),
+              _SectionHeader(theme: theme, title: l10n.addTripTripLanguagesSection),
               const SizedBox(height: 8),
               _buildLanguagesSection(theme),
             ],
@@ -508,7 +500,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
               const SizedBox(height: 20),
               _SectionHeader(
                   theme: theme,
-                  title: 'بيانات المرشد (تُملأ تلقائياً)'),
+                  title: l10n.guide_info_autofilled),
               const SizedBox(height: 8),
               _buildGuideInfo(theme, tutor),
             ],
@@ -525,6 +517,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   // ── Section: Image Picker ──────────────────────────────────────────────────
 
   Widget _buildImagePicker(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     final hasNewImage = _pickedImage != null;
     final hasExisting = _existingImageUrl != null;
 
@@ -561,7 +554,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
                               theme.colorScheme.primary.withValues(alpha: 0.6)),
                       const SizedBox(height: 8),
                       Text(
-                        'اضغط لإضافة صورة الرحلة',
+                        l10n.addTripImagePrompt,
                         style: theme.textTheme.bodyMedium?.copyWith(
                             color: theme.colorScheme.primary
                                 .withValues(alpha: 0.7)),
@@ -587,7 +580,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
                     const Icon(Icons.edit, size: 14, color: Colors.white),
                     const SizedBox(width: 4),
                     Text(
-                      'تغيير الصورة',
+                      l10n.addTripChangeImage,
                       style: const TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ],
@@ -620,13 +613,14 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   }
 
   Widget _buildAvailabilitySection(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     final String dateLabel;
     if (_startDate != null && _endDate != null) {
       final s = '${_startDate!.year}/${_startDate!.month.toString().padLeft(2, '0')}/${_startDate!.day.toString().padLeft(2, '0')}';
       final e = '${_endDate!.year}/${_endDate!.month.toString().padLeft(2, '0')}/${_endDate!.day.toString().padLeft(2, '0')}';
       dateLabel = '$s – $e';
     } else {
-      dateLabel = 'اختر فترة الإتاحة';
+      dateLabel = l10n.addTripPickAvailabilityPeriod;
     }
 
     return Column(
@@ -637,7 +631,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
           borderRadius: BorderRadius.circular(12),
           child: InputDecorator(
             decoration: InputDecoration(
-              labelText: 'فترة إتاحة الرحلة',
+              labelText: l10n.addTripAvailabilityPeriod,
               prefixIcon: const Icon(Icons.date_range_outlined),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
@@ -663,7 +657,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Text(
-            'وقت البداية والنهاية اليومي للجولة',
+            l10n.addTripDailyStartEndHint,
             style: theme.textTheme.bodyMedium,
           ),
         ),
@@ -677,11 +671,11 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
           secondary: Icon(Icons.hotel_outlined,
               color: theme.colorScheme.primary),
           title: Text(
-            'رحلة متعددة الأيام',
+            l10n.addTripMultiDayTitle,
             style: theme.textTheme.bodyLarge,
           ),
           subtitle: Text(
-            'الحجز الواحد يمتد لأكثر من يوم متواصل (مثل رحلات التخييم)',
+            l10n.addTripMultiDaySubtitle,
             style: theme.textTheme.bodyMedium,
           ),
           controlAffinity: ListTileControlAffinity.leading,
@@ -692,13 +686,13 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
           const SizedBox(height: 8),
           _field(
             _tripDurationDays,
-            'عدد أيام الرحلة',
+            l10n.addTripDurationDaysLabel,
             required: true,
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(3)],
             extraValidator: (v) {
               final n = int.tryParse(v ?? '');
-              if (n == null || n < 2) return 'يجب أن يكون العدد 2 أو أكثر';
+              if (n == null || n < 2) return l10n.addTripDurationDaysMinError;
               return null;
             },
           ),
@@ -708,13 +702,14 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   }
 
   Widget _timePicker(ThemeData theme, {required bool isStart}) {
+    final l10n = AppLocalizations.of(context);
     final val = isStart ? _startTime : _endTime;
     return InkWell(
       onTap: () => _pickTime(isStart: isStart),
       borderRadius: BorderRadius.circular(12),
       child: InputDecorator(
         decoration: InputDecoration(
-          labelText: isStart ? 'وقت البداية' : 'وقت النهاية',
+          labelText: isStart ? l10n.addTripStartTime : l10n.addTripEndTime,
           prefixIcon: Icon(
               isStart ? Icons.schedule_outlined : Icons.timer_off_outlined),
           border:
@@ -735,11 +730,12 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   // ── Section: Titles ────────────────────────────────────────────────────────
 
   Widget _buildTitlesSection() {
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
-        _field(_titleAr, 'العنوان بالعربي', required: true),
+        _field(_titleAr, l10n.addTripTitleArLabel, required: true),
         const SizedBox(height: 12),
-        _field(_titleEn, 'Title in English', required: true),
+        _field(_titleEn, l10n.addTripTitleEnLabel, required: true),
       ],
     );
   }
@@ -747,11 +743,12 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   // ── Section: Short Description ─────────────────────────────────────────────
 
   Widget _buildShortDescSection() {
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: [
-        _field(_shortDescAr, 'الوصف المختصر بالعربي', required: true),
+        _field(_shortDescAr, l10n.addTripShortDescArLabel, required: true),
         const SizedBox(height: 12),
-        _field(_shortDescEn, 'Short description in English', required: true),
+        _field(_shortDescEn, l10n.addTripShortDescEnLabel, required: true),
       ],
     );
   }
@@ -759,34 +756,48 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   // ── Section: Detailed Description ─────────────────────────────────────────
 
   Widget _buildDetailedDescSection(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // FIX: was theme.colorScheme.onSurfaceVariant (sage50 ≈ white, invisible)
         Text(
-          'استخدم القالب أدناه واملأ كل نقطة',
+          l10n.description_template_hint,
           style: theme.textTheme.bodyMedium,
         ),
         const SizedBox(height: 12),
-        _field(_descAr, 'الوصف بالعربي', required: true, maxLines: 8),
+        _field(_descAr, l10n.addTripDescArLabel, required: true, maxLines: 8),
         const SizedBox(height: 12),
-        _field(_descEn, 'Full description in English',
+        _field(_descEn, l10n.addTripDescEnLabel,
             required: true, maxLines: 8),
       ],
     );
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_didApplyDefaultDescriptionTemplate || widget.initialTrip != null) {
+      return;
+    }
+    final l10n = AppLocalizations.of(context);
+    _descAr.text = l10n.addTripDescTemplateAr;
+    _descEn.text = l10n.addTripDescTemplateEn;
+    _didApplyDefaultDescriptionTemplate = true;
+  }
+
   // ── Section: City ──────────────────────────────────────────────────────────
 
   Widget _buildCitySection() {
+    final l10n = AppLocalizations.of(context);
     return DropdownButtonFormField<Map<String, String>>(
       initialValue: _selectedCity,
-      decoration: const InputDecoration(
-        labelText: 'المدينة',
-        prefixIcon: Icon(Icons.location_city_outlined),
-        border: OutlineInputBorder(
+      decoration: InputDecoration(
+        labelText: l10n.addTripCity,
+        prefixIcon: const Icon(Icons.location_city_outlined),
+        border: const OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12))),
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       items: _saudiCities.map((city) {
         final isAr = Localizations.localeOf(context).languageCode == 'ar';
@@ -796,24 +807,25 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
         );
       }).toList(),
       onChanged: (val) => setState(() => _selectedCity = val),
-      validator: (v) => v == null ? 'الرجاء اختيار المدينة' : null,
+      validator: (v) => v == null ? l10n.addTripCityRequired : null,
     );
   }
 
   // ── Section: Pricing & Capacity ────────────────────────────────────────────
 
   Widget _buildPricingSection(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _field(
           _adultPrice,
-          'سعر البالغ',
+          l10n.addTripAdultPriceLabel,
           required: true,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           inputFormatters: [_DecimalInputFormatter(), LengthLimitingTextInputFormatter(8)],
           extraValidator: (v) =>
-              double.tryParse(v ?? '') == null ? 'أدخل رقماً صحيحاً' : null,
+              double.tryParse(v ?? '') == null ? l10n.addTripValidNumberError : null,
         ),
         const SizedBox(height: 12),
         CheckboxListTile(
@@ -824,7 +836,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
           }),
           secondary:
               Icon(Icons.child_friendly_outlined, color: theme.colorScheme.primary),
-          title: Text('يُسمح للأطفال', style: theme.textTheme.bodyLarge),
+          title: Text(l10n.addTripAllowsChildren, style: theme.textTheme.bodyLarge),
           controlAffinity: ListTileControlAffinity.leading,
           contentPadding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -833,12 +845,12 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
           const SizedBox(height: 8),
           _field(
             _childPrice,
-            'سعر الطفل (0 = مجاني)',
+            l10n.addTripChildPriceLabel,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: [_DecimalInputFormatter(), LengthLimitingTextInputFormatter(8)],
             extraValidator: (v) {
               if (v != null && v.isNotEmpty && double.tryParse(v) == null) {
-                return 'أدخل رقماً صحيحاً';
+                return l10n.addTripValidNumberError;
               }
               return null;
             },
@@ -847,7 +859,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Text(
-              'ملاحظة: 2 أطفال = مقعد بالغ واحد في احتساب السعة',
+              l10n.addTripChildrenCapacityNote,
               style: theme.textTheme.bodyMedium,
             ),
           ),
@@ -855,12 +867,12 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
         const SizedBox(height: 12),
         _field(
           _maxCapacity,
-          'الطاقة الاستيعابية القصوى (عدد البالغين)',
+          l10n.addTripMaxCapacityLabel,
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
           extraValidator: (v) {
             if (v != null && v.isNotEmpty && int.tryParse(v) == null) {
-              return 'أدخل عدداً صحيحاً';
+              return l10n.addTripValidIntegerError;
             }
             return null;
           },
@@ -872,6 +884,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   // ── Section: Accessibility ─────────────────────────────────────────────────
 
   Widget _buildAccessibilitySection(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       children: _accessibilityOptions
           .map((opt) => CheckboxListTile(
@@ -886,7 +899,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
                   });
                 },
                 secondary: Icon(opt.icon, color: theme.colorScheme.primary),
-                title: Text(opt.labelEn, style: theme.textTheme.bodyLarge),
+                title: Text(_accessibilityLabel(l10n, opt.key), style: theme.textTheme.bodyLarge),
                 controlAffinity: ListTileControlAffinity.leading,
                 contentPadding: EdgeInsets.zero,
               ))
@@ -897,20 +910,20 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   // ── Section: Trip Languages ────────────────────────────────────────────────
 
   Widget _buildLanguagesSection(ThemeData theme) {
-    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final l10n = AppLocalizations.of(context);
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: _languageOptions.map((lang) {
-        final selected = _tripLanguages.contains(lang.key);
+        final selected = _tripLanguages.contains(lang);
         return FilterChip(
-          label: Text(isAr ? lang.labelAr : lang.labelEn),
+          label: Text(_languageLabel(l10n, lang)),
           selected: selected,
           onSelected: (on) => setState(() {
             if (on) {
-              _tripLanguages.add(lang.key);
+              _tripLanguages.add(lang);
             } else {
-              _tripLanguages.remove(lang.key);
+              _tripLanguages.remove(lang);
             }
           }),
           selectedColor: theme.colorScheme.primary.withValues(alpha: 0.15),
@@ -932,21 +945,57 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
     );
   }
 
+  String _accessibilityLabel(AppLocalizations l10n, String key) {
+    switch (key) {
+      case 'wheelchair':
+        return l10n.accessibility_wheelchair;
+      case 'family':
+        return l10n.accessibility_family;
+      default:
+        return key;
+    }
+  }
+
+  String _languageLabel(AppLocalizations l10n, String key) {
+    switch (key) {
+      case 'ar':
+        return l10n.arabic;
+      case 'en':
+        return l10n.english;
+      case 'fr':
+        return l10n.french;
+      case 'es':
+        return l10n.spanish;
+      case 'de':
+        return l10n.german;
+      case 'tr':
+        return l10n.turkish;
+      case 'ur':
+        return l10n.urdu;
+      case 'zh':
+        return l10n.chinese;
+      default:
+        return key;
+    }
+  }
+
   // ── Section: Guide Info ────────────────────────────────────────────────────
 
   Widget _buildGuideInfo(ThemeData theme, TutorModel tutor) {
+    final l10n = AppLocalizations.of(context);
+    const dash = '-';
     return Column(
       children: tutor.tutorType == TutorType.individual
           ? [
-              _infoRow(theme, Icons.person_outline, 'المرشد: ${tutor.fullName}'),
+              _infoRow(theme, Icons.person_outline, l10n.addTripGuideName(tutor.fullName)),
               _infoRow(theme, Icons.verified_outlined,
-                  'الرخصة: ${tutor.licenceNumber ?? '—'}'),
+                  l10n.addTripLicenseValue(tutor.licenceNumber ?? dash)),
             ]
           : [
               _infoRow(theme, Icons.business_outlined,
-                  'الشركة: ${tutor.companyName ?? '—'}'),
+                  l10n.addTripCompanyName(tutor.companyName ?? dash)),
               _infoRow(theme, Icons.verified_outlined,
-                  'الترخيص: ${tutor.tourismLicenceNumber ?? '—'}'),
+                  l10n.addTripTourismLicenseValue(tutor.tourismLicenceNumber ?? dash)),
             ],
     );
   }
@@ -954,6 +1003,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   // ── Submit button ──────────────────────────────────────────────────────────
 
   Widget _buildSubmitButton(ThemeData theme, TutorModel? tutor) {
+    final l10n = AppLocalizations.of(context);
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -966,7 +1016,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
                 child: CircularProgressIndicator(
                     color: Colors.white, strokeWidth: 2.5),
               )
-            : Text(_isEditing ? 'حفظ التعديلات' : 'إرسال للمراجعة',
+            : Text(_isEditing ? l10n.addTripSaveChanges : l10n.addTripSubmitForReview,
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       ),
     );
@@ -996,7 +1046,9 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       validator: (v) {
-        if (required && (v == null || v.trim().isEmpty)) return 'مطلوب';
+        if (required && (v == null || v.trim().isEmpty)) {
+          return AppLocalizations.of(context).addTripRequiredField;
+        }
         return extraValidator?.call(v);
       },
     );
@@ -1100,6 +1152,7 @@ class _BlockedView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -1131,7 +1184,7 @@ class _BlockedView extends StatelessWidget {
             const SizedBox(height: 32),
             OutlinedButton(
               onPressed: onBack,
-              child: const Text('عودة للملف الشخصي'),
+              child: Text(l10n.addTripBackToProfile),
             ),
           ],
         ),

@@ -5,6 +5,7 @@ import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/admin/screens/add_attraction_screen.dart';
 import 'package:athar_app/features/attractions/logic/attractions_repository.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class AttractionsAdminScreen extends ConsumerStatefulWidget {
   const AttractionsAdminScreen({super.key});
@@ -21,16 +22,16 @@ class _AttractionsAdminScreenState
   @override
   Widget build(BuildContext context) {
     final attractionsAsync = ref.watch(attractionsStreamProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Stack(
       children: [
         attractionsAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('Error: $e')),
+          error: (e, _) => Center(child: Text(l10n.commonErrorWithMessage(e.toString()))),
           data: (attractions) {
             if (attractions.isEmpty) {
-              return const Center(
-                  child: Text('No attractions yet. Tap + to add one.'));
+              return Center(child: Text(l10n.adminNoAttractions));
             }
             return ListView.separated(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
@@ -54,7 +55,7 @@ class _AttractionsAdminScreenState
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             icon: const Icon(Icons.add),
-            label: const Text('Add Attraction'),
+            label: Text(l10n.adminAddAttraction),
           ),
         ),
       ],
@@ -69,6 +70,7 @@ class _AttractionAdminTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -132,7 +134,7 @@ class _AttractionAdminTile extends ConsumerWidget {
               IconButton(
                 icon: Icon(Icons.edit_outlined,
                     size: 20, color: theme.colorScheme.primary),
-                tooltip: 'Edit',
+                tooltip: l10n.adminEdit,
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -144,7 +146,7 @@ class _AttractionAdminTile extends ConsumerWidget {
               IconButton(
                 icon: const Icon(Icons.delete_outline,
                     size: 20, color: Colors.red),
-                tooltip: 'Delete',
+                tooltip: l10n.adminDelete,
                 onPressed: () => _confirmDelete(context, ref, attraction),
               ),
             ],
@@ -159,18 +161,18 @@ class _AttractionAdminTile extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Attraction'),
-        content: Text(
-            'Delete "${attraction.getName(false)}"? This cannot be undone.'),
+        title: Text(AppLocalizations.of(context).adminDeleteAttraction),
+        content: Text(AppLocalizations.of(context)
+            .adminDeleteAttractionConfirm(attraction.getName(false))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).adminCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Delete'),
+            child: Text(AppLocalizations.of(context).adminDelete),
           ),
         ],
       ),
@@ -183,15 +185,15 @@ class _AttractionAdminTile extends ConsumerWidget {
             .deleteAttraction(attraction.id);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('Attraction deleted'),
+            SnackBar(
+                content: Text(AppLocalizations.of(context).adminAttractionDeleted),
                 backgroundColor: Colors.red),
           );
         }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e')),
+            SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString()))),
           );
         }
       }

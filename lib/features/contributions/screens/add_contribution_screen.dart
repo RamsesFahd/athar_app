@@ -154,7 +154,7 @@ class _AddContributionScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${_isArabic ? 'حدث خطأ:' : 'Error:'} $e'),
+          content: Text(l10n.contributionErrorWithMessage(e.toString())),
           backgroundColor: Colors.red,
         ),
       );
@@ -176,13 +176,13 @@ class _AddContributionScreenState
       loading: () => const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       ),
-      error: (_, __) => const Scaffold(
-        body: Center(child: Text('Authentication error')),
+      error: (_, __) => Scaffold(
+        body: Center(child: Text(l10n.contributionAuthError)),
       ),
       data: (user) {
         if (user == null || user is! TouristModel) {
-          return const Scaffold(
-            body: Center(child: Text('User not available')),
+          return Scaffold(
+            body: Center(child: Text(l10n.contributionUserUnavailable)),
           );
         }
 
@@ -227,7 +227,7 @@ class _AddContributionScreenState
                     FilledButton.icon(
                       onPressed: () => Navigator.pop(context),
                       icon: const Icon(Icons.arrow_back),
-                      label: Text(isArabic ? 'العودة للملف الشخصي' : 'Go to Profile'),
+                      label: Text(l10n.contributionGoToProfile),
                     ),
                   ],
                 ),
@@ -260,7 +260,7 @@ class _AddContributionScreenState
                       const SizedBox(height: 22),
                       _buildSectionLabel(
                           context,
-                          isArabic ? 'نوع المساهمة' : 'Contribution Type'),
+                          l10n.contributionTypeLabel),
                       const SizedBox(height: 8),
                       _buildCategorySelector(theme, isArabic),
                       if (_selectedCategory != null) ...[
@@ -278,9 +278,9 @@ class _AddContributionScreenState
                       const SizedBox(height: 18),
                       _buildSectionLabel(
                           context,
-                          isArabic ? 'المنطقة' : 'Region'),
+                          l10n.locationLabel),
                       const SizedBox(height: 8),
-                      _buildRegionDropdown(theme, isArabic),
+                      _buildRegionDropdown(theme, l10n, isArabic),
                       const SizedBox(height: 18),
                       _buildSectionLabel(context, l10n.cityLabel),
                       const SizedBox(height: 8),
@@ -328,9 +328,7 @@ class _AddContributionScreenState
       controller: _titleController,
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
-        hintText: isArabic
-            ? 'مثال: رقصة الخطوة – عسير'
-            : 'Example: Al-Khatwa Dance – Asir',
+        hintText: l10n.contributionTitleExampleHint,
         prefixIcon: const Icon(Icons.title_rounded),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
         contentPadding:
@@ -350,9 +348,7 @@ class _AddContributionScreenState
       maxLines: 5,
       textInputAction: TextInputAction.newline,
       decoration: InputDecoration(
-        hintText: isArabic
-            ? 'اكتب وصفًا واضحًا: ما هو؟ أين يُستخدم؟ ولماذا مهم؟'
-            : 'Write a clear description: what is it, where is it used, and why is it important?',
+        hintText: l10n.contributionDescriptionExampleHint,
         helperText: isArabic
             ? 'نصيحة: اذكر (التاريخ • الاستخدام • الموقع)'
             : 'Tip: include (history • usage • location)',
@@ -485,11 +481,12 @@ class _AddContributionScreenState
     );
   }
 
-  Widget _buildRegionDropdown(ThemeData theme, bool isArabic) {
+  Widget _buildRegionDropdown(
+    ThemeData theme, AppLocalizations l10n, bool isArabic) {
     return DropdownButtonFormField<String>(
       value: _selectedRegionId,
       decoration: InputDecoration(
-        hintText: isArabic ? 'اختر المنطقة' : 'Select region',
+        hintText: l10n.contributionSelectRegionHint,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -528,7 +525,7 @@ class _AddContributionScreenState
       value: cityIds.contains(_selectedCityId) ? _selectedCityId : null,
       decoration: InputDecoration(
         hintText: _selectedRegionId == null
-            ? (isArabic ? 'اختر المنطقة أولاً' : 'Select region first')
+            ? l10n.contributionSelectRegionFirstHint
             : l10n.cityLabel,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
         contentPadding:
@@ -593,7 +590,7 @@ class _AddContributionScreenState
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  isArabic ? 'تم اختيار الملف' : 'File selected',
+                  l10n.contributionFileSelected,
                   style: theme.textTheme.bodySmall
                       ?.copyWith(color: theme.colorScheme.primary),
                 ),

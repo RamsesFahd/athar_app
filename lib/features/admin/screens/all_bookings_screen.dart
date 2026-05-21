@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class AllBookingsScreen extends ConsumerWidget {
   const AllBookingsScreen({super.key});
@@ -11,6 +12,7 @@ class AllBookingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return StreamBuilder<List<BookingModel>>(
       stream: ref.watch(adminRepositoryProvider).getAllBookings(),
@@ -29,7 +31,7 @@ class AllBookingsScreen extends ConsumerWidget {
                 Icon(Icons.book_online_outlined,
                     size: 72, color: AppColors.primary.withValues(alpha: 0.15)),
                 const SizedBox(height: 16),
-                Text('No bookings yet',
+                Text(l10n.adminNoBookings,
                     style: theme.textTheme.bodyLarge
                         ?.copyWith(color: Colors.grey.shade500)),
               ],
@@ -56,6 +58,7 @@ class _BookingTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Card(
       elevation: 1,
@@ -115,7 +118,8 @@ class _BookingTile extends StatelessWidget {
                   _DetailRow(
                     icon: Icons.people_outline,
                     text: Text(
-                      '${booking.adultsCount} adults, ${booking.childrenCount} children',
+                      l10n.adminBookingPeopleSummary(
+                          booking.adultsCount, booking.childrenCount),
                       style: Theme.of(context).textTheme.bodySmall,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -125,11 +129,11 @@ class _BookingTile extends StatelessWidget {
                       text: CurrencyFormatter.format(booking.totalPrice,
                           decimals: 2)),
                   const SizedBox(height: 4),
-                  Text('Tourist: ${booking.touristId}',
+                  Text(l10n.adminTouristId(booking.touristId),
                       style: theme.textTheme.labelSmall
                           ?.copyWith(color: Colors.grey.shade500),
                       overflow: TextOverflow.ellipsis),
-                  Text('Tutor: ${booking.tutorId}',
+                  Text(l10n.adminTutorId(booking.tutorId),
                       style: theme.textTheme.labelSmall
                           ?.copyWith(color: Colors.grey.shade500),
                       overflow: TextOverflow.ellipsis),
@@ -175,19 +179,20 @@ class _StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     Color color;
     String label;
+    final l10n = AppLocalizations.of(context);
     switch (status) {
       case BookingStatus.approved:
         color = Colors.green;
-        label = 'Accepted';
+        label = l10n.adminStatusApproved;
       case BookingStatus.completed:
         color = Colors.blue;
-        label = 'Completed';
+        label = l10n.contributionCompleted;
       case BookingStatus.rejected:
         color = Colors.red;
-        label = 'Rejected';
+        label = l10n.adminStatusRejected;
       default:
         color = Colors.orange;
-        label = 'Pending';
+        label = l10n.adminStatusPending;
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

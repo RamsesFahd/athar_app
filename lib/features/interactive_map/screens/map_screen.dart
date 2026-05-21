@@ -10,6 +10,7 @@ import 'package:athar_app/features/interactive_map/logic/map_notifier.dart';
 import 'package:athar_app/features/interactive_map/widgets/map_filter_chips.dart';
 import 'package:athar_app/features/interactive_map/widgets/map_search_bar.dart';
 import 'package:athar_app/features/interactive_map/widgets/map_results_sheet.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class MapScreen extends ConsumerStatefulWidget {
   const MapScreen({super.key});
@@ -259,6 +260,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   Future<void> _goToUserLocation() async {
+    final l10n = AppLocalizations.of(context);
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -267,9 +269,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     if (permission == LocationPermission.deniedForever) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content:
-                Text('يتطلب الوصول إلى موقعك تفعيل الإذن من الإعدادات'),
+          SnackBar(
+            content: Text(l10n.mapLocationPermissionSettings),
           ),
         );
       }
@@ -296,6 +297,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final mapState = ref.watch(mapNotifierProvider);
     final filteredPins = ref.watch(filteredMapPinsProvider);
     final activeFilter = ref.watch(activeMapFilterProvider);
@@ -376,7 +378,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16, vertical: 10),
                   child: Text(
-                    'تعذّر تحميل البيانات، تحقق من اتصالك بالإنترنت',
+                    l10n.mapLoadDataError,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onErrorContainer,
                     ),
@@ -429,7 +431,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 right: 16,
                 child: FloatingActionButton.small(
                   onPressed: _goToUserLocation,
-                  tooltip: 'موقعي',
+                  tooltip: l10n.mapMyLocationTooltip,
                   child: const Icon(Icons.my_location),
                 ),
               );

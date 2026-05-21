@@ -10,6 +10,7 @@ import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/core/models/map/map_pin_model.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/features/interactive_map/logic/map_notifier.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class MapResultsSheet extends ConsumerStatefulWidget {
   final LatLngBounds? visibleBounds;
@@ -137,6 +138,7 @@ class _PinDetail extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isAr = ref.watch(settingsProvider).locale.languageCode == 'ar';
+    final l10n = AppLocalizations.of(context);
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
     final isEvent = pin.type == MapPinType.event;
@@ -174,7 +176,7 @@ class _PinDetail extends ConsumerWidget {
                       Icons.close,
                       color: Color.fromARGB(255, 64, 64, 64),
                     ),
-                    tooltip: isAr ? 'إغلاق' : 'Close',
+                    tooltip: l10n.profileClose,
                     onPressed: () =>
                         ref.read(mapNotifierProvider.notifier).selectPin(null),
                   ),
@@ -194,8 +196,8 @@ class _PinDetail extends ConsumerWidget {
                     Icons.share_outlined,
                     color: Color.fromARGB(255, 64, 64, 64),
                   ),
-                  tooltip: isAr ? 'مشاركة' : 'Share',
-                  onPressed: () => _share(context, isAr),
+                  tooltip: l10n.mapShareTooltip,
+                  onPressed: () => _share(context),
                 ),
               ],
             ),
@@ -240,22 +242,16 @@ class _PinDetail extends ConsumerWidget {
                   const SizedBox(height: 6),
                   _EventTimeRow(event: event, isAr: isAr),
                   const SizedBox(height: 12),
-                  _FreeOrPaidBadge(isFree: event.isFree, isAr: isAr),
+                  _FreeOrPaidBadge(isFree: event.isFree),
                 ],
 
                 const SizedBox(height: 20),
                 Text(
-                  isAr
-                      ? (isEvent
-                          ? 'عن الفعالية'
-                          : isAttraction
-                              ? 'عن المعلم السياحي'
-                              : 'عن المعلم')
-                      : (isEvent
-                          ? 'About the Event'
-                          : isAttraction
-                              ? 'About the Attraction'
-                              : 'About'),
+                  isEvent
+                      ? l10n.mapAboutEvent
+                      : isAttraction
+                          ? l10n.mapAboutAttraction
+                          : l10n.mapAboutLandmark,
                   style: tt.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
@@ -278,7 +274,7 @@ class _PinDetail extends ConsumerWidget {
                     child: ElevatedButton.icon(
                       onPressed: () => _openUrl(event.ticketUrl!),
                       icon: const Icon(Icons.confirmation_number_outlined),
-                      label: Text(isAr ? 'احجز تذكرة' : 'Book Ticket'),
+                      label: Text(l10n.mapBookTicket),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: cs.primary,
                         foregroundColor: cs.onPrimary,
@@ -299,7 +295,7 @@ class _PinDetail extends ConsumerWidget {
                           child: OutlinedButton.icon(
                             onPressed: () => _openUrl(event.ticketUrl!),
                             icon: const Icon(Icons.open_in_new, size: 16),
-                            label: Text(isAr ? 'المصدر' : 'Source'),
+                            label: Text(l10n.mapSource),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
@@ -313,7 +309,7 @@ class _PinDetail extends ConsumerWidget {
                         child: OutlinedButton.icon(
                           onPressed: _openDirections,
                           icon: const Icon(Icons.directions_outlined, size: 16),
-                          label: Text(isAr ? 'الاتجاهات' : 'Directions'),
+                          label: Text(l10n.mapDirections),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
@@ -329,7 +325,7 @@ class _PinDetail extends ConsumerWidget {
                     child: ElevatedButton.icon(
                       onPressed: _openDirections,
                       icon: const Icon(Icons.directions_outlined),
-                      label: Text(isAr ? 'الاتجاهات' : 'Directions'),
+                      label: Text(l10n.mapDirections),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: cs.primary,
                         foregroundColor: cs.onPrimary,
@@ -347,12 +343,13 @@ class _PinDetail extends ConsumerWidget {
     );
   }
 
-  void _share(BuildContext context, bool isAr) {
+  void _share(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final url = 'https://maps.google.com/?q=${pin.latitude},${pin.longitude}';
     Clipboard.setData(ClipboardData(text: url));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(isAr ? 'تم نسخ الرابط' : 'Link copied'),
+        content: Text(l10n.commonLinkCopied),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -382,7 +379,7 @@ class _ResultsList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isAr = ref.watch(settingsProvider).locale.languageCode == 'ar';
+    final l10n = AppLocalizations.of(context);
 
     return CustomScrollView(
       controller: scrollController,
@@ -404,9 +401,7 @@ class _ResultsList extends ConsumerWidget {
                           .withValues(alpha: 0.3)),
                   const SizedBox(height: 8),
                   Text(
-                    isAr
-                        ? 'لا توجد نتائج في هذه المنطقة'
-                        : 'No results in this area',
+                    l10n.mapNoResultsInArea,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context)
                               .colorScheme
@@ -559,11 +554,11 @@ class _TypeBadge extends StatelessWidget {
     final Color color;
 
     if (pin.type == MapPinType.attraction) {
-      label = isAr ? 'معلم سياحي' : 'Attraction';
+      label = AppLocalizations.of(context).mapAttractionLabel;
       final hex = pin.categoryColorCode;
       color = hex != null ? _hexToColor(hex) : const Color(0xFF3A6EA5);
     } else if (pin.type == MapPinType.landmark) {
-      label = isAr ? 'معلم ثقافي' : 'Landmark';
+      label = AppLocalizations.of(context).mapLandmarkLabel;
       color = cs.primary;
     } else {
       final event = pin.sourceModel as EventModel;
@@ -589,15 +584,14 @@ class _TypeBadge extends StatelessWidget {
 
 class _FreeOrPaidBadge extends StatelessWidget {
   final bool isFree;
-  final bool isAr;
 
-  const _FreeOrPaidBadge({required this.isFree, required this.isAr});
+  const _FreeOrPaidBadge({required this.isFree});
 
   @override
   Widget build(BuildContext context) {
     final color = isFree ? Colors.green : Colors.orange;
-    final label =
-        isFree ? (isAr ? 'مجاني' : 'Free') : (isAr ? 'مدفوع' : 'Paid');
+    final l10n = AppLocalizations.of(context);
+    final label = isFree ? l10n.commonFree : l10n.commonPaid;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

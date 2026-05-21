@@ -8,6 +8,7 @@ import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class AddCulturalContentScreen extends ConsumerStatefulWidget {
   final CulturalItemModel? editItem;
@@ -107,16 +108,17 @@ class _AddCulturalContentScreenState
   }
 
   Future<void> _submit() async {
+    final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) return;
     if (_selectedRegionId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a region')),
+        SnackBar(content: Text(l10n.adminSelectRegion)),
       );
       return;
     }
     if (!_isEditMode && _pickedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please pick an image')),
+        SnackBar(content: Text(l10n.adminPickImage)),
       );
       return;
     }
@@ -155,7 +157,7 @@ class _AddCulturalContentScreenState
             .updateCulturalItem(widget.editItem!.id, data);
       } else {
         final imageUrl = await _uploadImage(_pickedImage!);
-        if (imageUrl == null) throw Exception('Image upload failed');
+        if (imageUrl == null) throw Exception(l10n.adminImageUploadFailed);
         final data = <String, dynamic>{
           'titleAr': _titleArController.text.trim(),
           'titleEn': _titleEnController.text.trim(),
@@ -180,8 +182,8 @@ class _AddCulturalContentScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_isEditMode
-                ? 'Item updated successfully'
-                : 'Cultural item added successfully'),
+                ? l10n.adminItemUpdated
+                : l10n.adminCulturalItemAdded),
             backgroundColor: Colors.green,
           ),
         );
@@ -194,7 +196,7 @@ class _AddCulturalContentScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -220,6 +222,7 @@ class _AddCulturalContentScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final screenContent = SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Form(
@@ -228,7 +231,7 @@ class _AddCulturalContentScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image picker
-            _SectionLabel('Image'),
+            _SectionLabel(l10n.adminImage),
             GestureDetector(
               onTap: _pickImage,
               child: Container(
@@ -265,8 +268,8 @@ class _AddCulturalContentScreenState
                                       color: Colors.black54,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: const Text('Tap to change',
-                                        style: TextStyle(
+                                    child: Text(l10n.adminTapToChange,
+                                        style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 11)),
                                   ),
@@ -282,7 +285,7 @@ class _AddCulturalContentScreenState
                                   color:
                                       AppColors.primary.withValues(alpha: 0.5)),
                               const SizedBox(height: 8),
-                              Text('Tap to pick image',
+                              Text(l10n.adminPickImage,
                                   style: theme.textTheme.bodySmall?.copyWith(
                                       color: AppColors.primary
                                           .withValues(alpha: 0.6))),
@@ -293,39 +296,39 @@ class _AddCulturalContentScreenState
 
             const SizedBox(height: 24),
 
-            _SectionLabel('Title (Arabic)'),
+            _SectionLabel(l10n.adminTitleArabic),
             _FormField(
               controller: _titleArController,
-              hint: 'أدخل العنوان بالعربي',
+              hint: l10n.adminTitleArabicHint,
               textDirection: TextDirection.rtl,
             ),
             const SizedBox(height: 16),
 
-            _SectionLabel('Title (English)'),
+            _SectionLabel(l10n.adminTitleEnglish),
             _FormField(
               controller: _titleEnController,
-              hint: 'Enter English title',
+              hint: l10n.adminTitleEnglishHint,
             ),
             const SizedBox(height: 16),
 
-            _SectionLabel('Description (Arabic)'),
+            _SectionLabel(l10n.adminDescriptionArabic),
             _FormField(
               controller: _descArController,
-              hint: 'أدخل الوصف بالعربي',
+              hint: l10n.adminDescriptionArabicHint,
               maxLines: 4,
               textDirection: TextDirection.rtl,
             ),
             const SizedBox(height: 16),
 
-            _SectionLabel('Description (English)'),
+            _SectionLabel(l10n.adminDescriptionEnglish),
             _FormField(
               controller: _descEnController,
-              hint: 'Enter English description',
+              hint: l10n.adminDescriptionEnglishHint,
               maxLines: 4,
             ),
             const SizedBox(height: 24),
 
-            _SectionLabel('Category'),
+            _SectionLabel(l10n.adminCategory),
             DropdownButtonFormField<String>(
               value: _selectedCategory,
               decoration: _inputDecoration(),
@@ -339,17 +342,17 @@ class _AddCulturalContentScreenState
 
             const SizedBox(height: 16),
 
-            _SectionLabel('Region'),
+            _SectionLabel(l10n.adminRegion),
             DropdownButtonFormField<String>(
               value: _selectedRegionId,
-              decoration: _inputDecoration(hint: 'Select a region'),
+              decoration: _inputDecoration(hint: l10n.adminSelectRegion),
               items: regionsData
                   .map((r) => DropdownMenuItem(
                       value: r.regionId, child: Text(r.nameEn)))
                   .toList(),
               onChanged: (v) => setState(() => _selectedRegionId = v),
               validator: (v) =>
-                  v == null ? 'Please select a region' : null,
+                  v == null ? l10n.adminSelectRegion : null,
             ),
 
             const SizedBox(height: 16),
@@ -363,7 +366,7 @@ class _AddCulturalContentScreenState
                       color: AppColors.primary.withValues(alpha: 0.7)),
                   const SizedBox(width: 6),
                   Text(
-                    'إحداثيات الخريطة (اختياري)',
+                    l10n.adminMapCoordinatesOptional,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w600,
                         ),
@@ -380,7 +383,7 @@ class _AddCulturalContentScreenState
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true, signed: true),
                         decoration:
-                            _inputDecoration(hint: 'Latitude (e.g. 24.68)'),
+                            _inputDecoration(hint: l10n.adminLatitudeExample),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -390,7 +393,7 @@ class _AddCulturalContentScreenState
                         keyboardType: const TextInputType.numberWithOptions(
                             decimal: true, signed: true),
                         decoration:
-                            _inputDecoration(hint: 'Longitude (e.g. 46.72)'),
+                            _inputDecoration(hint: l10n.adminLongitudeExample),
                       ),
                     ),
                   ],
@@ -420,7 +423,7 @@ class _AddCulturalContentScreenState
                             color: Colors.white, strokeWidth: 2.5),
                       )
                     : Text(
-                        _isEditMode ? 'Update Item' : 'Add to Archive',
+                        _isEditMode ? l10n.adminUpdateItem : l10n.adminAddToArchive,
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
@@ -435,7 +438,7 @@ class _AddCulturalContentScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditMode ? 'Edit Archive Item' : 'Add Archive Item'),
+        title: Text(_isEditMode ? l10n.adminEditArchiveItem : l10n.adminAddArchiveItem),
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
@@ -499,12 +502,13 @@ class _FormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
       textDirection: textDirection,
       validator: (v) =>
-          (v == null || v.trim().isEmpty) ? 'This field is required' : null,
+          (v == null || v.trim().isEmpty) ? l10n.requiredField : null,
       decoration: InputDecoration(
         hintText: hint,
         filled: true,

@@ -858,6 +858,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get french => 'French';
 
   @override
+  String get spanish => 'Spanish';
+
+  @override
+  String get german => 'German';
+
+  @override
+  String get turkish => 'Turkish';
+
+  @override
+  String get urdu => 'Urdu';
+
+  @override
+  String get chinese => 'Chinese';
+
+  @override
   String get myCulturalAchievements => 'My Cultural Achievements';
 
   @override
@@ -1305,4 +1320,1477 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get otpSendCode => 'Send Code';
+
+  @override
+  String get contactUsTitle => 'Contact Us';
+
+  @override
+  String get contactUsSubtitle =>
+      'We\'d love to hear your suggestions or feedback to improve Athar.';
+
+  @override
+  String get contactUsEmailTitle => 'Email';
+
+  @override
+  String get contactUsLocationTitle => 'Location';
+
+  @override
+  String get contactUsSaudiArabia => 'Saudi Arabia';
+
+  @override
+  String get contactUsSupportType => 'Support Type';
+
+  @override
+  String get contactUsReportIssue => 'Report Issue';
+
+  @override
+  String get contactUsSuggestFeature => 'Suggest Feature';
+
+  @override
+  String get contactUsGuideSupport => 'Guide Support';
+
+  @override
+  String get contactUsContributions => 'Contributions';
+
+  @override
+  String get contactUsSendMessageTitle => 'Send a Message';
+
+  @override
+  String get contactUsSendMessageSubtitle =>
+      'Write your message and we will review it as soon as possible.';
+
+  @override
+  String get contactUsNameHint => 'Your Name';
+
+  @override
+  String get contactUsEmailHint => 'Your Email';
+
+  @override
+  String get contactUsMessageHint => 'Write your message here...';
+
+  @override
+  String get contactUsMessageSent => 'Your message has been sent successfully';
+
+  @override
+  String get contactUsSendMessageButton => 'Send Message';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsSignInRequired => 'Please sign in';
+
+  @override
+  String get notificationsLoadError => 'Failed to load notifications';
+
+  @override
+  String get notificationsEmptyState => 'No notifications yet';
+
+  @override
+  String get notificationContributionApprovedTitle => 'Contribution Approved';
+
+  @override
+  String get notificationContributionRejectedTitle => 'Contribution Rejected';
+
+  @override
+  String get notificationContributionSubmittedTitle =>
+      'New Contribution Awaiting Review';
+
+  @override
+  String get notificationTripSubmittedTitle => 'New Trip Awaiting Review';
+
+  @override
+  String get notificationTripApprovedTitle => 'Trip Approved';
+
+  @override
+  String get notificationTripRejectedTitle => 'Trip Rejected';
+
+  @override
+  String get notificationBookingNewTitle => 'New Booking';
+
+  @override
+  String get notificationBookingApprovedTitle => 'Booking Approved';
+
+  @override
+  String get notificationBookingCancelledTitle => 'Booking Cancelled';
+
+  @override
+  String get notificationGuideVerifiedTitle => 'Account Verified';
+
+  @override
+  String get notificationGuideRejectedTitle => 'Verification Rejected';
+
+  @override
+  String get notificationPointsAwardedTitle => 'Bonus Points Awarded';
+
+  @override
+  String get notificationDefaultTitle => 'New Notification';
+
+  @override
+  String get notificationContributionApprovedBody =>
+      'Your contribution has been approved.';
+
+  @override
+  String get notificationContributionRejectedBody =>
+      'Your contribution was rejected. Please review the reason.';
+
+  @override
+  String get notificationContributionSubmittedBody =>
+      'A tourist submitted a contribution for review.';
+
+  @override
+  String get notificationTripSubmittedBody =>
+      'A guide submitted a new trip for review.';
+
+  @override
+  String get notificationTripApprovedBody =>
+      'Congratulations! Your trip is now open for bookings.';
+
+  @override
+  String get notificationTripRejectedBody => 'Your trip was rejected.';
+
+  @override
+  String get notificationBookingNewBody => 'A tourist has booked your trip.';
+
+  @override
+  String get notificationBookingApprovedBody =>
+      'Your booking has been approved.';
+
+  @override
+  String get notificationBookingCancelledBody =>
+      'Your booking has been cancelled.';
+
+  @override
+  String get notificationGuideVerifiedBody =>
+      'Your guide account has been verified.';
+
+  @override
+  String get notificationGuideRejectedBody =>
+      'Your guide verification request has been rejected.';
+
+  @override
+  String get notificationPointsAwardedBody =>
+      'Bonus points have been added to your account.';
+
+  @override
+  String get notificationDefaultBody => 'You have a new notification.';
+
+  @override
+  String commonErrorWithMessage(String message) {
+    return 'Error: $message';
+  }
+
+  @override
+  String get commonFree => 'Free';
+
+  @override
+  String get commonPaid => 'Paid';
+
+  @override
+  String get commonLinkCopied => 'Link copied';
+
+  @override
+  String get commonNoTitle => 'No title';
+
+  @override
+  String get commonNoDescription => 'No description';
+
+  @override
+  String get commonOk => 'OK';
+
+  @override
+  String get timeAmMarker => 'AM';
+
+  @override
+  String get timePmMarker => 'PM';
+
+  @override
+  String get homeAttractionsSectionTitle => 'Attractions';
+
+  @override
+  String get homeTripsSectionTitle => 'Trips';
+
+  @override
+  String get homeEventsSectionTitle => 'Events';
+
+  @override
+  String get homeHeroFallbackTitle => 'Discover Saudi Heritage';
+
+  @override
+  String get homeHeroEventBadge => 'The Countdown Begins';
+
+  @override
+  String get homeHeroEventSubtitle => 'A cultural moment is almost here';
+
+  @override
+  String get homeHeroEventCta => 'Get Ready';
+
+  @override
+  String get homeHeroAttractionCta => 'Explore Landmark';
+
+  @override
+  String get homeHeroCommunityCta => 'Share Athar';
+
+  @override
+  String get homeHeroArchiveCta => 'Open Archive';
+
+  @override
+  String get homeHeroTripBadge => 'Balloon Experience';
+
+  @override
+  String get homeHeroTripSubtitle => 'Rise above a landscape made for memory';
+
+  @override
+  String get homeHeroTripCta => 'Book Experience';
+
+  @override
+  String get homeHeroDaysLabel => 'Days';
+
+  @override
+  String get homeHeroHoursLabel => 'Hours';
+
+  @override
+  String get attractionsTitle => 'Attractions';
+
+  @override
+  String get attractionsSearchHint => 'Search attractions...';
+
+  @override
+  String get attractionsNoAvailable => 'No attractions available';
+
+  @override
+  String get attractionsNoResults => 'No results found';
+
+  @override
+  String get attractionHours => 'Hours';
+
+  @override
+  String get attractionAlwaysOpen => 'Always Open';
+
+  @override
+  String get attractionEntryFee => 'Entry Fee';
+
+  @override
+  String get attractionAbout => 'About';
+
+  @override
+  String get attractionTicketLink => 'Get tickets here';
+
+  @override
+  String get attractionGetDirections => 'Get Directions';
+
+  @override
+  String get mapSearchHint => 'Search landmarks or events...';
+
+  @override
+  String get mapLandmarks => 'Landmarks';
+
+  @override
+  String get mapAttractions => 'Attractions';
+
+  @override
+  String get mapEvents => 'Events';
+
+  @override
+  String get mapNearMe => 'Near Me';
+
+  @override
+  String get mapMyLocationTooltip => 'My location';
+
+  @override
+  String get mapShareTooltip => 'Share';
+
+  @override
+  String get mapAboutEvent => 'About the Event';
+
+  @override
+  String get mapAboutAttraction => 'About the Attraction';
+
+  @override
+  String get mapAboutLandmark => 'About the Landmark';
+
+  @override
+  String get mapBookTicket => 'Book Ticket';
+
+  @override
+  String get mapSource => 'Source';
+
+  @override
+  String get mapDirections => 'Directions';
+
+  @override
+  String get mapNoResultsInArea => 'No results in this area';
+
+  @override
+  String get mapAttractionLabel => 'Attraction';
+
+  @override
+  String get mapLandmarkLabel => 'Landmark';
+
+  @override
+  String get mapLocationPermissionSettings =>
+      'Location access requires enabling permission from settings';
+
+  @override
+  String get mapLoadDataError =>
+      'Could not load data. Check your internet connection';
+
+  @override
+  String get contributionAuthError => 'Authentication error';
+
+  @override
+  String get contributionUserUnavailable => 'User not available';
+
+  @override
+  String contributionErrorWithMessage(String message) {
+    return 'Error: $message';
+  }
+
+  @override
+  String get contributionGoToProfile => 'Go to Profile';
+
+  @override
+  String get contributionTypeLabel => 'Contribution Type';
+
+  @override
+  String get contributionTitleExampleHint => 'Example: Al-Khatwa Dance - Asir';
+
+  @override
+  String get contributionDescriptionExampleHint =>
+      'Write a clear description: what is it, where is it used, and why is it important?';
+
+  @override
+  String get contributionSelectRegionHint => 'Select region';
+
+  @override
+  String get contributionSelectRegionFirstHint => 'Select region first';
+
+  @override
+  String get contributionFileSelected => 'File selected';
+
+  @override
+  String get contributionRejectionDetailsTitle => 'Submission Details';
+
+  @override
+  String get contributionSubmittedContentTitle => 'Submitted Content';
+
+  @override
+  String get contributionSubmissionInfoTitle => 'Submission Info';
+
+  @override
+  String get contributionSubmittedDateLabel => 'Submitted';
+
+  @override
+  String get contributionSubmitNew => 'Submit New Contribution';
+
+  @override
+  String get contributionRejectionReason => 'Rejection Reason';
+
+  @override
+  String get contributionAchievementsSection => 'Achievements';
+
+  @override
+  String get contributionMyContributionsSection => 'My Contributions';
+
+  @override
+  String get contributionPhoneVerificationRequiredTitle =>
+      'Phone Verification Required';
+
+  @override
+  String get contributionPhoneVerificationRequiredBody =>
+      'You must verify your phone number before adding a contribution. Go to your profile to complete verification.';
+
+  @override
+  String get contributionCompleted => 'Completed';
+
+  @override
+  String get contributionContributorLevel => 'Contributor Level';
+
+  @override
+  String get contributionActiveContributor => 'Active Contributor';
+
+  @override
+  String get contributionPointsUnit => 'pts';
+
+  @override
+  String get contributionLikes => 'Likes';
+
+  @override
+  String get contributionShares => 'Shares';
+
+  @override
+  String get contributionQuality => 'Quality';
+
+  @override
+  String get contributionTopContributions => 'Top contributions';
+
+  @override
+  String get contributionNoAchievements => 'No achievements yet';
+
+  @override
+  String get contributionNoContributions => 'No contributions yet';
+
+  @override
+  String get contributionArchiveLinkMissing =>
+      'This contribution has no archive link';
+
+  @override
+  String get contributionArchiveItemNotFound =>
+      'Could not find the archive item';
+
+  @override
+  String get contributionPublished => 'Published';
+
+  @override
+  String get contributionPending => 'Pending';
+
+  @override
+  String get contributionRejected => 'Rejected';
+
+  @override
+  String get contributionWaitingForReview => 'Waiting for admin review';
+
+  @override
+  String get contributionRejectedDefault => 'Contribution was rejected';
+
+  @override
+  String get bookingAdultsAgeSubtitle => '12+ years';
+
+  @override
+  String get bookingChildrenAgeSubtitle => 'Under 12 years';
+
+  @override
+  String get bookingDateTimeTitle => 'Date & Time';
+
+  @override
+  String get bookingSelectDateError => 'Please select a date';
+
+  @override
+  String get bookingConfirmedMessage => 'Booking confirmed!';
+
+  @override
+  String bookingChildFreeLine(int count) {
+    return '$count Child (Free)';
+  }
+
+  @override
+  String bookingChildPriceLine(int count, String price) {
+    return '$count Child x $price';
+  }
+
+  @override
+  String bookingAdultPriceLine(int count, String price) {
+    return '$count Adults x $price';
+  }
+
+  @override
+  String bookingPeopleSummary(int adults, int children) {
+    return '$adults Adults, $children Children';
+  }
+
+  @override
+  String get bookingViewPendingGuide =>
+      'You have a new booking request that needs your review.';
+
+  @override
+  String get bookingViewPendingTourist =>
+      'Your booking is currently under review. You will be notified once the status changes.';
+
+  @override
+  String get bookingViewApprovedGuide =>
+      'You confirmed this booking. Contact the tourist using their details below.';
+
+  @override
+  String get bookingViewApprovedTourist =>
+      'Booking confirmed. You can contact the Guide using their details below.';
+
+  @override
+  String get bookingViewRejectedGuide => 'You rejected this request.';
+
+  @override
+  String get bookingViewRejectedTourist =>
+      'Sorry, this booking was rejected. You can try another date or a different trip.';
+
+  @override
+  String get bookingViewCancelledGuide =>
+      'The tourist cancelled this request before your approval.';
+
+  @override
+  String get bookingViewCancelledTourist => 'This booking has been cancelled.';
+
+  @override
+  String get bookingViewCompleted =>
+      'This trip has been completed successfully.';
+
+  @override
+  String get bookingCancelTitle => 'Cancel Booking?';
+
+  @override
+  String get cancelBookingConfirmation =>
+      'Are you sure you want to cancel this booking?';
+
+  @override
+  String get bookingCancelNo => 'No';
+
+  @override
+  String get bookingCancelYes => 'Yes, Cancel';
+
+  @override
+  String get bookingCancelButton => 'Cancel Booking';
+
+  @override
+  String get bookingTripDetailsTitle => 'Trip Details';
+
+  @override
+  String get bookingPriceSummaryTitle => 'Price Summary';
+
+  @override
+  String get bookingTouristLabel => 'Tourist';
+
+  @override
+  String get bookingGuideLabel => 'Guide';
+
+  @override
+  String get bookingAvailableSoon => 'Available soon';
+
+  @override
+  String get bookingPhoneLabel => 'Phone';
+
+  @override
+  String get bookingShownAfterConfirmation => 'Shown after confirmation';
+
+  @override
+  String get tripAdultsPriceLabel => 'Adults';
+
+  @override
+  String get tripChildrenPriceLabel => 'Children';
+
+  @override
+  String get tripGuideUnavailable => 'No guide info available';
+
+  @override
+  String tripReviewsCount(int count) {
+    return '($count reviews)';
+  }
+
+  @override
+  String get tripCardDetails => 'Details';
+
+  @override
+  String get tripCardViewDetails => 'View Details';
+
+  @override
+  String get tripAccessibilityWheelchairShort => 'Accessible';
+
+  @override
+  String get tripAccessibilityFamilyShort => 'Family Friendly';
+
+  @override
+  String get tripManagementGuidesOnly => 'This feature is for guides only';
+
+  @override
+  String get tripManagementVerifyPhoneFirst =>
+      'Verify your phone number first to add trips';
+
+  @override
+  String get tripManagementCompleteVerificationFirst =>
+      'Complete verification first to add trips';
+
+  @override
+  String get tripManagementCompleteProfileFirst =>
+      'Complete your profile (bio & languages) to add trips';
+
+  @override
+  String get tripStatusApproved => 'Approved';
+
+  @override
+  String get tripStatusRejected => 'Rejected';
+
+  @override
+  String get tripStatusPending => 'Pending';
+
+  @override
+  String get tripDeleteTitle => 'Delete Trip';
+
+  @override
+  String tripDeleteConfirm(String title) {
+    return 'Are you sure you want to delete \"$title\"?\nThis action cannot be undone.';
+  }
+
+  @override
+  String get tripDeletedSuccess => 'Trip deleted successfully';
+
+  @override
+  String get tripAddButton => 'Add Trip';
+
+  @override
+  String get tripNoTripsYet => 'No trips yet';
+
+  @override
+  String get tripTapToAddFirst => 'Tap + to add your first trip';
+
+  @override
+  String get tripNoBookingsYet => 'No bookings yet';
+
+  @override
+  String get tripEdit => 'Edit';
+
+  @override
+  String get tripDelete => 'Delete';
+
+  @override
+  String get addTripImageRequired => 'Please add a trip image';
+
+  @override
+  String get addTripDailyTimesRequired =>
+      'Please select the daily tour start and end time';
+
+  @override
+  String get addTripAvailabilityDatesRequired =>
+      'Please select trip availability dates';
+
+  @override
+  String get addTripUpdatedSuccess =>
+      'Trip updated! It will be reviewed again by admin.';
+
+  @override
+  String get addTripSubmittedSuccess =>
+      'Trip submitted! It will appear in the marketplace after admin approval.';
+
+  @override
+  String get addTripTitle => 'Add Trip';
+
+  @override
+  String get addTripAccountUnverifiedTitle => 'Account not verified';
+
+  @override
+  String get addTripAccountUnverifiedBody =>
+      'You must verify your account before adding trips.\nComplete credential verification from your profile.';
+
+  @override
+  String get addTripEditTitle => 'Edit Trip';
+
+  @override
+  String get addTripNewTitle => 'Add New Trip';
+
+  @override
+  String get addTripAvailabilityPeriod => 'Trip Availability Period';
+
+  @override
+  String get addTripStartTime => 'Start Time';
+
+  @override
+  String get addTripEndTime => 'End Time';
+
+  @override
+  String get addTripCity => 'City';
+
+  @override
+  String get addTripCredentialExpiredTitle => 'License expired';
+
+  @override
+  String get addTripCredentialExpiredBody =>
+      'You cannot add trips with an expired license.\nRenew your license and verify again to continue.';
+
+  @override
+  String get addTripLicenseExpiringSoonWarning =>
+      'Your license will expire soon. Please renew it before the expiry date.';
+
+  @override
+  String get addTripTimingDurationSection => 'Timing and Duration';
+
+  @override
+  String get addTripTitleSection => 'Trip Title';
+
+  @override
+  String get addTripShortDescriptionSection => 'Short Description';
+
+  @override
+  String get addTripDetailedDescriptionSection => 'Detailed Description';
+
+  @override
+  String get addTripLocationSection => 'Location';
+
+  @override
+  String get addTripPricingCapacitySection => 'Pricing and Capacity';
+
+  @override
+  String get addTripTripLanguagesSection => 'Available Tour Languages';
+
+  @override
+  String get addTripImagePrompt => 'Tap to add a trip image';
+
+  @override
+  String get addTripChangeImage => 'Change image';
+
+  @override
+  String get addTripPickAvailabilityPeriod => 'Choose availability period';
+
+  @override
+  String get addTripDailyStartEndHint => 'Daily tour start and end time';
+
+  @override
+  String get addTripMultiDayTitle => 'Multi-day trip';
+
+  @override
+  String get addTripMultiDaySubtitle =>
+      'One booking extends over more than one consecutive day, such as camping trips.';
+
+  @override
+  String get addTripDurationDaysLabel => 'Number of trip days';
+
+  @override
+  String get addTripDurationDaysMinError => 'The number must be 2 or more';
+
+  @override
+  String get addTripTitleArLabel => 'Title in Arabic';
+
+  @override
+  String get addTripTitleEnLabel => 'Title in English';
+
+  @override
+  String get addTripShortDescArLabel => 'Short description in Arabic';
+
+  @override
+  String get addTripShortDescEnLabel => 'Short description in English';
+
+  @override
+  String get addTripDescArLabel => 'Description in Arabic';
+
+  @override
+  String get addTripDescEnLabel => 'Full description in English';
+
+  @override
+  String get addTripDescTemplateAr =>
+      '## ما تشمله الجولة\n- \n\n## الجدول الزمني\n- \n\n## ما يجب إحضاره\n- ';
+
+  @override
+  String get addTripDescTemplateEn =>
+      '## What\'s Included\n- \n\n## Schedule\n- \n\n## What to Bring\n- ';
+
+  @override
+  String get addTripCityRequired => 'Please choose a city';
+
+  @override
+  String get addTripAdultPriceLabel => 'Adult price';
+
+  @override
+  String get addTripAllowsChildren => 'Children allowed';
+
+  @override
+  String get addTripChildPriceLabel => 'Child price (0 = free)';
+
+  @override
+  String get addTripChildrenCapacityNote =>
+      'Note: 2 children count as 1 adult seat in capacity calculation.';
+
+  @override
+  String get addTripMaxCapacityLabel => 'Maximum capacity (adults count)';
+
+  @override
+  String get addTripValidNumberError => 'Enter a valid number';
+
+  @override
+  String get addTripValidIntegerError => 'Enter a valid whole number';
+
+  @override
+  String get addTripRequiredField => 'Required';
+
+  @override
+  String get addTripSaveChanges => 'Save Changes';
+
+  @override
+  String get addTripSubmitForReview => 'Submit for Review';
+
+  @override
+  String addTripGuideName(String name) {
+    return 'Guide: $name';
+  }
+
+  @override
+  String addTripLicenseValue(String value) {
+    return 'License: $value';
+  }
+
+  @override
+  String addTripCompanyName(String name) {
+    return 'Company: $name';
+  }
+
+  @override
+  String addTripTourismLicenseValue(String value) {
+    return 'Tourism license: $value';
+  }
+
+  @override
+  String get addTripBackToProfile => 'Back to profile';
+
+  @override
+  String get bookingRejectedExploreMore =>
+      'You can go back and explore other trips or choose a different date.';
+
+  @override
+  String get tripManagementTouristHint =>
+      'View and manage your bookings from the Bookings tab in your profile';
+
+  @override
+  String get rawiImageQuestion => 'Rawi, what does this image represent?';
+
+  @override
+  String get rawiGeneralCouncil => 'Rawi General Council';
+
+  @override
+  String rawiStoryAboutRegion(String region) {
+    return 'Story about $region';
+  }
+
+  @override
+  String get rawiWelcomeGeneral =>
+      'Welcome to Rawi\'s Council.. Which region would you like to explore today?';
+
+  @override
+  String get rawiPickRegionStart =>
+      'Welcome to Rawi\'s Council.. Pick a region to start:';
+
+  @override
+  String get rawiAskHint => 'Ask Rawi...';
+
+  @override
+  String get rawiTyping => 'Rawi is typing...';
+
+  @override
+  String get rawiAttachmentFile => 'File';
+
+  @override
+  String get rawiAttachmentCamera => 'Camera';
+
+  @override
+  String get rawiAttachmentImage => 'Image';
+
+  @override
+  String get rawiGeneralCouncilTitle => 'General Council';
+
+  @override
+  String get rawiUserLabel => 'User';
+
+  @override
+  String get rawiBotLabel => 'Rawi';
+
+  @override
+  String get rawiHistoryHeader => 'Previous Conversation History:';
+
+  @override
+  String get rawiGeneralSystemInstruction =>
+      'You are Rawi, a general Saudi cultural assistant. Reply in the user\'s language and be friendly.';
+
+  @override
+  String get adminUsersTab => 'Users';
+
+  @override
+  String get adminGuidesTab => 'Guides';
+
+  @override
+  String get adminSearchUsersHint => 'Search by name or email...';
+
+  @override
+  String get adminNoUsersFound => 'No users found';
+
+  @override
+  String adminNoResultsFor(String query) {
+    return 'No results for \"$query\"';
+  }
+
+  @override
+  String adminNoGuidesForStatus(String status) {
+    return 'No $status guides';
+  }
+
+  @override
+  String get adminStatusPending => 'Pending';
+
+  @override
+  String get adminStatusApproved => 'Approved';
+
+  @override
+  String get adminStatusRejected => 'Rejected';
+
+  @override
+  String get adminStatusExpired => 'Expired';
+
+  @override
+  String get adminRoleTutor => 'Tutor';
+
+  @override
+  String get adminRoleAdmin => 'Admin';
+
+  @override
+  String get adminRoleTourist => 'Tourist';
+
+  @override
+  String get adminGuideTypeIndividual => 'Individual';
+
+  @override
+  String get adminGuideTypeCompany => 'Company';
+
+  @override
+  String get adminNoBookings => 'No bookings yet';
+
+  @override
+  String adminBookingPeopleSummary(int adults, int children) {
+    return '$adults adults, $children children';
+  }
+
+  @override
+  String adminTouristId(String id) {
+    return 'Tourist: $id';
+  }
+
+  @override
+  String adminTutorId(String id) {
+    return 'Tutor: $id';
+  }
+
+  @override
+  String get adminNoTripsPending => 'No trips pending approval';
+
+  @override
+  String get adminGuideLabel => 'Guide';
+
+  @override
+  String get adminCompanyLabel => 'Company';
+
+  @override
+  String get adminPriceLabel => 'Price';
+
+  @override
+  String get adminLicenseLabel => 'License';
+
+  @override
+  String get adminTutorIdLabel => 'Tutor ID';
+
+  @override
+  String get adminTripRejected => 'Trip rejected';
+
+  @override
+  String get adminTripApproved => 'Trip approved';
+
+  @override
+  String get adminReject => 'Reject';
+
+  @override
+  String get adminApprove => 'Approve';
+
+  @override
+  String get adminEdit => 'Edit';
+
+  @override
+  String get adminDelete => 'Delete';
+
+  @override
+  String get adminCancel => 'Cancel';
+
+  @override
+  String get adminAddAttraction => 'Add Attraction';
+
+  @override
+  String get adminEditAttraction => 'Edit Attraction';
+
+  @override
+  String get adminNoAttractions => 'No attractions yet. Tap + to add one.';
+
+  @override
+  String get adminDeleteAttraction => 'Delete Attraction';
+
+  @override
+  String adminDeleteAttractionConfirm(String name) {
+    return 'Delete \"$name\"? This cannot be undone.';
+  }
+
+  @override
+  String get adminAttractionDeleted => 'Attraction deleted';
+
+  @override
+  String get adminAddItem => 'Add Item';
+
+  @override
+  String get adminEditArchiveItem => 'Edit Archive Item';
+
+  @override
+  String get adminAddArchiveItem => 'Add Archive Item';
+
+  @override
+  String get adminUpdateItem => 'Update Item';
+
+  @override
+  String get adminAddToArchive => 'Add to Archive';
+
+  @override
+  String get adminItemUpdated => 'Item updated successfully';
+
+  @override
+  String get adminCulturalItemAdded => 'Cultural item added successfully';
+
+  @override
+  String get adminMapCoordinatesOptional => 'Map Coordinates (optional)';
+
+  @override
+  String get adminLatitudeExample => 'Latitude (e.g. 24.68)';
+
+  @override
+  String get adminLongitudeExample => 'Longitude (e.g. 46.72)';
+
+  @override
+  String get adminNoCulturalItems => 'No cultural items yet';
+
+  @override
+  String get adminDeleteItem => 'Delete Item';
+
+  @override
+  String adminDeleteItemConfirm(String name) {
+    return 'Delete \"$name\"? This cannot be undone.';
+  }
+
+  @override
+  String get adminItemDeleted => 'Item deleted';
+
+  @override
+  String adminByContributor(String name) {
+    return 'By: $name';
+  }
+
+  @override
+  String get adminSelectRegion => 'Please select a region';
+
+  @override
+  String get adminSelectCity => 'Please select a city';
+
+  @override
+  String get adminSelectMainImage => 'Please select a main image';
+
+  @override
+  String get adminCoordinatesRequired => 'Please enter coordinates (lat & lng)';
+
+  @override
+  String get adminAttractionUpdated => 'Attraction updated!';
+
+  @override
+  String get adminAttractionAdded =>
+      'Attraction added! AI tagging will run shortly.';
+
+  @override
+  String get adminMainImage => 'Main Image *';
+
+  @override
+  String get adminNameDescription => 'Name & Description';
+
+  @override
+  String get adminClassification => 'Classification';
+
+  @override
+  String get adminNameArabic => 'Name (Arabic)';
+
+  @override
+  String get adminNameEnglish => 'Name (English)';
+
+  @override
+  String get adminNameArabicHint => 'Enter the Arabic name';
+
+  @override
+  String get adminNameEnglishHint => 'Enter attraction name in English';
+
+  @override
+  String get adminDescriptionArabic => 'Description (Arabic)';
+
+  @override
+  String get adminDescriptionEnglish => 'Description (English)';
+
+  @override
+  String get adminDescriptionArabicHint => 'Enter the Arabic description';
+
+  @override
+  String get adminDescriptionEnglishHint => 'Enter description in English';
+
+  @override
+  String get adminLocation => 'Location';
+
+  @override
+  String get adminCategory => 'Category';
+
+  @override
+  String get adminRegion => 'Region';
+
+  @override
+  String get adminCity => 'City';
+
+  @override
+  String get adminSelectRegionFirst => 'Select a region first';
+
+  @override
+  String get adminAddress => 'Address';
+
+  @override
+  String get adminAddressHint => 'Full address';
+
+  @override
+  String get adminMapCoordinates => 'Map Coordinates';
+
+  @override
+  String get adminLatitude => 'Latitude';
+
+  @override
+  String get adminLongitude => 'Longitude';
+
+  @override
+  String get adminHoursFees => 'Hours & Fees';
+
+  @override
+  String get adminAlwaysOpen => 'Always Open (24/7)';
+
+  @override
+  String get adminOpeningHoursArabic => 'Opening Hours (Arabic)';
+
+  @override
+  String get adminOpeningHoursEnglish => 'Opening Hours (English)';
+
+  @override
+  String get adminOpeningHoursArabicHint => 'Example: 9 AM - 10 PM';
+
+  @override
+  String get adminOpeningHoursEnglishHint => 'Example: 9 AM - 10 PM';
+
+  @override
+  String get adminEntryFee => 'Entry Fee';
+
+  @override
+  String get adminEntryFeeSar => 'Entry Fee (SAR) - 0 means free';
+
+  @override
+  String get adminFreeFeeHint => '0 = Free';
+
+  @override
+  String get adminValidNumber => 'Enter a valid number';
+
+  @override
+  String get adminGalleryImages => 'Gallery Images';
+
+  @override
+  String get adminNoGalleryImages => 'No gallery images added yet.';
+
+  @override
+  String get adminMaxGalleryImages => 'Maximum 8 images reached.';
+
+  @override
+  String get adminVideoOptional => 'Video (Optional)';
+
+  @override
+  String get adminOptional => 'Optional';
+
+  @override
+  String get adminTicketBookingUrl => 'Ticket Booking URL';
+
+  @override
+  String get adminUpdateAttraction => 'Update Attraction';
+
+  @override
+  String get adminTapToChange => 'Tap to change';
+
+  @override
+  String get adminTapPickMainImage => 'Tap to pick main image';
+
+  @override
+  String get adminVideoSaved => 'Video saved';
+
+  @override
+  String get adminTapPickVideo => 'Tap to pick a video';
+
+  @override
+  String get adminAdd => 'Add';
+
+  @override
+  String get adminImage => 'Image';
+
+  @override
+  String get adminEventAdded => 'Event added successfully';
+
+  @override
+  String get adminSelectEventDate => 'Please select an event date';
+
+  @override
+  String get adminPickImage => 'Please pick an image';
+
+  @override
+  String get adminEventCoordinatesRequired =>
+      'Latitude and longitude are required for events';
+
+  @override
+  String get adminImageUploadFailed => 'Image upload failed';
+
+  @override
+  String get adminTitleArabic => 'Title (Arabic)';
+
+  @override
+  String get adminTitleEnglish => 'Title (English)';
+
+  @override
+  String get adminTitleArabicHint => 'Enter Arabic title';
+
+  @override
+  String get adminTitleEnglishHint => 'Enter English title';
+
+  @override
+  String get adminEventDate => 'Event Date';
+
+  @override
+  String get adminSelectDate => 'Select date';
+
+  @override
+  String get adminEndDateOptional => 'End Date (optional)';
+
+  @override
+  String get adminSelectEndDate =>
+      'Select end date (leave empty for single-day)';
+
+  @override
+  String get adminTimeArabic => 'Time (Arabic)';
+
+  @override
+  String get adminTimeEnglish => 'Time (English)';
+
+  @override
+  String get adminEventType => 'Event Type';
+
+  @override
+  String get adminAdmission => 'Admission';
+
+  @override
+  String get adminFreeEntry => 'Free Entry';
+
+  @override
+  String get adminPaidEntry => 'Paid Entry';
+
+  @override
+  String get adminTicketUrl => 'Ticket URL';
+
+  @override
+  String get adminAddEvent => 'Add Event';
+
+  @override
+  String get adminMigrationTitle => 'Content Migration';
+
+  @override
+  String get adminMigrateAllTitle => 'Migrate All Content';
+
+  @override
+  String get adminMigrateAllBody =>
+      'This will classify all attractions, trips, events, and cultural items using Gemini AI. Takes 3-7 minutes. Make sure you have a stable internet connection. Continue?';
+
+  @override
+  String get adminRunMigration => 'Run Migration';
+
+  @override
+  String get adminMigrationHeading => 'AI Content Classification';
+
+  @override
+  String get adminMigrationDescription =>
+      'Generates interestIds and embedding vectors for all attractions, trips, events, and cultural items.';
+
+  @override
+  String get adminMigratingProgress => 'Migrating... (3-7 minutes)';
+
+  @override
+  String get adminEmbeddingProgress => 'Generating embeddings...';
+
+  @override
+  String get adminGenerateMissingEmbeddings => 'Generate missing embeddings';
+
+  @override
+  String get adminMigrationComplete => 'Migration Complete';
+
+  @override
+  String get adminMigrationFailed => 'Migration Failed';
+
+  @override
+  String get adminOperationComplete => 'Operation complete';
+
+  @override
+  String adminEmbeddingStatsLine(
+      String collection, String processed, String skipped, String failed) {
+    return '$collection: processed $processed | skipped $skipped | failed $failed';
+  }
+
+  @override
+  String get adminDocumentShapes => 'Document Shapes';
+
+  @override
+  String get adminInspectDataShape => 'Inspect data shape';
+
+  @override
+  String adminTranslationFailed(String message) {
+    return 'Translation failed: $message';
+  }
+
+  @override
+  String get adminApproveContribution => 'Approve Contribution';
+
+  @override
+  String adminApproveContributionConfirm(
+      String title, String name, int points) {
+    return 'Approve \"$title\" by $name?\n\nThis will award $points points to the tourist.';
+  }
+
+  @override
+  String get adminFillEnglishBeforeApprove =>
+      'Please fill English title and description before approving.';
+
+  @override
+  String get adminFillArabicBeforeApprove =>
+      'Please fill Arabic title and description before approving.';
+
+  @override
+  String get adminContributionApproved => 'Contribution approved successfully';
+
+  @override
+  String get adminRejectContribution => 'Reject Contribution';
+
+  @override
+  String get adminRejectContributionHelp =>
+      'Provide a reason so the tourist knows what to improve.';
+
+  @override
+  String get adminRejectReasonHint =>
+      'e.g. Image quality is too low, please resubmit with a clearer photo.';
+
+  @override
+  String get adminPleaseEnterReason => 'Please enter a reason.';
+
+  @override
+  String get adminContributionRejected => 'Contribution rejected';
+
+  @override
+  String get adminReviewContribution => 'Review Contribution';
+
+  @override
+  String get adminVideoContribution => 'Video Contribution';
+
+  @override
+  String get adminTourist => 'Tourist';
+
+  @override
+  String get adminName => 'Name';
+
+  @override
+  String get adminEmail => 'Email';
+
+  @override
+  String get adminSubmissionDetails => 'Submission Details';
+
+  @override
+  String get adminSubmittedIn => 'Submitted in';
+
+  @override
+  String get adminDate => 'Date';
+
+  @override
+  String get adminRejectionReason => 'Rejection reason';
+
+  @override
+  String get adminArabicByTourist => 'Arabic (by tourist)';
+
+  @override
+  String get adminEnglishByTourist => 'English (by tourist)';
+
+  @override
+  String get adminEnglishAdminFills => 'English (admin fills)';
+
+  @override
+  String get adminArabicAdminFills => 'Arabic (admin fills)';
+
+  @override
+  String get adminTranslating => 'Translating...';
+
+  @override
+  String get adminAutoTranslate => 'Auto-translate with AI';
+
+  @override
+  String get adminTitle => 'Title';
+
+  @override
+  String get adminDescription => 'Description';
+
+  @override
+  String get adminVerifyGuideTitle => 'Verify Guide';
+
+  @override
+  String adminVerifyGuideConfirm(String name) {
+    return 'Verify \"$name\"?\nThey can add trips until their license expires.';
+  }
+
+  @override
+  String get adminVerifyGuide => 'Verify';
+
+  @override
+  String get adminGuideVerifiedSuccess => 'Guide verified successfully';
+
+  @override
+  String get adminRejectRequest => 'Reject request';
+
+  @override
+  String get adminRejectRequestHelp =>
+      'This will be shown to the guide so they know what needs correction.';
+
+  @override
+  String get adminRejectRequestHint =>
+      'Example: The license expiry date is incorrect';
+
+  @override
+  String get adminRequestRejected => 'Request rejected';
+
+  @override
+  String get adminReviewVerification => 'Review Verification';
+
+  @override
+  String get adminLicenseData => 'License Data';
+
+  @override
+  String get adminCompanyData => 'Company Data';
+
+  @override
+  String get adminLicenseNumber => 'License Number';
+
+  @override
+  String get adminLicenseExpiry => 'License Expiry Date';
+
+  @override
+  String get adminCompanyName => 'Company Name';
+
+  @override
+  String get adminCommercialRegistration => 'Commercial Registration No.';
+
+  @override
+  String get adminCommercialRegistrationExpiry =>
+      'Commercial Registration Expiry';
+
+  @override
+  String get adminTourismActivityLicense => 'Tourism Activity License';
+
+  @override
+  String get adminTourismLicenseNumber => 'Tourism License No.';
+
+  @override
+  String get adminTourismLicenseExpiry => 'Tourism License Expiry';
+
+  @override
+  String get adminExpiringSoon => 'Expiring soon';
+
+  @override
+  String get adminRejectionDetails => 'Rejection Details';
+
+  @override
+  String get adminVerificationDetails => 'Verification Details';
+
+  @override
+  String get adminBy => 'By';
+
+  @override
+  String get adminVerify => 'Verify';
 }

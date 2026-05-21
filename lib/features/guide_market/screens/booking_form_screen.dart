@@ -18,7 +18,7 @@ class BookingFormScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final form = ref.watch(bookingFormProvider);
     final formNotifier = ref.read(bookingFormProvider.notifier);
@@ -57,7 +57,7 @@ class BookingFormScreen extends ConsumerWidget {
                       const SizedBox(height: 32),
                       _buildCounterRow(
                         title: l10n.adults,
-                        subtitle: isAr ? '12 سنة فما فوق' : '12+ years',
+                        subtitle: l10n.bookingAdultsAgeSubtitle,
                         count: form.adults,
                         onAdd: formNotifier.incrementAdults,
                         onRemove: formNotifier.decrementAdults,
@@ -69,7 +69,7 @@ class BookingFormScreen extends ConsumerWidget {
                       ),
                       _buildCounterRow(
                         title: l10n.children,
-                        subtitle: isAr ? 'تحت 12 سنة' : 'Under 12 years',
+                        subtitle: l10n.bookingChildrenAgeSubtitle,
                         count: form.children,
                         onAdd: formNotifier.incrementChildren,
                         onRemove: formNotifier.decrementChildren,
@@ -77,7 +77,7 @@ class BookingFormScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 48),
                       _buildSectionHeader(
-                        isAr ? 'التاريخ والوقت' : 'Date & Time',
+                        l10n.bookingDateTimeTitle,
                         Icons.calendar_today_outlined,
                         theme,
                       ),
@@ -102,7 +102,7 @@ class BookingFormScreen extends ConsumerWidget {
                 width: double.infinity,
                 height: 62,
                 child: ElevatedButton(
-                  onPressed: () => _onContinue(context, ref, form, isAr),
+                  onPressed: () => _onContinue(context, ref, form, isAr, l10n),
                   child: Text(
                     l10n.continue_btn,
                     style: const TextStyle(
@@ -278,14 +278,13 @@ class BookingFormScreen extends ConsumerWidget {
     WidgetRef ref,
     BookingFormState form,
     bool isAr,
+     AppLocalizations l10n,
   ) {
     if (!form.isComplete) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            isAr
-                ? 'يرجى اختيار التاريخ للمتابعة'
-                : 'Please select a date',
+            l10n.bookingSelectDateError,
           ),
           behavior: SnackBarBehavior.floating,
         ),

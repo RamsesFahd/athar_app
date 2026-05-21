@@ -18,7 +18,7 @@ class TripCard extends StatelessWidget {
   @override
  Widget build(BuildContext context) {
   final isAr = Localizations.localeOf(context).languageCode == 'ar';
-  final l10n = AppLocalizations.of(context);
+  final l10n = AppLocalizations.of(context)!;
   final theme = Theme.of(context);
 
   return Container(
@@ -187,7 +187,7 @@ Widget _buildGridContent(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        isAr ? "التفاصيل" : "Details",
+                        l10n.tripCardDetails,
                         style: textTheme.labelSmall?.copyWith(
                           color: colorScheme.onPrimary,
                           fontWeight: FontWeight.w600,
@@ -298,8 +298,8 @@ Widget _buildGridContent(
                     runSpacing: 6,
                     children: trip.accessibilityFeatures.map((key) {
                       final label = switch (key) {
-                        'wheelchair' => isAr ? 'صديق للإعاقة' : 'Accessible',
-                        'family' => isAr ? 'مناسب للعائلات' : 'Family Friendly',
+                        'wheelchair' => l10n.tripAccessibilityWheelchairShort,
+                        'family' => l10n.tripAccessibilityFamilyShort,
                         _ => key,
                       };
                       return _buildTag(label, theme);
@@ -339,7 +339,7 @@ Widget _buildGridContent(
 
                     const Spacer(),
 
-                    _buildActionButton(context, isAr, theme),
+                    _buildActionButton(context, isAr, theme, l10n),
                   ],
                 ),
               ],
@@ -351,7 +351,7 @@ Widget _buildGridContent(
   );
 }
 
-Widget _buildActionButton(BuildContext context, bool isAr, ThemeData theme) {
+Widget _buildActionButton(BuildContext context, bool isAr, ThemeData theme, AppLocalizations l10n,) {
   return GestureDetector(
     onTap: () {
       try {
@@ -369,7 +369,7 @@ Widget _buildActionButton(BuildContext context, bool isAr, ThemeData theme) {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        isAr ? "عرض التفاصيل" : "View Details",
+        l10n.tripCardViewDetails,
         style: theme.textTheme.labelSmall?.copyWith(
           color: theme.colorScheme.onPrimary,
           fontWeight: FontWeight.w700,

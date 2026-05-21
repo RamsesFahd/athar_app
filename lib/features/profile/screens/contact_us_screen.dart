@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class ContactUsScreen extends StatelessWidget {
   const ContactUsScreen({super.key});
@@ -6,6 +7,7 @@ class ContactUsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
 
     return Scaffold(
@@ -29,7 +31,7 @@ class ContactUsScreen extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      isAr ? 'تواصل معنا' : 'Contact Us',
+                      l10n.contactUsTitle,
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.w900,
                       ),
@@ -37,50 +39,38 @@ class ContactUsScreen extends StatelessWidget {
                   ),
                 ],
               ),
-
               const SizedBox(height: 10),
-
               Text(
-                isAr
-                    ? 'يسعدنا سماع اقتراحاتك أو ملاحظاتك لتحسين تجربة أثر.'
-                    : 'We’d love to hear your suggestions or feedback to improve Athar.',
+                l10n.contactUsSubtitle,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   height: 1.5,
                 ),
               ),
-
               const SizedBox(height: 28),
-
               _ContactCard(
                 icon: Icons.email_outlined,
-                title: isAr ? 'البريد الإلكتروني' : 'Email',
+                title: l10n.contactUsEmailTitle,
                 subtitle: 'support@atharapp.dev',
               ),
-
               _ContactCard(
                 icon: Icons.alternate_email_rounded,
                 title: 'X / Twitter',
                 subtitle: '@athar_sa',
               ),
-
               _ContactCard(
                 icon: Icons.location_on_outlined,
-                title: isAr ? 'الموقع' : 'Location',
-                subtitle: isAr ? 'المملكة العربية السعودية' : 'Saudi Arabia',
+                title: l10n.contactUsLocationTitle,
+                subtitle: l10n.contactUsSaudiArabia,
               ),
-
               const SizedBox(height: 26),
-
               Text(
-                isAr ? 'نوع المساعدة' : 'Support Type',
+                l10n.contactUsSupportType,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w900,
                 ),
               ),
-
               const SizedBox(height: 14),
-
               GridView.count(
                 crossAxisCount: 2,
                 shrinkWrap: true,
@@ -91,26 +81,24 @@ class ContactUsScreen extends StatelessWidget {
                 children: [
                   _SupportReasonCard(
                     icon: Icons.bug_report_outlined,
-                    title: isAr ? 'الإبلاغ عن مشكلة' : 'Report Issue',
+                    title: l10n.contactUsReportIssue,
                   ),
                   _SupportReasonCard(
                     icon: Icons.lightbulb_outline_rounded,
-                    title: isAr ? 'اقتراح ميزة' : 'Suggest Feature',
+                    title: l10n.contactUsSuggestFeature,
                   ),
                   _SupportReasonCard(
                     icon: Icons.badge_outlined,
-                    title: isAr ? 'دعم المرشدين' : 'Guide Support',
+                    title: l10n.contactUsGuideSupport,
                   ),
                   _SupportReasonCard(
                     icon: Icons.volunteer_activism_outlined,
-                    title: isAr ? 'المساهمات الثقافية' : 'Contributions',
+                    title: l10n.contactUsContributions,
                   ),
                 ],
               ),
-
               const SizedBox(height: 28),
-
-              _MessageFormCard(isAr: isAr),
+              _MessageFormCard(l10n: l10n),
             ],
           ),
         ),
@@ -249,10 +237,10 @@ class _SupportReasonCard extends StatelessWidget {
 }
 
 class _MessageFormCard extends StatelessWidget {
-  final bool isAr;
+  final AppLocalizations l10n;
 
   const _MessageFormCard({
-    required this.isAr,
+    required this.l10n,
   });
 
   @override
@@ -286,29 +274,23 @@ class _MessageFormCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            isAr ? 'أرسل رسالة' : 'Send a Message',
+            l10n.contactUsSendMessageTitle,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w900,
             ),
           ),
-
           const SizedBox(height: 6),
-
           Text(
-            isAr
-                ? 'اكتب رسالتك وسنراجعها في أقرب وقت.'
-                : 'Write your message and we will review it as soon as possible.',
+            l10n.contactUsSendMessageSubtitle,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
               height: 1.5,
             ),
           ),
-
           const SizedBox(height: 18),
-
           TextField(
             decoration: InputDecoration(
-              hintText: isAr ? 'الاسم' : 'Your Name',
+              hintText: l10n.contactUsNameHint,
               filled: true,
               fillColor: theme.scaffoldBackgroundColor,
               border: OutlineInputBorder(
@@ -325,12 +307,10 @@ class _MessageFormCard extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 14),
-
           TextField(
             decoration: InputDecoration(
-              hintText: isAr ? 'البريد الإلكتروني' : 'Your Email',
+              hintText: l10n.contactUsEmailHint,
               filled: true,
               fillColor: theme.scaffoldBackgroundColor,
               border: OutlineInputBorder(
@@ -347,13 +327,11 @@ class _MessageFormCard extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 14),
-
           TextField(
             maxLines: 5,
             decoration: InputDecoration(
-              hintText: isAr ? 'اكتب رسالتك هنا...' : 'Write your message here...',
+              hintText: l10n.contactUsMessageHint,
               filled: true,
               fillColor: theme.scaffoldBackgroundColor,
               border: OutlineInputBorder(
@@ -370,9 +348,7 @@ class _MessageFormCard extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 20),
-
           SizedBox(
             width: double.infinity,
             height: 54,
@@ -380,16 +356,12 @@ class _MessageFormCard extends StatelessWidget {
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(
-                      isAr
-                          ? 'تم إرسال رسالتك بنجاح'
-                          : 'Your message has been sent successfully',
-                    ),
+                    content: Text(l10n.contactUsMessageSent),
                   ),
                 );
               },
               child: Text(
-                isAr ? 'إرسال الرسالة' : 'Send Message',
+                l10n.contactUsSendMessageButton,
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w800,

@@ -9,6 +9,7 @@ import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/interactive_map/logic/map_notifier.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class AddEventScreen extends ConsumerStatefulWidget {
   const AddEventScreen({super.key});
@@ -109,23 +110,24 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
   }
 
   Future<void> _submit() async {
+    final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) return;
     if (_selectedRegionId == null) {
-      _showError('Please select a region');
+      _showError(l10n.adminSelectRegion);
       return;
     }
     if (_selectedDate == null) {
-      _showError('Please select an event date');
+      _showError(l10n.adminSelectEventDate);
       return;
     }
     if (_pickedImage == null) {
-      _showError('Please pick an image');
+      _showError(l10n.adminPickImage);
       return;
     }
     final latText = _latController.text.trim();
     final lngText = _lngController.text.trim();
     if (latText.isEmpty || lngText.isEmpty) {
-      _showError('Latitude and longitude are required for events');
+      _showError(l10n.adminEventCoordinatesRequired);
       return;
     }
 
@@ -133,7 +135,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
 
     try {
       final imageUrl = await _uploadImage(_pickedImage!);
-      if (imageUrl == null) throw Exception('Image upload failed');
+      if (imageUrl == null) throw Exception(l10n.adminImageUploadFailed);
 
       final region =
           regionsData.firstWhere((r) => r.regionId == _selectedRegionId);
@@ -166,15 +168,15 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Event added successfully'),
+          SnackBar(
+            content: Text(l10n.adminEventAdded),
             backgroundColor: Colors.green,
           ),
         );
         _resetForm();
       }
     } catch (e) {
-      if (mounted) _showError('Error: $e');
+      if (mounted) _showError(l10n.commonErrorWithMessage(e.toString()));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -211,6 +213,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
@@ -220,7 +223,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image picker
-            _SectionLabel('Image'),
+            _SectionLabel(l10n.adminImage),
             GestureDetector(
               onTap: _pickImage,
               child: Container(
@@ -246,7 +249,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                               size: 40,
                               color: AppColors.primary.withValues(alpha: 0.5)),
                           const SizedBox(height: 8),
-                          Text('Tap to pick image',
+                          Text(l10n.adminPickImage,
                               style: theme.textTheme.bodySmall?.copyWith(
                                   color: AppColors.primary
                                       .withValues(alpha: 0.6))),
@@ -257,37 +260,37 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
 
             const SizedBox(height: 24),
 
-            _SectionLabel('Title (Arabic)'),
+            _SectionLabel(l10n.adminTitleArabic),
             _FormField(
               controller: _titleArController,
-              hint: 'أدخل العنوان بالعربي',
+              hint: l10n.adminTitleArabicHint,
               textDirection: TextDirection.rtl,
             ),
             const SizedBox(height: 16),
 
-            _SectionLabel('Title (English)'),
-            _FormField(controller: _titleEnController, hint: 'Enter English title'),
+            _SectionLabel(l10n.adminTitleEnglish),
+            _FormField(controller: _titleEnController, hint: l10n.adminTitleEnglishHint),
             const SizedBox(height: 16),
 
-            _SectionLabel('Description (Arabic)'),
+            _SectionLabel(l10n.adminDescriptionArabic),
             _FormField(
               controller: _descArController,
-              hint: 'أدخل الوصف بالعربي',
+              hint: l10n.adminDescriptionArabicHint,
               maxLines: 4,
               textDirection: TextDirection.rtl,
             ),
             const SizedBox(height: 16),
 
-            _SectionLabel('Description (English)'),
+            _SectionLabel(l10n.adminDescriptionEnglish),
             _FormField(
               controller: _descEnController,
-              hint: 'Enter English description',
+              hint: l10n.adminDescriptionEnglishHint,
               maxLines: 4,
             ),
             const SizedBox(height: 24),
 
             // Date picker
-            _SectionLabel('Event Date'),
+            _SectionLabel(l10n.adminEventDate),
             GestureDetector(
               onTap: _pickDate,
               child: Container(
@@ -305,7 +308,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                     Text(
                       _selectedDate != null
                           ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
-                          : 'Select date',
+                          : l10n.adminSelectDate,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: _selectedDate != null
                             ? null
@@ -319,7 +322,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             const SizedBox(height: 16),
 
             // End Date picker (optional)
-            _SectionLabel('End Date (optional)'),
+            _SectionLabel(l10n.adminEndDateOptional),
             GestureDetector(
               onTap: _pickEndDate,
               child: Container(
@@ -338,7 +341,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                       child: Text(
                         _selectedEndDate != null
                             ? '${_selectedEndDate!.day}/${_selectedEndDate!.month}/${_selectedEndDate!.year}'
-                            : 'Select end date (leave empty for single-day)',
+                            : l10n.adminSelectEndDate,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: _selectedEndDate != null
                               ? null
@@ -364,10 +367,10 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _SectionLabel('Time (Arabic)'),
+                      _SectionLabel(l10n.adminTimeArabic),
                       _FormField(
                         controller: _timeArController,
-                        hint: '8:00 م',
+                        hint: '8:00 ${l10n.timePmMarker}',
                         textDirection: TextDirection.rtl,
                       ),
                     ],
@@ -378,7 +381,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _SectionLabel('Time (English)'),
+                      _SectionLabel(l10n.adminTimeEnglish),
                       _FormField(
                         controller: _timeEnController,
                         hint: '8:00 PM',
@@ -391,7 +394,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             const SizedBox(height: 24),
 
             // Lat / Lng
-            _SectionLabel('Map Coordinates (required)'),
+            _SectionLabel(l10n.adminMapCoordinates),
             Row(
               children: [
                 Expanded(
@@ -399,9 +402,9 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                     controller: _latController,
                     keyboardType: const TextInputType.numberWithOptions(
                         decimal: true, signed: true),
-                    decoration: _inputDecoration(hint: 'Latitude'),
+                    decoration: _inputDecoration(hint: l10n.adminLatitude),
                     validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? 'Required' : null,
+                        (v == null || v.trim().isEmpty) ? l10n.requiredField : null,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -410,9 +413,9 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                     controller: _lngController,
                     keyboardType: const TextInputType.numberWithOptions(
                         decimal: true, signed: true),
-                    decoration: _inputDecoration(hint: 'Longitude'),
+                    decoration: _inputDecoration(hint: l10n.adminLongitude),
                     validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? 'Required' : null,
+                        (v == null || v.trim().isEmpty) ? l10n.requiredField : null,
                   ),
                 ),
               ],
@@ -420,7 +423,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             const SizedBox(height: 24),
 
             // Event type
-            _SectionLabel('Event Type'),
+            _SectionLabel(l10n.adminEventType),
             DropdownButtonFormField<EventType>(
               value: _selectedEventType,
               decoration: _inputDecoration(),
@@ -435,7 +438,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             const SizedBox(height: 16),
 
             // Category
-            _SectionLabel('Category'),
+            _SectionLabel(l10n.adminCategory),
             DropdownButtonFormField<String>(
               value: _selectedCategory,
               decoration: _inputDecoration(),
@@ -447,24 +450,24 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             const SizedBox(height: 16),
 
             // Region
-            _SectionLabel('Region'),
+            _SectionLabel(l10n.adminRegion),
             DropdownButtonFormField<String>(
               value: _selectedRegionId,
-              decoration: _inputDecoration(hint: 'Select a region'),
+              decoration: _inputDecoration(hint: l10n.adminSelectRegion),
               items: regionsData
                   .map((r) => DropdownMenuItem(value: r.regionId, child: Text(r.nameEn)))
                   .toList(),
               onChanged: (v) => setState(() => _selectedRegionId = v),
-              validator: (v) => v == null ? 'Please select a region' : null,
+              validator: (v) => v == null ? l10n.adminSelectRegion : null,
             ),
             const SizedBox(height: 16),
 
             // Free / Paid toggle
-            _SectionLabel('Admission'),
+            _SectionLabel(l10n.adminAdmission),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              title: Text(_isFree ? 'Free Entry' : 'Paid Entry'),
-              subtitle: Text(_isFree ? 'مجاني' : 'مدفوع'),
+              title: Text(_isFree ? l10n.adminFreeEntry : l10n.adminPaidEntry),
+              subtitle: Text(_isFree ? l10n.commonFree : l10n.commonPaid),
               value: _isFree,
               activeThumbColor: AppColors.primary,
               onChanged: (v) => setState(() => _isFree = v),
@@ -472,7 +475,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
 
             // Ticket URL (only shown when paid)
             if (!_isFree) ...[
-              _SectionLabel('Ticket URL'),
+              _SectionLabel(l10n.adminTicketUrl),
               _FormField(
                 controller: _ticketUrlController,
                 hint: 'https://...',
@@ -502,7 +505,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                         child: CircularProgressIndicator(
                             color: Colors.white, strokeWidth: 2.5),
                       )
-                    : const Text('Add Event',
+                    : Text(l10n.adminAddEvent,
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
               ),
@@ -571,12 +574,13 @@ class _FormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
       textDirection: textDirection,
       validator: required
-          ? (v) => (v == null || v.trim().isEmpty) ? 'This field is required' : null
+          ? (v) => (v == null || v.trim().isEmpty) ? l10n.requiredField : null
           : null,
       decoration: InputDecoration(
         hintText: hint,

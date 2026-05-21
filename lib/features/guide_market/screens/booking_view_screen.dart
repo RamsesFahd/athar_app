@@ -31,26 +31,18 @@ class BookingViewScreen extends ConsumerWidget {
   }
 }
 
-String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
+String _statusMessage(BookingStatus status, bool isGuide, AppLocalizations l10n) {
   switch (status) {
     case BookingStatus.pending:
-      return isGuide
-          ? (isAr ? 'لديك طلب حجز جديد يحتاج إلى مراجعتك.' : 'You have a new booking request that needs your review.')
-          : (isAr ? 'طلبك قيد المراجعة حاليًا. سيتم إشعارك عند تحديث الحالة.' : 'Your booking is currently under review. You will be notified once the status changes.');
+      return isGuide ? l10n.bookingViewPendingGuide : l10n.bookingViewPendingTourist;
     case BookingStatus.approved:
-      return isGuide
-          ? (isAr ? 'قبلت هذا الحجز. يمكنك التواصل مع السائح عبر معلوماته أدناه.' : 'You confirmed this booking. Contact the tourist using their details below.')
-          : (isAr ? 'تم تأكيد الحجز. يمكنك التواصل مع المرشد عبر معلوماته أدناه.' : 'Booking confirmed. You can contact the Guide using their details below.');
+      return isGuide ? l10n.bookingViewApprovedGuide : l10n.bookingViewApprovedTourist;
     case BookingStatus.rejected:
-      return isGuide
-          ? (isAr ? 'رفضت هذا الطلب.' : 'You rejected this request.')
-          : (isAr ? 'نعتذر، تم رفض هذا الحجز. يمكنك تجربة موعد آخر أو رحلة مختلفة.' : 'Sorry, this booking was rejected. You can try another date or a different trip.');
+      return isGuide ? l10n.bookingViewRejectedGuide : l10n.bookingViewRejectedTourist;
     case BookingStatus.cancelled:
-      return isGuide
-          ? (isAr ? 'ألغى السائح هذا الطلب قبل موافقتك.' : 'The tourist cancelled this request before your approval.')
-          : (isAr ? 'تم إلغاء هذا الحجز.' : 'This booking has been cancelled.');
+      return isGuide ? l10n.bookingViewCancelledGuide : l10n.bookingViewCancelledTourist;
     case BookingStatus.completed:
-      return isAr ? 'تمت هذه الرحلة بنجاح.' : 'This trip has been completed successfully.';
+      return l10n.bookingViewCompleted;
   }
 }
 
@@ -65,7 +57,7 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isAr ? 'تفاصيل الحجز' : 'Booking Details'),
+        title: Text(l10n.booking_details),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -117,21 +109,17 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
                   final confirmed = await showDialog<bool>(
                     context: context,
                     builder: (ctx) => AlertDialog(
-                      title: Text(isAr ? 'إلغاء الحجز؟' : 'Cancel Booking?'),
-                      content: Text(
-                        isAr
-                            ? 'هل أنت متأكد أنك تريد إلغاء هذا الحجز؟'
-                            : 'Are you sure you want to cancel this booking?',
-                      ),
+                      title: Text(l10n.bookingCancelTitle),
+                      content: Text(l10n.cancelBookingConfirmation),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(ctx, false),
-                          child: Text(isAr ? 'لا' : 'No'),
+                          child: Text(l10n.bookingCancelNo),
                         ),
                         TextButton(
                           onPressed: () => Navigator.pop(ctx, true),
                           child: Text(
-                            isAr ? 'نعم، إلغاء' : 'Yes, Cancel',
+                            l10n.bookingCancelYes,
                             style: const TextStyle(color: Colors.red),
                           ),
                         ),
@@ -153,7 +141,7 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
                 },
                 icon: const Icon(Icons.cancel_outlined, color: Colors.red),
                 label: Text(
-                  isAr ? 'إلغاء الحجز' : 'Cancel Booking',
+                  l10n.bookingCancelButton,
                   style: const TextStyle(color: Colors.red),
                 ),
                 style: OutlinedButton.styleFrom(
@@ -250,7 +238,7 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
               borderRadius: BorderRadius.circular(14),
             ),
             child: Text(
-              _statusMessage(booking.status, isAr, isGuide),
+              _statusMessage(booking.status, isGuide, l10n),
               style: textTheme.bodySmall,
             ),
           ),
@@ -258,7 +246,7 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
           const SizedBox(height: 18),
 
           Text(
-            isAr ? 'تفاصيل الرحلة' : 'Trip Details',
+            l10n.bookingTripDetailsTitle,
             style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
           ),
 
@@ -269,21 +257,19 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
             theme,
             Icons.access_time,
             l10n.time,
-            _localizedTimeSlot(booking.timeSlot, isAr),
+            _localizedTimeSlot(booking.timeSlot, isAr, l10n),
           ),
           _modernInfoRow(
             theme,
             Icons.people_outline,
             l10n.people_count,
-            isAr
-                ? '${booking.adultsCount} بالغ، ${booking.childrenCount} طفل'
-                : '${booking.adultsCount} Adults, ${booking.childrenCount} Children',
+            l10n.bookingPeopleSummary(booking.adultsCount, booking.childrenCount),
           ),
 
           const SizedBox(height: 18),
 
           Text(
-            isAr ? 'ملخص السعر' : 'Price Summary',
+            l10n.bookingPriceSummaryTitle,
             style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
           ),
 
@@ -319,9 +305,7 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
               booking.status == BookingStatus.completed) ...[
             const SizedBox(height: 18),
             Text(
-              isGuide
-                  ? (isAr ? 'معلومات السائح' : 'Tourist Contact')
-                  : (isAr ? 'معلومات المرشد' : 'Guide Contact'),
+              isGuide ? l10n.bookingTouristLabel : l10n.bookingGuideLabel,
               style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 12),
@@ -337,7 +321,7 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
                 final email = data?['email'] as String? ?? '';
                 return _contactRows(
                   theme: theme,
-                  isAr: isAr,
+                  l10n: l10n,
                   isGuide: isGuide,
                   name: name.isNotEmpty ? name : null,
                   phone: phone.isNotEmpty ? phone : null,
@@ -357,9 +341,7 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Text(
-                isAr
-                    ? 'يمكنك العودة واستعراض رحلات أخرى أو اختيار موعد مختلف.'
-                    : 'You can go back and explore other trips or choose a different date.',
+                l10n.bookingRejectedExploreMore,
                 style: textTheme.bodySmall,
               ),
             ),
@@ -371,34 +353,32 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
 
   Widget _contactRows({
     required ThemeData theme,
-    required bool isAr,
+    required AppLocalizations l10n,
     required bool isGuide,
     required String? name,
     required String? phone,
     required String? email,
   }) {
-    final personLabel = isGuide
-        ? (isAr ? 'السائح' : 'Tourist')
-        : (isAr ? 'المرشد' : 'Guide');
+    final personLabel = isGuide ? l10n.bookingTouristLabel : l10n.bookingGuideLabel;
     return Column(
       children: [
         _modernInfoRow(
           theme,
           Icons.person_outline,
           personLabel,
-          name ?? (isAr ? 'سيظهر لاحقًا' : 'Available soon'),
+          name ?? l10n.bookingAvailableSoon,
         ),
         _modernInfoRow(
           theme,
           Icons.phone_outlined,
-          isAr ? 'رقم التواصل' : 'Phone',
-          phone ?? (isAr ? 'سيظهر بعد التأكيد' : 'Shown after confirmation'),
+          l10n.bookingPhoneLabel,
+          phone ?? l10n.bookingShownAfterConfirmation,
         ),
         _modernInfoRow(
           theme,
           Icons.email_outlined,
-          isAr ? 'البريد الإلكتروني' : 'Email',
-          email ?? (isAr ? 'سيظهر بعد التأكيد' : 'Shown after confirmation'),
+          l10n.emailLabel,
+          email ?? l10n.bookingShownAfterConfirmation,
         ),
       ],
     );
@@ -453,10 +433,10 @@ String _statusMessage(BookingStatus status, bool isAr, bool isGuide) {
   }
 
 
-  String _localizedTimeSlot(String timeSlot, bool isAr) {
+  String _localizedTimeSlot(String timeSlot, bool isAr, AppLocalizations l10n) {
     if (!isAr) return timeSlot;
     return timeSlot
-        .replaceAll(RegExp(r'AM', caseSensitive: false), 'ص')
-        .replaceAll(RegExp(r'PM', caseSensitive: false), 'م');
+        .replaceAll(RegExp(r'AM', caseSensitive: false), l10n.timeAmMarker)
+        .replaceAll(RegExp(r'PM', caseSensitive: false), l10n.timePmMarker);
   }
 }

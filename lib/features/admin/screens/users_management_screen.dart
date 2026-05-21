@@ -4,12 +4,14 @@ import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/admin/screens/tutor_verification_detail_screen.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class UsersManagementScreen extends ConsumerWidget {
   const UsersManagementScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     return DefaultTabController(
       length: 2,
       child: Column(
@@ -22,9 +24,9 @@ class UsersManagementScreen extends ConsumerWidget {
               unselectedLabelColor: Colors.grey,
               indicatorColor: AppColors.primary,
               dividerColor: Colors.transparent,
-              tabs: const [
-                Tab(text: 'Users'),
-                Tab(text: 'Guides'),
+              tabs: [
+                Tab(text: l10n.adminUsersTab),
+                Tab(text: l10n.adminGuidesTab),
               ],
             ),
           ),
@@ -57,6 +59,7 @@ class _UsersTabState extends ConsumerState<_UsersTab> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       children: [
@@ -65,7 +68,7 @@ class _UsersTabState extends ConsumerState<_UsersTab> {
           child: TextField(
             onChanged: (v) => setState(() => _searchQuery = v.trim().toLowerCase()),
             decoration: InputDecoration(
-              hintText: 'Search by name or email...',
+              hintText: l10n.adminSearchUsersHint,
               prefixIcon: const Icon(Icons.search),
               filled: true,
               fillColor: theme.colorScheme.surface,
@@ -106,8 +109,8 @@ class _UsersTabState extends ConsumerState<_UsersTab> {
                 return Center(
                   child: Text(
                     _searchQuery.isEmpty
-                        ? 'No users found'
-                        : 'No results for "$_searchQuery"',
+                        ? l10n.adminNoUsersFound
+                        : l10n.adminNoResultsFor(_searchQuery),
                     style: theme.textTheme.bodyLarge
                         ?.copyWith(color: Colors.grey.shade500),
                   ),
@@ -140,15 +143,15 @@ class _GuidesTab extends ConsumerStatefulWidget {
 class _GuidesTabState extends ConsumerState<_GuidesTab> {
   VerificationStatus _filter = VerificationStatus.pending;
 
-  static const _filterLabels = {
-    VerificationStatus.pending: 'Pending',
-    VerificationStatus.verified: 'Approved',
-    VerificationStatus.rejected: 'Rejected',
-  };
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+    final filterLabels = {
+      VerificationStatus.pending: l10n.adminStatusPending,
+      VerificationStatus.verified: l10n.adminStatusApproved,
+      VerificationStatus.rejected: l10n.adminStatusRejected,
+    };
 
     return Column(
       children: [
@@ -157,7 +160,7 @@ class _GuidesTabState extends ConsumerState<_GuidesTab> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: _filterLabels.entries.map((entry) {
+              children: filterLabels.entries.map((entry) {
                 final selected = _filter == entry.key;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
@@ -205,7 +208,9 @@ class _GuidesTabState extends ConsumerState<_GuidesTab> {
                           color: AppColors.primary.withValues(alpha: 0.15)),
                       const SizedBox(height: 12),
                       Text(
-                        'No ${_filterLabels[_filter]?.toLowerCase()} guides',
+                        l10n.adminNoGuidesForStatus(
+                          filterLabels[_filter]?.toLowerCase() ?? '',
+                        ),
                         style: theme.textTheme.bodyLarge
                             ?.copyWith(color: Colors.grey.shade500),
                       ),
@@ -355,7 +360,7 @@ class _GuideTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            _typeBadge(isIndividual),
+            _typeBadge(context, isIndividual),
             const SizedBox(width: 6),
             const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
           ],
@@ -364,7 +369,8 @@ class _GuideTile extends StatelessWidget {
     );
   }
 
-  Widget _typeBadge(bool isIndividual) {
+  Widget _typeBadge(BuildContext context, bool isIndividual) {
+    final l10n = AppLocalizations.of(context);
     final color = isIndividual ? Colors.orange : Colors.blue;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -374,7 +380,7 @@ class _GuideTile extends StatelessWidget {
         border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Text(
-        isIndividual ? 'فردي' : 'شركة',
+        isIndividual ? l10n.adminGuideTypeIndividual : l10n.adminGuideTypeCompany,
         style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w600,
@@ -394,16 +400,17 @@ class _RoleBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     Color color;
     String label;
+    final l10n = AppLocalizations.of(context);
     switch (role) {
       case UserRole.tutor:
         color = Colors.blue;
-        label = 'Tutor';
+        label = l10n.adminRoleTutor;
       case UserRole.admin:
         color = Colors.purple;
-        label = 'Admin';
+        label = l10n.adminRoleAdmin;
       default:
         color = Colors.teal;
-        label = 'Tourist';
+        label = l10n.adminRoleTourist;
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -427,29 +434,36 @@ class _VerificationBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     Color color;
     IconData icon;
+    final l10n = AppLocalizations.of(context);
+    String label;
     switch (status) {
       case VerificationStatus.verified:
         color = Colors.green;
         icon = Icons.verified;
+        label = l10n.adminStatusApproved;
       case VerificationStatus.pending:
         color = Colors.orange;
         icon = Icons.hourglass_top_rounded;
+        label = l10n.adminStatusPending;
       case VerificationStatus.rejected:
         color = Colors.red;
         icon = Icons.cancel_outlined;
+        label = l10n.adminStatusRejected;
       case VerificationStatus.expired:
         color = Colors.grey;
         icon = Icons.timer_off_outlined;
+        label = l10n.adminStatusExpired;
       default:
         color = Colors.grey;
         icon = Icons.help_outline;
+        label = status.name;
     }
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 12, color: color),
         const SizedBox(width: 4),
-        Text(status.name,
+        Text(label,
             style: TextStyle(
                 fontSize: 10, fontWeight: FontWeight.w600, color: color)),
       ],

@@ -856,6 +856,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get french => 'الفرنسية';
 
   @override
+  String get spanish => 'الإسبانية';
+
+  @override
+  String get german => 'الألمانية';
+
+  @override
+  String get turkish => 'التركية';
+
+  @override
+  String get urdu => 'الأردية';
+
+  @override
+  String get chinese => 'الصينية';
+
+  @override
   String get myCulturalAchievements => 'إنجازاتي الثقافية';
 
   @override
@@ -1295,4 +1310,1467 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get otpSendCode => 'إرسال الرمز';
+
+  @override
+  String get contactUsTitle => 'تواصل معنا';
+
+  @override
+  String get contactUsSubtitle =>
+      'يسعدنا سماع اقتراحاتك أو ملاحظاتك لتحسين تجربة أثر.';
+
+  @override
+  String get contactUsEmailTitle => 'البريد الإلكتروني';
+
+  @override
+  String get contactUsLocationTitle => 'الموقع';
+
+  @override
+  String get contactUsSaudiArabia => 'المملكة العربية السعودية';
+
+  @override
+  String get contactUsSupportType => 'نوع المساعدة';
+
+  @override
+  String get contactUsReportIssue => 'الإبلاغ عن مشكلة';
+
+  @override
+  String get contactUsSuggestFeature => 'اقتراح ميزة';
+
+  @override
+  String get contactUsGuideSupport => 'دعم المرشدين';
+
+  @override
+  String get contactUsContributions => 'المساهمات الثقافية';
+
+  @override
+  String get contactUsSendMessageTitle => 'أرسل رسالة';
+
+  @override
+  String get contactUsSendMessageSubtitle =>
+      'اكتب رسالتك وسنراجعها في أقرب وقت.';
+
+  @override
+  String get contactUsNameHint => 'الاسم';
+
+  @override
+  String get contactUsEmailHint => 'البريد الإلكتروني';
+
+  @override
+  String get contactUsMessageHint => 'اكتب رسالتك هنا...';
+
+  @override
+  String get contactUsMessageSent => 'تم إرسال رسالتك بنجاح';
+
+  @override
+  String get contactUsSendMessageButton => 'إرسال الرسالة';
+
+  @override
+  String get notificationsTitle => 'التنبيهات';
+
+  @override
+  String get notificationsSignInRequired => 'يرجى تسجيل الدخول';
+
+  @override
+  String get notificationsLoadError => 'حدث خطأ أثناء تحميل التنبيهات';
+
+  @override
+  String get notificationsEmptyState => 'لا توجد تنبيهات حتى الآن';
+
+  @override
+  String get notificationContributionApprovedTitle => 'تم قبول المساهمة';
+
+  @override
+  String get notificationContributionRejectedTitle => 'تم رفض المساهمة';
+
+  @override
+  String get notificationContributionSubmittedTitle =>
+      'مساهمة جديدة بانتظار المراجعة';
+
+  @override
+  String get notificationTripSubmittedTitle => 'رحلة جديدة بانتظار المراجعة';
+
+  @override
+  String get notificationTripApprovedTitle => 'تم قبول رحلتك';
+
+  @override
+  String get notificationTripRejectedTitle => 'تم رفض رحلتك';
+
+  @override
+  String get notificationBookingNewTitle => 'حجز جديد';
+
+  @override
+  String get notificationBookingApprovedTitle => 'تم قبول الحجز';
+
+  @override
+  String get notificationBookingCancelledTitle => 'تم إلغاء الحجز';
+
+  @override
+  String get notificationGuideVerifiedTitle => 'تم توثيق حسابك';
+
+  @override
+  String get notificationGuideRejectedTitle => 'تم رفض طلب التوثيق';
+
+  @override
+  String get notificationPointsAwardedTitle => 'نقاط إضافية';
+
+  @override
+  String get notificationDefaultTitle => 'تنبيه جديد';
+
+  @override
+  String get notificationContributionApprovedBody => 'تم قبول مساهمتك بنجاح.';
+
+  @override
+  String get notificationContributionRejectedBody =>
+      'تم رفض مساهمتك. يرجى مراجعة السبب.';
+
+  @override
+  String get notificationContributionSubmittedBody =>
+      'قدّم سائح مساهمة جديدة تحتاج للمراجعة.';
+
+  @override
+  String get notificationTripSubmittedBody =>
+      'قام مرشد بتقديم رحلة جديدة للمراجعة.';
+
+  @override
+  String get notificationTripApprovedBody => 'تهانينا! رحلتك متاحة الآن للحجز.';
+
+  @override
+  String get notificationTripRejectedBody => 'تم رفض رحلتك.';
+
+  @override
+  String get notificationBookingNewBody => 'لديك حجز جديد من سائح.';
+
+  @override
+  String get notificationBookingApprovedBody => 'تم قبول حجزك بنجاح.';
+
+  @override
+  String get notificationBookingCancelledBody => 'تم إلغاء حجزك.';
+
+  @override
+  String get notificationGuideVerifiedBody => 'تم توثيق حسابك كمرشد معتمد.';
+
+  @override
+  String get notificationGuideRejectedBody => 'تم رفض طلب توثيقك كمرشد سياحي.';
+
+  @override
+  String get notificationPointsAwardedBody => 'تم منحك نقاطًا إضافية.';
+
+  @override
+  String get notificationDefaultBody => 'لديك تنبيه جديد.';
+
+  @override
+  String commonErrorWithMessage(String message) {
+    return 'خطأ: $message';
+  }
+
+  @override
+  String get commonFree => 'مجاني';
+
+  @override
+  String get commonPaid => 'مدفوع';
+
+  @override
+  String get commonLinkCopied => 'تم نسخ الرابط';
+
+  @override
+  String get commonNoTitle => 'بلا عنوان';
+
+  @override
+  String get commonNoDescription => 'بلا وصف';
+
+  @override
+  String get commonOk => 'حسنًا';
+
+  @override
+  String get timeAmMarker => 'ص';
+
+  @override
+  String get timePmMarker => 'م';
+
+  @override
+  String get homeAttractionsSectionTitle => 'المعالم السياحية';
+
+  @override
+  String get homeTripsSectionTitle => 'الرحلات';
+
+  @override
+  String get homeEventsSectionTitle => 'الفعاليات';
+
+  @override
+  String get homeHeroFallbackTitle => 'اكتشف تراث المملكة';
+
+  @override
+  String get homeHeroEventBadge => 'العد التنازلي بدأ';
+
+  @override
+  String get homeHeroEventSubtitle => 'فعالية ثقافية تقترب من لحظتها';
+
+  @override
+  String get homeHeroEventCta => 'استعد للتجربة';
+
+  @override
+  String get homeHeroAttractionCta => 'استكشف المعلم';
+
+  @override
+  String get homeHeroCommunityCta => 'شارك الأثر';
+
+  @override
+  String get homeHeroArchiveCta => 'افتح الأرشيف';
+
+  @override
+  String get homeHeroTripBadge => 'رحلة المنطاد';
+
+  @override
+  String get homeHeroTripSubtitle => 'حلّق فوق التفاصيل التي لا تُنسى';
+
+  @override
+  String get homeHeroTripCta => 'احجز التجربة';
+
+  @override
+  String get homeHeroDaysLabel => 'يوم';
+
+  @override
+  String get homeHeroHoursLabel => 'ساعة';
+
+  @override
+  String get attractionsTitle => 'المعالم السياحية';
+
+  @override
+  String get attractionsSearchHint => 'ابحث عن معلم سياحي...';
+
+  @override
+  String get attractionsNoAvailable => 'لا توجد معالم سياحية';
+
+  @override
+  String get attractionsNoResults => 'لا توجد نتائج';
+
+  @override
+  String get attractionHours => 'ساعات العمل';
+
+  @override
+  String get attractionAlwaysOpen => 'مفتوح 24/7';
+
+  @override
+  String get attractionEntryFee => 'رسوم الدخول';
+
+  @override
+  String get attractionAbout => 'الوصف';
+
+  @override
+  String get attractionTicketLink => 'احجز تذاكرك هنا';
+
+  @override
+  String get attractionGetDirections => 'احصل على الاتجاهات';
+
+  @override
+  String get mapSearchHint => 'ابحث عن معالم أو فعاليات...';
+
+  @override
+  String get mapLandmarks => 'المعالم الثقافية';
+
+  @override
+  String get mapAttractions => 'المعالم السياحية';
+
+  @override
+  String get mapEvents => 'الفعاليات';
+
+  @override
+  String get mapNearMe => 'قريب مني';
+
+  @override
+  String get mapMyLocationTooltip => 'موقعي';
+
+  @override
+  String get mapShareTooltip => 'مشاركة';
+
+  @override
+  String get mapAboutEvent => 'عن الفعالية';
+
+  @override
+  String get mapAboutAttraction => 'عن المعلم السياحي';
+
+  @override
+  String get mapAboutLandmark => 'عن المعلم';
+
+  @override
+  String get mapBookTicket => 'احجز تذكرة';
+
+  @override
+  String get mapSource => 'المصدر';
+
+  @override
+  String get mapDirections => 'الاتجاهات';
+
+  @override
+  String get mapNoResultsInArea => 'لا توجد نتائج في هذه المنطقة';
+
+  @override
+  String get mapAttractionLabel => 'معلم سياحي';
+
+  @override
+  String get mapLandmarkLabel => 'معلم ثقافي';
+
+  @override
+  String get mapLocationPermissionSettings =>
+      'يتطلب الوصول إلى موقعك تفعيل الإذن من الإعدادات';
+
+  @override
+  String get mapLoadDataError =>
+      'تعذّر تحميل البيانات، تحقق من اتصالك بالإنترنت';
+
+  @override
+  String get contributionAuthError => 'خطأ في تسجيل الدخول';
+
+  @override
+  String get contributionUserUnavailable => 'المستخدم غير متاح';
+
+  @override
+  String contributionErrorWithMessage(String message) {
+    return 'حدث خطأ: $message';
+  }
+
+  @override
+  String get contributionGoToProfile => 'العودة للملف الشخصي';
+
+  @override
+  String get contributionTypeLabel => 'نوع المساهمة';
+
+  @override
+  String get contributionTitleExampleHint => 'مثال: رقصة الخطوة - عسير';
+
+  @override
+  String get contributionDescriptionExampleHint =>
+      'اكتب وصفًا واضحًا: ما هو؟ أين يُستخدم؟ ولماذا مهم؟';
+
+  @override
+  String get contributionSelectRegionHint => 'اختر المنطقة';
+
+  @override
+  String get contributionSelectRegionFirstHint => 'اختر المنطقة أولًا';
+
+  @override
+  String get contributionFileSelected => 'تم اختيار الملف';
+
+  @override
+  String get contributionRejectionDetailsTitle => 'تفاصيل المساهمة';
+
+  @override
+  String get contributionSubmittedContentTitle => 'المحتوى المُرسَل';
+
+  @override
+  String get contributionSubmissionInfoTitle => 'معلومات التقديم';
+
+  @override
+  String get contributionSubmittedDateLabel => 'تاريخ الإرسال';
+
+  @override
+  String get contributionSubmitNew => 'إرسال مساهمة جديدة';
+
+  @override
+  String get contributionRejectionReason => 'سبب الرفض';
+
+  @override
+  String get contributionAchievementsSection => 'الإنجازات';
+
+  @override
+  String get contributionMyContributionsSection => 'مساهماتي';
+
+  @override
+  String get contributionPhoneVerificationRequiredTitle =>
+      'التحقق من الجوال مطلوب';
+
+  @override
+  String get contributionPhoneVerificationRequiredBody =>
+      'يجب التحقق من رقم جوالك أولًا لإضافة مساهمة. توجّه إلى الملف الشخصي لإكمال التحقق.';
+
+  @override
+  String get contributionCompleted => 'مكتمل';
+
+  @override
+  String get contributionContributorLevel => 'مستوى المساهم';
+
+  @override
+  String get contributionActiveContributor => 'مساهم نشط';
+
+  @override
+  String get contributionPointsUnit => 'نقطة';
+
+  @override
+  String get contributionLikes => 'إعجابات';
+
+  @override
+  String get contributionShares => 'مشاركات';
+
+  @override
+  String get contributionQuality => 'جودة عالية';
+
+  @override
+  String get contributionTopContributions => 'مساهمات متميزة';
+
+  @override
+  String get contributionNoAchievements => 'لا توجد إنجازات بعد';
+
+  @override
+  String get contributionNoContributions => 'لا توجد مساهمات بعد';
+
+  @override
+  String get contributionArchiveLinkMissing =>
+      'هذه المساهمة لا تحتوي على رابط للأرشيف';
+
+  @override
+  String get contributionArchiveItemNotFound =>
+      'تعذّر العثور على العنصر في الأرشيف';
+
+  @override
+  String get contributionPublished => 'منشور';
+
+  @override
+  String get contributionPending => 'قيد المراجعة';
+
+  @override
+  String get contributionRejected => 'مرفوض';
+
+  @override
+  String get contributionWaitingForReview => 'بانتظار مراجعة المشرف';
+
+  @override
+  String get contributionRejectedDefault => 'تم رفض المساهمة';
+
+  @override
+  String get bookingAdultsAgeSubtitle => '12 سنة فما فوق';
+
+  @override
+  String get bookingChildrenAgeSubtitle => 'تحت 12 سنة';
+
+  @override
+  String get bookingDateTimeTitle => 'التاريخ والوقت';
+
+  @override
+  String get bookingSelectDateError => 'يرجى اختيار التاريخ للمتابعة';
+
+  @override
+  String get bookingConfirmedMessage => 'تم تأكيد الحجز!';
+
+  @override
+  String bookingChildFreeLine(int count) {
+    return '$count طفل (مجانًا)';
+  }
+
+  @override
+  String bookingChildPriceLine(int count, String price) {
+    return '$count طفل × $price';
+  }
+
+  @override
+  String bookingAdultPriceLine(int count, String price) {
+    return '$count بالغ x $price';
+  }
+
+  @override
+  String bookingPeopleSummary(int adults, int children) {
+    return '$adults بالغ، $children طفل';
+  }
+
+  @override
+  String get bookingViewPendingGuide => 'لديك طلب حجز جديد يحتاج إلى مراجعتك.';
+
+  @override
+  String get bookingViewPendingTourist =>
+      'طلبك قيد المراجعة حاليًا. سيتم إشعارك عند تحديث الحالة.';
+
+  @override
+  String get bookingViewApprovedGuide =>
+      'قبلت هذا الحجز. يمكنك التواصل مع السائح عبر معلوماته أدناه.';
+
+  @override
+  String get bookingViewApprovedTourist =>
+      'تم تأكيد الحجز. يمكنك التواصل مع المرشد عبر معلوماته أدناه.';
+
+  @override
+  String get bookingViewRejectedGuide => 'رفضت هذا الطلب.';
+
+  @override
+  String get bookingViewRejectedTourist =>
+      'نعتذر، تم رفض هذا الحجز. يمكنك تجربة موعد آخر أو رحلة مختلفة.';
+
+  @override
+  String get bookingViewCancelledGuide => 'ألغى السائح هذا الطلب قبل موافقتك.';
+
+  @override
+  String get bookingViewCancelledTourist => 'تم إلغاء هذا الحجز.';
+
+  @override
+  String get bookingViewCompleted => 'تمت هذه الرحلة بنجاح.';
+
+  @override
+  String get bookingCancelTitle => 'إلغاء الحجز؟';
+
+  @override
+  String get cancelBookingConfirmation =>
+      'هل أنت متأكد أنك تريد إلغاء هذا الحجز؟';
+
+  @override
+  String get bookingCancelNo => 'لا';
+
+  @override
+  String get bookingCancelYes => 'نعم، إلغاء';
+
+  @override
+  String get bookingCancelButton => 'إلغاء الحجز';
+
+  @override
+  String get bookingTripDetailsTitle => 'تفاصيل الرحلة';
+
+  @override
+  String get bookingPriceSummaryTitle => 'ملخص السعر';
+
+  @override
+  String get bookingTouristLabel => 'السائح';
+
+  @override
+  String get bookingGuideLabel => 'المرشد';
+
+  @override
+  String get bookingAvailableSoon => 'سيظهر لاحقًا';
+
+  @override
+  String get bookingPhoneLabel => 'رقم التواصل';
+
+  @override
+  String get bookingShownAfterConfirmation => 'سيظهر بعد التأكيد';
+
+  @override
+  String get tripAdultsPriceLabel => 'للبالغين';
+
+  @override
+  String get tripChildrenPriceLabel => 'للأطفال';
+
+  @override
+  String get tripGuideUnavailable => 'لا تتوفر معلومات المرشد';
+
+  @override
+  String tripReviewsCount(int count) {
+    return '($count تقييم)';
+  }
+
+  @override
+  String get tripCardDetails => 'التفاصيل';
+
+  @override
+  String get tripCardViewDetails => 'عرض التفاصيل';
+
+  @override
+  String get tripAccessibilityWheelchairShort => 'صديق للإعاقة';
+
+  @override
+  String get tripAccessibilityFamilyShort => 'مناسب للعائلات';
+
+  @override
+  String get tripManagementGuidesOnly => 'هذه الميزة للمرشدين فقط';
+
+  @override
+  String get tripManagementVerifyPhoneFirst =>
+      'تحقق من رقم هاتفك أولًا لتتمكن من إضافة رحلات';
+
+  @override
+  String get tripManagementCompleteVerificationFirst =>
+      'أكمل التوثيق أولًا لتتمكن من إضافة رحلات';
+
+  @override
+  String get tripManagementCompleteProfileFirst =>
+      'أكمل ملفك الشخصي (النبذة واللغات) لتتمكن من إضافة رحلات';
+
+  @override
+  String get tripStatusApproved => 'مقبول';
+
+  @override
+  String get tripStatusRejected => 'مرفوض';
+
+  @override
+  String get tripStatusPending => 'قيد المراجعة';
+
+  @override
+  String get tripDeleteTitle => 'حذف الرحلة';
+
+  @override
+  String tripDeleteConfirm(String title) {
+    return 'هل أنت متأكد أنك تريد حذف \"$title\"؟\nلا يمكن التراجع عن هذه العملية.';
+  }
+
+  @override
+  String get tripDeletedSuccess => 'تم حذف الرحلة بنجاح';
+
+  @override
+  String get tripAddButton => 'إضافة رحلة';
+
+  @override
+  String get tripNoTripsYet => 'لا توجد رحلات بعد';
+
+  @override
+  String get tripTapToAddFirst => 'اضغط على + لإضافة أول رحلة';
+
+  @override
+  String get tripNoBookingsYet => 'لا توجد حجوزات بعد';
+
+  @override
+  String get tripEdit => 'تعديل';
+
+  @override
+  String get tripDelete => 'حذف';
+
+  @override
+  String get addTripImageRequired => 'الرجاء إضافة صورة للرحلة';
+
+  @override
+  String get addTripDailyTimesRequired =>
+      'الرجاء تحديد وقت بداية ونهاية الجولة اليومية';
+
+  @override
+  String get addTripAvailabilityDatesRequired =>
+      'الرجاء تحديد تواريخ إتاحة الرحلة';
+
+  @override
+  String get addTripUpdatedSuccess =>
+      'تم تحديث الرحلة! ستتم إعادة مراجعتها من قِبل الإدارة.';
+
+  @override
+  String get addTripSubmittedSuccess =>
+      'تم إرسال الرحلة! ستظهر في السوق بعد موافقة الإدارة.';
+
+  @override
+  String get addTripTitle => 'إضافة رحلة';
+
+  @override
+  String get addTripAccountUnverifiedTitle => 'الحساب غير موثّق';
+
+  @override
+  String get addTripAccountUnverifiedBody =>
+      'يجب توثيق حسابك أولًا قبل إضافة رحلات.\nأكمل بيانات التوثيق من الملف الشخصي.';
+
+  @override
+  String get addTripEditTitle => 'تعديل الرحلة';
+
+  @override
+  String get addTripNewTitle => 'إضافة رحلة جديدة';
+
+  @override
+  String get addTripAvailabilityPeriod => 'فترة إتاحة الرحلة';
+
+  @override
+  String get addTripStartTime => 'وقت البداية';
+
+  @override
+  String get addTripEndTime => 'وقت النهاية';
+
+  @override
+  String get addTripCity => 'المدينة';
+
+  @override
+  String get addTripCredentialExpiredTitle => 'الرخصة منتهية';
+
+  @override
+  String get addTripCredentialExpiredBody =>
+      'لا يمكنك إضافة رحلات برخصة منتهية.\nجدّد رخصتك وأعد التوثيق للمتابعة.';
+
+  @override
+  String get addTripLicenseExpiringSoonWarning =>
+      'رخصتك ستنتهي قريباً. تأكد من تجديدها قبل انتهاء صلاحيتها.';
+
+  @override
+  String get addTripTimingDurationSection => 'التوقيت والمدة';
+
+  @override
+  String get addTripTitleSection => 'عنوان الرحلة';
+
+  @override
+  String get addTripShortDescriptionSection => 'وصف مختصر';
+
+  @override
+  String get addTripDetailedDescriptionSection => 'الوصف التفصيلي';
+
+  @override
+  String get addTripLocationSection => 'الموقع';
+
+  @override
+  String get addTripPricingCapacitySection => 'التسعير والسعة';
+
+  @override
+  String get addTripTripLanguagesSection => 'اللغات المتاحة في الجولة';
+
+  @override
+  String get addTripImagePrompt => 'اضغط لإضافة صورة الرحلة';
+
+  @override
+  String get addTripChangeImage => 'تغيير الصورة';
+
+  @override
+  String get addTripPickAvailabilityPeriod => 'اختر فترة الإتاحة';
+
+  @override
+  String get addTripDailyStartEndHint => 'وقت البداية والنهاية اليومي للجولة';
+
+  @override
+  String get addTripMultiDayTitle => 'رحلة متعددة الأيام';
+
+  @override
+  String get addTripMultiDaySubtitle =>
+      'الحجز الواحد يمتد لأكثر من يوم متواصل، مثل رحلات التخييم.';
+
+  @override
+  String get addTripDurationDaysLabel => 'عدد أيام الرحلة';
+
+  @override
+  String get addTripDurationDaysMinError => 'يجب أن يكون العدد 2 أو أكثر';
+
+  @override
+  String get addTripTitleArLabel => 'العنوان بالعربي';
+
+  @override
+  String get addTripTitleEnLabel => 'العنوان بالإنجليزية';
+
+  @override
+  String get addTripShortDescArLabel => 'الوصف المختصر بالعربي';
+
+  @override
+  String get addTripShortDescEnLabel => 'الوصف المختصر بالإنجليزية';
+
+  @override
+  String get addTripDescArLabel => 'الوصف بالعربي';
+
+  @override
+  String get addTripDescEnLabel => 'الوصف الكامل بالإنجليزية';
+
+  @override
+  String get addTripDescTemplateAr =>
+      '## ما تشمله الجولة\n- \n\n## الجدول الزمني\n- \n\n## ما يجب إحضاره\n- ';
+
+  @override
+  String get addTripDescTemplateEn =>
+      '## What\'s Included\n- \n\n## Schedule\n- \n\n## What to Bring\n- ';
+
+  @override
+  String get addTripCityRequired => 'الرجاء اختيار المدينة';
+
+  @override
+  String get addTripAdultPriceLabel => 'سعر البالغ';
+
+  @override
+  String get addTripAllowsChildren => 'يُسمح للأطفال';
+
+  @override
+  String get addTripChildPriceLabel => 'سعر الطفل (0 = مجاني)';
+
+  @override
+  String get addTripChildrenCapacityNote =>
+      'ملاحظة: 2 أطفال = مقعد بالغ واحد في احتساب السعة.';
+
+  @override
+  String get addTripMaxCapacityLabel =>
+      'الطاقة الاستيعابية القصوى (عدد البالغين)';
+
+  @override
+  String get addTripValidNumberError => 'أدخل رقماً صحيحاً';
+
+  @override
+  String get addTripValidIntegerError => 'أدخل عدداً صحيحاً';
+
+  @override
+  String get addTripRequiredField => 'مطلوب';
+
+  @override
+  String get addTripSaveChanges => 'حفظ التعديلات';
+
+  @override
+  String get addTripSubmitForReview => 'إرسال للمراجعة';
+
+  @override
+  String addTripGuideName(String name) {
+    return 'المرشد: $name';
+  }
+
+  @override
+  String addTripLicenseValue(String value) {
+    return 'الرخصة: $value';
+  }
+
+  @override
+  String addTripCompanyName(String name) {
+    return 'الشركة: $name';
+  }
+
+  @override
+  String addTripTourismLicenseValue(String value) {
+    return 'الترخيص: $value';
+  }
+
+  @override
+  String get addTripBackToProfile => 'عودة للملف الشخصي';
+
+  @override
+  String get bookingRejectedExploreMore =>
+      'يمكنك العودة واستعراض رحلات أخرى أو اختيار موعد مختلف.';
+
+  @override
+  String get tripManagementTouristHint =>
+      'يمكنك عرض حجوزاتك وإدارة رحلاتك من تبويب الحجوزات في ملفك الشخصي';
+
+  @override
+  String get rawiImageQuestion => 'يا راوي، وش تمثل الصورة؟';
+
+  @override
+  String get rawiGeneralCouncil => 'مجلس راوي العام';
+
+  @override
+  String rawiStoryAboutRegion(String region) {
+    return 'سالفة عن $region';
+  }
+
+  @override
+  String get rawiWelcomeGeneral =>
+      'حياك الله في مجلس راوي.. وش المنطقة اللي ودك نسولف عنها اليوم؟';
+
+  @override
+  String get rawiPickRegionStart =>
+      'حياك الله في مجلس راوي.. اختر منطقة نبدأ منها:';
+
+  @override
+  String get rawiAskHint => 'اسأل راوي...';
+
+  @override
+  String get rawiTyping => 'راوي يكتب الآن...';
+
+  @override
+  String get rawiAttachmentFile => 'ملف';
+
+  @override
+  String get rawiAttachmentCamera => 'كاميرا';
+
+  @override
+  String get rawiAttachmentImage => 'صورة';
+
+  @override
+  String get rawiGeneralCouncilTitle => 'المجلس العام';
+
+  @override
+  String get rawiUserLabel => 'المستخدم';
+
+  @override
+  String get rawiBotLabel => 'راوي';
+
+  @override
+  String get rawiHistoryHeader => 'سياق المحادثة السابق:';
+
+  @override
+  String get rawiGeneralSystemInstruction =>
+      'أنت \"راوي\"، مساعد ثقافي سعودي عام. أجب بلغة المستخدم وكن ودوداً.';
+
+  @override
+  String get adminUsersTab => 'المستخدمون';
+
+  @override
+  String get adminGuidesTab => 'المرشدون';
+
+  @override
+  String get adminSearchUsersHint => 'ابحث بالاسم أو البريد...';
+
+  @override
+  String get adminNoUsersFound => 'لا يوجد مستخدمون';
+
+  @override
+  String adminNoResultsFor(String query) {
+    return 'لا توجد نتائج لـ \"$query\"';
+  }
+
+  @override
+  String adminNoGuidesForStatus(String status) {
+    return 'لا يوجد مرشدون بحالة $status';
+  }
+
+  @override
+  String get adminStatusPending => 'قيد المراجعة';
+
+  @override
+  String get adminStatusApproved => 'مقبول';
+
+  @override
+  String get adminStatusRejected => 'مرفوض';
+
+  @override
+  String get adminStatusExpired => 'منتهية';
+
+  @override
+  String get adminRoleTutor => 'مرشد';
+
+  @override
+  String get adminRoleAdmin => 'مشرف';
+
+  @override
+  String get adminRoleTourist => 'سائح';
+
+  @override
+  String get adminGuideTypeIndividual => 'فردي';
+
+  @override
+  String get adminGuideTypeCompany => 'شركة';
+
+  @override
+  String get adminNoBookings => 'لا توجد حجوزات بعد';
+
+  @override
+  String adminBookingPeopleSummary(int adults, int children) {
+    return '$adults بالغ، $children طفل';
+  }
+
+  @override
+  String adminTouristId(String id) {
+    return 'السائح: $id';
+  }
+
+  @override
+  String adminTutorId(String id) {
+    return 'المرشد: $id';
+  }
+
+  @override
+  String get adminNoTripsPending => 'لا توجد رحلات بانتظار الموافقة';
+
+  @override
+  String get adminGuideLabel => 'المرشد';
+
+  @override
+  String get adminCompanyLabel => 'الشركة';
+
+  @override
+  String get adminPriceLabel => 'السعر';
+
+  @override
+  String get adminLicenseLabel => 'الرخصة';
+
+  @override
+  String get adminTutorIdLabel => 'معرّف المرشد';
+
+  @override
+  String get adminTripRejected => 'تم رفض الرحلة';
+
+  @override
+  String get adminTripApproved => 'تم قبول الرحلة';
+
+  @override
+  String get adminReject => 'رفض';
+
+  @override
+  String get adminApprove => 'قبول';
+
+  @override
+  String get adminEdit => 'تعديل';
+
+  @override
+  String get adminDelete => 'حذف';
+
+  @override
+  String get adminCancel => 'إلغاء';
+
+  @override
+  String get adminAddAttraction => 'إضافة معلم';
+
+  @override
+  String get adminEditAttraction => 'تعديل معلم';
+
+  @override
+  String get adminNoAttractions => 'لا توجد معالم بعد. اضغط + لإضافة معلم.';
+
+  @override
+  String get adminDeleteAttraction => 'حذف المعلم';
+
+  @override
+  String adminDeleteAttractionConfirm(String name) {
+    return 'حذف \"$name\"؟ لا يمكن التراجع عن هذه العملية.';
+  }
+
+  @override
+  String get adminAttractionDeleted => 'تم حذف المعلم';
+
+  @override
+  String get adminAddItem => 'إضافة عنصر';
+
+  @override
+  String get adminEditArchiveItem => 'تعديل عنصر أرشيفي';
+
+  @override
+  String get adminAddArchiveItem => 'إضافة عنصر أرشيفي';
+
+  @override
+  String get adminUpdateItem => 'تحديث العنصر';
+
+  @override
+  String get adminAddToArchive => 'إضافة للأرشيف';
+
+  @override
+  String get adminItemUpdated => 'تم تحديث العنصر بنجاح';
+
+  @override
+  String get adminCulturalItemAdded => 'تمت إضافة العنصر الثقافي بنجاح';
+
+  @override
+  String get adminMapCoordinatesOptional => 'إحداثيات الخريطة (اختياري)';
+
+  @override
+  String get adminLatitudeExample => 'خط العرض (مثال: 24.68)';
+
+  @override
+  String get adminLongitudeExample => 'خط الطول (مثال: 46.72)';
+
+  @override
+  String get adminNoCulturalItems => 'لا توجد عناصر ثقافية بعد';
+
+  @override
+  String get adminDeleteItem => 'حذف العنصر';
+
+  @override
+  String adminDeleteItemConfirm(String name) {
+    return 'حذف \"$name\"؟ لا يمكن التراجع عن هذه العملية.';
+  }
+
+  @override
+  String get adminItemDeleted => 'تم حذف العنصر';
+
+  @override
+  String adminByContributor(String name) {
+    return 'بواسطة: $name';
+  }
+
+  @override
+  String get adminSelectRegion => 'الرجاء اختيار المنطقة';
+
+  @override
+  String get adminSelectCity => 'الرجاء اختيار المدينة';
+
+  @override
+  String get adminSelectMainImage => 'الرجاء اختيار الصورة الرئيسية';
+
+  @override
+  String get adminCoordinatesRequired =>
+      'الرجاء إدخال الإحداثيات (خط العرض والطول)';
+
+  @override
+  String get adminAttractionUpdated => 'تم تحديث المعلم!';
+
+  @override
+  String get adminAttractionAdded =>
+      'تمت إضافة المعلم! سيتم تشغيل الوسوم الذكية قريباً.';
+
+  @override
+  String get adminMainImage => 'الصورة الرئيسية *';
+
+  @override
+  String get adminNameDescription => 'الاسم والوصف';
+
+  @override
+  String get adminClassification => 'التصنيف';
+
+  @override
+  String get adminNameArabic => 'الاسم (عربي)';
+
+  @override
+  String get adminNameEnglish => 'الاسم (إنجليزي)';
+
+  @override
+  String get adminNameArabicHint => 'أدخل الاسم بالعربي';
+
+  @override
+  String get adminNameEnglishHint => 'أدخل اسم المعلم بالإنجليزية';
+
+  @override
+  String get adminDescriptionArabic => 'الوصف (عربي)';
+
+  @override
+  String get adminDescriptionEnglish => 'الوصف (إنجليزي)';
+
+  @override
+  String get adminDescriptionArabicHint => 'أدخل الوصف بالعربي';
+
+  @override
+  String get adminDescriptionEnglishHint => 'أدخل الوصف بالإنجليزية';
+
+  @override
+  String get adminLocation => 'الموقع';
+
+  @override
+  String get adminCategory => 'التصنيف';
+
+  @override
+  String get adminRegion => 'المنطقة';
+
+  @override
+  String get adminCity => 'المدينة';
+
+  @override
+  String get adminSelectRegionFirst => 'اختر المنطقة أولاً';
+
+  @override
+  String get adminAddress => 'العنوان';
+
+  @override
+  String get adminAddressHint => 'العنوان الكامل';
+
+  @override
+  String get adminMapCoordinates => 'إحداثيات الخريطة';
+
+  @override
+  String get adminLatitude => 'خط العرض';
+
+  @override
+  String get adminLongitude => 'خط الطول';
+
+  @override
+  String get adminHoursFees => 'الأوقات والرسوم';
+
+  @override
+  String get adminAlwaysOpen => 'مفتوح دائماً (24/7)';
+
+  @override
+  String get adminOpeningHoursArabic => 'أوقات العمل (عربي)';
+
+  @override
+  String get adminOpeningHoursEnglish => 'أوقات العمل (إنجليزي)';
+
+  @override
+  String get adminOpeningHoursArabicHint => 'مثال: 9 صباحاً - 10 مساءً';
+
+  @override
+  String get adminOpeningHoursEnglishHint => 'Example: 9 AM - 10 PM';
+
+  @override
+  String get adminEntryFee => 'رسوم الدخول';
+
+  @override
+  String get adminEntryFeeSar => 'رسوم الدخول (ريال) - 0 يعني مجاني';
+
+  @override
+  String get adminFreeFeeHint => '0 = مجاني';
+
+  @override
+  String get adminValidNumber => 'أدخل رقماً صحيحاً';
+
+  @override
+  String get adminGalleryImages => 'صور المعرض';
+
+  @override
+  String get adminNoGalleryImages => 'لم تتم إضافة صور للمعرض بعد.';
+
+  @override
+  String get adminMaxGalleryImages => 'تم الوصول إلى الحد الأقصى 8 صور.';
+
+  @override
+  String get adminVideoOptional => 'فيديو (اختياري)';
+
+  @override
+  String get adminOptional => 'اختياري';
+
+  @override
+  String get adminTicketBookingUrl => 'رابط حجز التذاكر';
+
+  @override
+  String get adminUpdateAttraction => 'تحديث المعلم';
+
+  @override
+  String get adminTapToChange => 'اضغط للتغيير';
+
+  @override
+  String get adminTapPickMainImage => 'اضغط لاختيار الصورة الرئيسية';
+
+  @override
+  String get adminVideoSaved => 'تم حفظ الفيديو';
+
+  @override
+  String get adminTapPickVideo => 'اضغط لاختيار فيديو';
+
+  @override
+  String get adminAdd => 'إضافة';
+
+  @override
+  String get adminImage => 'الصورة';
+
+  @override
+  String get adminEventAdded => 'تمت إضافة الفعالية بنجاح';
+
+  @override
+  String get adminSelectEventDate => 'الرجاء اختيار تاريخ الفعالية';
+
+  @override
+  String get adminPickImage => 'الرجاء اختيار صورة';
+
+  @override
+  String get adminEventCoordinatesRequired =>
+      'خط العرض والطول مطلوبان للفعاليات';
+
+  @override
+  String get adminImageUploadFailed => 'فشل رفع الصورة';
+
+  @override
+  String get adminTitleArabic => 'العنوان (عربي)';
+
+  @override
+  String get adminTitleEnglish => 'العنوان (إنجليزي)';
+
+  @override
+  String get adminTitleArabicHint => 'أدخل العنوان بالعربي';
+
+  @override
+  String get adminTitleEnglishHint => 'أدخل العنوان بالإنجليزية';
+
+  @override
+  String get adminEventDate => 'تاريخ الفعالية';
+
+  @override
+  String get adminSelectDate => 'اختر التاريخ';
+
+  @override
+  String get adminEndDateOptional => 'تاريخ النهاية (اختياري)';
+
+  @override
+  String get adminSelectEndDate =>
+      'اختر تاريخ النهاية (اتركه فارغاً لفعالية يوم واحد)';
+
+  @override
+  String get adminTimeArabic => 'الوقت (عربي)';
+
+  @override
+  String get adminTimeEnglish => 'الوقت (إنجليزي)';
+
+  @override
+  String get adminEventType => 'نوع الفعالية';
+
+  @override
+  String get adminAdmission => 'الدخول';
+
+  @override
+  String get adminFreeEntry => 'دخول مجاني';
+
+  @override
+  String get adminPaidEntry => 'دخول مدفوع';
+
+  @override
+  String get adminTicketUrl => 'رابط التذاكر';
+
+  @override
+  String get adminAddEvent => 'إضافة فعالية';
+
+  @override
+  String get adminMigrationTitle => 'ترحيل المحتوى';
+
+  @override
+  String get adminMigrateAllTitle => 'ترحيل كل المحتوى';
+
+  @override
+  String get adminMigrateAllBody =>
+      'سيتم تصنيف كل المعالم والرحلات والفعاليات والعناصر الثقافية باستخدام Gemini AI. قد تستغرق العملية 3-7 دقائق. تأكد من اتصال الإنترنت ثم تابع.';
+
+  @override
+  String get adminRunMigration => 'تشغيل الترحيل';
+
+  @override
+  String get adminMigrationHeading => 'تصنيف المحتوى بالذكاء الاصطناعي';
+
+  @override
+  String get adminMigrationDescription =>
+      'يولد معرفات الاهتمامات ومتجهات التضمين لكل المعالم والرحلات والفعاليات والعناصر الثقافية.';
+
+  @override
+  String get adminMigratingProgress => 'جاري الترحيل... (3-7 دقائق)';
+
+  @override
+  String get adminEmbeddingProgress => 'جاري توليد التضمينات...';
+
+  @override
+  String get adminGenerateMissingEmbeddings => 'توليد التضمينات الناقصة';
+
+  @override
+  String get adminMigrationComplete => 'اكتمل الترحيل';
+
+  @override
+  String get adminMigrationFailed => 'فشل الترحيل';
+
+  @override
+  String get adminOperationComplete => 'اكتملت العملية';
+
+  @override
+  String adminEmbeddingStatsLine(
+      String collection, String processed, String skipped, String failed) {
+    return '$collection: تم $processed | متخطى $skipped | فشل $failed';
+  }
+
+  @override
+  String get adminDocumentShapes => 'شكل المستندات';
+
+  @override
+  String get adminInspectDataShape => 'فحص شكل البيانات';
+
+  @override
+  String adminTranslationFailed(String message) {
+    return 'فشل الترجمة: $message';
+  }
+
+  @override
+  String get adminApproveContribution => 'قبول المساهمة';
+
+  @override
+  String adminApproveContributionConfirm(
+      String title, String name, int points) {
+    return 'قبول \"$title\" من $name؟\n\nسيتم منح السائح $points نقطة.';
+  }
+
+  @override
+  String get adminFillEnglishBeforeApprove =>
+      'الرجاء تعبئة العنوان والوصف بالإنجليزية قبل القبول.';
+
+  @override
+  String get adminFillArabicBeforeApprove =>
+      'الرجاء تعبئة العنوان والوصف بالعربية قبل القبول.';
+
+  @override
+  String get adminContributionApproved => 'تم قبول المساهمة بنجاح';
+
+  @override
+  String get adminRejectContribution => 'رفض المساهمة';
+
+  @override
+  String get adminRejectContributionHelp =>
+      'اكتب سبب الرفض ليعرف السائح ما الذي يحتاج إلى تحسين.';
+
+  @override
+  String get adminRejectReasonHint =>
+      'مثال: جودة الصورة منخفضة، الرجاء إعادة الإرسال بصورة أوضح.';
+
+  @override
+  String get adminPleaseEnterReason => 'الرجاء إدخال سبب.';
+
+  @override
+  String get adminContributionRejected => 'تم رفض المساهمة';
+
+  @override
+  String get adminReviewContribution => 'مراجعة المساهمة';
+
+  @override
+  String get adminVideoContribution => 'مساهمة فيديو';
+
+  @override
+  String get adminTourist => 'السائح';
+
+  @override
+  String get adminName => 'الاسم';
+
+  @override
+  String get adminEmail => 'البريد الإلكتروني';
+
+  @override
+  String get adminSubmissionDetails => 'تفاصيل الإرسال';
+
+  @override
+  String get adminSubmittedIn => 'لغة الإرسال';
+
+  @override
+  String get adminDate => 'التاريخ';
+
+  @override
+  String get adminRejectionReason => 'سبب الرفض';
+
+  @override
+  String get adminArabicByTourist => 'العربية (من السائح)';
+
+  @override
+  String get adminEnglishByTourist => 'الإنجليزية (من السائح)';
+
+  @override
+  String get adminEnglishAdminFills => 'الإنجليزية (يعبئها المشرف)';
+
+  @override
+  String get adminArabicAdminFills => 'العربية (يعبئها المشرف)';
+
+  @override
+  String get adminTranslating => 'جاري الترجمة...';
+
+  @override
+  String get adminAutoTranslate => 'ترجمة تلقائية بالذكاء الاصطناعي';
+
+  @override
+  String get adminTitle => 'العنوان';
+
+  @override
+  String get adminDescription => 'الوصف';
+
+  @override
+  String get adminVerifyGuideTitle => 'توثيق المرشد';
+
+  @override
+  String adminVerifyGuideConfirm(String name) {
+    return 'هل تريد توثيق حساب \"$name\"؟\nسيتمكن من إضافة رحلات حتى تنتهي صلاحية رخصته.';
+  }
+
+  @override
+  String get adminVerifyGuide => 'توثيق';
+
+  @override
+  String get adminGuideVerifiedSuccess => 'تم توثيق المرشد بنجاح';
+
+  @override
+  String get adminRejectRequest => 'رفض الطلب';
+
+  @override
+  String get adminRejectRequestHelp =>
+      'سيظهر هذا للمرشد حتى يعرف ما يحتاج تصحيحه.';
+
+  @override
+  String get adminRejectRequestHint => 'مثال: تاريخ انتهاء الرخصة غير صحيح';
+
+  @override
+  String get adminRequestRejected => 'تم رفض الطلب';
+
+  @override
+  String get adminReviewVerification => 'مراجعة التوثيق';
+
+  @override
+  String get adminLicenseData => 'بيانات الرخصة';
+
+  @override
+  String get adminCompanyData => 'بيانات الشركة';
+
+  @override
+  String get adminLicenseNumber => 'رقم الرخصة';
+
+  @override
+  String get adminLicenseExpiry => 'تاريخ انتهاء الرخصة';
+
+  @override
+  String get adminCompanyName => 'اسم الشركة';
+
+  @override
+  String get adminCommercialRegistration => 'رقم السجل التجاري';
+
+  @override
+  String get adminCommercialRegistrationExpiry => 'انتهاء السجل التجاري';
+
+  @override
+  String get adminTourismActivityLicense => 'ترخيص النشاط السياحي';
+
+  @override
+  String get adminTourismLicenseNumber => 'رقم الترخيص السياحي';
+
+  @override
+  String get adminTourismLicenseExpiry => 'انتهاء الترخيص السياحي';
+
+  @override
+  String get adminExpiringSoon => 'تنتهي قريباً';
+
+  @override
+  String get adminRejectionDetails => 'تفاصيل الرفض';
+
+  @override
+  String get adminVerificationDetails => 'تفاصيل التوثيق';
+
+  @override
+  String get adminBy => 'بواسطة';
+
+  @override
+  String get adminVerify => 'توثيق';
 }

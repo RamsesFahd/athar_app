@@ -4,6 +4,7 @@ import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class TutorVerificationDetailScreen extends ConsumerStatefulWidget {
   final TutorModel tutor;
@@ -23,21 +24,20 @@ class _TutorVerificationDetailScreenState
   // ── Approve ──────────────────────────────────────────────────────────────────
 
   Future<void> _showApproveDialog() async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('توثيق المرشد'),
-        content: Text(
-          'هل تريد توثيق حساب "${tutor.fullName}"؟\nلن يتمكن من إضافة رحلات حتى تنتهي صلاحية رخصته.',
-        ),
+        title: Text(l10n.adminVerifyGuideTitle),
+        content: Text(l10n.adminVerifyGuideConfirm(tutor.fullName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('إلغاء'),
+            child: Text(l10n.adminCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('توثيق'),
+            child: Text(l10n.adminVerifyGuide),
           ),
         ],
       ),
@@ -57,8 +57,8 @@ class _TutorVerificationDetailScreenState
           );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم توثيق المرشد بنجاح'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).adminGuideVerifiedSuccess),
           backgroundColor: Colors.green,
         ),
       );
@@ -66,7 +66,7 @@ class _TutorVerificationDetailScreenState
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('خطأ: $e'), backgroundColor: Colors.red),
+        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -76,6 +76,7 @@ class _TutorVerificationDetailScreenState
   // ── Reject ───────────────────────────────────────────────────────────────────
 
   Future<void> _showRejectSheet() async {
+    final l10n = AppLocalizations.of(context);
     final reasonController = TextEditingController();
     await showModalBottomSheet(
       context: context,
@@ -95,13 +96,13 @@ class _TutorVerificationDetailScreenState
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'سبب الرفض',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                l10n.adminRejectionReason,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
               Text(
-                'سيظهر هذا للمرشد حتى يعرف ما يحتاج تصحيحه',
+                l10n.adminRejectRequestHelp,
                 style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
               ),
               const SizedBox(height: 16),
@@ -110,7 +111,7 @@ class _TutorVerificationDetailScreenState
                 maxLines: 3,
                 autofocus: true,
                 decoration: InputDecoration(
-                  hintText: 'مثال: تاريخ انتهاء الرخصة غير صحيح',
+                  hintText: l10n.adminRejectRequestHint,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -128,7 +129,7 @@ class _TutorVerificationDetailScreenState
                           Navigator.pop(ctx);
                           await _reject(reasonController.text.trim());
                         },
-                  child: const Text('رفض'),
+                  child: Text(l10n.adminReject),
                 ),
               ),
             ],
@@ -151,8 +152,8 @@ class _TutorVerificationDetailScreenState
           );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم رفض الطلب'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).adminRequestRejected),
           backgroundColor: Colors.orange,
         ),
       );
@@ -160,7 +161,7 @@ class _TutorVerificationDetailScreenState
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('خطأ: $e'), backgroundColor: Colors.red),
+        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -172,11 +173,12 @@ class _TutorVerificationDetailScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final isIndividual = tutor.tutorType == TutorType.individual;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('مراجعة التوثيق'),
+        title: Text(l10n.adminReviewVerification),
         centerTitle: true,
       ),
       body: _isLoading
@@ -252,6 +254,7 @@ class _TutorVerificationDetailScreenState
 
   Widget _typeBadge(ThemeData theme) {
     final isIndividual = tutor.tutorType == TutorType.individual;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -260,7 +263,7 @@ class _TutorVerificationDetailScreenState
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        isIndividual ? 'فردي' : 'شركة',
+        isIndividual ? l10n.adminGuideTypeIndividual : l10n.adminGuideTypeCompany,
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
@@ -271,6 +274,7 @@ class _TutorVerificationDetailScreenState
   }
 
   Widget _buildCredentialCard(ThemeData theme, bool isIndividual) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -290,7 +294,7 @@ class _TutorVerificationDetailScreenState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            isIndividual ? 'بيانات الرخصة' : 'بيانات الشركة',
+            isIndividual ? l10n.adminLicenseData : l10n.adminCompanyData,
             style: theme.textTheme.titleMedium
                 ?.copyWith(fontWeight: FontWeight.bold),
           ),
@@ -299,14 +303,14 @@ class _TutorVerificationDetailScreenState
             _credentialRow(
               theme,
               icon: Icons.badge_outlined,
-              label: 'رقم الرخصة',
+              label: l10n.adminLicenseNumber,
               value: tutor.licenceNumber,
             ),
             const SizedBox(height: 14),
             _credentialRow(
               theme,
               icon: Icons.calendar_today_outlined,
-              label: 'تاريخ انتهاء الرخصة',
+              label: l10n.adminLicenseExpiry,
               value: _formatDate(tutor.licenceExpiryDate),
               expiryDate: tutor.licenceExpiryDate,
             ),
@@ -314,27 +318,27 @@ class _TutorVerificationDetailScreenState
             _credentialRow(
               theme,
               icon: Icons.business_outlined,
-              label: 'اسم الشركة',
+              label: l10n.adminCompanyName,
               value: tutor.companyName,
             ),
             const SizedBox(height: 14),
             _credentialRow(
               theme,
               icon: Icons.receipt_long_outlined,
-              label: 'رقم السجل التجاري',
+              label: l10n.adminCommercialRegistration,
               value: tutor.commercialRegistration,
             ),
             const SizedBox(height: 14),
             _credentialRow(
               theme,
               icon: Icons.calendar_today_outlined,
-              label: 'انتهاء السجل التجاري',
+              label: l10n.adminCommercialRegistrationExpiry,
               value: _formatDate(tutor.commercialRegExpiryDate),
               expiryDate: tutor.commercialRegExpiryDate,
             ),
             const Divider(height: 24),
             Text(
-              'ترخيص النشاط السياحي',
+              l10n.adminTourismActivityLicense,
               style: theme.textTheme.titleMedium
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
@@ -342,14 +346,14 @@ class _TutorVerificationDetailScreenState
             _credentialRow(
               theme,
               icon: Icons.tour_outlined,
-              label: 'رقم الترخيص السياحي',
+              label: l10n.adminTourismLicenseNumber,
               value: tutor.tourismLicenceNumber,
             ),
             const SizedBox(height: 14),
             _credentialRow(
               theme,
               icon: Icons.calendar_today_outlined,
-              label: 'انتهاء الترخيص السياحي',
+              label: l10n.adminTourismLicenseExpiry,
               value: _formatDate(tutor.tourismLicenceExpiryDate),
               expiryDate: tutor.tourismLicenceExpiryDate,
             ),
@@ -371,6 +375,7 @@ class _TutorVerificationDetailScreenState
         expiryDate.isAfter(DateTime.now());
     final isExpired =
         expiryDate != null && expiryDate.isBefore(DateTime.now());
+    final l10n = AppLocalizations.of(context);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -394,9 +399,9 @@ class _TutorVerificationDetailScreenState
           ),
         ),
         if (isExpired)
-          _statusChip('منتهية', Colors.red)
+          _statusChip(l10n.adminStatusExpired, Colors.red)
         else if (isExpiringSoon)
-          _statusChip('تنتهي قريباً', Colors.orange),
+          _statusChip(l10n.adminExpiringSoon, Colors.orange),
       ],
     );
   }
@@ -417,6 +422,7 @@ class _TutorVerificationDetailScreenState
   }
 
   Widget _buildDecisionCard(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     final isRejected = tutor.verificationStatus == VerificationStatus.rejected;
     final cardColor = isRejected
         ? Colors.red.withValues(alpha: 0.06)
@@ -446,26 +452,26 @@ class _TutorVerificationDetailScreenState
               ),
               const SizedBox(width: 6),
               Text(
-                isRejected ? 'تفاصيل الرفض' : 'تفاصيل التوثيق',
+                isRejected ? l10n.adminRejectionDetails : l10n.adminVerificationDetails,
                 style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold, color: labelColor),
               ),
             ],
           ),
           const SizedBox(height: 10),
-          _decisionRow(theme, 'بواسطة', tutor.verifiedByAdminName ?? '—'),
+          _decisionRow(theme, l10n.adminBy, tutor.verifiedByAdminName ?? '-'),
           const SizedBox(height: 6),
           _decisionRow(
             theme,
-            'التاريخ',
+            l10n.adminDate,
             tutor.verificationActionAt != null
                 ? DateFormat('yyyy-MM-dd – HH:mm')
                     .format(tutor.verificationActionAt!)
-                : '—',
+                : '-',
           ),
           if (isRejected && tutor.rejectionReason != null) ...[
             const SizedBox(height: 6),
-            _decisionRow(theme, 'سبب الرفض', tutor.rejectionReason!),
+            _decisionRow(theme, l10n.adminRejectionReason, tutor.rejectionReason!),
           ],
         ],
       ),
@@ -494,6 +500,7 @@ class _TutorVerificationDetailScreenState
   }
 
   Widget _buildBottomBar(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -510,8 +517,8 @@ class _TutorVerificationDetailScreenState
                   ),
                 ),
                 icon: const Icon(Icons.close, color: Colors.red, size: 18),
-                label: const Text('رفض',
-                    style: TextStyle(
+                label: Text(l10n.adminReject,
+                    style: const TextStyle(
                         color: Colors.red, fontWeight: FontWeight.bold)),
               ),
             ),
@@ -527,8 +534,8 @@ class _TutorVerificationDetailScreenState
                   ),
                 ),
                 icon: const Icon(Icons.verified_outlined, size: 18),
-                label: const Text('توثيق',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                label: Text(l10n.adminVerify,
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
           ],
