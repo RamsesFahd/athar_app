@@ -381,6 +381,7 @@ ${region.systemPrompt}
 isFirstTurn: false
 itemsNames: [$itemsTitles]
 userLanguage: $effectiveLangCode
+LANGUAGE LAW: Respond ONLY in ${isAr ? 'Arabic (العربية)' : 'English'}. The user is using the ${isAr ? 'Arabic' : 'English'} interface. Zero tolerance for mixing languages.
 STRICT RULE: Your response MUST be in the same language as "Current User Message" ($effectiveLangCode).
 ''';
       } else {
