@@ -550,13 +550,15 @@ let embeddingCache: Map<string, CachedEmbedding> | null = null;
 let embeddingCachedAt = 0;
 
 function cosineSimilarity(a: number[], b: number[]): number {
+  if (!a.length || !b.length || a.length !== b.length) return 0;
   let dot = 0, normA = 0, normB = 0;
   for (let i = 0; i < a.length; i++) {
     dot += a[i] * b[i];
     normA += a[i] * a[i];
     normB += b[i] * b[i];
   }
-  return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+  const denom = Math.sqrt(normA) * Math.sqrt(normB);
+  return denom === 0 ? 0 : dot / denom;
 }
 
 function extractDocMeta(
@@ -590,7 +592,7 @@ function extractDocMeta(
       titleEn = name.en || "";
       description = (desc.ar || desc.en || "").slice(0, 200);
       imageUrl = data.mainImageUrl || data.imageUrl || null;
-      region = data.region || data.regionId || "";
+      region = normalizeRegion(data.regionId || data.region || data.location);
       break;
     }
     case "trips": {
@@ -600,7 +602,7 @@ function extractDocMeta(
       titleEn = typeof t === "object" ? (t.en || "") : "";
       description = (typeof d === "object" ? (d.ar || d.en || "") : String(d || "")).slice(0, 200);
       imageUrl = data.imageUrl || data.mainImageUrl || null;
-      region = data.region || data.regionId || "";
+      region = normalizeRegion(data.regionId || data.region);
       break;
     }
     case "events": {
@@ -608,7 +610,7 @@ function extractDocMeta(
       titleEn = data.titleEn || "";
       description = (data.descriptionAr || data.descriptionEn || "").slice(0, 200);
       imageUrl = data.imageUrl || data.mainImageUrl || null;
-      region = data.region || data.regionId || data.location || "";
+      region = normalizeRegion(data.regionId || data.region || data.location);
       break;
     }
     case "cultural_items": {
@@ -616,7 +618,7 @@ function extractDocMeta(
       titleEn = data.titleEn || "";
       description = (data.descriptionAr || data.descriptionEn || "").slice(0, 200);
       imageUrl = data.imageUrl || data.mainImageUrl || null;
-      region = data.region || data.regionId || "";
+      region = normalizeRegion(data.regionId || data.region);
       break;
     }
   }
@@ -655,6 +657,42 @@ async function loadEmbeddingCache(): Promise<Map<string, CachedEmbedding>> {
   return cache;
 }
 
+function normalizeRegion(raw: string | undefined | null): string {
+  if (!raw) return "";
+  const s = String(raw).trim().toLowerCase().replace(/\s+/g, "_");
+  const aliases: Record<string, string> = {
+    "central_region": "central_region",
+    "central": "central_region",
+    "najd": "central_region",
+    "المنطقة_الوسطى": "central_region",
+    "الوسطى": "central_region",
+
+    "western_region": "western_region",
+    "western": "western_region",
+    "hejaz": "western_region",
+    "al-hejaz": "western_region",
+    "المنطقة_الغربية": "western_region",
+    "الغربية": "western_region",
+
+    "eastern_region": "eastern_region",
+    "eastern": "eastern_region",
+    "المنطقة_الشرقية": "eastern_region",
+    "الشرقية": "eastern_region",
+
+    "northern_region": "northern_region",
+    "northern": "northern_region",
+    "المنطقة_الشمالية": "northern_region",
+    "الشمالية": "northern_region",
+
+    "southern_region": "southern_region",
+    "southern": "southern_region",
+    "asir": "southern_region",
+    "المنطقة_الجنوبية": "southern_region",
+    "الجنوبية": "southern_region",
+  };
+  return aliases[s] ?? s;
+}
+
 export const askRawi = onCall(
   {
     enforceAppCheck: false,
@@ -677,15 +715,23 @@ export const askRawi = onCall(
     if (!userMessage?.trim()) throw new HttpsError("invalid-argument", "userMessage is required");
 
     const genAI = new GoogleGenerativeAI(GEMINI_KEY);
+    const isAr = locale === "ar";
+
+    // ✦ FIX: normalize the incoming regionId the same way stored values are normalized
+    const wantedRegion = normalizeRegion(regionId);
 
     // 1. Embed the user query
     const queryEmbedding = await generateEmbedding(userMessage);
 
     // 2. Load cached embeddings and strictly filter by region when provided
     const cache = await loadEmbeddingCache();
-    const filteredCache = regionId
-      ? new Map([...cache.entries()].filter(([, meta]) => meta.region === regionId))
+
+    // ✦ FIX: compare two normalized values so format differences don't break filtering
+    const filteredCache = wantedRegion
+      ? new Map([...cache.entries()].filter(([, meta]) => meta.region === wantedRegion))
       : cache;
+
+    logger.info(`[askRawi] wantedRegion="${wantedRegion}" totalCache=${cache.size} filtered=${filteredCache.size}`);
 
     // 3. Cosine similarity → top-K (region-filtered)
     const scored: Array<{ key: string; score: number; meta: CachedEmbedding }> = [];
@@ -701,12 +747,11 @@ export const askRawi = onCall(
     // 4. Build retrieved context (top-K semantic matches)
     const contextLines = topDocs.map((d) => {
       const m = d.meta;
-      const title = locale === "ar" ? (m.titleAr || m.titleEn) : (m.titleEn || m.titleAr);
+      const title = isAr ? (m.titleAr || m.titleEn) : (m.titleEn || m.titleAr);
       return `• [${m.type}] ${title} (id:${m.docId}) — ${m.description.slice(0, 200)}`;
     }).join("\n");
 
     // 4b. Build full archive inventory from the region-filtered cache
-    //     Group by type so the model can reason about categories (e.g. "food items")
     const archiveByType = new Map<string, Array<{ id: string; titleAr: string; titleEn: string }>>();
     for (const meta of filteredCache.values()) {
       if (!archiveByType.has(meta.type)) archiveByType.set(meta.type, []);
@@ -721,36 +766,63 @@ export const askRawi = onCall(
     }
     const archiveSummary = archiveLines.join("\n");
 
+    // ✦ FIX: set of all real names — any ** wrap around a name not here gets stripped
+    const allowedNames = new Set<string>();
+    for (const meta of filteredCache.values()) {
+      if (meta.titleAr) allowedNames.add(meta.titleAr.trim());
+      if (meta.titleEn) allowedNames.add(meta.titleEn.trim());
+    }
+    const validIdSet = new Set([...filteredCache.values()].map((m) => m.docId));
+
     // 5. System prompt
-    const langInstruction = locale === "ar"
+    const langInstruction = isAr
       ? "You MUST respond entirely in Arabic (العربية). Do not mix languages."
       : "You MUST respond entirely in English. Do not mix languages.";
 
-    const systemPrompt = `You are Rawi (راوي), a warm and knowledgeable cultural narrator for Saudi Arabian heritage and tourism. You are aligned with Vision 2030's goal of promoting authentic Saudi cultural experiences.
+    const hasArchive = filteredCache.size > 0;
+
+    const systemPrompt = `You are "Rawi" (راوي), a passionate and knowledgeable Cultural Expert and Storyteller for Saudi heritage.
 
 ${langInstruction}
 
---- Available Archive Items ---
-These are ALL the real items available in the Athar database for this region. Use them as your source of truth:
+--- PERSONA & TONE ---
+- You are an "Expert Companion" (رفيق خبير), warm but never casual.
+- NEVER use patronizing language like "my son", "يا ولدي", or "my child". Address the user as a respected Explorer (مستكشف) or Guest (ضيف).
 
-${archiveSummary || (locale === "ar" ? "لا توجد عناصر مسجّلة لهذه المنطقة حالياً." : "No items registered for this region yet.")}
+--- CONVERSATION FLOW (CRITICAL) ---
+- This is an ONGOING dialogue. The 'Conversation context' below shows previous turns.
+- If the context is NOT empty, you have ALREADY greeted the user. Do NOT greet again.
+- NEVER say "أهلاً بك مجدداً", "أهلاً بك", "مرحباً", "Welcome back", or any greeting after the first turn.
+- Start answering the user's message immediately. No openers, no re-introductions.
+- If the user says "نعم" / "أكمل" / "Tell me more", look at the context to see WHICH item you were discussing and continue THAT specific topic.
 
---- Best Semantic Matches for this Query ---
-The following items are the closest matches to the user's specific query:
+--- STRICT GROUNDING (NO INVENTION) ---
+- The "Available Archive Items" below are the ONLY real items. They are your single source of truth.
+- NEVER invent, assume, or mention any place, food, craft, dress, or item that is NOT in the archive list.
+- When you name a SPECIFIC item that EXISTS in the archive list, wrap it in double asterisks, e.g. **اسم العنصر**.
+- NEVER wrap an item in asterisks unless its name appears in the archive list. General descriptive words stay in plain text.
+- Do NOT use hashtags.
+- NEVER mention "database", "archive", "Athar", "the platform", "Vision 2030", or that you are an AI.
+- BANNED phrases: (للأسف، أعتذر، قاعدة بياناتي، لا تتوفر لدي معلومات).
 
-${contextLines || (locale === "ar" ? "لم يتم العثور على تطابق دقيق — استخدم قائمة الأرشيف أعلاه." : "No close match found — refer to the archive list above.")}
+--- Available Archive Items (this region only) ---
+${hasArchive ? archiveSummary : (isAr
+    ? "لا توجد عناصر مسجّلة لهذه المنطقة حالياً."
+    : "No items registered for this region yet.")}
 
-Rules:
-- Respond warmly but not casually.
-- ONLY recommend items that appear in the archive lists above — never invent places, events, or cultural items.
-- If the user asks about a broad topic (like food, heritage, or music), you MUST scan the Available Archive Items and mention the specific relevant items by name (e.g., العريكة, المرسة) even if they did not appear in the semantic matches.
-- If the user's question closely matches items in the Semantic Matches section, prioritise those and describe them specifically.
-- At the END of your response, append a JSON block with up to ${MAX_SUGGESTED_ITEMS} item IDs of the most relevant items. Use exactly this format (no other text after it):
+--- Closest Matches to the User's Question ---
+${contextLines || (isAr ? "لا تطابق دقيق — استخدم قائمة الأرشيف أعلاه." : "No close match — use the archive list above.")}
+
+${!hasArchive ? (isAr
+    ? "بما أنه لا توجد عناصر لهذه المنطقة، تحدّث بدفء عن طابع المنطقة العام دون ذكر أي اسم محدد بين النجمتين، ودون اختلاق عناصر."
+    : "Since there are no items for this region, speak warmly about the region's general character WITHOUT naming specific items in asterisks and WITHOUT inventing anything.") : ""}
+
+--- OUTPUT TAIL ---
+At the END of your response, append a JSON block with up to ${MAX_SUGGESTED_ITEMS} item IDs from the archive list above (use the real id values). Format exactly:
 <<<RECOMMENDED>>>{"itemIds":["docId1","docId2"]}<<<END>>>
-- If no items are relevant, append: <<<RECOMMENDED>>>{"itemIds":[]}<<<END>>>`;
+If none are relevant, append: <<<RECOMMENDED>>>{"itemIds":[]}<<<END>>>`;
 
     // 6. Build conversation turns
-    const isAr = locale === "ar";
     const historyText = (recentMessages || [])
       .slice(-6)
       .map((m) => `${m.role === "user" ? (isAr ? "المستخدم" : "User") : "Rawi"}: ${m.content}`)
@@ -789,6 +861,12 @@ Rules:
       visibleText = rawText.replace(/<<<RECOMMENDED>>>[\s\S]*?<<<END>>>/, "").trim();
     }
 
+    // ✦ FIX: strip ** from any name not in the archive (prevents invented items being highlighted)
+    visibleText = visibleText.replace(/\*\*(.+?)\*\*/g, (full, inner) => {
+      const name = String(inner).trim();
+      return allowedNames.has(name) ? full : name;
+    });
+
     // 9. Look up metadata for suggested items
     const suggestedItems: Array<{
       id: string;
@@ -799,22 +877,24 @@ Rules:
     }> = [];
 
     for (const id of itemIds) {
-      // Search cache first
-      for (const meta of cache.values()) {
-        if (meta.docId === id) {
-          suggestedItems.push({
-            id,
-            type: meta.type,
-            titleAr: meta.titleAr,
-            titleEn: meta.titleEn,
-            imageUrl: meta.imageUrl,
-          });
-          break;
-        }
+      // ✦ FIX: reject any id not belonging to this region
+      if (!validIdSet.has(id)) {
+        logger.warn(`[askRawi] dropped invented/out-of-region itemId="${id}"`);
+        continue;
+      }
+      const meta = filteredCache.get([...filteredCache.entries()].find(([, m]) => m.docId === id)?.[0] ?? "");
+      if (meta) {
+        suggestedItems.push({
+          id,
+          type: meta.type,
+          titleAr: meta.titleAr,
+          titleEn: meta.titleEn,
+          imageUrl: meta.imageUrl,
+        });
       }
     }
 
-    logger.info(`[askRawi] session=${conversationId} locale=${locale} topDocs=${topDocs.length} suggested=${suggestedItems.length}`);
+    logger.info(`[askRawi] session=${conversationId} locale=${locale} region=${wantedRegion} topDocs=${topDocs.length} suggested=${suggestedItems.length}`);
 
     return { reply: visibleText, suggestedItems };
   }
