@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/favorites/favorite_item_model.dart';
@@ -9,9 +10,10 @@ import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:athar_app/core/utils/share_utils.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/profile/logic/favorites_notifier.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:athar_app/features/guide_market/screens/booking_form_screen.dart';
 import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
+import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
+import 'package:athar_app/features/profile/screens/profile_screen.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/services/tts_service.dart';
@@ -26,12 +28,17 @@ class TripDetailsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final l10n = AppLocalizations.of(context);
-    //acc
     final settings = ref.watch(settingsProvider);
     final ttsService = ref.read(ttsServiceProvider);
 
     final titleText = trip.getTitle(isAr);
     final descriptionText = trip.getDescription(isAr);
+    final isFullyBooked = trip.isPrivate
+        ? ref
+              .watch(bookedDatesForTripProvider(trip.id))
+              .whenOrNull(data: (dates) => trip.isPrivateFullyBooked(dates)) ??
+            false
+        : trip.isFullyBooked;
 
     return Scaffold(
       body: Stack(
@@ -62,36 +69,42 @@ class TripDetailsScreen extends ConsumerWidget {
                       // ── Title ──────────────────────────────────────
                       Text(trip.getTitle(isAr),
                           style: theme.textTheme.displayLarge),
+                      const SizedBox(height: 8),
+
+                      // ── Trip type + accessibility badges on one row ─
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          _buildTripTypeBadge(theme, l10n),
+                          ..._buildAccessibilityBadgeList(theme, l10n),
+                        ],
+                      ),
                       const SizedBox(height: 12),
 
                       // ── Price display ──────────────────────────────
                       _buildPriceRow(theme, isAr, l10n),
                       const SizedBox(height: 16),
 
-                      // ── Accessibility badges ───────────────────────
-                      if (trip.accessibilityFeatures.isNotEmpty)
-                        _buildAccessibilityBadges(theme, l10n),
+                      // ── Description ────────────────────────────────
+                      if (descriptionText.isNotEmpty) ...[
+                        const SizedBox(height: 20),
+                        MarkdownBody(
+                          data: descriptionText,
+                          styleSheet: MarkdownStyleSheet(
+                            p: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
+                            listBullet: theme.textTheme.bodyMedium
+                                ?.copyWith(height: 1.6),
+                            strong: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
 
                       const SizedBox(height: 20),
 
-                      // ── About section ──────────────────────────────
-                      Text(l10n.about_trip,
-                          style: theme.textTheme.headlineSmall),
-                      const SizedBox(height: 12),
-
-                      MarkdownBody(
-                        data: trip.getDescription(isAr),
-                        styleSheet: MarkdownStyleSheet(
-                          p: theme.textTheme.bodyLarge?.copyWith(height: 1.8),
-                          listBullet: TextStyle(
-                              color: theme.colorScheme.primary, fontSize: 16),
-                          strong: theme.textTheme.bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-
-                      // ── Tutor / company info — live from user doc ──
+                      // ── Guide info — live from user doc ────────────
                       StreamBuilder<DocumentSnapshot>(
                         stream: trip.tutorId != null
                             ? FirebaseFirestore.instance
@@ -126,6 +139,12 @@ class TripDetailsScreen extends ConsumerWidget {
                       ),
                       _buildInfoRow(context, Icons.verified_outlined,
                           '${l10n.license}: ${trip.license}'),
+                      if (trip.timeRange != null)
+                        _buildInfoRow(
+                          context,
+                          Icons.access_time,
+                          '${l10n.time}: ${trip.timeRange}',
+                        ),
                     ],
                   ),
                 ),
@@ -203,7 +222,7 @@ class TripDetailsScreen extends ConsumerWidget {
             ),
           ),
 
-          // ── Book Now button ───────────────────────────────────────
+          // ── Book Now / Fully Booked button ────────────────────────
           Positioned(
             bottom: 0,
             left: 0,
@@ -223,43 +242,101 @@ class TripDetailsScreen extends ConsumerWidget {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {
-                    final currentUser = ref.read(authNotifierProvider).value;
-                    if (currentUser is TouristModel &&
-                        (currentUser.phoneNumber == null ||
-                            currentUser.phoneNumber!.isEmpty)) {
-                      showDialog(
-                        context: context,
-                        builder: (_) => AlertDialog(
-                          title: Text(l10n.completeProfileTitle),
-                          content: Text(l10n.phoneRequiredForTourist),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(l10n.cancel),
+                  onPressed: isFullyBooked
+                      ? null
+                      : () {
+                          final currentUser =
+                              ref.read(authNotifierProvider).value;
+                          if (currentUser is TouristModel &&
+                              (currentUser.phoneNumber == null ||
+                                  currentUser.phoneNumber!.isEmpty)) {
+                            showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                title: Text(l10n.completeProfileTitle),
+                                content:
+                                    Text(l10n.phoneRequiredForTourist),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context),
+                                    child: Text(l10n.cancel),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              const ProfileScreen(),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(l10n.editProfile),
+                                  ),
+                                ],
+                              ),
+                            );
+                            return;
+                          }
+                          ref
+                              .read(bookingNotifierProvider.notifier)
+                              .startBooking(trip);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  BookingFormScreen(trip: trip),
                             ),
-                            ElevatedButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(l10n.editProfile),
-                            ),
-                          ],
-                        ),
-                      );
-                      return;
-                    }
-                    ref
-                        .read(bookingNotifierProvider.notifier)
-                        .startBooking(trip);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BookingFormScreen(trip: trip),
-                      ),
-                    );
-                  },
-                  child: Text(l10n.book_now),
+                          );
+                        },
+                  style: isFullyBooked
+                      ? ElevatedButton.styleFrom(
+                          backgroundColor:
+                              theme.colorScheme.onSurface.withValues(alpha: 0.12),
+                          foregroundColor:
+                              theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                        )
+                      : null,
+                  child: Text(
+                    isFullyBooked ? l10n.tripFullyBooked : l10n.book_now,
+                  ),
                 ),
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTripTypeBadge(ThemeData theme, AppLocalizations l10n) {
+    final isPrivate = trip.isPrivate;
+    final color = theme.colorScheme.primary;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isPrivate ? Icons.lock_outline : Icons.group_outlined,
+            size: 14,
+            color: color,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            isPrivate ? l10n.tripTypePrivate : l10n.tripTypeShared,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: color,
+              fontFamily: 'Tajawal',
             ),
           ),
         ],
@@ -272,30 +349,28 @@ class TripDetailsScreen extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          // قسم البالغين
           _buildPriceItem(
             theme,
             label: l10n.tripAdultsPriceLabel,
             price: CurrencyFormatter.format(trip.adultPrice),
             icon: Icons.person_outline,
           ),
-
-          Container(
-            height: 30,
-            width: 1,
-            margin: const EdgeInsets.symmetric(horizontal: 24),
-            color: theme.dividerColor.withValues(alpha: 0.2),
-          ),
-
-          // قسم الأطفال
-          _buildPriceItem(
-            theme,
-            label: l10n.tripChildrenPriceLabel,
-            price: trip.childPrice == 0
-                ? Text(l10n.commonFree)
-                : CurrencyFormatter.format(trip.childPrice),
-            icon: Icons.child_care_outlined,
-          ),
+          if (trip.allowsKids) ...[
+            Container(
+              height: 30,
+              width: 1,
+              margin: const EdgeInsets.symmetric(horizontal: 24),
+              color: theme.dividerColor.withValues(alpha: 0.2),
+            ),
+            _buildPriceItem(
+              theme,
+              label: l10n.tripChildrenPriceLabel,
+              price: trip.childPrice == 0
+                  ? Text(l10n.commonFree)
+                  : CurrencyFormatter.format(trip.childPrice),
+              icon: Icons.child_care_outlined,
+            ),
+          ],
         ],
       ),
     );
@@ -336,7 +411,8 @@ class TripDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildAccessibilityBadges(ThemeData theme, AppLocalizations l10n) {
+  List<Widget> _buildAccessibilityBadgeList(
+      ThemeData theme, AppLocalizations l10n) {
     const badgeInfo = {
       'wheelchair': (icon: Icons.accessible_forward_rounded,),
       'family': (icon: Icons.family_restroom_rounded,),
@@ -346,8 +422,7 @@ class TripDetailsScreen extends ConsumerWidget {
         trip.accessibilityFeatures.where(badgeInfo.containsKey).map((key) {
       final info = badgeInfo[key]!;
       return Container(
-        margin: const EdgeInsetsDirectional.only(end: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
           color: theme.colorScheme.onSurface.withValues(alpha: 0.04),
           borderRadius: BorderRadius.circular(20),
@@ -356,7 +431,7 @@ class TripDetailsScreen extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(info.icon,
-                size: 16,
+                size: 14,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             const SizedBox(width: 6),
             Text(
@@ -364,7 +439,7 @@ class TripDetailsScreen extends ConsumerWidget {
                   ? l10n.tripAccessibilityWheelchairShort
                   : l10n.tripAccessibilityFamilyShort,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                 fontFamily: 'Tajawal',
@@ -375,15 +450,7 @@ class TripDetailsScreen extends ConsumerWidget {
       );
     }).toList();
 
-    if (badges.isEmpty) return const SizedBox.shrink();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Wrap(
-        runSpacing: 10,
-        children: badges,
-      ),
-    );
+    return badges;
   }
 
   Widget _buildInfoRow(BuildContext context, IconData icon, String text,
@@ -415,7 +482,6 @@ class TripDetailsScreen extends ConsumerWidget {
   void _showGuideDetailsPopUp(
       BuildContext context, AppLocalizations l10n, bool isAr) {
     final theme = Theme.of(context);
-    // guideRating / guideReviewsCount stay as trip snapshots (performance)
     final rating = trip.guideRating;
     final reviews = trip.guideReviewsCount;
 

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../widgets/custom_stepper.dart';
 import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
 import 'package:athar_app/features/guide_market/logic/booking_form_notifier.dart';
+import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
 import 'package:athar_app/features/guide_market/screens/booking_summary_screen.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -18,10 +19,14 @@ class BookingFormScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final form = ref.watch(bookingFormProvider);
     final formNotifier = ref.read(bookingFormProvider.notifier);
+    // For private trips, eagerly load booked dates so the picker has them ready.
+    final bookedDates = trip.isPrivate
+        ? ref.watch(bookedDatesForTripProvider(trip.id)).valueOrNull
+        : null;
 
     return Scaffold(
       appBar: AppBar(
@@ -61,20 +66,24 @@ class BookingFormScreen extends ConsumerWidget {
                         count: form.adults,
                         onAdd: formNotifier.incrementAdults,
                         onRemove: formNotifier.decrementAdults,
+                        canIncrement: trip.availableSeats == null ||
+                            form.adults < trip.availableSeats!,
                         theme: theme,
                       ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24),
-                        child: Divider(thickness: 0.8, height: 1),
-                      ),
-                      _buildCounterRow(
-                        title: l10n.children,
-                        subtitle: l10n.bookingChildrenAgeSubtitle,
-                        count: form.children,
-                        onAdd: formNotifier.incrementChildren,
-                        onRemove: formNotifier.decrementChildren,
-                        theme: theme,
-                      ),
+                      if (trip.allowsKids) ...[
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Divider(thickness: 0.8, height: 1),
+                        ),
+                        _buildCounterRow(
+                          title: l10n.children,
+                          subtitle: l10n.bookingChildrenAgeSubtitle,
+                          count: form.children,
+                          onAdd: formNotifier.incrementChildren,
+                          onRemove: formNotifier.decrementChildren,
+                          theme: theme,
+                        ),
+                      ],
                       const SizedBox(height: 48),
                       _buildSectionHeader(
                         l10n.bookingDateTimeTitle,
@@ -88,7 +97,7 @@ class BookingFormScreen extends ConsumerWidget {
                             ? l10n.select
                             : form.selectedDate.toString().split(' ')[0],
                         icon: Icons.event_available,
-                        onTap: () => _pickDate(context, formNotifier, trip),
+                        onTap: () => _pickDate(context, formNotifier, trip, bookedDates),
                         theme: theme,
                       ),
                     ],
@@ -141,6 +150,7 @@ class BookingFormScreen extends ConsumerWidget {
     required VoidCallback onAdd,
     required VoidCallback onRemove,
     required ThemeData theme,
+    bool canIncrement = true,
   }) {
     return Row(
       children: [
@@ -167,7 +177,8 @@ class BookingFormScreen extends ConsumerWidget {
             ),
           ),
         ),
-        _counterButton(Icons.add, onAdd, theme, isPrimary: true),
+        _counterButton(Icons.add, onAdd, theme,
+            isPrimary: true, isEnabled: canIncrement),
       ],
     );
   }
@@ -254,7 +265,11 @@ class BookingFormScreen extends ConsumerWidget {
 
 
   Future<void> _pickDate(
-      BuildContext context, BookingFormNotifier formNotifier, TripModel trip) async {
+    BuildContext context,
+    BookingFormNotifier formNotifier,
+    TripModel trip,
+    Set<String>? bookedDates,
+  ) async {
     final now = DateTime.now();
     final first = trip.startDate != null && trip.startDate!.isAfter(now)
         ? trip.startDate!
@@ -265,6 +280,16 @@ class BookingFormScreen extends ConsumerWidget {
       initialDate: first,
       firstDate: first,
       lastDate: last,
+      // For private trips, grey out days that already have an active booking.
+      selectableDayPredicate: (trip.isPrivate && bookedDates != null)
+          ? (day) {
+              final key =
+                  '${day.year.toString().padLeft(4, '0')}-'
+                  '${day.month.toString().padLeft(2, '0')}-'
+                  '${day.day.toString().padLeft(2, '0')}';
+              return !bookedDates.contains(key);
+            }
+          : null,
       builder: (context, child) => Theme(
         data: Theme.of(context),
         child: child!,

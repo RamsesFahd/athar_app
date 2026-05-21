@@ -107,36 +107,35 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
 
                               const SizedBox(height: 10),
                               _buildPriceBreakdown(l10n, theme),
-                            ],
-                          ),
-                        ),
-                      ),
+                              const SizedBox(height: 16),
 
-                      const SizedBox(height: 12),
-
-                      // قسم التنويه
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(Icons.info_outline, size: 24, color: theme.colorScheme.primary),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                l10n.payment_note,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  color: theme.colorScheme.primary,
+                              // قسم التنويه — يتمرر مع باقي بيانات الحجز
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary.withValues(alpha: 0.05),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Icon(Icons.info_outline, size: 24, color: theme.colorScheme.primary),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Text(
+                                        l10n.payment_note,
+                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          color: theme.colorScheme.primary,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -180,8 +179,12 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
       navigator.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
     } catch (e) {
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
+      final msg = e.toString().contains('tripDayAlreadyBookedError')
+          ? l10n.tripDayAlreadyBookedError
+          : l10n.commonErrorWithMessage(e.toString());
       messenger.showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
+        SnackBar(content: Text(msg), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);

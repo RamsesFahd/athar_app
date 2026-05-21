@@ -48,6 +48,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   DateTime? _endDate;
   bool _allowsKids = false;
   bool _isMultiDayTrip = false;
+  String _tripType = 'shared';
   File? _pickedImage;
   String? _existingImageUrl;
   bool _isSubmitting = false;
@@ -100,6 +101,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
     _endTime = _parseTimeStr(trip.endTime);
     _startDate = trip.startDate;
     _endDate = trip.endDate;
+    _tripType = trip.tripType;
     _accessibilityFeatures.addAll(trip.accessibilityFeatures);
     _tripLanguages.addAll(trip.tripLanguages ?? []);
     _selectedCity = _saudiCities.firstWhere(
@@ -313,6 +315,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
         guideLanguages: tutor.languages,
         guideRating: tutor.rating,
         guideReviewsCount: tutor.reviewsCount,
+        tripType: _tripType,
         status: 'pending',
         startTime: _fmtTimeStr(_startTime!),
         endTime: _fmtTimeStr(_endTime!),
@@ -451,6 +454,10 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
               ),
             _buildImagePicker(theme),
             const SizedBox(height: 24),
+            _SectionHeader(theme: theme, title: l10n.addTripTypeSection),
+            const SizedBox(height: 12),
+            _buildTripTypeSection(theme, l10n),
+            const SizedBox(height: 20),
             _SectionHeader(theme: theme, title: l10n.addTripTimingDurationSection),
             const SizedBox(height: 12),
             _buildAvailabilitySection(theme),
@@ -589,6 +596,49 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
             ),
         ],
       ),
+    );
+  }
+
+  // ── Section: Trip Type ─────────────────────────────────────────────────────
+
+  Widget _buildTripTypeSection(ThemeData theme, AppLocalizations l10n) {
+    return Row(
+      children: ['shared', 'private'].map((type) {
+        final selected = _tripType == type;
+        final label = type == 'shared' ? l10n.addTripTypeShared : l10n.addTripTypePrivate;
+        return Expanded(
+          child: GestureDetector(
+            onTap: () => setState(() => _tripType = type),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              margin: EdgeInsetsDirectional.only(end: type == 'shared' ? 8 : 0),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(
+                color: selected
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: selected
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.primary.withValues(alpha: 0.35),
+                  width: selected ? 2 : 1.5,
+                ),
+              ),
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: selected
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.onSurface,
+                  fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 

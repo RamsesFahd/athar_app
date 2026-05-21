@@ -22,6 +22,7 @@ class TripModel {
   final String? tutorId;
   final String status; // 'pending' | 'approved' | 'rejected'
   final String tutorType; // 'individual' | 'company'
+  final String tripType; // 'shared' | 'private'
   final List<String> accessibilityFeatures;
   final List<String> interestIds;
   final HeroAiText? heroCopy;
@@ -81,6 +82,7 @@ class TripModel {
     this.tutorId,
     this.status = 'pending',
     this.tutorType = 'individual',
+    this.tripType = 'shared',
     this.accessibilityFeatures = const [],
     this.guideBio,
     this.guideLanguages,
@@ -112,6 +114,29 @@ class TripModel {
   }
 
   bool get isMultiDay => (tripDurationDays ?? 0) > 1 || durationDays > 1;
+
+  bool get isPrivate => tripType == 'private';
+
+  /// For shared trips: driven by availableSeats. For private trips use
+  /// [isPrivateFullyBooked] instead (requires the async booked-dates set).
+  bool get isFullyBooked => availableSeats != null && availableSeats! <= 0;
+
+  /// Returns true when every calendar day in [startDate]→[endDate] has an
+  /// active (pending/approved) booking. Only meaningful for private trips.
+  bool isPrivateFullyBooked(Set<String> bookedDates) {
+    if (startDate == null || endDate == null) return false;
+    var day = DateTime(startDate!.year, startDate!.month, startDate!.day);
+    final last = DateTime(endDate!.year, endDate!.month, endDate!.day);
+    while (!day.isAfter(last)) {
+      final key =
+          '${day.year.toString().padLeft(4, '0')}-'
+          '${day.month.toString().padLeft(2, '0')}-'
+          '${day.day.toString().padLeft(2, '0')}';
+      if (!bookedDates.contains(key)) return false;
+      day = day.add(const Duration(days: 1));
+    }
+    return true;
+  }
 
   /// Human-readable daily time slot, e.g. "08:00 – 18:00".
   String? get timeRange {
@@ -160,6 +185,7 @@ class TripModel {
       tutorId: map['tutorId'],
       status: map['status'] ?? 'pending',
       tutorType: map['tutorType'] ?? 'individual',
+      tripType: map['tripType'] as String? ?? 'shared',
       accessibilityFeatures:
           List<String>.from(map['accessibilityFeatures'] ?? []),
       interestIds: List<String>.from(map['interestIds'] ?? []),
@@ -206,6 +232,7 @@ class TripModel {
       'tutorId': tutorId,
       'status': status,
       'tutorType': tutorType,
+      'tripType': tripType,
       'accessibilityFeatures': accessibilityFeatures,
       'guideBio': guideBio,
       'guideLanguages': guideLanguages,

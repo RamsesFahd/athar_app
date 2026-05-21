@@ -1860,6 +1860,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bookingShownAfterConfirmation => 'Shown after confirmation';
 
   @override
+  String get tripDayAlreadyBookedError =>
+      'This day is already booked for this trip. Please choose a different day.';
+
+  @override
+  String get tripTypeShared => 'Shared Trip';
+
+  @override
+  String get tripTypePrivate => 'Private Trip';
+
+  @override
+  String get tripFullyBooked => 'Fully Booked';
+
+  @override
+  String get addTripTypeSection => 'Trip Type';
+
+  @override
+  String get addTripTypeShared => 'Shared (multiple tourists)';
+
+  @override
+  String get addTripTypePrivate => 'Private (one booking only)';
+
+  @override
   String get tripAdultsPriceLabel => 'Adults';
 
   @override

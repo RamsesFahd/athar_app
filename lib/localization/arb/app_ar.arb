@@ -710,6 +710,13 @@
   "bookingPhoneLabel": "رقم التواصل",
   "bookingShownAfterConfirmation": "سيظهر بعد التأكيد",
 
+  "tripDayAlreadyBookedError": "هذا اليوم محجوز مسبقًا لهذه الرحلة. يرجى اختيار يوم آخر.",
+  "tripTypeShared": "رحلة جماعية",
+  "tripTypePrivate": "رحلة خاصة",
+  "tripFullyBooked": "محجوز بالكامل",
+  "addTripTypeSection": "نوع الرحلة",
+  "addTripTypeShared": "جماعية (يحجز عدة سياح)",
+  "addTripTypePrivate": "خاصة (حجز واحد فقط)",
   "tripAdultsPriceLabel": "للبالغين",
   "tripChildrenPriceLabel": "للأطفال",
   "tripGuideUnavailable": "لا تتوفر معلومات المرشد",

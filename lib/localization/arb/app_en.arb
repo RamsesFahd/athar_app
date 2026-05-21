@@ -742,6 +742,13 @@
   "bookingPhoneLabel": "Phone",
   "bookingShownAfterConfirmation": "Shown after confirmation",
 
+  "tripDayAlreadyBookedError": "This day is already booked for this trip. Please choose a different day.",
+  "tripTypeShared": "Shared Trip",
+  "tripTypePrivate": "Private Trip",
+  "tripFullyBooked": "Fully Booked",
+  "addTripTypeSection": "Trip Type",
+  "addTripTypeShared": "Shared (multiple tourists)",
+  "addTripTypePrivate": "Private (one booking only)",
   "tripAdultsPriceLabel": "Adults",
   "tripChildrenPriceLabel": "Children",
   "tripGuideUnavailable": "No guide info available",

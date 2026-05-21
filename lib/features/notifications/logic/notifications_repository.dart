@@ -36,12 +36,17 @@ class NotificationsRepository {
     required String type,
     String? bodyOverrideAr,
     String? bodyOverrideEn,
+    // Deterministic ID prevents duplicate writes from Cloud Functions and
+    // client code firing for the same event.
+    String? notificationId,
   }) async {
-    final doc = _firestore
+    final collection = _firestore
         .collection('users')
         .doc(userId)
-        .collection('notifications')
-        .doc();
+        .collection('notifications');
+    final doc = notificationId != null
+        ? collection.doc(notificationId)
+        : collection.doc();
 
     await doc.set({
       'type': type,

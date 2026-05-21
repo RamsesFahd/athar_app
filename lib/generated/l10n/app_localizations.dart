@@ -3590,6 +3590,48 @@ abstract class AppLocalizations {
   /// **'Shown after confirmation'**
   String get bookingShownAfterConfirmation;
 
+  /// No description provided for @tripDayAlreadyBookedError.
+  ///
+  /// In en, this message translates to:
+  /// **'This day is already booked for this trip. Please choose a different day.'**
+  String get tripDayAlreadyBookedError;
+
+  /// No description provided for @tripTypeShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared Trip'**
+  String get tripTypeShared;
+
+  /// No description provided for @tripTypePrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Private Trip'**
+  String get tripTypePrivate;
+
+  /// No description provided for @tripFullyBooked.
+  ///
+  /// In en, this message translates to:
+  /// **'Fully Booked'**
+  String get tripFullyBooked;
+
+  /// No description provided for @addTripTypeSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip Type'**
+  String get addTripTypeSection;
+
+  /// No description provided for @addTripTypeShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared (multiple tourists)'**
+  String get addTripTypeShared;
+
+  /// No description provided for @addTripTypePrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Private (one booking only)'**
+  String get addTripTypePrivate;
+
   /// No description provided for @tripAdultsPriceLabel.
   ///
   /// In en, this message translates to:

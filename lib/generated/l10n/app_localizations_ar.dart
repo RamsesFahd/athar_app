@@ -1840,6 +1840,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookingShownAfterConfirmation => 'سيظهر بعد التأكيد';
 
   @override
+  String get tripDayAlreadyBookedError =>
+      'هذا اليوم محجوز مسبقًا لهذه الرحلة. يرجى اختيار يوم آخر.';
+
+  @override
+  String get tripTypeShared => 'رحلة جماعية';
+
+  @override
+  String get tripTypePrivate => 'رحلة خاصة';
+
+  @override
+  String get tripFullyBooked => 'محجوز بالكامل';
+
+  @override
+  String get addTripTypeSection => 'نوع الرحلة';
+
+  @override
+  String get addTripTypeShared => 'جماعية (يحجز عدة سياح)';
+
+  @override
+  String get addTripTypePrivate => 'خاصة (حجز واحد فقط)';
+
+  @override
   String get tripAdultsPriceLabel => 'للبالغين';
 
   @override
