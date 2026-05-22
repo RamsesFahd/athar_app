@@ -887,6 +887,7 @@
 
   "adminUsersTab": "Users",
   "adminGuidesTab": "Guides",
+  "adminTripsTab": "Trips",
   "adminSearchUsersHint": "Search by name or email...",
   "adminNoUsersFound": "No users found",
   "adminNoResultsFor": "No results for \"{query}\"",
@@ -946,6 +947,7 @@
   "adminAddAttraction": "Add Attraction",
   "adminEditAttraction": "Edit Attraction",
   "adminNoAttractions": "No attractions yet. Tap + to add one.",
+  "adminNoEvents": "No events yet. Tap + to add one.",
   "adminDeleteAttraction": "Delete Attraction",
   "adminDeleteAttractionConfirm": "Delete \"{name}\"? This cannot be undone.",
   "@adminDeleteAttractionConfirm": {
@@ -1141,5 +1143,15 @@
   "adminRejectionDetails": "Rejection Details",
   "adminVerificationDetails": "Verification Details",
   "adminBy": "By",
-  "adminVerify": "Verify"
+  "adminVerify": "Verify",
+  "adminRevokeVerificationTitle": "Revoke Verification",
+  "adminRevokeVerificationConfirm": "Revoke verification for \"{name}\"? They will need to resubmit documents.",
+  "@adminRevokeVerificationConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "adminRevokeVerification": "Revoke Verification",
+  "adminVerificationRevoked": "Verification revoked",
+  "adminVerificationRevokedSuccess": "Verification revoked successfully"
 }

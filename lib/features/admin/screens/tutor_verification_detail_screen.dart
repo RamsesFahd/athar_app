@@ -21,6 +21,64 @@ class _TutorVerificationDetailScreenState
 
   TutorModel get tutor => widget.tutor;
 
+  // ── Revoke verification ──────────────────────────────────────────────────────────────
+
+  Future<void> _showRevokeDialog() async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.adminRevokeVerificationTitle),
+        content: Text(l10n.adminRevokeVerificationConfirm(tutor.fullName)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.adminCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            child: Text(l10n.adminRevokeVerification),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) await _revoke();
+  }
+
+  Future<void> _revoke() async {
+    final admin = ref.read(authNotifierProvider).value;
+    if (admin == null) return;
+    setState(() => _isLoading = true);
+    try {
+      await ref.read(adminRepositoryProvider).rejectTutor(
+            tutor.uId,
+            adminId: admin.uId,
+            adminName: admin.fullName,
+            reason: AppLocalizations.of(context).adminVerificationRevoked,
+          );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              AppLocalizations.of(context).adminVerificationRevokedSuccess),
+          backgroundColor: Colors.red,
+        ),
+      );
+      Navigator.of(context).pop();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(AppLocalizations.of(context)
+                .commonErrorWithMessage(e.toString())),
+            backgroundColor: Colors.red),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   // ── Approve ──────────────────────────────────────────────────────────────────
 
   Future<void> _showApproveDialog() async {
@@ -66,7 +124,10 @@ class _TutorVerificationDetailScreenState
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text(AppLocalizations.of(context)
+                .commonErrorWithMessage(e.toString())),
+            backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -98,7 +159,8 @@ class _TutorVerificationDetailScreenState
             children: [
               Text(
                 l10n.adminRejectionReason,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
               Text(
@@ -161,7 +223,10 @@ class _TutorVerificationDetailScreenState
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
+        SnackBar(
+            content: Text(AppLocalizations.of(context)
+                .commonErrorWithMessage(e.toString())),
+            backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -213,7 +278,9 @@ class _TutorVerificationDetailScreenState
               : null,
           child: tutor.profileImage == null
               ? Text(
-                  tutor.fullName.isNotEmpty ? tutor.fullName[0].toUpperCase() : '?',
+                  tutor.fullName.isNotEmpty
+                      ? tutor.fullName[0].toUpperCase()
+                      : '?',
                   style: const TextStyle(fontSize: 24),
                 )
               : null,
@@ -234,7 +301,8 @@ class _TutorVerificationDetailScreenState
                   children: [
                     Icon(Icons.phone_outlined,
                         size: 13,
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.45)),
+                        color: theme.colorScheme.onSurface
+                            .withValues(alpha: 0.45)),
                     const SizedBox(width: 4),
                     Text(tutor.phoneNumber!,
                         style: theme.textTheme.bodySmall?.copyWith(
@@ -263,7 +331,9 @@ class _TutorVerificationDetailScreenState
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        isIndividual ? l10n.adminGuideTypeIndividual : l10n.adminGuideTypeCompany,
+        isIndividual
+            ? l10n.adminGuideTypeIndividual
+            : l10n.adminGuideTypeCompany,
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
@@ -373,8 +443,7 @@ class _TutorVerificationDetailScreenState
     final isExpiringSoon = expiryDate != null &&
         expiryDate.difference(DateTime.now()).inDays < 30 &&
         expiryDate.isAfter(DateTime.now());
-    final isExpired =
-        expiryDate != null && expiryDate.isBefore(DateTime.now());
+    final isExpired = expiryDate != null && expiryDate.isBefore(DateTime.now());
     final l10n = AppLocalizations.of(context);
 
     return Row(
@@ -387,8 +456,9 @@ class _TutorVerificationDetailScreenState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(label,
-                  style: theme.textTheme.bodySmall
-                      ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                      color:
+                          theme.colorScheme.onSurface.withValues(alpha: 0.5))),
               const SizedBox(height: 2),
               Text(
                 value ?? '—',
@@ -415,8 +485,8 @@ class _TutorVerificationDetailScreenState
       ),
       child: Text(
         label,
-        style: TextStyle(
-            fontSize: 11, fontWeight: FontWeight.bold, color: color),
+        style:
+            TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color),
       ),
     );
   }
@@ -452,9 +522,11 @@ class _TutorVerificationDetailScreenState
               ),
               const SizedBox(width: 6),
               Text(
-                isRejected ? l10n.adminRejectionDetails : l10n.adminVerificationDetails,
-                style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold, color: labelColor),
+                isRejected
+                    ? l10n.adminRejectionDetails
+                    : l10n.adminVerificationDetails,
+                style: theme.textTheme.titleSmall
+                    ?.copyWith(fontWeight: FontWeight.bold, color: labelColor),
               ),
             ],
           ),
@@ -471,7 +543,8 @@ class _TutorVerificationDetailScreenState
           ),
           if (isRejected && tutor.rejectionReason != null) ...[
             const SizedBox(height: 6),
-            _decisionRow(theme, l10n.adminRejectionReason, tutor.rejectionReason!),
+            _decisionRow(
+                theme, l10n.adminRejectionReason, tutor.rejectionReason!),
           ],
         ],
       ),
@@ -501,6 +574,32 @@ class _TutorVerificationDetailScreenState
 
   Widget _buildBottomBar(ThemeData theme) {
     final l10n = AppLocalizations.of(context);
+    final isVerified = tutor.verificationStatus == VerificationStatus.verified;
+
+    if (isVerified) {
+      return SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: _isLoading ? null : _showRevokeDialog,
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              icon: const Icon(Icons.block, size: 18),
+              label: Text(l10n.adminRevokeVerification,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+            ),
+          ),
+        ),
+      );
+    }
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

@@ -2200,6 +2200,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminGuidesTab => 'المرشدون';
 
   @override
+  String get adminTripsTab => 'الرحلات';
+
+  @override
   String get adminSearchUsersHint => 'ابحث بالاسم أو البريد...';
 
   @override
@@ -2307,6 +2310,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminNoAttractions => 'لا توجد معالم بعد. اضغط + لإضافة معلم.';
+
+  @override
+  String get adminNoEvents => 'لا توجد فعاليات بعد. اضغط + لإضافة فعالية.';
 
   @override
   String get adminDeleteAttraction => 'حذف المعلم';
@@ -2802,4 +2808,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminVerify => 'توثيق';
+
+  @override
+  String get adminRevokeVerificationTitle => 'إلغاء التوثيق';
+
+  @override
+  String adminRevokeVerificationConfirm(String name) {
+    return 'هل تريد إلغاء توثيق "$name"؟ سيحتاج لإعادة رفع الوثائق.';
+  }
+
+  @override
+  String get adminRevokeVerification => 'إلغاء التوثيق';
+
+  @override
+  String get adminVerificationRevoked => 'تم إلغاء التوثيق';
+
+  @override
+  String get adminVerificationRevokedSuccess => 'تم إلغاء التوثيق بنجاح';
 }

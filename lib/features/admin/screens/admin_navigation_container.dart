@@ -3,14 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
-import 'package:athar_app/features/admin/screens/trip_approvals_screen.dart';
+import 'package:athar_app/features/admin/screens/trip_bookings_screen.dart';
 import 'package:athar_app/features/admin/screens/users_management_screen.dart';
-import 'package:athar_app/features/admin/screens/all_bookings_screen.dart';
 import 'package:athar_app/features/admin/screens/cultural_archive_admin_screen.dart';
-import 'package:athar_app/features/admin/screens/add_event_screen.dart';
 import 'package:athar_app/features/admin/screens/contributions_review_screen.dart';
-import 'package:athar_app/features/admin/screens/attractions_admin_screen.dart';
-import 'package:athar_app/features/admin/screens/content_migration_screen.dart';
+import 'package:athar_app/features/admin/screens/events_attractions_admin_screen.dart';
 
 class AdminNavigationContainer extends ConsumerStatefulWidget {
   const AdminNavigationContainer({super.key});
@@ -26,32 +23,27 @@ class _AdminNavigationContainerState
 
   final List<Widget> _screens = const [
     UsersManagementScreen(),
-    TripApprovalsScreen(),
-    AllBookingsScreen(),
+    TripBookingsScreen(),
     CulturalArchiveAdminScreen(),
-    AddEventScreen(),
+    EventsAttractionsAdminScreen(),
     ContributionsReviewScreen(),
-    AttractionsAdminScreen(),
-    ContentMigrationScreen(),
   ];
 
   final List<({String label, IconData icon})> _tabs = const [
     (label: 'People', icon: Icons.people_outline),
     (label: 'Trips', icon: Icons.card_travel_outlined),
-    (label: 'Bookings', icon: Icons.book_online_outlined),
     (label: 'Archive', icon: Icons.museum_outlined),
     (label: 'Events', icon: Icons.celebration_outlined),
     (label: 'Contributions', icon: Icons.volunteer_activism_outlined),
-    (label: 'Attractions', icon: Icons.place_outlined),
-    (label: 'Migration', icon: Icons.auto_awesome_outlined),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
-          'Admin — ${_tabs[_currentIndex].label}',
+          _tabs[_currentIndex].label,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: AppColors.primary,

@@ -855,6 +855,7 @@
 
   "adminUsersTab": "المستخدمون",
   "adminGuidesTab": "المرشدون",
+  "adminTripsTab": "الرحلات",
   "adminSearchUsersHint": "ابحث بالاسم أو البريد...",
   "adminNoUsersFound": "لا يوجد مستخدمون",
   "adminNoResultsFor": "لا توجد نتائج لـ \"{query}\"",
@@ -914,6 +915,7 @@
   "adminAddAttraction": "إضافة معلم",
   "adminEditAttraction": "تعديل معلم",
   "adminNoAttractions": "لا توجد معالم بعد. اضغط + لإضافة معلم.",
+  "adminNoEvents": "لا توجد فعاليات بعد. اضغط + لإضافة فعالية.",
   "adminDeleteAttraction": "حذف المعلم",
   "adminDeleteAttractionConfirm": "حذف \"{name}\"؟ لا يمكن التراجع عن هذه العملية.",
   "@adminDeleteAttractionConfirm": {
@@ -1109,5 +1111,15 @@
   "adminRejectionDetails": "تفاصيل الرفض",
   "adminVerificationDetails": "تفاصيل التوثيق",
   "adminBy": "بواسطة",
-  "adminVerify": "توثيق"
+  "adminVerify": "توثيق",
+  "adminRevokeVerificationTitle": "إلغاء التوثيق",
+  "adminRevokeVerificationConfirm": "هل تريد إلغاء توثيق \"{name}\"؟ سيحتاج لإعادة رفع الوثائق.",
+  "@adminRevokeVerificationConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "adminRevokeVerification": "إلغاء التوثيق",
+  "adminVerificationRevoked": "تم إلغاء التوثيق",
+  "adminVerificationRevokedSuccess": "تم إلغاء التوثيق بنجاح"
 }

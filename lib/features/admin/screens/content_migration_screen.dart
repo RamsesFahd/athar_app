@@ -50,7 +50,6 @@ class _ContentMigrationScreenState
 
     if (confirmed != true || !mounted) return;
 
-
     setState(() {
       _isMigrating = true;
       _error = null;
@@ -75,63 +74,65 @@ class _ContentMigrationScreenState
   }
 
   Future<void> _runEmbedMissing() async {
-  final l10n = AppLocalizations.of(context);
-  setState(() => _isEmbedding = true);
-  try {
-    final callable = FirebaseFunctions.instanceFor(region: 'us-central1')
-        .httpsCallable(
-      'embedMissingDocuments',
-      options: HttpsCallableOptions(
-        timeout: const Duration(minutes: 10), // ✅ زيادة المهلة لـ 10 دقائق
-      ),
-    );
-    final result = await callable.call();
-    
-    final converted = _convertResponse(result.data) as Map<String, dynamic>;
-    final stats = converted['stats'] as Map<String, dynamic>;
-
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Text(l10n.adminOperationComplete),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: stats.entries.map((e) {
-              final s = e.value as Map<String, dynamic>;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  l10n.adminEmbeddingStatsLine(
-                    e.key,
-                    (s['processed'] ?? 0).toString(),
-                    (s['skipped'] ?? 0).toString(),
-                    (s['failed'] ?? 0).toString(),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n.commonOk),
-            ),
-          ],
+    final l10n = AppLocalizations.of(context);
+    setState(() => _isEmbedding = true);
+    try {
+      final callable =
+          FirebaseFunctions.instanceFor(region: 'us-central1').httpsCallable(
+        'embedMissingDocuments',
+        options: HttpsCallableOptions(
+          timeout: const Duration(minutes: 10), // ✅ زيادة المهلة لـ 10 دقائق
         ),
       );
+      final result = await callable.call();
+
+      final converted = _convertResponse(result.data) as Map<String, dynamic>;
+      final stats = converted['stats'] as Map<String, dynamic>;
+
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(l10n.adminOperationComplete),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: stats.entries.map((e) {
+                final s = e.value as Map<String, dynamic>;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    l10n.adminEmbeddingStatsLine(
+                      e.key,
+                      (s['processed'] ?? 0).toString(),
+                      (s['skipped'] ?? 0).toString(),
+                      (s['failed'] ?? 0).toString(),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(l10n.commonOk),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(l10n.commonErrorWithMessage(e.toString())),
+              backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isEmbedding = false);
     }
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
-      );
-    }
-  } finally {
-    if (mounted) setState(() => _isEmbedding = false);
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +162,8 @@ class _ContentMigrationScreenState
             Text(
               l10n.adminMigrationDescription,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                color:
+                    theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -199,60 +201,69 @@ class _ContentMigrationScreenState
                     )
                   : const Icon(Icons.auto_awesome),
               label: Text(
-                _isEmbedding ? l10n.adminEmbeddingProgress : l10n.adminGenerateMissingEmbeddings,
+                _isEmbedding
+                    ? l10n.adminEmbeddingProgress
+                    : l10n.adminGenerateMissingEmbeddings,
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               ),
             ),
             const SizedBox(height: 24),
             const SizedBox(height: 16),
             OutlinedButton.icon(
-  onPressed: () async {
-    try {
-      final callable = FirebaseFunctions.instanceFor(region: 'us-central1')
-          .httpsCallable('inspectDocumentShapes');
-      final result = await callable.call();
-      
-      // ✅ التحويل الآمن
-      final converted = _convertResponse(result.data);
-      
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text(l10n.adminDocumentShapes),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: SingleChildScrollView(
-                child: SelectableText(
-                  const JsonEncoder.withIndent('  ').convert(converted),
-                  style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
-                ),
-              ),
+              onPressed: () async {
+                try {
+                  final callable =
+                      FirebaseFunctions.instanceFor(region: 'us-central1')
+                          .httpsCallable('inspectDocumentShapes');
+                  final result = await callable.call();
+
+                  // ✅ التحويل الآمن
+                  final converted = _convertResponse(result.data);
+
+                  if (mounted) {
+                    showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: Text(l10n.adminDocumentShapes),
+                        content: SizedBox(
+                          width: double.maxFinite,
+                          child: SingleChildScrollView(
+                            child: SelectableText(
+                              const JsonEncoder.withIndent('  ')
+                                  .convert(converted),
+                              style: const TextStyle(
+                                  fontFamily: 'monospace', fontSize: 11),
+                            ),
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(l10n.commonOk),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content:
+                              Text(l10n.commonErrorWithMessage(e.toString())),
+                          backgroundColor: Colors.red),
+                    );
+                  }
+                }
+              },
+              icon: const Icon(Icons.bug_report_outlined),
+              label: Text(l10n.adminInspectDataShape),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(l10n.commonOk),
-              ),
-            ],
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
-        );
-      }
-    }
-  },
-  icon: const Icon(Icons.bug_report_outlined),
-  label: Text(l10n.adminInspectDataShape),
-),
 
             // Results
             if (_results != null) _buildResults(theme),

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -25,8 +26,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
   final _titleEnController = TextEditingController();
   final _descArController = TextEditingController();
   final _descEnController = TextEditingController();
-  final _timeArController = TextEditingController();
-  final _timeEnController = TextEditingController();
+  // ❌ تم حذف متحكمات الوقت اليدوية
   final _latController = TextEditingController();
   final _lngController = TextEditingController();
   final _ticketUrlController = TextEditingController();
@@ -35,6 +35,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
   EventType _selectedEventType = EventType.other;
   DateTime? _selectedDate;
   DateTime? _selectedEndDate;
+  TimeOfDay? _selectedTime; // ✅ إضافة متغير للوقت
   File? _pickedImage;
   bool _isFree = true;
   bool _isSubmitting = false;
@@ -56,8 +57,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
     _titleEnController.dispose();
     _descArController.dispose();
     _descEnController.dispose();
-    _timeArController.dispose();
-    _timeEnController.dispose();
     _latController.dispose();
     _lngController.dispose();
     _ticketUrlController.dispose();
@@ -90,7 +89,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
-        // Clear end date if it's before the new start date
         if (_selectedEndDate != null && _selectedEndDate!.isBefore(picked)) {
           _selectedEndDate = null;
         }
@@ -109,6 +107,58 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
     if (picked != null) setState(() => _selectedEndDate = picked);
   }
 
+  // ✅ دالة لاختيار الوقت
+  Future<void> _pickTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+    if (picked != null) {
+      setState(() => _selectedTime = picked);
+    }
+  }
+
+  // ✅ دوال لتنسيق الوقت تلقائياً للغتين
+  String _formatTimeEn(TimeOfDay time) {
+    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute $period';
+  }
+
+  String _formatTimeAr(TimeOfDay time) {
+    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+    final period = time.period == DayPeriod.am ? 'صباحاً' : 'مساءً';
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute $period';
+  }
+
+  // ✅ دالة ذكية لاستخراج الإحداثيات من النصوص المنسوخة أو روابط جوجل ماب
+  Future<void> _pasteCoordinates() async {
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    final text = data?.text ?? '';
+    if (text.isEmpty) return;
+
+    // يبحث عن الإحداثيات بصيغة: 21.4225, 39.8261 أو من رابط جوجل @21.4225,39.8261
+    final regExp = RegExp(r'(-?\d+\.\d+),\s*(-?\d+\.\d+)');
+    final match = regExp.firstMatch(text);
+
+    if (match != null) {
+      setState(() {
+        _latController.text = match.group(1)!;
+        _lngController.text = match.group(2)!;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم استخراج الإحداثيات بنجاح'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      _showError('لم يتم العثور على إحداثيات صالحة في الحافظة');
+    }
+  }
+
   Future<void> _submit() async {
     final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) return;
@@ -118,6 +168,10 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
     }
     if (_selectedDate == null) {
       _showError(l10n.adminSelectEventDate);
+      return;
+    }
+    if (_selectedTime == null) {
+      _showError('الرجاء اختيار وقت الفعالية'); // أضفها في الترجمة لاحقاً
       return;
     }
     if (_pickedImage == null) {
@@ -149,8 +203,8 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
         'eventDate': Timestamp.fromDate(_selectedDate!),
         if (_selectedEndDate != null)
           'endDate': Timestamp.fromDate(_selectedEndDate!),
-        'timeAr': _timeArController.text.trim(),
-        'timeEn': _timeEnController.text.trim(),
+        'timeAr': _formatTimeAr(_selectedTime!), // ✅ توليد الوقت العربي آلياً
+        'timeEn': _formatTimeEn(_selectedTime!), // ✅ توليد الوقت الإنجليزي آلياً
         'latitude': double.parse(latText),
         'longitude': double.parse(lngText),
         'regionId': _selectedRegionId,
@@ -163,7 +217,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
           'ticketUrl': _ticketUrlController.text.trim(),
       });
 
-      // Invalidate map so it reloads with the new event
       ref.invalidate(mapNotifierProvider);
 
       if (mounted) {
@@ -194,8 +247,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
     _titleEnController.clear();
     _descArController.clear();
     _descEnController.clear();
-    _timeArController.clear();
-    _timeEnController.clear();
     _latController.clear();
     _lngController.clear();
     _ticketUrlController.clear();
@@ -204,6 +255,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
       _selectedEventType = EventType.other;
       _selectedDate = null;
       _selectedEndDate = null;
+      _selectedTime = null; // ✅ تصفير الوقت
       _pickedImage = null;
       _isFree = true;
       _selectedCategory = 'food';
@@ -257,7 +309,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                       ),
               ),
             ),
-
             const SizedBox(height: 24),
 
             _SectionLabel(l10n.adminTitleArabic),
@@ -296,8 +347,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             GestureDetector(
               onTap: _pickDate,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
@@ -307,8 +357,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.calendar_today_outlined,
-                        size: 18, color: AppColors.primary),
+                    Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.primary),
                     const SizedBox(width: 10),
                     Text(
                       _selectedDate != null
@@ -331,8 +380,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             GestureDetector(
               onTap: _pickEndDate,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
@@ -342,8 +390,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.event_outlined,
-                        size: 18, color: AppColors.primary),
+                    Icon(Icons.event_outlined, size: 18, color: AppColors.primary),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
@@ -360,11 +407,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                     if (_selectedEndDate != null)
                       GestureDetector(
                         onTap: () => setState(() => _selectedEndDate = null),
-                        child: Icon(
-                          Icons.close,
-                          size: 16,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
+                        child: Icon(Icons.close, size: 16, color: theme.colorScheme.onSurfaceVariant),
                       ),
                   ],
                 ),
@@ -372,64 +415,74 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Time fields
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _SectionLabel(l10n.adminTimeArabic),
-                      _FormField(
-                        controller: _timeArController,
-                        hint: '8:00 ${l10n.timePmMarker}',
-                        textDirection: TextDirection.rtl,
-                      ),
-                    ],
+            // ✅ Time Picker (بدل الإدخال اليدوي)
+            _SectionLabel('وقت الفعالية'), // يمكنك إضافتها لملف الترجمة
+            GestureDetector(
+              onTap: _pickTime,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: theme.colorScheme.outline.withValues(alpha: 0.35),
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _SectionLabel(l10n.adminTimeEnglish),
-                      _FormField(
-                        controller: _timeEnController,
-                        hint: '8:00 PM',
+                child: Row(
+                  children: [
+                    Icon(Icons.access_time, size: 18, color: AppColors.primary),
+                    const SizedBox(width: 10),
+                    Text(
+                      _selectedTime != null
+                          ? _formatTimeAr(_selectedTime!)
+                          : 'اختر وقت الفعالية',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: _selectedTime != null
+                            ? null
+                            : theme.colorScheme.onSurfaceVariant,
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // ✅ Lat / Lng with Smart Paste Button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _SectionLabel(l10n.adminMapCoordinates),
+                TextButton.icon(
+                  onPressed: _pasteCoordinates,
+                  icon: const Icon(Icons.content_paste, size: 16),
+                  label: const Text('لصق من الخرائط', style: TextStyle(fontSize: 12)),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-
-            // Lat / Lng
-            _SectionLabel(l10n.adminMapCoordinates),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
                   child: TextFormField(
                     controller: _latController,
-                    keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true, signed: true),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
                     decoration: _inputDecoration(hint: l10n.adminLatitude),
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? l10n.requiredField
-                        : null,
+                    validator: (v) => (v == null || v.trim().isEmpty) ? l10n.requiredField : null,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextFormField(
                     controller: _lngController,
-                    keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true, signed: true),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
                     decoration: _inputDecoration(hint: l10n.adminLongitude),
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? l10n.requiredField
-                        : null,
+                    validator: (v) => (v == null || v.trim().isEmpty) ? l10n.requiredField : null,
                   ),
                 ),
               ],

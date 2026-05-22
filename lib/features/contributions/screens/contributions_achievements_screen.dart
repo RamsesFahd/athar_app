@@ -16,7 +16,9 @@ import 'package:athar_app/generated/l10n/app_localizations.dart';
 // Stream provider family — keyed by touristId
 final _touristContributionsProvider = StreamProvider.autoDispose
     .family<List<ContributionModel>, String>((ref, touristId) {
-  return ref.watch(contributionRepositoryProvider).getTouristContributions(touristId);
+  return ref
+      .watch(contributionRepositoryProvider)
+      .getTouristContributions(touristId);
 });
 
 class ContributionsAchievementsScreen extends ConsumerWidget {
@@ -81,10 +83,8 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
 
         // Watch a live stream of the tourist's Firestore document so
         // points/contributionsCount update in real time after admin approval.
-        final liveTouristAsync =
-            ref.watch(touristStreamProvider(tourist.uId));
-        final liveTourist =
-            liveTouristAsync.valueOrNull ?? tourist;
+        final liveTouristAsync = ref.watch(touristStreamProvider(tourist.uId));
+        final liveTourist = liveTouristAsync.valueOrNull ?? tourist;
 
         // Watch the live contributions stream for this tourist
         final contributionsAsync =
@@ -140,10 +140,8 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
                               isContributionPage: true,
                             ),
                             const SizedBox(height: 16),
-
                             _buildRewardBanner(theme, isArabic),
                             const SizedBox(height: 16),
-
                             _buildLevelCard(
                               theme,
                               isArabic,
@@ -152,7 +150,6 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
                               maxPoints: _nextLevelPoints,
                             ),
                             const SizedBox(height: 18),
-
                             _buildStatsRow(
                               theme,
                               isArabic,
@@ -163,25 +160,20 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
                               qualityBonusCount: stats.qualityBonusCount,
                             ),
                             const SizedBox(height: 24),
-
                             _buildSectionTitle(
                               theme,
                               l10n.contributionAchievementsSection,
                             ),
                             const SizedBox(height: 12),
-
                             badges.isEmpty
                                 ? _buildBadgesEmptyMessage(theme, l10n)
                                 : _buildAchievementsRow(badges),
-
                             const SizedBox(height: 24),
-
                             _buildSectionTitle(
                               theme,
                               l10n.contributionMyContributionsSection,
                             ),
                             const SizedBox(height: 12),
-
                             if (contributions.isEmpty)
                               _buildContributionsEmptyMessage(theme, l10n)
                             else
@@ -192,7 +184,6 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
                                       context, ref, theme, item, isArabic),
                                 ),
                               ),
-
                             const SizedBox(height: 90),
                           ],
                         ),
@@ -279,8 +270,8 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
     return defs.map((def) {
       final data = achievements.firstWhere(
         (a) => a.id == def.id,
-        orElse: () => AchievementData(
-            id: def.id, isEarned: false, current: 0, target: 1),
+        orElse: () =>
+            AchievementData(id: def.id, isEarned: false, current: 0, target: 1),
       );
       final progressLabel = data.isEarned
           ? l10n.contributionCompleted
@@ -341,18 +332,15 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
     required int maxPoints,
   }) {
     final safeCurrentPoints = currentPoints.clamp(0, maxPoints);
-    final progressValue =
-        maxPoints == 0 ? 0.0 : safeCurrentPoints / maxPoints;
-    final remainingPoints =
-        (maxPoints - safeCurrentPoints).clamp(0, maxPoints);
+    final progressValue = maxPoints == 0 ? 0.0 : safeCurrentPoints / maxPoints;
+    final remainingPoints = (maxPoints - safeCurrentPoints).clamp(0, maxPoints);
 
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(22),
-        border:
-            Border.all(color: theme.dividerColor.withValues(alpha: 0.08)),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.08)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.025),
@@ -435,8 +423,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
                 : '$remainingPoints points left to the next level',
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
-              color: theme.textTheme.bodySmall?.color
-                  ?.withValues(alpha: 0.82),
+              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.82),
             ),
           ),
         ],
@@ -469,21 +456,24 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
       _StatItem(
           value: '$qualityBonusCount',
           label: l10n.contributionQuality,
-          subtitle: l10n.contributionTopContributions,
           icon: Icons.stars_rounded),
     ];
 
-    return Row(
-      children: List.generate(stats.length, (index) {
-        final stat = stats[index];
-        return Expanded(
-          child: Padding(
-            padding: EdgeInsetsDirectional.only(
-                end: index == stats.length - 1 ? 0 : 8),
-            child: _buildInlineStat(theme, stat),
-          ),
-        );
-      }),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: List.generate(stats.length, (index) {
+          final stat = stats[index];
+          return SizedBox(
+            width: 86,
+            child: Padding(
+              padding: EdgeInsetsDirectional.only(
+                  end: index == stats.length - 1 ? 0 : 8),
+              child: _buildInlineStat(theme, stat),
+            ),
+          );
+        }),
+      ),
     );
   }
 
@@ -517,8 +507,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.labelSmall?.copyWith(
               fontWeight: FontWeight.w700,
-              color: theme.textTheme.bodySmall?.color
-                  ?.withValues(alpha: 0.78),
+              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.78),
             )),
         if (stat.subtitle != null) ...[
           const SizedBox(height: 2),
@@ -528,8 +517,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.labelSmall?.copyWith(
                 fontSize: 9,
-                color: theme.textTheme.bodySmall?.color
-                    ?.withValues(alpha: 0.5),
+                color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.5),
               )),
         ],
       ],
@@ -538,8 +526,8 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
 
   Widget _buildSectionTitle(ThemeData theme, String title) {
     return Text(title,
-        style: theme.textTheme.titleMedium
-            ?.copyWith(fontWeight: FontWeight.w800));
+        style:
+            theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800));
   }
 
   Widget _buildBadgesEmptyMessage(ThemeData theme, AppLocalizations l10n) {
@@ -548,8 +536,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border:
-            Border.all(color: theme.dividerColor.withValues(alpha: 0.08)),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.08)),
       ),
       child: Text(
         l10n.contributionNoAchievements,
@@ -559,14 +546,14 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildContributionsEmptyMessage(ThemeData theme, AppLocalizations l10n) {
+  Widget _buildContributionsEmptyMessage(
+      ThemeData theme, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border:
-            Border.all(color: theme.dividerColor.withValues(alpha: 0.08)),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.08)),
       ),
       child: Text(
         l10n.contributionNoContributions,
@@ -613,8 +600,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) =>
-              ContributionRejectionDetailScreen(contribution: item),
+          builder: (_) => ContributionRejectionDetailScreen(contribution: item),
         ),
       );
       return;
@@ -682,18 +668,15 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
         ? (_categoryLabelsAr[item.category] ?? item.category)
         : (_categoryLabelsEn[item.category] ?? item.category);
     final cityDisplay = cityLabel(item.cityId, isArabic: isArabic);
-    final icon =
-        _categoryIcons[item.category] ?? Icons.category_outlined;
+    final icon = _categoryIcons[item.category] ?? Icons.category_outlined;
     final previewColor =
         (_categoryColors[item.category] ?? theme.colorScheme.primary)
             .withValues(alpha: 0.12);
 
     final helperText = switch (item.status) {
-      ContributionStatus.pending =>
-        l10n.contributionWaitingForReview,
+      ContributionStatus.pending => l10n.contributionWaitingForReview,
       ContributionStatus.rejected =>
-        item.rejectionReason ??
-            l10n.contributionRejectedDefault,
+        item.rejectionReason ?? l10n.contributionRejectedDefault,
       ContributionStatus.approved => '',
     };
 
@@ -707,8 +690,8 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
           decoration: BoxDecoration(
             color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-                color: theme.dividerColor.withValues(alpha: 0.08)),
+            border:
+                Border.all(color: theme.dividerColor.withValues(alpha: 0.08)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.03),
@@ -729,8 +712,8 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
                         width: 90,
                         height: 90,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _buildCategoryPreview(
-                            previewColor, icon, theme),
+                        errorBuilder: (_, __, ___) =>
+                            _buildCategoryPreview(previewColor, icon, theme),
                       )
                     : _buildCategoryPreview(previewColor, icon, theme),
               ),
@@ -797,14 +780,14 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
                       if (item.status == ContributionStatus.approved)
                         Row(
                           children: [
-                            _buildMeta(theme, Icons.favorite_rounded,
-                                '${item.likes}'),
+                            _buildMeta(
+                                theme, Icons.favorite_rounded, '${item.likes}'),
                             const SizedBox(width: 14),
-                            _buildMeta(theme, Icons.share_outlined,
-                                '${item.shares}'),
+                            _buildMeta(
+                                theme, Icons.share_outlined, '${item.shares}'),
                             const SizedBox(width: 14),
-                            _buildMeta(theme, Icons.stars_rounded,
-                                '+${item.points}'),
+                            _buildMeta(
+                                theme, Icons.stars_rounded, '+${item.points}'),
                           ],
                         ),
                     ],
@@ -818,8 +801,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategoryPreview(
-      Color color, IconData icon, ThemeData theme) {
+  Widget _buildCategoryPreview(Color color, IconData icon, ThemeData theme) {
     return Container(
       width: 90,
       height: 90,
@@ -829,8 +811,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
   }
 
   Widget _buildMeta(ThemeData theme, IconData icon, String value) {
-    final iconColor =
-        theme.textTheme.bodySmall?.color?.withValues(alpha: 0.72);
+    final iconColor = theme.textTheme.bodySmall?.color?.withValues(alpha: 0.72);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [

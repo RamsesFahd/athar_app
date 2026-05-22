@@ -2219,6 +2219,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminGuidesTab => 'Guides';
 
   @override
+  String get adminTripsTab => 'Trips';
+
+  @override
   String get adminSearchUsersHint => 'Search by name or email...';
 
   @override
@@ -2326,6 +2329,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminNoAttractions => 'No attractions yet. Tap + to add one.';
+
+  @override
+  String get adminNoEvents => 'No events yet. Tap + to add one.';
 
   @override
   String get adminDeleteAttraction => 'Delete Attraction';
@@ -2822,4 +2828,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminVerify => 'Verify';
+
+  @override
+  String get adminRevokeVerificationTitle => 'Revoke Verification';
+
+  @override
+  String adminRevokeVerificationConfirm(String name) {
+    return 'Revoke verification for "$name"? They will need to resubmit documents.';
+  }
+
+  @override
+  String get adminRevokeVerification => 'Revoke Verification';
+
+  @override
+  String get adminVerificationRevoked => 'Verification revoked';
+
+  @override
+  String get adminVerificationRevokedSuccess => 'Verification revoked successfully';
 }

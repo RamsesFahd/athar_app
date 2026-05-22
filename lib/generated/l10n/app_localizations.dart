@@ -4238,6 +4238,12 @@ abstract class AppLocalizations {
   /// **'Guides'**
   String get adminGuidesTab;
 
+  /// No description provided for @adminTripsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Trips'**
+  String get adminTripsTab;
+
   /// No description provided for @adminSearchUsersHint.
   ///
   /// In en, this message translates to:
@@ -4435,6 +4441,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No attractions yet. Tap + to add one.'**
   String get adminNoAttractions;
+
+  /// No description provided for @adminNoEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'No events yet. Tap + to add one.'**
+  String get adminNoEvents;
 
   /// No description provided for @adminDeleteAttraction.
   ///
@@ -5372,6 +5384,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verify'**
   String get adminVerify;
+
+  /// No description provided for @adminRevokeVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke Verification'**
+  String get adminRevokeVerificationTitle;
+
+  /// No description provided for @adminRevokeVerificationConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke verification for "{name}"? They will need to resubmit documents.'**
+  String adminRevokeVerificationConfirm(String name);
+
+  /// No description provided for @adminRevokeVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke Verification'**
+  String get adminRevokeVerification;
+
+  /// No description provided for @adminVerificationRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification revoked'**
+  String get adminVerificationRevoked;
+
+  /// No description provided for @adminVerificationRevokedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification revoked successfully'**
+  String get adminVerificationRevokedSuccess;
 }
 
 class _AppLocalizationsDelegate
