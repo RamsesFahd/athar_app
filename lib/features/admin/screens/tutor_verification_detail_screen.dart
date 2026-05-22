@@ -103,7 +103,9 @@ class _TutorVerificationDetailScreenState
               const SizedBox(height: 4),
               Text(
                 l10n.adminRejectRequestHelp,
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 13),
               ),
               const SizedBox(height: 16),
               TextField(

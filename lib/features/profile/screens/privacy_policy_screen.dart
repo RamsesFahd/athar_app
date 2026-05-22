@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
@@ -207,8 +208,7 @@ class _IntroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighContrast =
-        theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
 
     return Container(
       width: double.infinity,
@@ -220,7 +220,7 @@ class _IntroCard extends StatelessWidget {
 
         border: Border.all(
           color: isHighContrast
-              ? Colors.black
+              ? theme.colorScheme.onSurface
               : theme.colorScheme.primary.withValues(alpha: 0.12),
           width: isHighContrast ? 2 : 1,
         ),
@@ -261,8 +261,7 @@ class _PolicySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighContrast =
-        theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
 
     return Container(
       width: double.infinity,
@@ -275,7 +274,7 @@ class _PolicySection extends StatelessWidget {
 
         border: Border.all(
           color: isHighContrast
-              ? Colors.black
+              ? theme.colorScheme.onSurface
               : theme.dividerColor.withValues(alpha: 0.12),
           width: isHighContrast ? 2 : 1,
         ),

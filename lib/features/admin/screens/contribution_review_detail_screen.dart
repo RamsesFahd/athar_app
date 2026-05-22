@@ -215,7 +215,7 @@ class _ContributionReviewDetailScreenState
               const SizedBox(height: 4),
               Text(
                 l10n.adminRejectContributionHelp,
-                style: const TextStyle(color: Colors.grey),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: 16),
               TextField(
@@ -571,14 +571,14 @@ class _InfoRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: Colors.grey),
+          Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
           const SizedBox(width: 8),
           SizedBox(
             width: 90,
             child: Text(
               '$label:',
               style: theme.textTheme.bodySmall
-                  ?.copyWith(color: Colors.grey),
+                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),
           Expanded(

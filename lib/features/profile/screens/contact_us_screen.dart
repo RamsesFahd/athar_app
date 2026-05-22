@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class ContactUsScreen extends StatelessWidget {
@@ -121,7 +122,7 @@ class _ContactCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
 
     return Container(
       width: double.infinity,
@@ -132,7 +133,7 @@ class _ContactCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
           color: isHighContrast
-              ? Colors.black
+              ? theme.colorScheme.onSurface
               : theme.dividerColor.withValues(alpha: 0.12),
           width: isHighContrast ? 2 : 1,
         ),
@@ -196,7 +197,7 @@ class _SupportReasonCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -205,7 +206,7 @@ class _SupportReasonCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isHighContrast
-              ? Colors.black
+              ? theme.colorScheme.onSurface
               : theme.colorScheme.primary.withValues(alpha: 0.14),
           width: isHighContrast ? 2 : 1,
         ),
@@ -246,7 +247,7 @@ class _MessageFormCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
 
     return Container(
       width: double.infinity,
@@ -256,7 +257,7 @@ class _MessageFormCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isHighContrast
-              ? Colors.black
+              ? theme.colorScheme.onSurface
               : theme.dividerColor.withValues(alpha: 0.12),
           width: isHighContrast ? 2 : 1,
         ),
@@ -363,7 +364,7 @@ class _MessageFormCard extends StatelessWidget {
               child: Text(
                 l10n.contactUsSendMessageButton,
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  color: Colors.white,
+                  color: theme.colorScheme.onPrimary,
                   fontWeight: FontWeight.w800,
                 ),
               ),

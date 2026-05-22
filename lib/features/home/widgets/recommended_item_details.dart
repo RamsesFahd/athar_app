@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 
 class RecommendedItemDetails extends StatelessWidget {
   final String title;
@@ -19,7 +20,7 @@ class RecommendedItemDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     
     return Scaffold(
       body: SingleChildScrollView(
@@ -40,7 +41,7 @@ class RecommendedItemDetails extends StatelessWidget {
                  child: Container(
                  decoration: BoxDecoration(
                  color: isHighContrast
-                 ? Colors.black
+                 ? theme.colorScheme.onSurface
                  : Colors.black.withValues(alpha: 0.35),
                  shape: BoxShape.circle,
                 ),
@@ -66,7 +67,7 @@ class RecommendedItemDetails extends StatelessWidget {
               top: Radius.circular(24),
                ),
              border: isHighContrast
-            ? Border.all(color: Colors.black, width: 2)
+            ? Border.all(color: theme.colorScheme.onSurface, width: 2)
             : null,
            ),
               child: Column(
@@ -86,7 +87,7 @@ class RecommendedItemDetails extends StatelessWidget {
                           Icons.category,
                           size: 18,
                           color: isHighContrast
-                              ? Colors.black
+                              ? theme.colorScheme.onSurface
                               : theme.colorScheme.primary,
                         ),
                       ),
@@ -109,7 +110,7 @@ class RecommendedItemDetails extends StatelessWidget {
                           Icons.location_on,
                           size: 18,
                           color: isHighContrast
-                              ? Colors.black
+                              ? theme.colorScheme.onSurface
                               : theme.colorScheme.primary,
                         ),
                       ),

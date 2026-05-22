@@ -18,7 +18,6 @@ import '../widgets/settings_tile.dart';
 import '../widgets/guest_profile_view.dart';
 import '../widgets/tourist_profile.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
-import 'package:athar_app/features/contributions/screens/contributions_achievements_screen.dart';
 import 'package:athar_app/features/onboarding/screens/user_preferences_screen.dart';
 import 'package:athar_app/core/models/favorites/favorite_item_model.dart';
 import 'package:athar_app/features/profile/logic/favorites_notifier.dart';
@@ -111,7 +110,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _tabItem(String title, int index, ThemeData theme) {
     final bool isSelected = _activeTabIndex == index;
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = ref.watch(settingsProvider).highContrast;
     return Expanded(
       child: InkWell(
         onTap: () => setState(() => _activeTabIndex = index),
@@ -126,7 +125,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                  color: isSelected
     ? theme.colorScheme.primary
     : isHighContrast
-        ? Colors.black87
+        ? theme.colorScheme.onSurface
         : theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
                 ),
               ),
@@ -448,7 +447,7 @@ Widget _buildBookingItem(
   final statusColor = _statusColor(b.status, theme);
 
   final isHighContrast =
-  theme.colorScheme.primary == Colors.black;
+  ref.watch(settingsProvider).highContrast;
 
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -458,7 +457,7 @@ Widget _buildBookingItem(
       borderRadius: BorderRadius.circular(18),
       border: Border.all(
         color: isHighContrast
-        ? Colors.black
+        ? theme.colorScheme.onSurface
         : theme.colorScheme.primary.withValues(alpha: 0.08),
       ),
       boxShadow: isHighContrast
@@ -611,9 +610,9 @@ Widget _buildBookingItem(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isHighContrast
-                    ? Colors.black
+                    ? theme.colorScheme.primary
                     : Colors.green,
-                    foregroundColor: Colors.white,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -635,7 +634,7 @@ Widget _buildBookingItem(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     side: BorderSide(
                     color: isHighContrast
-                    ? Colors.black
+                    ? theme.colorScheme.onSurface
                     : Colors.red,
                     ),
                     shape: RoundedRectangleBorder(
@@ -653,7 +652,7 @@ Widget _buildBookingItem(
                     l10n.reject_booking,
                     style: TextStyle(
                     color: isHighContrast
-                    ? Colors.black
+                    ? theme.colorScheme.onSurface
                     : Colors.red,
                     ),
                   ),
@@ -734,7 +733,7 @@ Widget _buildBookingItem(
     final isPending = tutor.verificationStatus == VerificationStatus.pending;
     final isRejected = tutor.verificationStatus == VerificationStatus.rejected;
     final isVerified = tutor.verificationStatus == VerificationStatus.verified;
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = ref.watch(settingsProvider).highContrast;
 
     String headline;
     String? subtext;
@@ -764,7 +763,7 @@ Widget _buildBookingItem(
           ? 'سنُعلمك حالما يتم اعتماد طلبك'
           : "We'll notify you once your request is approved";
       color = isHighContrast
-      ? Colors.black
+      ? theme.colorScheme.primary
       : Colors.orange;
       icon = Icons.hourglass_top_outlined;
     } else if (verificationMissing.isNotEmpty) {
@@ -789,7 +788,7 @@ Widget _buildBookingItem(
           ? 'في انتظار التوثيق من الإدارة'
           : 'Awaiting admin verification';
       color = isHighContrast
-    ? Colors.black
+    ? theme.colorScheme.primary
     : Colors.orange;
       icon = Icons.pending_outlined;
     }
@@ -869,7 +868,7 @@ Widget _buildBookingItem(
       required List<Widget> tiles,
        required ThemeData theme,
 }) {
-  final isHighContrast = theme.colorScheme.primary == Colors.black;
+  final isHighContrast = ref.watch(settingsProvider).highContrast;
 
     return Container(
       decoration: BoxDecoration(
@@ -885,7 +884,7 @@ Widget _buildBookingItem(
       ],
         border: Border.all(
   color: isHighContrast
-      ? Colors.black
+      ? theme.colorScheme.onSurface
       : theme.dividerColor.withValues(alpha: 0.1),
   width: isHighContrast ? 2 : 1,
 ),
@@ -906,7 +905,7 @@ Widget _buildBookingItem(
 
   Widget _buildAccountSection(
       ThemeData theme, AppLocalizations l10n, UserModel user) {
-        final isHighContrast = theme.colorScheme.primary == Colors.black;
+        final isHighContrast = ref.watch(settingsProvider).highContrast;
         final isAr = Localizations.localeOf(context).languageCode == 'ar';
         final showDelete = user is TutorModel || user is TouristModel;
 
@@ -925,7 +924,7 @@ Widget _buildBookingItem(
 
 border: Border.all(
   color: isHighContrast
-      ? Colors.black
+      ? theme.colorScheme.onSurface
       : theme.dividerColor.withValues(alpha: 0.1),
   width: isHighContrast ? 2 : 1,
 ),
@@ -1281,8 +1280,8 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (isSelected) ...[
-                  const Icon(Icons.check_rounded,
-                      size: 16, color: Colors.white),
+                  Icon(Icons.check_rounded,
+                      size: 16, color: theme.colorScheme.onPrimary),
                   const SizedBox(width: 6),
                 ],
                 Text(
@@ -1292,7 +1291,7 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                     fontWeight:
                         isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: isSelected
-                        ? Colors.white
+                        ? theme.colorScheme.onPrimary
                         : theme.colorScheme.primary,
                   ),
                 ),
@@ -1424,14 +1423,14 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                   fontWeight:
                       isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected
-                      ? Colors.white
+                      ? theme.colorScheme.onPrimary
                       : theme.colorScheme.primary,
                 ),
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_rounded,
-                  size: 20, color: Colors.white),
+              Icon(Icons.check_rounded,
+                  size: 20, color: theme.colorScheme.onPrimary),
           ],
         ),
       ),

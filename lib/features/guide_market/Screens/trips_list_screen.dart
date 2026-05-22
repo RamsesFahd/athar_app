@@ -102,7 +102,9 @@ class _TripsListScreenState extends ConsumerState<TripsListScreen> {
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge
-                          ?.copyWith(color: Colors.grey.shade500),
+                          ?.copyWith(
+                              color:
+                                  Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ),
                 )

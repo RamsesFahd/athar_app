@@ -1,4 +1,5 @@
 import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/profile/logic/profile_notifier.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -142,7 +143,7 @@ class _CredentialVerificationScreenState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     final authState = ref.watch(authNotifierProvider);
     final notifierState = ref.watch(profileNotifierProvider);
     final isLoading = notifierState is AsyncLoading;
@@ -185,7 +186,7 @@ class _CredentialVerificationScreenState
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isHighContrast
-                              ? Colors.black
+                              ? theme.colorScheme.onSurface
                               : Colors.red.withValues(alpha: 0.3),
                           width: isHighContrast ? 2 : 1,
                         ),
@@ -350,7 +351,7 @@ class _CredentialVerificationScreenState
 
   Widget _buildVerifiedScaffold(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.credVerifTitle),
@@ -372,7 +373,7 @@ class _CredentialVerificationScreenState
                 child: Icon(
                   Icons.verified_outlined,
                   size: 56,
-                  color: isHighContrast ? Colors.black : Colors.green,
+                  color: isHighContrast ? theme.colorScheme.primary : Colors.green,
                 ),
               ),
               const SizedBox(height: 24),
@@ -402,7 +403,7 @@ class _CredentialVerificationScreenState
 
   Widget _buildPendingReviewScaffold(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.credVerifTitle),
@@ -424,7 +425,7 @@ class _CredentialVerificationScreenState
                 child: Icon(
                   Icons.hourglass_top_outlined,
                   size: 56,
-                  color: isHighContrast ? Colors.black : Colors.orange,
+                  color: isHighContrast ? theme.colorScheme.primary : Colors.orange,
                 ),
               ),
               const SizedBox(height: 24),
@@ -454,7 +455,7 @@ class _CredentialVerificationScreenState
 
   Widget _buildPhoneNotVerifiedScaffold(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     return Scaffold(
       appBar: AppBar(title: Text(l10n.credVerifTitle)),
       body: Center(
@@ -474,7 +475,7 @@ class _CredentialVerificationScreenState
                 child: Icon(
                   Icons.phone_locked_outlined,
                   size: 56,
-                  color: isHighContrast ? Colors.black : Colors.orange,
+                  color: isHighContrast ? theme.colorScheme.primary : Colors.orange,
                 ),
               ),
               const SizedBox(height: 24),

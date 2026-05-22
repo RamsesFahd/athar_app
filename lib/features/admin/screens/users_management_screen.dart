@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
-import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/admin/screens/tutor_verification_detail_screen.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -12,17 +11,18 @@ class UsersManagementScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     return DefaultTabController(
       length: 2,
       child: Column(
         children: [
           Material(
-            color: Theme.of(context).colorScheme.surface,
+            color: theme.colorScheme.surface,
             elevation: 1,
             child: TabBar(
-              labelColor: AppColors.primary,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: AppColors.primary,
+              labelColor: theme.colorScheme.primary,
+              unselectedLabelColor: theme.colorScheme.onSurfaceVariant,
+              indicatorColor: theme.colorScheme.primary,
               dividerColor: Colors.transparent,
               tabs: [
                 Tab(text: l10n.adminUsersTab),
@@ -74,11 +74,11 @@ class _UsersTabState extends ConsumerState<_UsersTab> {
               fillColor: theme.colorScheme.surface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey.shade300),
+                borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.grey.shade300),
+                borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
               ),
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -112,7 +112,7 @@ class _UsersTabState extends ConsumerState<_UsersTab> {
                         ? l10n.adminNoUsersFound
                         : l10n.adminNoResultsFor(_searchQuery),
                     style: theme.textTheme.bodyLarge
-                        ?.copyWith(color: Colors.grey.shade500),
+                        ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                   ),
                 );
               }
@@ -168,17 +168,20 @@ class _GuidesTabState extends ConsumerState<_GuidesTab> {
                     label: Text(entry.value),
                     selected: selected,
                     onSelected: (_) => setState(() => _filter = entry.key),
-                    selectedColor: AppColors.primary.withValues(alpha: 0.15),
-                    checkmarkColor: AppColors.primary,
+                    selectedColor:
+                        theme.colorScheme.primary.withValues(alpha: 0.15),
+                    checkmarkColor: theme.colorScheme.primary,
                     labelStyle: TextStyle(
-                      color: selected ? AppColors.primary : Colors.grey,
+                      color: selected
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.onSurfaceVariant,
                       fontWeight:
                           selected ? FontWeight.bold : FontWeight.normal,
                     ),
                     side: BorderSide(
                       color: selected
-                          ? AppColors.primary.withValues(alpha: 0.5)
-                          : Colors.grey.shade300,
+                          ? theme.colorScheme.primary.withValues(alpha: 0.5)
+                          : theme.colorScheme.outlineVariant,
                     ),
                   ),
                 );
@@ -205,14 +208,15 @@ class _GuidesTabState extends ConsumerState<_GuidesTab> {
                     children: [
                       Icon(Icons.verified_user_outlined,
                           size: 64,
-                          color: AppColors.primary.withValues(alpha: 0.15)),
+                          color: theme.colorScheme.primary
+                              .withValues(alpha: 0.15)),
                       const SizedBox(height: 12),
                       Text(
                         l10n.adminNoGuidesForStatus(
                           filterLabels[_filter]?.toLowerCase() ?? '',
                         ),
                         style: theme.textTheme.bodyLarge
-                            ?.copyWith(color: Colors.grey.shade500),
+                            ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -253,12 +257,12 @@ class _UserTile extends StatelessWidget {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
           radius: 22,
-          backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
           backgroundImage: user.profileImage != null
               ? NetworkImage(user.profileImage!)
               : null,
           child: user.profileImage == null
-              ? Icon(Icons.person, color: AppColors.primary, size: 22)
+              ? Icon(Icons.person, color: theme.colorScheme.primary, size: 22)
               : null,
         ),
         title: Row(
@@ -281,7 +285,7 @@ class _UserTile extends StatelessWidget {
             const SizedBox(height: 2),
             Text(user.email,
                 style: theme.textTheme.bodySmall
-                    ?.copyWith(color: Colors.grey.shade600),
+                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 overflow: TextOverflow.ellipsis),
             if (isTutor && tutor!.verificationStatus != null) ...[
               const SizedBox(height: 4),
@@ -331,12 +335,12 @@ class _GuideTile extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 24,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+              backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
               backgroundImage: tutor.profileImage != null
                   ? NetworkImage(tutor.profileImage!)
                   : null,
               child: tutor.profileImage == null
-                  ? Icon(Icons.person, color: AppColors.primary, size: 24)
+                  ? Icon(Icons.person, color: theme.colorScheme.primary, size: 24)
                   : null,
             ),
             const SizedBox(width: 12),
@@ -350,7 +354,7 @@ class _GuideTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(tutor.email,
                       style: theme.textTheme.bodySmall
-                          ?.copyWith(color: Colors.grey.shade500),
+                          ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                       overflow: TextOverflow.ellipsis),
                   if (status != null) ...[
                     const SizedBox(height: 4),
@@ -362,7 +366,8 @@ class _GuideTile extends StatelessWidget {
             const SizedBox(width: 8),
             _typeBadge(context, isIndividual),
             const SizedBox(width: 6),
-            const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
+            Icon(Icons.chevron_right,
+                color: theme.colorScheme.onSurfaceVariant, size: 20),
           ],
         ),
       ),
@@ -435,6 +440,7 @@ class _VerificationBadge extends StatelessWidget {
     Color color;
     IconData icon;
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     String label;
     switch (status) {
       case VerificationStatus.verified:
@@ -450,11 +456,11 @@ class _VerificationBadge extends StatelessWidget {
         icon = Icons.cancel_outlined;
         label = l10n.adminStatusRejected;
       case VerificationStatus.expired:
-        color = Colors.grey;
+        color = theme.colorScheme.onSurfaceVariant;
         icon = Icons.timer_off_outlined;
         label = l10n.adminStatusExpired;
       default:
-        color = Colors.grey;
+        color = theme.colorScheme.onSurfaceVariant;
         icon = Icons.help_outline;
         label = status.name;
     }

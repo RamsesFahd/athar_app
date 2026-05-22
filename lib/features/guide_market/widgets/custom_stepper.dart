@@ -15,22 +15,26 @@ class CustomStepper extends StatelessWidget {
     final Color activeColor = theme.colorScheme.primary; 
     // لون رمادي فاتح جداً للخطوات غير النشطة
     final Color inactiveColor = theme.colorScheme.primary.withOpacity(0.1);
+    final Color inactiveTextColor = theme.colorScheme.onSurfaceVariant;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
       child: Row(
         children: [
           // الخطوة 1: التفاصيل
-          _buildStep(l10n.details, currentStep >= 1, activeColor, inactiveColor),
+          _buildStep(l10n.details, currentStep >= 1, activeColor,
+              inactiveColor, inactiveTextColor),
           const SizedBox(width: 12),
           // الخطوة 2: التأكيد
-          _buildStep(l10n.confirm, currentStep >= 2, activeColor, inactiveColor),
+          _buildStep(l10n.confirm, currentStep >= 2, activeColor,
+              inactiveColor, inactiveTextColor),
         ],
       ),
     );
   }
 
-  Widget _buildStep(String title, bool isActive, Color activeColor, Color inactiveColor) {
+  Widget _buildStep(String title, bool isActive, Color activeColor,
+      Color inactiveColor, Color inactiveTextColor) {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,7 +44,7 @@ class CustomStepper extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
-              color: isActive ? activeColor : Colors.grey,
+              color: isActive ? activeColor : inactiveTextColor,
             ),
           ),
           const SizedBox(height: 6),

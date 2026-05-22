@@ -221,7 +221,9 @@ class BookingFormScreen extends ConsumerWidget {
           icon,
           color: isPrimary
               ? theme.colorScheme.onPrimary
-              : (isEnabled ? theme.colorScheme.primary : Colors.grey),
+              : (isEnabled
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant),
           size: 20,
         ),
       ),

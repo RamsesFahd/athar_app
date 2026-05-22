@@ -67,12 +67,13 @@ class _ContributionsReviewScreenState
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.inbox_outlined,
-                          size: 48, color: Colors.grey[400]),
+                          size: 48,
+                          color: theme.colorScheme.onSurfaceVariant),
                       const SizedBox(height: 12),
                       Text(
                         'No ${_filter?.name ?? ''} contributions',
                         style: theme.textTheme.bodyLarge
-                            ?.copyWith(color: Colors.grey),
+                            ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -221,19 +222,19 @@ class _ContributionCard extends StatelessWidget {
                               ? Icons.videocam_outlined
                               : Icons.image_outlined,
                           size: 14,
-                          color: Colors.grey,
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           c.mediaType == 'video' ? 'Video' : 'Image',
                           style: theme.textTheme.bodySmall
-                              ?.copyWith(color: Colors.grey),
+                              ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                         ),
                         const Spacer(),
                         Text(
                           c.touristName,
                           style: theme.textTheme.bodySmall
-                              ?.copyWith(color: Colors.grey),
+                              ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -241,7 +242,7 @@ class _ContributionCard extends StatelessWidget {
                         Text(
                           date,
                           style: theme.textTheme.bodySmall
-                              ?.copyWith(color: Colors.grey),
+                              ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 
 import 'package:athar_app/core/models/attractions/attraction_model.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
@@ -77,7 +78,7 @@ void initState() {
   Widget build(BuildContext context) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     final heroHeight = 430 + _largeTextExtra(context, 78);
 
     final userAsync = ref.watch(authNotifierProvider);
@@ -545,7 +546,7 @@ class _CinematicHeroSlide extends StatelessWidget {
           ),
           _HeroGradient(
             kind: slide.kind,
-            isHighContrast: theme.colorScheme.primary == Colors.black,
+            isHighContrast: theme.isHighContrast,
           ),
           PositionedDirectional(
             start: 24,
@@ -809,7 +810,7 @@ class _HeroCta extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
@@ -834,7 +835,8 @@ class _HeroCta extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: isHighContrast ? Colors.black : const Color(0xFF344235),
+          color:
+              isHighContrast ? theme.colorScheme.onSurface : const Color(0xFF344235),
           fontWeight: FontWeight.w900,
           fontSize: 12,
         ),

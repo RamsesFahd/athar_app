@@ -80,9 +80,9 @@ class Header extends ConsumerWidget implements PreferredSizeWidget {
     child: IconButton(
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(),
-      icon: const Icon(
+      icon: Icon(
         Icons.accessibility_new,
-        color: Colors.white,
+        color: colorScheme.onPrimary,
         size: 22,
       ),
       tooltip: 'سهولة الوصول',
@@ -101,8 +101,8 @@ class Header extends ConsumerWidget implements PreferredSizeWidget {
                 alignment: Alignment.center,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.notifications_none_rounded,
-                        color: Colors.black87),
+                    icon: Icon(Icons.notifications_none_rounded,
+                        color: colorScheme.onSurface),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -122,7 +122,8 @@ class Header extends ConsumerWidget implements PreferredSizeWidget {
                         decoration: BoxDecoration(
                           color: colorScheme.primary,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 1.5),
+                          border:
+                              Border.all(color: colorScheme.surface, width: 1.5),
                         ),
                       ),
                     ),

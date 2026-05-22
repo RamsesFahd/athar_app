@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import '../../../core/theme/app_colors.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/core/models/favorites/favorite_item_model.dart';
 import 'package:athar_app/core/utils/share_utils.dart';
@@ -25,7 +26,7 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
   Widget build(BuildContext context) {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     final l10n = AppLocalizations.of(context);
     final double screenHeight = MediaQuery.of(context).size.height;
 
@@ -154,10 +155,11 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: CircleAvatar(
-              backgroundColor: isHighContrast ? Colors.black : Colors.black26,
+              backgroundColor:
+                  isHighContrast ? theme.colorScheme.primary : Colors.black26,
               child: IconButton(
                 icon: Icon(isAr ? Icons.chevron_right : Icons.chevron_left,
-                    color: Colors.white),
+                    color: theme.colorScheme.onPrimary),
                 onPressed: () => Navigator.pop(context),
               ),
             ),
@@ -269,12 +271,12 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
 
   Widget _buildCategoryBadge(
       ThemeData theme, String categoryLabel, AppLocalizations l10n) {
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
         color: isHighContrast
-            ? Colors.white
+            ? theme.colorScheme.surface
             : AppColors.secondary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),

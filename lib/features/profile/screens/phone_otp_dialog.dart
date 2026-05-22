@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:athar_app/features/profile/logic/profile_notifier.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -130,7 +131,7 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     final isLoading =
         ref.watch(profileNotifierProvider) is AsyncLoading;
 
@@ -200,9 +201,10 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
       FilledButton(
         onPressed: isLoading ? null : _sendOtp,
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 18, height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: theme.colorScheme.onPrimary))
             : Text(l10n.otpSendCode),
       ),
     ];
@@ -312,9 +314,10 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
       FilledButton(
         onPressed: isLoading ? null : _verifyOtp,
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 18, height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                child: CircularProgressIndicator(
+                    strokeWidth: 2, color: theme.colorScheme.onPrimary))
             : Text(l10n.verifyButton),
       ),
     ];

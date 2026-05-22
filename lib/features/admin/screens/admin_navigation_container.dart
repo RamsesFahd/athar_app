@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/admin/screens/trip_approvals_screen.dart';
@@ -48,14 +47,15 @@ class _AdminNavigationContainerState
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Admin — ${_tabs[_currentIndex].label}',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         elevation: 0,
         actions: [
           IconButton(
@@ -77,8 +77,8 @@ class _AdminNavigationContainerState
         currentIndex: _currentIndex,
         onTap: (i) => setState(() => _currentIndex = i),
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: theme.colorScheme.primary,
+        unselectedItemColor: theme.colorScheme.onSurfaceVariant,
         selectedLabelStyle:
             const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
         items: _tabs

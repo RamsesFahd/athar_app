@@ -23,7 +23,7 @@ class BookingViewScreen extends ConsumerWidget {
     case BookingStatus.rejected:
       return Colors.red;
     case BookingStatus.cancelled:
-      return Colors.grey;
+      return theme.colorScheme.onSurfaceVariant;
     case BookingStatus.completed:
       return theme.colorScheme.primary;
     case BookingStatus.pending:
