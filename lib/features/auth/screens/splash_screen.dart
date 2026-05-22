@@ -22,9 +22,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> _initApp() async {
+    // We wait for auth to resolve, plus a short minimum so the splash doesn't
+    // flash by too fast. 500ms (was 2s) keeps it graceful without adding delay:
+    // the splash now disappears as soon as auth is ready, not on a fixed timer.
     final results = await Future.wait([
       ref.read(authNotifierProvider.future),
-      Future.delayed(const Duration(seconds: 2)),
+      Future.delayed(const Duration(milliseconds: 500)),
     ]);
 
     if (!mounted) return;
@@ -56,10 +59,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Keep authNotifierProvider alive while splash is visible so it is never
-    // auto-disposed before NavigationContainer reads it on navigation.
-    ref.watch(authNotifierProvider);
-
+    // Note: AuthNotifier is annotated @Riverpod(keepAlive: true), so it is never
+    // auto-disposed — no need to watch it here just to keep it alive. The splash
+    // is a static image + logo; it renders instantly without waiting on any data.
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 

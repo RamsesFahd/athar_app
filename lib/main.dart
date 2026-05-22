@@ -27,25 +27,29 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // <-- 2. تفعيل App Check مباشرة بعد تهيئة Firebase
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
-  );
-
-  if (kDebugMode) {
-    await FirebaseAuth.instance.setSettings(
-      appVerificationDisabledForTesting: true,
-    );
-  }
-
+  // navigatorKey must be set before runApp so NotificationService can navigate.
   NotificationService.navigatorKey = navigatorKey;
-  await NotificationService.instance.init();
 
   runApp(
     const ProviderScope(
       child: AtharApp(),
     ),
   );
+
+  // Everything below runs after the first frame is painted.
+  // AppCheck, auth settings, and notifications don't block UI rendering.
+  // AppCheck will be ready long before the first Firestore call (after splash).
+  FirebaseAppCheck.instance.activate(
+    androidProvider: kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
+  );
+
+  if (kDebugMode) {
+    FirebaseAuth.instance.setSettings(
+      appVerificationDisabledForTesting: true,
+    );
+  }
+
+  NotificationService.instance.init();
 }
 
 class AtharApp extends ConsumerWidget {

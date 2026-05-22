@@ -27,7 +27,6 @@ class NavigationContainer extends ConsumerStatefulWidget {
 
 class _NavigationContainerState extends ConsumerState<NavigationContainer> {
   int _currentIndex = 0;
-  int _previousIndex = 0;
   Widget? _subPage;
 
   // Screens are built lazily once auth resolves and cached per role.
@@ -42,7 +41,6 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
         onEventTap: (EventModel event) {
           ref.read(pendingMapPinIdProvider.notifier).state = event.id;
           setState(() {
-            _previousIndex = _currentIndex;
             _currentIndex = 1;
             _subPage = null;
           });
@@ -111,7 +109,6 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
           // Guard against a stale index that would exceed the new list length.
           if (_currentIndex >= _screens!.length) {
             _currentIndex = 0;
-            _previousIndex = 0;
           }
         }
 
@@ -125,35 +122,34 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
                 ),
           body: Stack(
             children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 280),
-                transitionBuilder: (Widget child, Animation<double> animation) {
-                  final isMovingForward = _currentIndex > _previousIndex;
-                  final beginOffset = isMovingForward
-                      ? const Offset(1.0, 0.0)
-                      : const Offset(-1.0, 0.0);
-
-                  return SlideTransition(
+              // IndexedStack keeps all tab screens mounted (just hidden).
+              // _HomeHeroSliderState — and every other tab's state — survives
+              // tab switches, so the slider never resets to skeleton on return.
+              IndexedStack(
+                index: _currentIndex,
+                children: _screens!,
+              ),
+              // Sub-pages (e.g. CulturalArchive) slide in over the tabs and
+              // are disposed when the user goes back. This is the only place
+              // AnimatedSwitcher is still used, scoped to sub-page transitions.
+              if (_subPage != null)
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 280),
+                  transitionBuilder: (child, animation) => SlideTransition(
                     position: Tween<Offset>(
-                      begin: beginOffset,
+                      begin: const Offset(1.0, 0.0),
                       end: Offset.zero,
                     ).animate(CurvedAnimation(
                       parent: animation,
                       curve: Curves.easeOutQuart,
                     )),
-                    child: FadeTransition(
-                      opacity: animation,
-                      child: child,
-                    ),
-                  );
-                },
-                child: KeyedSubtree(
-                  key: ValueKey<String>(_subPage != null
-                      ? 'subpage_${_subPage.hashCode}'
-                      : 'tab_$_currentIndex'),
-                  child: _subPage ?? _screens![_currentIndex],
+                    child: FadeTransition(opacity: animation, child: child),
+                  ),
+                  child: KeyedSubtree(
+                    key: ValueKey<int>(_subPage.hashCode),
+                    child: _subPage!,
+                  ),
                 ),
-              ),
             ],
           ),
           bottomNavigationBar: AtharBottomNavigation(
@@ -162,7 +158,6 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
             onTap: (index) {
               if (index != _currentIndex || _subPage != null) {
                 setState(() {
-                  _previousIndex = _currentIndex;
                   _currentIndex = index;
                   _subPage = null;
                 });
