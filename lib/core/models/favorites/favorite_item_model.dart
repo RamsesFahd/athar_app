@@ -14,6 +14,7 @@ class FavoriteItemModel {
   final String locationEn;
   final String imageUrl;
   final DateTime savedAt;
+  final String? contributionId;
 
   const FavoriteItemModel({
     required this.id,
@@ -25,6 +26,7 @@ class FavoriteItemModel {
     required this.locationEn,
     required this.imageUrl,
     required this.savedAt,
+    this.contributionId,
   });
 
   factory FavoriteItemModel.fromCultural(CulturalItemModel item) {
@@ -38,6 +40,7 @@ class FavoriteItemModel {
       locationEn: item.regionEn,
       imageUrl: item.imageUrl,
       savedAt: DateTime.now(),
+      contributionId: item.isContribution ? item.contributionId : null,
     );
   }
 
@@ -69,6 +72,7 @@ class FavoriteItemModel {
       locationEn: map['locationEn'] as String,
       imageUrl: map['imageUrl'] as String,
       savedAt: (map['savedAt'] as Timestamp).toDate(),
+      contributionId: map['contributionId'] as String?,
     );
   }
 
@@ -81,5 +85,6 @@ class FavoriteItemModel {
         'locationEn': locationEn,
         'imageUrl': imageUrl,
         'savedAt': Timestamp.fromDate(savedAt),
+        if (contributionId != null) 'contributionId': contributionId,
       };
 }

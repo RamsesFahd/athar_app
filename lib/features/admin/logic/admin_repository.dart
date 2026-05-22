@@ -301,6 +301,7 @@ class AdminRepository {
       'isContribution': true,
       'contributorId': touristId,
       'contributorName': touristName,
+      'contributionId': contributionId,
       'createdAt': FieldValue.serverTimestamp(),
       'createdBy': adminId,
     });

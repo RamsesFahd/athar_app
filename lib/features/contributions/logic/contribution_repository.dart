@@ -14,6 +14,22 @@ ContributionRepository contributionRepository(Ref ref) {
   return ContributionRepository();
 }
 
+/// Streams the sum of likes across all approved contributions for a tourist.
+/// Used in the tourist profile header to show a live heart count.
+final touristTotalLikesProvider =
+    StreamProvider.autoDispose.family<int, String>((ref, uid) {
+  return FirebaseFirestore.instance
+      .collection('contributions')
+      .where('touristId', isEqualTo: uid)
+      .where('status', isEqualTo: ContributionStatus.approved.name)
+      .snapshots()
+      .map((snap) => snap.docs.fold<int>(
+            0,
+            (sum, doc) =>
+                sum + ((doc.data()['likes'] as num?)?.toInt() ?? 0),
+          ));
+});
+
 /// Streams the tourist's Firestore document so points/count stay live
 /// even after an admin approves a contribution in the background.
 @riverpod
@@ -167,7 +183,7 @@ class ContributionRepository {
       totalLikes: approved.fold(0, (acc, c) => acc + c.likes),
       totalShares: approved.fold(0, (acc, c) => acc + c.shares),
       uniqueRegionCount: approved.map((c) => c.regionId).toSet().length,
-      qualityBonusCount: approved.where((c) => c.points > 60).length,
+      qualityBonusCount: approved.where((c) => c.points >= 60).length,
     );
   }
 

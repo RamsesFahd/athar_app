@@ -19,6 +19,7 @@ class CulturalItemModel {
   final bool isContribution;
   final String? contributorId;
   final String? contributorName;
+  final String? contributionId;
   final List<String> interestIds;
   final HeroAiText? heroCopy;
 
@@ -40,6 +41,7 @@ class CulturalItemModel {
     this.isContribution = false,
     this.contributorId,
     this.contributorName,
+    this.contributionId,
     this.interestIds = const [],
     this.heroCopy,
   });
@@ -62,6 +64,7 @@ class CulturalItemModel {
       'isContribution': isContribution,
       if (contributorId != null) 'contributorId': contributorId,
       if (contributorName != null) 'contributorName': contributorName,
+      if (contributionId != null) 'contributionId': contributionId,
     };
   }
 
@@ -86,6 +89,7 @@ class CulturalItemModel {
       isContribution: map['isContribution'] as bool? ?? false,
       contributorId: map['contributorId'] as String?,
       contributorName: map['contributorName'] as String?,
+      contributionId: map['contributionId'] as String?,
       interestIds: List<String>.from(map['interestIds'] ?? []),
       heroCopy: map['heroCopy'] is Map
           ? HeroAiText.fromMap(Map<String, dynamic>.from(map['heroCopy'] as Map))

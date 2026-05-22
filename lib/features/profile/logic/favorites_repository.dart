@@ -48,9 +48,21 @@ class FavoritesRepository {
     final exists = await isFavorite(uid, item.itemId);
     if (exists) {
       await removeFavorite(uid, item.itemId);
+      if (item.contributionId != null) {
+        await _firestore
+            .collection('contributions')
+            .doc(item.contributionId)
+            .update({'likes': FieldValue.increment(-1)});
+      }
       return false;
     } else {
       await addFavorite(uid, item);
+      if (item.contributionId != null) {
+        await _firestore
+            .collection('contributions')
+            .doc(item.contributionId)
+            .update({'likes': FieldValue.increment(1)});
+      }
       return true;
     }
   }
