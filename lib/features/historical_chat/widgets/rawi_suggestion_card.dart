@@ -9,7 +9,6 @@ import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:athar_app/core/theme/app_colors.dart';
 
 class RawiSuggestionsRow extends StatelessWidget {
   final List<Map<String, dynamic>> items;
@@ -24,19 +23,21 @@ class RawiSuggestionsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
     final rowExtra = ((textScale - 1.0).clamp(0.0, 1.0) * 34).toDouble();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsetsDirectional.only(start: 12, end: 12, top: 6, bottom: 4),
+          padding: const EdgeInsetsDirectional.only(
+              start: 12, end: 12, top: 6, bottom: 4),
           child: Text(
             l10n.rawiSuggestedItems,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: AppColors.primary,
+              color: theme.colorScheme.primary,
             ),
           ),
         ),
@@ -72,6 +73,7 @@ class RawiSuggestionCard extends StatelessWidget {
     if (url.isNotEmpty) return url;
     return item['mainImage']?.toString() ?? '';
   }
+
   String get _title {
     if (isAr) {
       return item['titleAr']?.toString().isNotEmpty == true
@@ -104,50 +106,61 @@ class RawiSuggestionCard extends StatelessWidget {
 
     try {
       switch (_type) {
-        case 'attraction': {
-          final doc = await db.collection('attractions').doc(_id).get();
-          if (!doc.exists || doc.data() == null) return;
-          final model = AttractionModel.fromMap(doc.data()!, doc.id);
-          if (!context.mounted) return;
-          Navigator.push(context, MaterialPageRoute(
-            builder: (_) => AttractionDetailsScreen(attraction: model),
-          ));
-          break;
-        }
-        case 'trip': {
-          final doc = await db.collection('trips').doc(_id).get();
-          if (!doc.exists || doc.data() == null) return;
-          final model = TripModel.fromMap(doc.data()!, doc.id);
-          if (!context.mounted) return;
-          Navigator.push(context, MaterialPageRoute(
-            builder: (_) => TripDetailsScreen(trip: model),
-          ));
-          break;
-        }
-        case 'cultural_item': {
-          final doc = await db.collection('cultural_items').doc(_id).get();
-          if (!doc.exists || doc.data() == null) return;
-          final model = CulturalItemModel.fromMap(doc.data()!, doc.id);
-          if (!context.mounted) return;
-          Navigator.push(context, MaterialPageRoute(
-            builder: (_) => CulturalItemDetails(item: model),
-          ));
-          break;
-        }
-        case 'event': {
-          final doc = await db.collection('events').doc(_id).get();
-          if (!doc.exists || doc.data() == null) return;
-          final model = EventModel.fromMap(doc.data()!, doc.id);
-          if (!context.mounted) return;
-          _showEventSheet(context, model);
-          break;
-        }
+        case 'attraction':
+          {
+            final doc = await db.collection('attractions').doc(_id).get();
+            if (!doc.exists || doc.data() == null) return;
+            final model = AttractionModel.fromMap(doc.data()!, doc.id);
+            if (!context.mounted) return;
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AttractionDetailsScreen(attraction: model),
+                ));
+            break;
+          }
+        case 'trip':
+          {
+            final doc = await db.collection('trips').doc(_id).get();
+            if (!doc.exists || doc.data() == null) return;
+            final model = TripModel.fromMap(doc.data()!, doc.id);
+            if (!context.mounted) return;
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => TripDetailsScreen(trip: model),
+                ));
+            break;
+          }
+        case 'cultural_item':
+          {
+            final doc = await db.collection('cultural_items').doc(_id).get();
+            if (!doc.exists || doc.data() == null) return;
+            final model = CulturalItemModel.fromMap(doc.data()!, doc.id);
+            if (!context.mounted) return;
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CulturalItemDetails(item: model),
+                ));
+            break;
+          }
+        case 'event':
+          {
+            final doc = await db.collection('events').doc(_id).get();
+            if (!doc.exists || doc.data() == null) return;
+            final model = EventModel.fromMap(doc.data()!, doc.id);
+            if (!context.mounted) return;
+            _showEventSheet(context, model);
+            break;
+          }
       }
     } catch (_) {}
   }
 
   void _showEventSheet(BuildContext context, EventModel event) {
     final isAr = this.isAr;
+    final theme = Theme.of(context);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -163,13 +176,27 @@ class RawiSuggestionCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                isAr ? (event.titleAr.isNotEmpty ? event.titleAr : event.titleEn) : (event.titleEn.isNotEmpty ? event.titleEn : event.titleAr),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                isAr
+                    ? (event.titleAr.isNotEmpty ? event.titleAr : event.titleEn)
+                    : (event.titleEn.isNotEmpty
+                        ? event.titleEn
+                        : event.titleAr),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Text(
-                isAr ? (event.descriptionAr.isNotEmpty ? event.descriptionAr : event.descriptionEn) : (event.descriptionEn.isNotEmpty ? event.descriptionEn : event.descriptionAr),
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                isAr
+                    ? (event.descriptionAr.isNotEmpty
+                        ? event.descriptionAr
+                        : event.descriptionEn)
+                    : (event.descriptionEn.isNotEmpty
+                        ? event.descriptionEn
+                        : event.descriptionAr),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
               const SizedBox(height: 16),
             ],
@@ -181,16 +208,17 @@ class RawiSuggestionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: () => _navigate(context),
       child: Container(
         width: 140,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha:0.07),
+              color: theme.colorScheme.shadow.withValues(alpha: 0.07),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -210,10 +238,10 @@ class RawiSuggestionCard extends StatelessWidget {
                       // 2× physical pixels for the 140 px logical card width
                       memCacheWidth: 280,
                       fadeInDuration: const Duration(milliseconds: 150),
-                      placeholder: (_, __) => _placeholder(),
-                      errorWidget: (_, __, ___) => _placeholder(),
+                      placeholder: (_, __) => _placeholder(context),
+                      errorWidget: (_, __, ___) => _placeholder(context),
                     )
-                  : _placeholder(),
+                  : _placeholder(context),
             ),
             // Title + icon
             Padding(
@@ -223,7 +251,11 @@ class RawiSuggestionCard extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
-                    child: Icon(_typeIcon, size: 12, color: AppColors.primary),
+                    child: Icon(
+                      _typeIcon,
+                      size: 12,
+                      color: theme.colorScheme.primary,
+                    ),
                   ),
                   const SizedBox(width: 4),
                   Expanded(
@@ -231,10 +263,10 @@ class RawiSuggestionCard extends StatelessWidget {
                       _title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -247,11 +279,16 @@ class RawiSuggestionCard extends StatelessWidget {
     );
   }
 
-  Widget _placeholder() {
+  Widget _placeholder(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      color: AppColors.primary.withValues(alpha:0.08),
+      color: colorScheme.primary.withValues(alpha: 0.08),
       child: Center(
-        child: Icon(_typeIcon, color: AppColors.primary.withValues(alpha:0.4), size: 32),
+        child: Icon(
+          _typeIcon,
+          color: colorScheme.primary.withValues(alpha: 0.4),
+          size: 32,
+        ),
       ),
     );
   }
