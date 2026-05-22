@@ -5,6 +5,7 @@ import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 part 'marketplace_repository.g.dart';
 
 @riverpod
@@ -53,8 +54,7 @@ class MarketplaceRepository {
         final existing = await _bookings
             .where('tripId', isEqualTo: booking.tripId)
             .where('date', isEqualTo: booking.date)
-            .where('status', whereIn: ['pending', 'approved'])
-            .get();
+            .where('status', whereIn: ['pending', 'approved']).get();
         if (existing.docs.isNotEmpty) {
           throw Exception('tripDayAlreadyBookedError');
         }
@@ -76,8 +76,7 @@ class MarketplaceRepository {
   Future<Set<String>> fetchBookedDates(String tripId) async {
     final snap = await _bookings
         .where('tripId', isEqualTo: tripId)
-        .where('status', whereIn: ['pending', 'approved'])
-        .get();
+        .where('status', whereIn: ['pending', 'approved']).get();
     return snap.docs
         .map((d) => (d.data() as Map<String, dynamic>)['date'] as String? ?? '')
         .where((d) => d.isNotEmpty)
@@ -88,9 +87,8 @@ class MarketplaceRepository {
   Future<void> submitTrip(TripModel trip) async {
     await _trips.doc(trip.id).set(trip.toMap());
     // Notify all admins that a new trip is pending review.
-    final adminSnap = await _users
-        .where('role', isEqualTo: UserRole.admin.name)
-        .get();
+    final adminSnap =
+        await _users.where('role', isEqualTo: UserRole.admin.name).get();
     final repo = NotificationsRepository();
     for (final doc in adminSnap.docs) {
       await repo.addNotification(
@@ -102,10 +100,8 @@ class MarketplaceRepository {
 
   // 6. جلب رحلات مرشد معين
   Stream<List<TripModel>> fetchTutorTrips(String tutorId) {
-    return _trips
-        .where('tutorId', isEqualTo: tutorId)
-        .snapshots()
-        .map((snapshot) => snapshot.docs
+    return _trips.where('tutorId', isEqualTo: tutorId).snapshots().map(
+        (snapshot) => snapshot.docs
             .map((doc) =>
                 TripModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
             .toList());
@@ -118,13 +114,13 @@ class MarketplaceRepository {
         .where(field, isEqualTo: userId)
         .snapshots()
         .map((snapshot) {
-          final list = snapshot.docs
-              .map((doc) =>
-                  BookingModel.fromMap(doc.data() as Map<String, dynamic>))
-              .toList();
-          list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-          return list;
-        });
+      final list = snapshot.docs
+          .map(
+              (doc) => BookingModel.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+      list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return list;
+    });
   }
 
   // 7. تحديث حالة الحجز (قبول / رفض / إكمال)
@@ -135,13 +131,21 @@ class MarketplaceRepository {
   ) async {
     await _bookings.doc(bookingId).update({'status': status.name});
 
-    if (status == BookingStatus.cancelled ||
-        status == BookingStatus.rejected) {
+    if (status == BookingStatus.cancelled || status == BookingStatus.rejected) {
       await NotificationsRepository().addNotification(
         userId: touristId,
         type: 'booking_cancelled',
       );
     }
+  }
+
+  Future<void> markBookingCompleted(String bookingId) async {
+    final callable = FirebaseFunctions.instance.httpsCallable(
+      'markBookingCompleted',
+      options: HttpsCallableOptions(timeout: const Duration(seconds: 30)),
+    );
+
+    await callable.call(<String, dynamic>{'bookingId': bookingId});
   }
 
   /// 7b. قبول الحجز — معلومات التواصل تُقرأ live من user document
@@ -194,13 +198,10 @@ class MarketplaceRepository {
   // 10. جلب حجوزات مستخدم مرة واحدة (Future، لا Stream) — يُستخدم لفحوصات الأمان
   Future<List<BookingModel>> fetchUserBookingsOnce(
       String userId, UserRole role) async {
-    final String field =
-        (role == UserRole.tutor) ? 'tutorId' : 'touristId';
-    final snapshot =
-        await _bookings.where(field, isEqualTo: userId).get();
+    final String field = (role == UserRole.tutor) ? 'tutorId' : 'touristId';
+    final snapshot = await _bookings.where(field, isEqualTo: userId).get();
     return snapshot.docs
-        .map((doc) =>
-            BookingModel.fromMap(doc.data() as Map<String, dynamic>))
+        .map((doc) => BookingModel.fromMap(doc.data() as Map<String, dynamic>))
         .toList();
   }
 }
@@ -211,8 +212,7 @@ class MarketplaceRepository {
 /// rebuilds (e.g. after an auth change) and is shared across all watchers.
 // keepAlive (no autoDispose): stream stays active across navigation so Home
 // never re-fetches trips on re-entry. Disposed only when the app terminates.
-final allTripsStreamProvider =
-    StreamProvider<List<TripModel>>((ref) {
+final allTripsStreamProvider = StreamProvider<List<TripModel>>((ref) {
   return ref.watch(marketplaceRepositoryProvider).fetchAllTrips();
 });
 

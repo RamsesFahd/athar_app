@@ -1109,6 +1109,16 @@ const NOTIFICATION_COPY: Record<string, NotificationPayload> = {
     title: { ar: "اكتملت رحلتك", en: "Trip Completed" },
     body:  { ar: "نأمل أن تكون رحلتك رائعة! شاركنا تقييمك للمرشد.", en: "We hope you had a great trip! Share your rating for the guide." },
   },
+  booking_auto_completed: {
+    type: "booking_auto_completed",
+    title: { ar: "اكتملت الرحلة تلقائيًا", en: "Trip Auto-Completed" },
+    body:  { ar: "تم إكمال الرحلة تلقائيًا بعد 24 ساعة من وقت الانتهاء. إذا كان هناك إشكال، تواصل معنا عبر البريد.", en: "The trip was auto-completed 24 hours after the scheduled end time. Contact support if there is an issue." },
+  },
+  booking_reminder: {
+    type: "booking_reminder",
+    title: { ar: "تذكير بالرحلة", en: "Trip Reminder" },
+    body:  { ar: "لديك رحلة اليوم. يرجى تذكر وضعها كمكتملة بعد انتهائها.", en: "You have a trip today. Please remember to mark it completed after it ends." },
+  },
   guide_verified: {
     type: "guide_verified",
     title: { ar: "تم توثيق حسابك", en: "Account Verified" },
@@ -1133,13 +1143,17 @@ const NOTIFICATION_COPY: Record<string, NotificationPayload> = {
 async function createInAppNotification(
   userId: string,
   notif: NotificationPayload,
-  bodyOverride?: BilingualText
+  bodyOverride?: BilingualText,
+  notificationId?: string
 ): Promise<void> {
-  await db
+  const collection = db
     .collection("users")
     .doc(userId)
-    .collection("notifications")
-    .add({
+    .collection("notifications");
+
+  const docRef = notificationId ? collection.doc(notificationId) : collection.doc();
+
+  await docRef.set({
       type: notif.type,
       title: notif.title,
       body: bodyOverride ?? notif.body,
@@ -1220,7 +1234,8 @@ async function sendPushToUser(
 async function notify(
   userId: string,
   type: string,
-  bodyOverride?: BilingualText
+  bodyOverride?: BilingualText,
+  notificationId?: string
 ): Promise<void> {
   const notif = NOTIFICATION_COPY[type];
   if (!notif) {
@@ -1228,7 +1243,7 @@ async function notify(
     return;
   }
   await Promise.all([
-    createInAppNotification(userId, notif, bodyOverride),
+    createInAppNotification(userId, notif, bodyOverride, notificationId),
     sendPushToUser(userId, notif, bodyOverride),
   ]);
 }
@@ -1436,6 +1451,222 @@ export const onBookingStatusChanged = onDocumentUpdated(
   }
 );
 
+function parseBookingDate(date: string): Date | null {
+  if (!date) return null;
+  const parsed = new Date(`${date}T00:00:00`);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function extractTimeParts(timeSlot: string): Array<[number, number]> {
+  const matches = [...timeSlot.matchAll(/(\d{1,2}):(\d{2})/g)];
+  return matches.map((match) => [Number(match[1]), Number(match[2])]);
+}
+
+function scheduledBookingStart(date: string, timeSlot: string): Date | null {
+  const bookingDate = parseBookingDate(date);
+  const timeParts = extractTimeParts(timeSlot);
+  if (!bookingDate || timeParts.length === 0) return null;
+  const [hours, minutes] = timeParts[0];
+  return new Date(
+    bookingDate.getFullYear(),
+    bookingDate.getMonth(),
+    bookingDate.getDate(),
+    hours,
+    minutes,
+  );
+}
+
+function scheduledBookingEnd(date: string, timeSlot: string): Date | null {
+  const bookingDate = parseBookingDate(date);
+  const timeParts = extractTimeParts(timeSlot);
+  if (!bookingDate || timeParts.length === 0) return null;
+  const [hours, minutes] = timeParts.length > 1 ? timeParts[timeParts.length - 1] : timeParts[0];
+  return new Date(
+    bookingDate.getFullYear(),
+    bookingDate.getMonth(),
+    bookingDate.getDate(),
+    hours,
+    minutes,
+  );
+}
+
+function toRiyadhYmd(date: Date): string {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Riyadh",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const parts = formatter.formatToParts(date);
+  const year = parts.find((part) => part.type === "year")?.value ?? "";
+  const month = parts.find((part) => part.type === "month")?.value ?? "";
+  const day = parts.find((part) => part.type === "day")?.value ?? "";
+  return `${year}-${month}-${day}`;
+}
+
+function isRiyadhDay(date: Date, other: Date): boolean {
+  return toRiyadhYmd(date) === toRiyadhYmd(other);
+}
+
+export const remindGuidesToCompleteBookings = onSchedule(
+  { schedule: "0 8 * * *", timeZone: "Asia/Riyadh" },
+  async () => {
+    const today = new Date();
+    const snap = await db
+      .collection("bookings")
+      .where("status", "==", "approved")
+      .get();
+
+    const reminders = snap.docs.filter((doc) => {
+      const data = doc.data();
+      const start = scheduledBookingStart(String(data.date ?? ""), String(data.timeSlot ?? ""));
+      return start != null && isRiyadhDay(today, start);
+    });
+
+    if (reminders.length === 0) {
+      logger.info("[bookingReminder] No guide reminders to send.");
+      return;
+    }
+
+    const notificationPromises = reminders.flatMap((doc) => {
+      const data = doc.data();
+      const tutorId: string = data.tutorId ?? "";
+      const date: string = data.date ?? "";
+      const timeSlot: string = data.timeSlot ?? "";
+
+      if (!tutorId) return [];
+
+      return [notify(
+        tutorId,
+        "booking_reminder",
+        {
+          ar: `تذكير: لديك رحلة اليوم ${date} ${timeSlot}. يرجى وضعها كمكتملة بعد انتهاء الرحلة.`,
+          en: `Reminder: you have a trip today on ${date} ${timeSlot}. Please mark it completed after the trip ends.`,
+        },
+        `${doc.id}_booking_reminder`,
+      )];
+    });
+
+    await Promise.all(notificationPromises);
+    logger.info(`[bookingReminder] Sent ${notificationPromises.length} reminder(s).`);
+  }
+);
+
+export const autoCompleteBookings = onSchedule(
+  { schedule: "0 * * * *", timeZone: "Asia/Riyadh" },
+  async () => {
+    const snap = await db
+      .collection("bookings")
+      .where("status", "==", "approved")
+      .get();
+
+    const now = Date.now();
+    const batch = db.batch();
+    let count = 0;
+    const notifications: Array<Promise<void>> = [];
+
+    for (const doc of snap.docs) {
+      const data = doc.data();
+      const scheduledEnd = scheduledBookingEnd(
+        String(data.date ?? ""),
+        String(data.timeSlot ?? ""),
+      );
+
+      if (!scheduledEnd) continue;
+
+      const deadline = scheduledEnd.getTime() + (24 * 60 * 60 * 1000);
+      if (now >= deadline) {
+        batch.update(doc.ref, {
+          status: "completed",
+          completedAt: FieldValue.serverTimestamp(),
+          completedBy: "system_auto",
+        });
+        const tutorId: string = data.tutorId ?? "";
+        if (tutorId) {
+          notifications.push(
+            notify(
+              tutorId,
+              "booking_auto_completed",
+              undefined,
+              `${doc.id}_booking_auto_completed`,
+            ),
+          );
+        }
+        count += 1;
+      }
+    }
+
+    if (count > 0) {
+      await batch.commit();
+      await Promise.all(notifications);
+      logger.info(`[autoCompleteBookings] Auto-completed ${count} booking(s) after 24h fallback.`);
+    }
+  }
+);
+
+export const markBookingCompleted = onCall(
+  {
+    enforceAppCheck: false,
+    timeoutSeconds: 30,
+    region: "us-central1",
+  },
+  async (request) => {
+    const authUid = request.auth?.uid;
+    if (!authUid) {
+      throw new HttpsError("unauthenticated", "You must be signed in to complete a booking.");
+    }
+
+    const { bookingId } = request.data as { bookingId?: string };
+    if (!bookingId?.trim()) {
+      throw new HttpsError("invalid-argument", "bookingId is required.");
+    }
+
+    const bookingRef = db.collection("bookings").doc(bookingId);
+    const userRef = db.collection("users").doc(authUid);
+
+    await db.runTransaction(async (tx) => {
+      const [bookingSnap, userSnap] = await Promise.all([tx.get(bookingRef), tx.get(userRef)]);
+
+      if (!bookingSnap.exists) {
+        throw new HttpsError("not-found", "Booking not found.");
+      }
+
+      const userData = userSnap.data() as FirebaseFirestore.DocumentData | undefined;
+      if (!userData || userData.role !== "tutor") {
+        throw new HttpsError("permission-denied", "Only the assigned guide can complete this booking.");
+      }
+
+      const bookingData = bookingSnap.data() as FirebaseFirestore.DocumentData;
+      if (bookingData.tutorId !== authUid) {
+        throw new HttpsError("permission-denied", "This booking does not belong to the signed-in guide.");
+      }
+
+      if (bookingData.status === "completed") {
+        return;
+      }
+
+      if (bookingData.status !== "approved") {
+        throw new HttpsError("failed-precondition", "Only approved bookings can be completed.");
+      }
+
+      const scheduledEnd = scheduledBookingEnd(String(bookingData.date ?? ""), String(bookingData.timeSlot ?? ""));
+      if (!scheduledEnd) {
+        throw new HttpsError("failed-precondition", "Booking schedule is invalid.");
+      }
+
+      if (Date.now() < scheduledEnd.getTime()) {
+        throw new HttpsError("failed-precondition", "This booking can only be completed after the scheduled trip time has passed.");
+      }
+
+      tx.update(bookingRef, {
+        status: "completed",
+        completedAt: FieldValue.serverTimestamp(),
+        completedBy: authUid,
+      });
+    });
+  }
+);
+
 // ── Trigger 7: Admin verifies a guide account → notify the guide ───────────
 
 export const onGuideVerified = onDocumentUpdated(
@@ -1524,52 +1755,6 @@ export const autoApproveBookings = onSchedule(
     await batch.commit();
     await Promise.all(notifications.map((fn) => fn()));
     logger.info(`[autoApprove] Auto-approved ${snap.size} booking(s).`);
-  }
-);
-
-// ── Scheduled 2: Mark approved bookings as completed when date has passed ──
-//
-// Runs daily at 01:00 Riyadh time. Finds all approved bookings whose date
-// string (YYYY-MM-DD) is strictly before today and transitions them to
-// 'completed'. The tourist receives a completion notification with a prompt
-// to rate their guide.
-
-export const markCompletedBookings = onSchedule(
-  { schedule: "0 1 * * *", timeZone: "Asia/Riyadh" },
-  async () => {
-    // Today's date in YYYY-MM-DD, used for lexicographic comparison with the
-    // stored date string which uses the same format (from Dart's DateTime.toString()).
-    const today = new Date().toISOString().split("T")[0];
-
-    const snap = await db
-      .collection("bookings")
-      .where("status", "==", "approved")
-      .get();
-
-    const toComplete = snap.docs.filter((doc) => {
-      const date: string = doc.data().date ?? "";
-      return date < today; // YYYY-MM-DD lexicographic comparison is correct
-    });
-
-    if (toComplete.length === 0) {
-      logger.info("[markCompleted] No bookings to complete.");
-      return;
-    }
-
-    const batch = db.batch();
-    const notifications: Array<() => Promise<void>> = [];
-
-    for (const doc of toComplete) {
-      batch.update(doc.ref, { status: "completed" });
-      const touristId: string = doc.data().touristId ?? "";
-      if (touristId) {
-        notifications.push(() => notify(touristId, "booking_completed"));
-      }
-    }
-
-    await batch.commit();
-    await Promise.all(notifications.map((fn) => fn()));
-    logger.info(`[markCompleted] Marked ${toComplete.length} booking(s) as completed.`);
   }
 );
 

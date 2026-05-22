@@ -146,6 +146,8 @@ class NotificationService {
       case 'booking_new':
       case 'booking_approved':
       case 'booking_cancelled':
+      case 'booking_reminder':
+      case 'booking_auto_completed':
       case 'guide_verified':
       case 'points_awarded':
         Navigator.of(context).pushNamed('/notifications');

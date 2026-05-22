@@ -2774,6 +2774,12 @@ abstract class AppLocalizations {
   /// **'Booking Cancelled'**
   String get notificationBookingCancelledTitle;
 
+  /// No description provided for @notificationBookingAutoCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip Auto-Completed'**
+  String get notificationBookingAutoCompletedTitle;
+
   /// No description provided for @notificationGuideVerifiedTitle.
   ///
   /// In en, this message translates to:
@@ -2851,6 +2857,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your booking has been cancelled.'**
   String get notificationBookingCancelledBody;
+
+  /// No description provided for @notificationBookingAutoCompletedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your trip was auto-completed 24 hours after the scheduled end time. Contact support if there is an issue.'**
+  String get notificationBookingAutoCompletedBody;
 
   /// No description provided for @notificationGuideVerifiedBody.
   ///

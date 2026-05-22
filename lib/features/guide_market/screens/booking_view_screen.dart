@@ -4,162 +4,225 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/core/utils/booking_schedule_helper.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/bookings/widgets/rating_stars_widget.dart';
+import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
 import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 /// Read-only view of a completed/pending booking.
 /// Formerly booking_detail_screen.dart — renamed for clarity (Issue I).
-class BookingViewScreen extends ConsumerWidget {
+class BookingViewScreen extends ConsumerStatefulWidget {
   final BookingModel booking;
 
   const BookingViewScreen({super.key, required this.booking});
 
-  Color _statusColor(BookingStatus status, ThemeData theme) {
-  switch (status) {
-    case BookingStatus.approved:
-      return Colors.green;
-    case BookingStatus.rejected:
-      return Colors.red;
-    case BookingStatus.cancelled:
-      return Colors.grey;
-    case BookingStatus.completed:
-      return theme.colorScheme.primary;
-    case BookingStatus.pending:
-      return Colors.amber.shade700;
-  }
+  @override
+  ConsumerState<BookingViewScreen> createState() => _BookingViewScreenState();
 }
 
-String _statusMessage(BookingStatus status, bool isGuide, AppLocalizations l10n) {
-  switch (status) {
-    case BookingStatus.pending:
-      return isGuide ? l10n.bookingViewPendingGuide : l10n.bookingViewPendingTourist;
-    case BookingStatus.approved:
-      return isGuide ? l10n.bookingViewApprovedGuide : l10n.bookingViewApprovedTourist;
-    case BookingStatus.rejected:
-      return isGuide ? l10n.bookingViewRejectedGuide : l10n.bookingViewRejectedTourist;
-    case BookingStatus.cancelled:
-      return isGuide ? l10n.bookingViewCancelledGuide : l10n.bookingViewCancelledTourist;
-    case BookingStatus.completed:
-      return l10n.bookingViewCompleted;
+class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
+  bool _isCompleting = false;
+
+  Color _statusColor(BookingStatus status, ThemeData theme) {
+    switch (status) {
+      case BookingStatus.approved:
+        return Colors.green;
+      case BookingStatus.rejected:
+        return Colors.red;
+      case BookingStatus.cancelled:
+        return Colors.grey;
+      case BookingStatus.completed:
+        return theme.colorScheme.primary;
+      case BookingStatus.pending:
+        return Colors.amber.shade700;
+    }
   }
-}
+
+  String _statusMessage(
+      BookingStatus status, bool isGuide, AppLocalizations l10n) {
+    switch (status) {
+      case BookingStatus.pending:
+        return isGuide
+            ? l10n.bookingViewPendingGuide
+            : l10n.bookingViewPendingTourist;
+      case BookingStatus.approved:
+        return isGuide
+            ? l10n.bookingViewApprovedGuide
+            : l10n.bookingViewApprovedTourist;
+      case BookingStatus.rejected:
+        return isGuide
+            ? l10n.bookingViewRejectedGuide
+            : l10n.bookingViewRejectedTourist;
+      case BookingStatus.cancelled:
+        return isGuide
+            ? l10n.bookingViewCancelledGuide
+            : l10n.bookingViewCancelledTourist;
+      case BookingStatus.completed:
+        return l10n.bookingViewCompleted;
+    }
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final l10n = AppLocalizations.of(context);
-    final currentUser = ref.watch(authNotifierProvider).value;
-    final isTourist = currentUser is TouristModel;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.booking_details),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          if (booking.imageUrl.isNotEmpty)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(18),
-              child: Image.network(
-                booking.imageUrl,
-                height: 190,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  height: 190,
-                  color: colorScheme.surface,
-                  alignment: Alignment.center,
-                  child: Icon(
-                    Icons.broken_image_outlined,
-                    size: 34,
-                    color: colorScheme.primary,
-                  ),
-                ),
-              ),
-            ),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('bookings')
+            .doc(widget.booking.bookingId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          final data = snapshot.data?.data() as Map<String, dynamic>?;
+          final liveBooking =
+              data != null ? BookingModel.fromMap(data) : widget.booking;
+          final currentUser = ref.watch(authNotifierProvider).value;
+          final isTourist = currentUser is TouristModel;
+          final canComplete = !isTourist &&
+              canGuideMarkBookingCompleted(liveBooking, DateTime.now());
 
-          const SizedBox(height: 16),
-
-          _buildBookingOverviewCard(theme, isAr, l10n, ref, isTourist),
-
-          const SizedBox(height: 24),
-
-          if (isTourist && booking.status == BookingStatus.completed)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: RatingStarsWidget(
-                bookingId: booking.bookingId,
-                touristId: booking.touristId,
-                tutorId: booking.tutorId,
-                tripId: booking.tripId,
-              ),
-            ),
-
-          if (isTourist && booking.status == BookingStatus.pending)
-            SizedBox(
-              width: double.infinity,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 52),
-                child: OutlinedButton.icon(
-                  onPressed: () async {
-                    final confirmed = await showDialog<bool>(
-                      context: context,
-                      builder: (ctx) => AlertDialog(
-                        title: Text(l10n.bookingCancelTitle),
-                        content: Text(l10n.cancelBookingConfirmation),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(ctx, false),
-                            child: Text(l10n.bookingCancelNo),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(ctx, true),
-                            child: Text(
-                              l10n.bookingCancelYes,
-                              style: const TextStyle(color: Colors.red),
-                            ),
-                          ),
-                        ],
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              if (liveBooking.imageUrl.isNotEmpty)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: Image.network(
+                    liveBooking.imageUrl,
+                    height: 190,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      height: 190,
+                      color: colorScheme.surface,
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.broken_image_outlined,
+                        size: 34,
+                        color: colorScheme.primary,
                       ),
-                    );
-
-                    if (confirmed == true && context.mounted) {
-                      // Issue H fix: delegate to BookingNotifier instead of
-                      // calling the repository directly from the screen.
-                      await ref
-                          .read(bookingNotifierProvider.notifier)
-                          .cancelBooking(booking.bookingId);
-
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                      }
-                    }
-                  },
-                  icon: const Icon(Icons.cancel_outlined, color: Colors.red),
-                  label: Text(
-                    l10n.bookingCancelButton,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.red),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
-              ),
-            ),
-        ],
+              const SizedBox(height: 16),
+              _buildBookingOverviewCard(
+                  theme, isAr, l10n, ref, isTourist, liveBooking),
+              const SizedBox(height: 24),
+              if (!isTourist && canComplete)
+                SizedBox(
+                  width: double.infinity,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 52),
+                    child: ElevatedButton.icon(
+                      onPressed: _isCompleting
+                          ? null
+                          : () => _completeBooking(liveBooking),
+                      icon: _isCompleting
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.check_circle_outline),
+                      label: Text(l10n.bookingCompleted),
+                    ),
+                  ),
+                ),
+              if (isTourist && liveBooking.status == BookingStatus.completed)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: RatingStarsWidget(
+                    bookingId: liveBooking.bookingId,
+                    touristId: liveBooking.touristId,
+                    tutorId: liveBooking.tutorId,
+                    tripId: liveBooking.tripId,
+                  ),
+                ),
+              if (isTourist && liveBooking.status == BookingStatus.pending)
+                SizedBox(
+                  width: double.infinity,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 52),
+                    child: OutlinedButton.icon(
+                      onPressed: () async {
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder: (ctx) => AlertDialog(
+                            title: Text(l10n.bookingCancelTitle),
+                            content: Text(l10n.cancelBookingConfirmation),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, false),
+                                child: Text(l10n.bookingCancelNo),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(ctx, true),
+                                child: Text(
+                                  l10n.bookingCancelYes,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (confirmed == true && context.mounted) {
+                          // Issue H fix: delegate to BookingNotifier instead of
+                          // calling the repository directly from the screen.
+                          await ref
+                              .read(bookingNotifierProvider.notifier)
+                              .cancelBooking(liveBooking.bookingId);
+
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        }
+                      },
+                      icon:
+                          const Icon(Icons.cancel_outlined, color: Colors.red),
+                      label: Text(
+                        l10n.bookingCancelButton,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: Colors.red),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
+  }
+
+  Future<void> _completeBooking(BookingModel booking) async {
+    setState(() => _isCompleting = true);
+    try {
+      await ref
+          .read(marketplaceRepositoryProvider)
+          .markBookingCompleted(booking.bookingId);
+    } finally {
+      if (mounted) setState(() => _isCompleting = false);
+    }
   }
 
   Widget _buildBookingOverviewCard(
@@ -168,6 +231,7 @@ String _statusMessage(BookingStatus status, bool isGuide, AppLocalizations l10n)
     AppLocalizations l10n,
     WidgetRef ref,
     bool isTourist,
+    BookingModel booking,
   ) {
     final isGuide = !isTourist;
     final colorScheme = theme.colorScheme;
@@ -232,9 +296,7 @@ String _statusMessage(BookingStatus status, bool isGuide, AppLocalizations l10n)
               ),
             ],
           ),
-
           const SizedBox(height: 14),
-
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(12),
@@ -247,16 +309,12 @@ String _statusMessage(BookingStatus status, bool isGuide, AppLocalizations l10n)
               style: textTheme.bodySmall,
             ),
           ),
-
           const SizedBox(height: 18),
-
           Text(
             l10n.bookingTripDetailsTitle,
             style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
           ),
-
           const SizedBox(height: 12),
-
           _modernInfoRow(theme, Icons.calendar_today, l10n.date, booking.date),
           _modernInfoRow(
             theme,
@@ -268,18 +326,15 @@ String _statusMessage(BookingStatus status, bool isGuide, AppLocalizations l10n)
             theme,
             Icons.people_outline,
             l10n.people_count,
-            l10n.bookingPeopleSummary(booking.adultsCount, booking.childrenCount),
+            l10n.bookingPeopleSummary(
+                booking.adultsCount, booking.childrenCount),
           ),
-
           const SizedBox(height: 18),
-
           Text(
             l10n.bookingPriceSummaryTitle,
             style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
           ),
-
           const SizedBox(height: 12),
-
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             decoration: BoxDecoration(
@@ -305,7 +360,6 @@ String _statusMessage(BookingStatus status, bool isGuide, AppLocalizations l10n)
               ],
             ),
           ),
-
           if (booking.status == BookingStatus.approved ||
               booking.status == BookingStatus.completed) ...[
             const SizedBox(height: 18),
@@ -335,7 +389,6 @@ String _statusMessage(BookingStatus status, bool isGuide, AppLocalizations l10n)
               },
             ),
           ],
-
           if (booking.status == BookingStatus.rejected) ...[
             const SizedBox(height: 18),
             Container(
@@ -364,7 +417,8 @@ String _statusMessage(BookingStatus status, bool isGuide, AppLocalizations l10n)
     required String? phone,
     required String? email,
   }) {
-    final personLabel = isGuide ? l10n.bookingTouristLabel : l10n.bookingGuideLabel;
+    final personLabel =
+        isGuide ? l10n.bookingTouristLabel : l10n.bookingGuideLabel;
     return Column(
       children: [
         _modernInfoRow(
@@ -436,7 +490,6 @@ String _statusMessage(BookingStatus status, bool isGuide, AppLocalizations l10n)
       ),
     );
   }
-
 
   String _localizedTimeSlot(String timeSlot, bool isAr, AppLocalizations l10n) {
     if (!isAr) return timeSlot;

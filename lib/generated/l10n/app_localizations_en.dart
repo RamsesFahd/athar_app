@@ -1415,6 +1415,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationBookingCancelledTitle => 'Booking Cancelled';
 
   @override
+  String get notificationBookingAutoCompletedTitle => 'Trip Auto-Completed';
+
+  @override
   String get notificationGuideVerifiedTitle => 'Account Verified';
 
   @override
@@ -1459,6 +1462,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationBookingCancelledBody =>
       'Your booking has been cancelled.';
+
+  @override
+  String get notificationBookingAutoCompletedBody =>
+      'Your trip was auto-completed 24 hours after the scheduled end time. Contact support if there is an issue.';
 
   @override
   String get notificationGuideVerifiedBody =>

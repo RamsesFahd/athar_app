@@ -153,6 +153,10 @@ class NotificationCard extends StatelessWidget {
         return l10n.notificationBookingApprovedTitle;
       case 'booking_cancelled':
         return l10n.notificationBookingCancelledTitle;
+      case 'booking_reminder':
+        return l10n.notificationDefaultTitle;
+      case 'booking_auto_completed':
+        return l10n.notificationBookingAutoCompletedTitle;
       case 'guide_verified':
         return l10n.notificationGuideVerifiedTitle;
       case 'guide_rejected':
@@ -184,6 +188,10 @@ class NotificationCard extends StatelessWidget {
         return l10n.notificationBookingApprovedBody;
       case 'booking_cancelled':
         return l10n.notificationBookingCancelledBody;
+      case 'booking_reminder':
+        return l10n.notificationDefaultBody;
+      case 'booking_auto_completed':
+        return l10n.notificationBookingAutoCompletedBody;
       case 'guide_verified':
         return l10n.notificationGuideVerifiedBody;
       case 'guide_rejected':

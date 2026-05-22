@@ -1405,6 +1405,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationBookingCancelledTitle => 'تم إلغاء الحجز';
 
   @override
+  String get notificationBookingAutoCompletedTitle => 'اكتملت الرحلة تلقائيًا';
+
+  @override
   String get notificationGuideVerifiedTitle => 'تم توثيق حسابك';
 
   @override
@@ -1445,6 +1448,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notificationBookingCancelledBody => 'تم إلغاء حجزك.';
+
+  @override
+  String get notificationBookingAutoCompletedBody =>
+      'تم إكمال الرحلة تلقائيًا بعد 24 ساعة من وقت الانتهاء. إذا كان هناك إشكال، تواصل معنا عبر البريد.';
 
   @override
   String get notificationGuideVerifiedBody => 'تم توثيق حسابك كمرشد معتمد.';
