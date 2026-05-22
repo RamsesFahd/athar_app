@@ -44,7 +44,9 @@ void _stubTts(MockFlutterTts tts, {bool arSaAvailable = true}) {
   when(() => tts.setVolume(any())).thenAnswer((_) async => null);
   when(() => tts.setSpeechRate(any())).thenAnswer((_) async => null);
   when(() => tts.setPitch(any())).thenAnswer((_) async => null);
-  when(() => tts.isLanguageAvailable(any())).thenAnswer((_) async => arSaAvailable);
+  when(() => tts.setVoice(any())).thenAnswer((_) async => null);
+  when(() => tts.isLanguageAvailable(any()))
+      .thenAnswer((_) async => arSaAvailable);
   when(() => tts.setLanguage(any())).thenAnswer((_) async => null);
   when(() => tts.speak(any())).thenAnswer((_) async => null);
   when(() => tts.stop()).thenAnswer((_) async => null);
@@ -62,7 +64,9 @@ void main() {
 
   group('TtsService', () {
     // UT-43 ----------------------------------------------------------------
-    test('UT-43: speak() with Arabic locale calls setLanguage("ar-SA") before speak', () async {
+    test(
+        'UT-43: speak() with Arabic locale calls setLanguage("ar-SA") before speak',
+        () async {
       when(() => mockRef.read(settingsProvider))
           .thenReturn(_settings(languageCode: 'ar'));
 
@@ -76,7 +80,9 @@ void main() {
     });
 
     // UT-44 ----------------------------------------------------------------
-    test('UT-44: speak() with English locale calls setLanguage("en-US") before speak', () async {
+    test(
+        'UT-44: speak() with English locale calls setLanguage("en-US") before speak',
+        () async {
       when(() => mockRef.read(settingsProvider))
           .thenReturn(_settings(languageCode: 'en'));
 
@@ -92,7 +98,9 @@ void main() {
     // UT-45 ----------------------------------------------------------------
     // Language is controlled by the app locale, not text content.
     // With Arabic locale active, even mixed-script text triggers "ar-SA".
-    test('UT-45: speak() with Arabic locale and mixed-script text still sets "ar-SA"', () async {
+    test(
+        'UT-45: speak() with Arabic locale and mixed-script text still sets "ar-SA"',
+        () async {
       when(() => mockRef.read(settingsProvider))
           .thenReturn(_settings(languageCode: 'ar'));
 
