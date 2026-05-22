@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
@@ -27,25 +28,48 @@ class HomeHeroSlider extends ConsumerStatefulWidget {
 }
 
 class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
-  final PageController _controller = PageController();
+  // Virtual multiplier: PageView thinks it has slides.length × _kVirtual pages.
+  // The timer always advances +1 so we never animate backwards to "page 0".
+  static const int _kVirtual = 10000;
+
+  late final PageController _controller;
   Timer? _timer;
-  int _currentIndex = 0;
+  int _virtualPage = 0; // position inside the virtual list
   int _lastLength = 0;
   late final int _rotationSeed;
 
+  // Shown as active dot indicator and passed as isActive to each slide.
+  int get _logicalIndex => _lastLength == 0 ? 0 : _virtualPage % _lastLength;
+
+  // Tracks whether we've already kicked off a background precache for slide[0].
+  bool _precachingTriggered = false;
+
   T _pickByRotation<T>(List<T> items, int offset) {
-  final index = (_rotationSeed + offset) % items.length;
-  return items[index];
-}
+    final index = (_rotationSeed + offset) % items.length;
+    return items[index];
+  }
 
-@override
-void initState() {
-  super.initState();
+  @override
+  void initState() {
+    super.initState();
+    _rotationSeed =
+        DateTime.now().millisecondsSinceEpoch ~/
+        Duration.millisecondsPerHour;
+    _controller = PageController();
+  }
 
-  _rotationSeed =
-      DateTime.now().millisecondsSinceEpoch ~/
-      Duration.millisecondsPerHour;
-}
+  // Fire-and-forget background warmup for slide[0].
+  // Does NOT gate display — the slider is already visible when this runs.
+  // Benefit: if the user hasn't scrolled yet, slide[0] re-renders from memory
+  // instead of re-downloading when CachedNetworkImage's in-memory entry expires.
+  Future<void> _warmupFirstSlide(String imageUrl) async {
+    if (!mounted || imageUrl.isEmpty || imageUrl.startsWith('assets/')) return;
+    try {
+      await precacheImage(NetworkImage(imageUrl), context);
+    } catch (_) {
+      // Ignore — CachedNetworkImage handles loading and retries independently.
+    }
+  }
 
   @override
   void dispose() {
@@ -55,24 +79,34 @@ void initState() {
   }
 
   void _startTimer(int length) {
-  if (_lastLength == length && _timer != null) return;
-  _lastLength = length;
+    if (_lastLength == length && _timer != null) return;
 
-  _timer?.cancel();
-  if (length <= 1) return;
+    // First time data arrives: jump PageController to the virtual middle
+    // so the user can swipe both directions indefinitely without hitting an edge.
+    if (_lastLength == 0 && length > 0) {
+      final midPage = length * (_kVirtual ~/ 2);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _controller.hasClients) {
+          _controller.jumpToPage(midPage);
+          setState(() => _virtualPage = midPage);
+        }
+      });
+    }
 
-  _timer = Timer.periodic(const Duration(seconds: 10), (_) {
-    if (!_controller.hasClients) return;
+    _lastLength = length;
+    _timer?.cancel();
+    if (length <= 1) return;
 
-    final nextPage = (_currentIndex + 1) % length;
-
-    _controller.animateToPage(
-      nextPage,
-      duration: const Duration(milliseconds: 650),
-      curve: Curves.easeInOutCubic,
-    );
-  });
-}
+    _timer = Timer.periodic(const Duration(seconds: 10), (_) {
+      if (!_controller.hasClients) return;
+      // Always go +1 forward in the virtual list — never animates backwards.
+      _controller.animateToPage(
+        _controller.page!.round() + 1,
+        duration: const Duration(milliseconds: 650),
+        curve: Curves.easeInOutCubic,
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -108,13 +142,26 @@ void initState() {
       interests: interests,
     );
 
-    if (slides.isNotEmpty) {
+    // Show skeleton only when all providers have no data yet (first cold launch
+    // or offline with empty cache). Any data — cache or server — is good enough.
+    if (slides.isEmpty) return const _SkeletonHeroFallback();
+
+    // Background warmup for slide[0]: kicked off once, does not block display.
+    if (!_precachingTriggered) {
+      _precachingTriggered = true;
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _warmupFirstSlide(slides.first.imageUrl),
+      );
+    }
+
+    // Schedule the auto-advance timer only when the slide count changes,
+    // not on every build. _startTimer itself early-returns if unchanged,
+    // but this avoids queuing a post-frame callback on each rebuild.
+    if (_lastLength != slides.length) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _startTimer(slides.length);
       });
     }
-
-    if (slides.isEmpty) return _StaticHeroFallback(isAr: isAr);
 
     return SizedBox(
       height: heroHeight,
@@ -123,12 +170,11 @@ void initState() {
         children: [
           PageView.builder(
             controller: _controller,
-            itemCount: slides.length,
-           onPageChanged: (index) {
-  setState(() => _currentIndex = index);
-},
+            // Virtual item count: timer always advances +1, never wraps to 0.
+            itemCount: slides.length * _kVirtual,
+            onPageChanged: (index) => setState(() => _virtualPage = index),
             itemBuilder: (context, index) {
-              final slide = slides[index];
+              final slide = slides[index % slides.length];
               final heroCopy = slide.heroCopy;
 
               final title = isAr
@@ -152,7 +198,7 @@ void initState() {
                 title: title,
                 subtitle: subtitle,
                 isAr: isAr,
-                isActive: index == _currentIndex,
+                isActive: (index % slides.length) == _logicalIndex,
               );
             },
           ),
@@ -163,7 +209,7 @@ void initState() {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(slides.length, (index) {
-                final active = index == _currentIndex;
+                final active = index == _logicalIndex;
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -653,12 +699,16 @@ class _HeroImage extends StatelessWidget {
       return Image.asset(imageUrl, fit: BoxFit.cover);
     }
 
-    return Image.network(
-      imageUrl,
+    // CachedNetworkImage: disk-caches images so subsequent slides load
+    // instantly. The dark placeholder fills the frame while loading so
+    // text is never visible without a background behind it.
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) {
-        return Image.asset('assets/images/archive_en.jpeg', fit: BoxFit.cover);
-      },
+      fadeInDuration: const Duration(milliseconds: 300),
+      placeholder: (_, __) => const ColoredBox(color: Color(0xFF1A1A1A)),
+      errorWidget: (_, __, ___) =>
+          Image.asset('assets/images/archive_en.jpeg', fit: BoxFit.cover),
     );
   }
 }
@@ -845,42 +895,50 @@ class _HeroCta extends StatelessWidget {
   }
 }
 
-class _StaticHeroFallback extends StatelessWidget {
-  final bool isAr;
+// Shown while waiting for server data + first image precache.
+// Matches the hero's exact dimensions so the layout doesn't jump.
+// Pulses between two dark greys — a shimmer without an extra package.
+class _SkeletonHeroFallback extends StatefulWidget {
+  const _SkeletonHeroFallback();
 
-  const _StaticHeroFallback({required this.isAr});
+  @override
+  State<_SkeletonHeroFallback> createState() => _SkeletonHeroFallbackState();
+}
+
+class _SkeletonHeroFallbackState extends State<_SkeletonHeroFallback>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 430 + _largeTextExtra(context, 78),
-      width: double.infinity,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            isAr
-                ? 'assets/images/archive_ar.jpeg'
-                : 'assets/images/archive_en.jpeg',
-            fit: BoxFit.cover,
-          ),
-          Container(color: Colors.black.withValues(alpha: 0.55)),
-          PositionedDirectional(
-            start: 24,
-            end: 24,
-            bottom: 58,
-            child: Text(
-              isAr ? 'اكتشف تراث المملكة' : 'Discover Saudi Heritage',
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 34,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-        ],
+    final heroHeight = 430 + _largeTextExtra(context, 78);
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (_, __) => SizedBox(
+        height: heroHeight,
+        width: double.infinity,
+        child: ColoredBox(
+          color: Color.lerp(
+            const Color(0xFF1A1A1A),
+            const Color(0xFF2C2C2C),
+            _ctrl.value,
+          )!,
+        ),
       ),
     );
   }

@@ -209,8 +209,10 @@ class MarketplaceRepository {
 /// (instead of calling the repository directly inside a [StreamBuilder])
 /// ensures the stream is re-created whenever the underlying provider
 /// rebuilds (e.g. after an auth change) and is shared across all watchers.
+// keepAlive (no autoDispose): stream stays active across navigation so Home
+// never re-fetches trips on re-entry. Disposed only when the app terminates.
 final allTripsStreamProvider =
-    StreamProvider.autoDispose<List<TripModel>>((ref) {
+    StreamProvider<List<TripModel>>((ref) {
   return ref.watch(marketplaceRepositoryProvider).fetchAllTrips();
 });
 
