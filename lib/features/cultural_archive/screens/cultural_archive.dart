@@ -193,7 +193,7 @@ class CulturalArchive extends ConsumerWidget {
                       : _buildGridView(filteredItems.filteredItems, largeText),
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) =>
-                  const Center(child: Text('Error loading items')),
+                  Center(child: Text(l10n.commonErrorWithMessage(''))),
             ),
           ),
         ],

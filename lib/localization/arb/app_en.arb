@@ -81,17 +81,17 @@
   "touristRole": "Tourist",
   "tutorRole": "Tutor",
 
-  "errorEmailAlreadyInUse": "This email is already in use.",
+  "errorEmailAlreadyInUse": "This email is already registered.",
   "errorInvalidEmail": "The email address is invalid.",
-  "errorUserNotFound": "No user found with this email.",
+  "errorUserNotFound": "We couldn’t find an account with that email.",
   "errorWrongPassword": "Incorrect password. Please try again.",
-  "errorWeakPassword": "The password is too weak.",
-  "errorUnexpected": "An unexpected error occurred. Please try again later.",
+  "errorWeakPassword": "Use a stronger password to continue.",
+  "errorUnexpected": "Something went wrong. Please try again.",
   "fillAllFieldsError": "Please fill in all fields",
   "passwordsDoNotMatchError": "Passwords do not match. Please try again.",
   "guestUser": "Guest",
   "@guestUser": { "description": "Default name for anonymous users" },
-  "errorEmailNotVerified": "Please verify your email via the link sent to you.",
+  "errorEmailNotVerified": "Verify your email using the link we sent.",
   "@errorEmailNotVerified": { "description": "Error message" },
   "homeLabel": "Home",
   "@homeLabel": { "description": "Label for Home tab" },
@@ -270,8 +270,8 @@
   "rawiUntitledEnglish": "New Chat",
   "rawiMicTooltip": "Voice input",
   "rawiMicListening": "Listening...",
-  "rawiMicPermissionDenied": "Please allow microphone access in settings",
-  "rawiMicError": "Could not start voice recognition",
+  "rawiMicPermissionDenied": "Turn on microphone access in Settings to use voice input.",
+  "rawiMicError": "Voice input couldn’t start. Please try again.",
   "rawiSuggestedItems": "Rawi's Suggestions",
   "all_trips": "Explore Trips",
 "search_trips_hint": "Search for a trip...",
@@ -555,7 +555,7 @@
 
   "notificationsTitle": "Notifications",
   "notificationsSignInRequired": "Please sign in",
-  "notificationsLoadError": "Failed to load notifications",
+  "notificationsLoadError": "We couldn’t load your notifications. Please try again.",
   "notificationsEmptyState": "No notifications yet",
   "notificationContributionApprovedTitle": "Contribution Approved",
   "notificationContributionRejectedTitle": "Contribution Rejected",
@@ -584,7 +584,7 @@
   "notificationPointsAwardedBody": "Bonus points have been added to your account.",
   "notificationDefaultBody": "You have a new notification.",
 
-  "commonErrorWithMessage": "Error: {message}",
+  "commonErrorWithMessage": "{message, select, _ {Something went wrong. Please try again.} other {Something went wrong. Please try again.}}",
   "@commonErrorWithMessage": {
     "placeholders": {
       "message": { "type": "String" }
@@ -642,12 +642,12 @@
   "mapNoResultsInArea": "No results in this area",
   "mapAttractionLabel": "Attraction",
   "mapLandmarkLabel": "Landmark",
-  "mapLocationPermissionSettings": "Location access requires enabling permission from settings",
-  "mapLoadDataError": "Could not load data. Check your internet connection",
+  "mapLocationPermissionSettings": "Turn on location access in Settings to use your current location.",
+  "mapLoadDataError": "We couldn’t load the map. Check your connection and try again.",
 
-  "contributionAuthError": "Authentication error",
-  "contributionUserUnavailable": "User not available",
-  "contributionErrorWithMessage": "Error: {message}",
+  "contributionAuthError": "Please sign in again to add a contribution.",
+  "contributionUserUnavailable": "We couldn’t load your profile. Please try again.",
+  "contributionErrorWithMessage": "{message, select, _ {We couldn’t submit your contribution. Please try again.} other {We couldn’t submit your contribution. Please try again.}}",
   "@contributionErrorWithMessage": {
     "placeholders": {
       "message": { "type": "String" }
@@ -681,7 +681,7 @@
   "contributionNoAchievements": "No achievements yet",
   "contributionNoContributions": "No contributions yet",
   "contributionArchiveLinkMissing": "This contribution has no archive link",
-  "contributionArchiveItemNotFound": "Could not find the archive item",
+  "contributionArchiveItemNotFound": "We couldn’t find that archive item.",
   "contributionPublished": "Published",
   "contributionPending": "Pending",
   "contributionRejected": "Rejected",
@@ -742,7 +742,7 @@
   "bookingPhoneLabel": "Phone",
   "bookingShownAfterConfirmation": "Shown after confirmation",
 
-  "tripDayAlreadyBookedError": "This day is already booked for this trip. Please choose a different day.",
+  "tripDayAlreadyBookedError": "That date is already booked for this trip. Choose another date.",
   "tripTypeShared": "Shared Trip",
   "tripTypePrivate": "Private Trip",
   "tripFullyBooked": "Fully Booked",
@@ -1031,7 +1031,7 @@
   "adminSelectEventDate": "Please select an event date",
   "adminPickImage": "Please pick an image",
   "adminEventCoordinatesRequired": "Latitude and longitude are required for events",
-  "adminImageUploadFailed": "Image upload failed",
+  "adminImageUploadFailed": "We couldn’t upload the image. Please try again.",
   "adminTitleArabic": "Title (Arabic)",
   "adminTitleEnglish": "Title (English)",
   "adminTitleArabicHint": "Enter Arabic title",
@@ -1058,7 +1058,7 @@
   "adminEmbeddingProgress": "Generating embeddings...",
   "adminGenerateMissingEmbeddings": "Generate missing embeddings",
   "adminMigrationComplete": "Migration Complete",
-  "adminMigrationFailed": "Migration Failed",
+  "adminMigrationFailed": "Migration couldn’t be completed.",
   "adminOperationComplete": "Operation complete",
   "adminEmbeddingStatsLine": "{collection}: processed {processed} | skipped {skipped} | failed {failed}",
   "@adminEmbeddingStatsLine": {
@@ -1071,7 +1071,7 @@
   },
   "adminDocumentShapes": "Document Shapes",
   "adminInspectDataShape": "Inspect data shape",
-  "adminTranslationFailed": "Translation failed: {message}",
+  "adminTranslationFailed": "{message, select, _ {We couldn’t translate this content. Please try again.} other {We couldn’t translate this content. Please try again.}}",
   "@adminTranslationFailed": {
     "placeholders": {
       "message": { "type": "String" }

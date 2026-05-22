@@ -44,7 +44,8 @@ class _TripsListScreenState extends ConsumerState<TripsListScreen> {
       ),
       body: tripsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text(error.toString())),
+        error: (error, _) =>
+            Center(child: Text(l10n.commonErrorWithMessage(''))),
         data: (allTrips) {
           // PERFORMANCE OPTIMIZATION: filterAndSort result used directly.
           final displayedTrips =

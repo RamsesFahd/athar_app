@@ -343,7 +343,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
     } catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
-          SnackBar(content: Text(l10n.commonErrorWithMessage(e.toString())), backgroundColor: Colors.red));
+          SnackBar(content: Text(l10n.commonErrorWithMessage('')), backgroundColor: Colors.red));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }

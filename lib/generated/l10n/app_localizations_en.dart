@@ -130,23 +130,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tutorRole => 'Tutor';
 
   @override
-  String get errorEmailAlreadyInUse => 'This email is already in use.';
+  String get errorEmailAlreadyInUse => 'This email is already registered.';
 
   @override
   String get errorInvalidEmail => 'The email address is invalid.';
 
   @override
-  String get errorUserNotFound => 'No user found with this email.';
+  String get errorUserNotFound =>
+      'We couldn’t find an account with that email.';
 
   @override
   String get errorWrongPassword => 'Incorrect password. Please try again.';
 
   @override
-  String get errorWeakPassword => 'The password is too weak.';
+  String get errorWeakPassword => 'Use a stronger password to continue.';
 
   @override
   String get errorUnexpected =>
-      'An unexpected error occurred. Please try again later.';
+      'Something went wrong. Please try again.';
 
   @override
   String get fillAllFieldsError => 'Please fill in all fields';
@@ -160,7 +161,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorEmailNotVerified =>
-      'Please verify your email via the link sent to you.';
+      'Verify your email using the link we sent.';
 
   @override
   String get homeLabel => 'Home';
@@ -640,10 +641,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rawiMicPermissionDenied =>
-      'Please allow microphone access in settings';
+      'Turn on microphone access in Settings to use voice input.';
 
   @override
-  String get rawiMicError => 'Could not start voice recognition';
+  String get rawiMicError => 'Voice input couldn’t start. Please try again.';
 
   @override
   String get rawiSuggestedItems => 'Rawi\'s Suggestions';
@@ -1381,7 +1382,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsSignInRequired => 'Please sign in';
 
   @override
-  String get notificationsLoadError => 'Failed to load notifications';
+  String get notificationsLoadError =>
+      'We couldn’t load your notifications. Please try again.';
 
   @override
   String get notificationsEmptyState => 'No notifications yet';
@@ -1477,7 +1479,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String commonErrorWithMessage(String message) {
-    return 'Error: $message';
+    return 'Something went wrong. Please try again.';
   }
 
   @override
@@ -1629,21 +1631,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mapLocationPermissionSettings =>
-      'Location access requires enabling permission from settings';
+      'Turn on location access in Settings to use your current location.';
 
   @override
   String get mapLoadDataError =>
-      'Could not load data. Check your internet connection';
+      'We couldn’t load the map. Check your connection and try again.';
 
   @override
-  String get contributionAuthError => 'Authentication error';
+  String get contributionAuthError =>
+      'Please sign in again to add a contribution.';
 
   @override
-  String get contributionUserUnavailable => 'User not available';
+  String get contributionUserUnavailable =>
+      'We couldn’t load your profile. Please try again.';
 
   @override
   String contributionErrorWithMessage(String message) {
-    return 'Error: $message';
+    return 'We couldn’t submit your contribution. Please try again.';
   }
 
   @override
@@ -1736,7 +1740,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contributionArchiveItemNotFound =>
-      'Could not find the archive item';
+      'We couldn’t find that archive item.';
 
   @override
   String get contributionPublished => 'Published';
@@ -1861,7 +1865,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tripDayAlreadyBookedError =>
-      'This day is already booked for this trip. Please choose a different day.';
+      'That date is already booked for this trip. Choose another date.';
 
   @override
   String get tripTypeShared => 'Shared Trip';
@@ -2545,7 +2549,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'Latitude and longitude are required for events';
 
   @override
-  String get adminImageUploadFailed => 'Image upload failed';
+  String get adminImageUploadFailed =>
+      'We couldn’t upload the image. Please try again.';
 
   @override
   String get adminTitleArabic => 'Title (Arabic)';
@@ -2629,7 +2634,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminMigrationComplete => 'Migration Complete';
 
   @override
-  String get adminMigrationFailed => 'Migration Failed';
+  String get adminMigrationFailed => 'Migration couldn’t be completed.';
 
   @override
   String get adminOperationComplete => 'Operation complete';
@@ -2648,7 +2653,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String adminTranslationFailed(String message) {
-    return 'Translation failed: $message';
+    return 'We couldn’t translate this content. Please try again.';
   }
 
   @override

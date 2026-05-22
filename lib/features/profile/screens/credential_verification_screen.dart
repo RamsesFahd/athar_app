@@ -121,7 +121,7 @@ class _CredentialVerificationScreenState
     if (!mounted) return;
     final state = ref.read(profileNotifierProvider);
     if (state is AsyncError) {
-      _showError(state.error.toString());
+      _showError(l10n.commonErrorWithMessage(''));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -345,7 +345,8 @@ class _CredentialVerificationScreenState
         );
       },
       loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) => Scaffold(body: Center(child: Text('Error: $e'))),
+      error: (e, _) =>
+          Scaffold(body: Center(child: Text(l10n.commonErrorWithMessage('')))),
     );
   }
 

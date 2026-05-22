@@ -32,7 +32,9 @@ class _GoogleRoleSelectionScreenState
         error: (error, _) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(error.toString()),
+              content: Text(isAr
+                  ? 'تعذّر إكمال تسجيل الدخول. يرجى المحاولة مرة أخرى.'
+                  : 'We couldn’t finish signing you in. Please try again.'),
               backgroundColor: theme.colorScheme.error,
             ),
           );

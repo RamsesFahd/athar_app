@@ -176,7 +176,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
         _resetForm();
       }
     } catch (e) {
-      if (mounted) _showError(l10n.commonErrorWithMessage(e.toString()));
+      if (mounted) _showError(l10n.commonErrorWithMessage(''));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }

@@ -83,7 +83,7 @@ class _ContributionReviewDetailScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context).adminTranslationFailed(e.toString())),
+          content: Text(AppLocalizations.of(context).adminTranslationFailed('')),
           backgroundColor: Colors.red,
         ),
       );
@@ -177,7 +177,7 @@ class _ContributionReviewDetailScreenState
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
+        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage('')), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -275,7 +275,7 @@ class _ContributionReviewDetailScreenState
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
+        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage('')), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);

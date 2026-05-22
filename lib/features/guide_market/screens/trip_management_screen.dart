@@ -156,7 +156,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(l10n.commonErrorWithMessage(e.toString())),
+              content: Text(l10n.commonErrorWithMessage('')),
               backgroundColor: Colors.red),
         );
       }
@@ -214,7 +214,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
         if (snapshot.hasError) {
           return Center(
               child:
-                  Text(l10n.commonErrorWithMessage(snapshot.error.toString())));
+                  Text(l10n.commonErrorWithMessage('')));
         }
         final trips = snapshot.data ?? [];
 
@@ -285,7 +285,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
         if (snapshot.hasError) {
           return Center(
               child:
-                  Text(l10n.commonErrorWithMessage(snapshot.error.toString())));
+                  Text(l10n.commonErrorWithMessage('')));
         }
         final bookings = snapshot.data ?? [];
         if (bookings.isEmpty) {

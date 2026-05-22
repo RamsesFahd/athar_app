@@ -123,7 +123,7 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
       ),
       body: attractionsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(e.toString())),
+        error: (e, _) => Center(child: Text(l10n.commonErrorWithMessage(''))),
         data: (_) {
           // Use pre-cached collections. Only the filter pass runs here,
           // which is an O(n) scan — not the O(n) set/map allocations.

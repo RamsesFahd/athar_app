@@ -64,6 +64,7 @@ class _UserPreferencesScreenState
     final taxonomyAsync = ref.watch(taxonomyProvider);
     final prefsState = ref.watch(preferencesNotifierProvider);
     final theme = Theme.of(context);
+    final isAr = Directionality.of(context) == TextDirection.rtl;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -91,7 +92,9 @@ class _UserPreferencesScreenState
                     loading: () =>
                         const Center(child: CircularProgressIndicator()),
                     error: (err, _) => _ErrorView(
-                      message: 'تعذر تحميل الاهتمامات',
+                      message: isAr
+                          ? 'تعذّر تحميل الاهتمامات. يرجى المحاولة مرة أخرى.'
+                          : 'We couldn’t load your interests. Please try again.',
                       onRetry: () => ref.invalidate(taxonomyProvider),
                     ),
                   ),

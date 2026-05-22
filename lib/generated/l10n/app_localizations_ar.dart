@@ -130,22 +130,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tutorRole => 'مرشد سياحي';
 
   @override
-  String get errorEmailAlreadyInUse => 'هذا البريد الإلكتروني مستخدم بالفعل.';
+  String get errorEmailAlreadyInUse => 'هذا البريد الإلكتروني مسجّل بالفعل.';
 
   @override
   String get errorInvalidEmail => 'عنوان البريد الإلكتروني غير صحيح.';
 
   @override
-  String get errorUserNotFound => 'لا يوجد مستخدم مسجل بهذا البريد.';
+  String get errorUserNotFound =>
+      'لم نتمكن من العثور على حساب بهذا البريد الإلكتروني.';
 
   @override
   String get errorWrongPassword => 'كلمة المرور خاطئة. حاول مرة أخرى.';
 
   @override
-  String get errorWeakPassword => 'كلمة المرور ضعيفة جداً.';
+  String get errorWeakPassword => 'استخدم كلمة مرور أقوى للمتابعة.';
 
   @override
-  String get errorUnexpected => 'حدث خطأ غير متوقع. يرجى المحاولة لاحقاً.';
+  String get errorUnexpected => 'حدث خطأ. يرجى المحاولة مرة أخرى.';
 
   @override
   String get fillAllFieldsError => 'يرجى ملء جميع الحقول';
@@ -159,7 +160,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get errorEmailNotVerified =>
-      'يرجى التحقق من بريدك الإلكتروني عبر الرابط المرسل إليك أولًا.';
+      'تحقق من بريدك الإلكتروني عبر الرابط الذي أرسلناه.';
 
   @override
   String get homeLabel => 'الرئيسية';
@@ -639,10 +640,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get rawiMicPermissionDenied =>
-      'يرجى السماح بالوصول إلى الميكروفون من الإعدادات';
+      'فعّل الوصول إلى الميكروفون من الإعدادات لاستخدام الإدخال الصوتي.';
 
   @override
-  String get rawiMicError => 'تعذّر بدء التعرف على الصوت';
+  String get rawiMicError => 'تعذّر بدء الإدخال الصوتي. يرجى المحاولة مرة أخرى.';
 
   @override
   String get rawiSuggestedItems => 'اقتراحات راوي';
@@ -1371,7 +1372,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationsSignInRequired => 'يرجى تسجيل الدخول';
 
   @override
-  String get notificationsLoadError => 'حدث خطأ أثناء تحميل التنبيهات';
+  String get notificationsLoadError =>
+      'تعذّر تحميل التنبيهات. يرجى المحاولة مرة أخرى.';
 
   @override
   String get notificationsEmptyState => 'لا توجد تنبيهات حتى الآن';
@@ -1460,7 +1462,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String commonErrorWithMessage(String message) {
-    return 'خطأ: $message';
+    return 'حدث خطأ. يرجى المحاولة مرة أخرى.';
   }
 
   @override
@@ -1612,21 +1614,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get mapLocationPermissionSettings =>
-      'يتطلب الوصول إلى موقعك تفعيل الإذن من الإعدادات';
+      'فعّل الوصول إلى الموقع من الإعدادات لاستخدام موقعك الحالي.';
 
   @override
   String get mapLoadDataError =>
-      'تعذّر تحميل البيانات، تحقق من اتصالك بالإنترنت';
+      'تعذّر تحميل الخريطة. تحقق من اتصالك وحاول مرة أخرى.';
 
   @override
-  String get contributionAuthError => 'خطأ في تسجيل الدخول';
+  String get contributionAuthError =>
+      'يرجى تسجيل الدخول مرة أخرى لإضافة مساهمة.';
 
   @override
-  String get contributionUserUnavailable => 'المستخدم غير متاح';
+  String get contributionUserUnavailable =>
+      'تعذّر تحميل ملفك الشخصي. يرجى المحاولة مرة أخرى.';
 
   @override
   String contributionErrorWithMessage(String message) {
-    return 'حدث خطأ: $message';
+    return 'تعذّر إرسال مساهمتك. يرجى المحاولة مرة أخرى.';
   }
 
   @override
@@ -1719,7 +1723,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get contributionArchiveItemNotFound =>
-      'تعذّر العثور على العنصر في الأرشيف';
+      'تعذّر العثور على عنصر الأرشيف.';
 
   @override
   String get contributionPublished => 'منشور';
@@ -1841,7 +1845,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tripDayAlreadyBookedError =>
-      'هذا اليوم محجوز مسبقًا لهذه الرحلة. يرجى اختيار يوم آخر.';
+      'هذا التاريخ محجوز لهذه الرحلة. اختر تاريخًا آخر.';
 
   @override
   String get tripTypeShared => 'رحلة جماعية';
@@ -2527,7 +2531,8 @@ class AppLocalizationsAr extends AppLocalizations {
       'خط العرض والطول مطلوبان للفعاليات';
 
   @override
-  String get adminImageUploadFailed => 'فشل رفع الصورة';
+  String get adminImageUploadFailed =>
+      'تعذّر رفع الصورة. يرجى المحاولة مرة أخرى.';
 
   @override
   String get adminTitleArabic => 'العنوان (عربي)';
@@ -2611,7 +2616,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminMigrationComplete => 'اكتمل الترحيل';
 
   @override
-  String get adminMigrationFailed => 'فشل الترحيل';
+  String get adminMigrationFailed => 'تعذّر إكمال الترحيل.';
 
   @override
   String get adminOperationComplete => 'اكتملت العملية';
@@ -2630,7 +2635,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String adminTranslationFailed(String message) {
-    return 'فشل الترجمة: $message';
+    return 'تعذّرت ترجمة هذا المحتوى. يرجى المحاولة مرة أخرى.';
   }
 
   @override

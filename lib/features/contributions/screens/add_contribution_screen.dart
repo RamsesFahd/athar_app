@@ -154,7 +154,7 @@ class _AddContributionScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n.contributionErrorWithMessage(e.toString())),
+          content: Text(l10n.contributionErrorWithMessage('')),
           backgroundColor: Colors.red,
         ),
       );

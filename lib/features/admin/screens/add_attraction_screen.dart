@@ -285,7 +285,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
       }
     } catch (e) {
       if (mounted)
-        _showSnackBar(l10n.commonErrorWithMessage(e.toString()), isError: true);
+        _showSnackBar(l10n.commonErrorWithMessage(''), isError: true);
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }

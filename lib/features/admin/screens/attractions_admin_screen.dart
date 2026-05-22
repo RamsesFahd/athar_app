@@ -28,7 +28,7 @@ class _AttractionsAdminScreenState
       children: [
         attractionsAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text(l10n.commonErrorWithMessage(e.toString()))),
+          error: (e, _) => Center(child: Text(l10n.commonErrorWithMessage(''))),
           data: (attractions) {
             if (attractions.isEmpty) {
               return Center(child: Text(l10n.adminNoAttractions));
@@ -193,7 +193,7 @@ class _AttractionAdminTile extends ConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString()))),
+            SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(''))),
           );
         }
       }

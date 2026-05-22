@@ -95,7 +95,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
             body: Center(child: CircularProgressIndicator()),
           ),
           error: (e, _) => Scaffold(
-            body: Center(child: Text('Error: $e')),
+            body: Center(child: Text(l10n.commonErrorWithMessage(''))),
           ),
           data: (contributions) {
             final repo = ref.read(contributionRepositoryProvider);
@@ -209,7 +209,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
         body: Center(child: CircularProgressIndicator()),
       ),
       error: (e, _) => Scaffold(
-        body: Center(child: Text('Error: $e')),
+        body: Center(child: Text(l10n.commonErrorWithMessage(''))),
       ),
     );
   }

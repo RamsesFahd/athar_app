@@ -190,7 +190,7 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
       final l10n = AppLocalizations.of(context);
       final msg = e.toString().contains('tripDayAlreadyBookedError')
           ? l10n.tripDayAlreadyBookedError
-          : l10n.commonErrorWithMessage(e.toString());
+          : l10n.commonErrorWithMessage('');
       messenger.showSnackBar(
         SnackBar(content: Text(msg), backgroundColor: Colors.red),
       );

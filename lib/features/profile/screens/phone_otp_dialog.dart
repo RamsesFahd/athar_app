@@ -80,6 +80,7 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
   // ── actions ───────────────────────────────────────────────────────────────
   void _sendOtp({bool isResend = false}) {
     final l10n = AppLocalizations.of(context);
+    final isAr = Directionality.of(context) == TextDirection.rtl;
     final raw = _phoneController.text.trim();
     if (raw.length < 9) {
       setState(() => _phoneError = l10n.phoneInvalidError);
@@ -98,8 +99,13 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
       },
       onError: (error) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(error)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isAr
+                ? 'تعذّر إرسال رمز التحقق. يرجى المحاولة مرة أخرى.'
+                : 'We couldn’t send the verification code. Please try again.'),
+          ),
+        );
       },
     );
   }
@@ -120,8 +126,13 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
         SnackBar(content: Text(l10n.phoneVerifiedSuccess)),
       );
     } else if (state is AsyncError) {
+      final isAr = Directionality.of(context) == TextDirection.rtl;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(state.error.toString().replaceFirst('Exception: ', ''))),
+        SnackBar(
+          content: Text(isAr
+              ? 'تعذّر التحقق من الرمز. تأكد منه وحاول مرة أخرى.'
+              : 'We couldn’t verify the code. Check it and try again.'),
+        ),
       );
       _clearOtp();
     }

@@ -79,7 +79,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       },
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) => Scaffold(body: Center(child: Text("Error: $e"))),
+      error: (e, _) =>
+          Scaffold(body: Center(child: Text(l10n.commonErrorWithMessage('')))),
     );
   }
 
@@ -154,7 +155,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       final favAsync = ref.watch(favoritesStreamProvider);
       return favAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(child: Text(l10n.commonErrorWithMessage(''))),
         data: (favorites) {
           if (favorites.isEmpty) {
             return Center(
@@ -200,7 +201,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Center(child: Text(l10n.commonErrorWithMessage('')));
             }
             final bookings = snapshot.data ?? [];
             if (bookings.isEmpty) {

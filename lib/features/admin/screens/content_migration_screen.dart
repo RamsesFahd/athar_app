@@ -67,7 +67,7 @@ class _ContentMigrationScreenState
       }
     } catch (e) {
       if (mounted) {
-        setState(() => _error = e.toString());
+        setState(() => _error = l10n.adminMigrationFailed);
       }
     } finally {
       if (mounted) setState(() => _isMigrating = false);
@@ -125,7 +125,7 @@ class _ContentMigrationScreenState
   } catch (e) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
+        SnackBar(content: Text(l10n.commonErrorWithMessage('')), backgroundColor: Colors.red),
       );
     }
   } finally {
@@ -245,7 +245,7 @@ class _ContentMigrationScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
+          SnackBar(content: Text(l10n.commonErrorWithMessage('')), backgroundColor: Colors.red),
         );
       }
     }

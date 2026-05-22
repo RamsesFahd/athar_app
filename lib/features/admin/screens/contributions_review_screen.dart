@@ -5,6 +5,7 @@ import 'package:athar_app/core/models/contribution/contribution_model.dart';
 import 'package:athar_app/core/constants/region_city_constants.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/admin/screens/contribution_review_detail_screen.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 final _contributionsStreamProvider =
     StreamProvider.autoDispose<List<ContributionModel>>((ref) {
@@ -44,6 +45,7 @@ class _ContributionsReviewScreenState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final contributionsAsync = ref.watch(_contributionsStreamProvider);
 
     return Column(
@@ -51,9 +53,9 @@ class _ContributionsReviewScreenState
         _buildFilterRow(theme),
         Expanded(
           child: contributionsAsync.when(
-            loading: () =>
-                const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('Error: $e')),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (e, _) =>
+                Center(child: Text(l10n.commonErrorWithMessage(''))),
             data: (all) {
               final filtered = _filter == null
                   ? all
