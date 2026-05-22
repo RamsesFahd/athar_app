@@ -228,14 +228,29 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
 
   Widget _buildStoriesRow(bool isAr) {
     final theme = Theme.of(context);
+    final screenWidth = MediaQuery.sizeOf(context).width;
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
-    final extraHeight = ((textScale - 1.0).clamp(0.0, 1.0) * 34).toDouble();
+    final compactWidth = screenWidth < 360;
+    final avatarRadius = compactWidth ? 25.0 : 28.0;
+    final avatarExtent = (avatarRadius * 2) + 4;
+    const verticalPadding = 10.0;
+    const itemSpacing = 4.0;
+    const labelFontSize = 11.0;
+    const labelLineHeight = 1.15;
+    const labelLines = 2;
+    final labelScale = textScale.clamp(1.0, 2.0).toDouble();
+    final labelExtent =
+        labelFontSize * labelLineHeight * labelLines * labelScale;
+    final itemHeight = avatarExtent + itemSpacing + labelExtent;
 
     return SizedBox(
-      height: 110 + extraHeight,
+      height: itemHeight + (verticalPadding * 2),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: verticalPadding,
+        ),
         itemCount: regionsData.length,
         itemBuilder: (context, index) {
           final region = regionsData[index];
@@ -245,6 +260,7 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               child: SizedBox(
                 width: 72,
+                height: itemHeight,
                 child: Column(
                   children: [
                     Container(
@@ -257,18 +273,32 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
                         ),
                       ),
                       child: CircleAvatar(
-                        radius: 28,
+                        radius: avatarRadius,
                         backgroundImage: AssetImage(region.logoImage),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      region.getName(isAr ? 'ar' : 'en'),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontSize: 11, fontWeight: FontWeight.w600),
+                    const SizedBox(height: itemSpacing),
+                    Expanded(
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.topCenter,
+                          child: SizedBox(
+                            width: 72,
+                            child: Text(
+                              region.getName(isAr ? 'ar' : 'en'),
+                              textAlign: TextAlign.center,
+                              maxLines: labelLines,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: labelFontSize,
+                                height: labelLineHeight,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ),
