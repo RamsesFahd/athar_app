@@ -132,9 +132,13 @@ class MarketplaceRepository {
     await _bookings.doc(bookingId).update({'status': status.name});
 
     if (status == BookingStatus.cancelled || status == BookingStatus.rejected) {
+      final notifType = status == BookingStatus.rejected
+          ? 'booking_rejected'
+          : 'booking_cancelled';
       await NotificationsRepository().addNotification(
         userId: touristId,
-        type: 'booking_cancelled',
+        type: notifType,
+        notificationId: '${bookingId}_$notifType',
       );
     }
   }
