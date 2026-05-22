@@ -24,8 +24,6 @@ class MapFilterChips extends ConsumerWidget {
         children: [
           _chip(context, l10n.filterAll, MapFilter.all),
           const SizedBox(width: 8),
-          _chip(context, l10n.mapLandmarks, MapFilter.landmarks),
-          const SizedBox(width: 8),
           _chip(context, l10n.mapAttractions, MapFilter.attractions),
           const SizedBox(width: 8),
           _chip(context, l10n.mapEvents, MapFilter.events),
