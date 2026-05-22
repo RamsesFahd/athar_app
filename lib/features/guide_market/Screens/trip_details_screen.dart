@@ -13,7 +13,6 @@ import 'package:athar_app/features/profile/logic/favorites_notifier.dart';
 import 'package:athar_app/features/guide_market/screens/booking_form_screen.dart';
 import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
 import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
-import 'package:athar_app/features/profile/screens/profile_screen.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/services/tts_service.dart';
@@ -34,9 +33,8 @@ class TripDetailsScreen extends ConsumerWidget {
     final titleText = trip.getTitle(isAr);
     final descriptionText = trip.getDescription(isAr);
     final isFullyBooked = trip.isPrivate
-        ? ref
-              .watch(bookedDatesForTripProvider(trip.id))
-              .whenOrNull(data: (dates) => trip.isPrivateFullyBooked(dates)) ??
+        ? ref.watch(bookedDatesForTripProvider(trip.id)).whenOrNull(
+                data: (dates) => trip.isPrivateFullyBooked(dates)) ??
             false
         : trip.isFullyBooked;
 
@@ -92,7 +90,8 @@ class TripDetailsScreen extends ConsumerWidget {
                         MarkdownBody(
                           data: descriptionText,
                           styleSheet: MarkdownStyleSheet(
-                            p: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
+                            p: theme.textTheme.bodyMedium
+                                ?.copyWith(height: 1.6),
                             listBullet: theme.textTheme.bodyMedium
                                 ?.copyWith(height: 1.6),
                             strong: theme.textTheme.bodyMedium?.copyWith(
@@ -254,26 +253,11 @@ class TripDetailsScreen extends ConsumerWidget {
                               context: context,
                               builder: (_) => AlertDialog(
                                 title: Text(l10n.completeProfileTitle),
-                                content:
-                                    Text(l10n.phoneRequiredForTourist),
+                                content: Text(l10n.phoneRequiredForTourist),
                                 actions: [
                                   TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context),
-                                    child: Text(l10n.cancel),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) =>
-                                              const ProfileScreen(),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(l10n.editProfile),
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text(l10n.commonOk),
                                   ),
                                 ],
                               ),
@@ -293,10 +277,10 @@ class TripDetailsScreen extends ConsumerWidget {
                         },
                   style: isFullyBooked
                       ? ElevatedButton.styleFrom(
-                          backgroundColor:
-                              theme.colorScheme.onSurface.withValues(alpha: 0.12),
-                          foregroundColor:
-                              theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                          backgroundColor: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.12),
+                          foregroundColor: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.4),
                         )
                       : null,
                   child: Text(
