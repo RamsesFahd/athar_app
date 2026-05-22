@@ -113,44 +113,127 @@ class _ContributionReviewDetailScreenState
       return;
     }
 
-    final confirmed = await showDialog<bool>(
+    final basePoints = ContributionRepository.getPoints(c.category, c.mediaType);
+    final bonusController = TextEditingController(text: '0');
+    int? totalPoints;
+
+    await showDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.adminApproveContribution),
-        content: Text(l10n.adminApproveContributionConfirm(
-          c.displayTitle,
-          c.touristName,
-          ContributionRepository.getPoints(c.category, c.mediaType),
-        )),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.adminCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.green),
-            child: Text(l10n.adminApprove),
-          ),
-        ],
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) {
+          final bonus = int.tryParse(bonusController.text) ?? 0;
+          final total = basePoints + bonus.clamp(0, 9999);
+
+          return AlertDialog(
+            title: Text(l10n.adminApproveContribution),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'سيُمنح "${c.displayTitle}" لـ ${c.touristName}',
+                  style: const TextStyle(fontSize: 13),
+                ),
+                const SizedBox(height: 16),
+                // Base points chip
+                Row(
+                  children: [
+                    const Icon(Icons.star_outline, size: 16, color: Colors.amber),
+                    const SizedBox(width: 6),
+                    Text(
+                      'النقاط الأساسية:',
+                      style: TextStyle(
+                          fontSize: 13, color: Colors.grey.shade600),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '$basePoints نقطة',
+                      style: const TextStyle(
+                          fontSize: 13, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // Bonus points input
+                TextField(
+                  controller: bonusController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: 'نقاط إضافية (بونص جودة)',
+                    hintText: '0',
+                    prefixIcon: const Icon(Icons.add_circle_outline),
+                    helperText: 'اختياري — لمكافأة جودة المحتوى العالية',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onChanged: (_) => setDialogState(() {}),
+                ),
+                const SizedBox(height: 14),
+                // Total preview
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                        color: Colors.green.withValues(alpha: 0.3)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.workspace_premium_outlined,
+                          size: 18, color: Colors.green),
+                      const SizedBox(width: 8),
+                      Text(
+                        'الإجمالي: $total نقطة',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l10n.adminCancel),
+              ),
+              FilledButton(
+                onPressed: () {
+                  final b = int.tryParse(bonusController.text) ?? 0;
+                  totalPoints = basePoints + b.clamp(0, 9999);
+                  Navigator.pop(ctx);
+                },
+                style: FilledButton.styleFrom(backgroundColor: Colors.green),
+                child: Text(l10n.adminApprove),
+              ),
+            ],
+          );
+        },
       ),
     );
 
-    if (confirmed == true) await _approve(targetTitle, targetDesc);
+    if (totalPoints != null) {
+      await _approve(targetTitle, targetDesc, totalPoints!);
+    }
   }
 
-  Future<void> _approve(String targetTitle, String targetDesc) async {
+  Future<void> _approve(
+      String targetTitle, String targetDesc, int totalPoints) async {
     final admin = ref.read(authNotifierProvider).value;
     if (admin == null) return;
     setState(() => _isLoading = true);
     try {
-      final points =
-          ContributionRepository.getPoints(c.category, c.mediaType);
       await ref.read(adminRepositoryProvider).approveContribution(
             c.id,
             touristId: c.touristId,
             touristName: c.touristName,
-            points: points,
+            points: totalPoints,
             titleAr: _submittedInAr ? c.titleAr : targetTitle,
             titleEn: _submittedInAr ? targetTitle : c.titleEn,
             descriptionAr:
@@ -311,6 +394,10 @@ class _ContributionReviewDetailScreenState
                 _buildSourceContent(theme),
                 const SizedBox(height: 16),
                 _buildTargetContent(theme, isPending),
+                if (!isPending && c.adminName != null) ...[
+                  const SizedBox(height: 16),
+                  _buildDecisionCard(theme),
+                ],
                 if (isPending) ...[
                   const SizedBox(height: 24),
                   _buildActionRow(theme),
@@ -394,14 +481,72 @@ class _ContributionReviewDetailScreenState
             label: l10n.adminSubmittedIn,
             value: c.submissionLanguage == 'ar' ? l10n.arabic : l10n.english),
         _InfoRow(icon: Icons.calendar_today_outlined, label: l10n.adminDate, value: date),
-        if (c.status == ContributionStatus.rejected &&
-            c.rejectionReason != null)
-          _InfoRow(
-              icon: Icons.cancel_outlined,
-              label: l10n.adminRejectionReason,
-              value: c.rejectionReason!,
-              valueColor: Colors.red),
       ],
+    );
+  }
+
+  Widget _buildDecisionCard(ThemeData theme) {
+    final isApproved = c.status == ContributionStatus.approved;
+    final cardColor = isApproved
+        ? Colors.green.withValues(alpha: 0.06)
+        : Colors.red.withValues(alpha: 0.06);
+    final borderColor = isApproved
+        ? Colors.green.withValues(alpha: 0.25)
+        : Colors.red.withValues(alpha: 0.25);
+    final labelColor =
+        isApproved ? Colors.green.shade700 : Colors.red.shade700;
+
+    final reviewDate = c.reviewedAt != null
+        ? DateFormat('yyyy-MM-dd  •  HH:mm').format(c.reviewedAt!)
+        : '—';
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: borderColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                isApproved ? Icons.verified_outlined : Icons.cancel_outlined,
+                size: 16,
+                color: labelColor,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                isApproved ? 'تم القبول' : 'تم الرفض',
+                style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold, color: labelColor),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          _InfoRow(
+            icon: Icons.admin_panel_settings_outlined,
+            label: 'بواسطة',
+            value: c.adminName ?? '—',
+          ),
+          _InfoRow(
+            icon: Icons.calendar_today_outlined,
+            label: 'التاريخ',
+            value: reviewDate,
+          ),
+          if (!isApproved && c.rejectionReason != null)
+            _InfoRow(
+              icon: Icons.info_outline,
+              label: 'السبب',
+              value: c.rejectionReason!,
+              valueColor: Colors.red.shade700,
+              maxLines: 4,
+            ),
+        ],
+      ),
     );
   }
 

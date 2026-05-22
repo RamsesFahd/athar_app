@@ -88,12 +88,51 @@ class AdminRepository {
             .toList());
   }
 
-  Future<void> approveTrip(String tripId, {required String tutorId}) async {
-    await _trips.doc(tripId).update({'status': 'approved'});
+  Stream<List<TripModel>> getAllTrips() {
+    return _trips
+        .orderBy('status')
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((doc) => TripModel.fromMap(
+                doc.data() as Map<String, dynamic>, doc.id))
+            .toList());
   }
 
-  Future<void> rejectTrip(String tripId, {required String tutorId}) async {
-    await _trips.doc(tripId).update({'status': 'rejected'});
+  Future<void> approveTrip(
+    String tripId, {
+    required String tutorId,
+    required String adminId,
+    required String adminName,
+  }) async {
+    await _trips.doc(tripId).update({
+      'status': 'approved',
+      'reviewedByAdminId': adminId,
+      'reviewedByAdminName': adminName,
+      'reviewedAt': Timestamp.now(),
+      'rejectionReason': null,
+    });
+  }
+
+  Future<void> rejectTrip(
+    String tripId, {
+    required String tutorId,
+    required String adminId,
+    required String adminName,
+    required String reason,
+  }) async {
+    await _trips.doc(tripId).update({
+      'status': 'rejected',
+      'reviewedByAdminId': adminId,
+      'reviewedByAdminName': adminName,
+      'reviewedAt': Timestamp.now(),
+      'rejectionReason': reason,
+    });
+  }
+
+  Future<UserModel?> getUserById(String uid) async {
+    final doc = await _users.doc(uid).get();
+    if (!doc.exists) return null;
+    return UserModel.fromMap(doc.data() as Map<String, dynamic>);
   }
 
   // ── Users Management ────────────────────────────────────────────────────────

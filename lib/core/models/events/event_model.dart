@@ -75,6 +75,8 @@ class EventModel {
   final DateTime eventDate;
   final String timeAr;
   final String timeEn;
+  final String? endTimeAr;
+  final String? endTimeEn;
   final double latitude;
   final double longitude;
   final String regionId;
@@ -100,6 +102,8 @@ class EventModel {
     required this.eventDate,
     required this.timeAr,
     required this.timeEn,
+    this.endTimeAr,
+    this.endTimeEn,
     required this.latitude,
     required this.longitude,
     required this.regionId,
@@ -118,7 +122,12 @@ class EventModel {
 
   String getTitle(bool isAr) => isAr ? titleAr : titleEn;
   String getDescription(bool isAr) => isAr ? descriptionAr : descriptionEn;
-  String getTime(bool isAr) => isAr ? timeAr : timeEn;
+  String getTime(bool isAr) {
+    final start = isAr ? timeAr : timeEn;
+    final end = isAr ? endTimeAr : endTimeEn;
+    if (end != null && end.isNotEmpty) return '$start – $end';
+    return start;
+  }
   String getRegion(bool isAr) => isAr ? regionAr : regionEn;
 
   Map<String, dynamic> toMap() {
@@ -131,6 +140,8 @@ class EventModel {
       'eventDate': Timestamp.fromDate(eventDate),
       'timeAr': timeAr,
       'timeEn': timeEn,
+      if (endTimeAr != null) 'endTimeAr': endTimeAr,
+      if (endTimeEn != null) 'endTimeEn': endTimeEn,
       'latitude': latitude,
       'longitude': longitude,
       'regionId': regionId,
@@ -159,6 +170,8 @@ class EventModel {
           : DateTime.now(),
       timeAr: map['timeAr'] ?? '',
       timeEn: map['timeEn'] ?? '',
+      endTimeAr: map['endTimeAr'],
+      endTimeEn: map['endTimeEn'],
       latitude: (map['latitude'] as num?)?.toDouble() ?? 0.0,
       longitude: (map['longitude'] as num?)?.toDouble() ?? 0.0,
       regionId: map['regionId'] ?? '',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:athar_app/core/models/contribution/contribution_model.dart';
+import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/core/constants/region_city_constants.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/admin/screens/contribution_review_detail_screen.dart';
@@ -108,29 +109,46 @@ class _ContributionsReviewScreenState
 
   Widget _buildFilterRow(ThemeData theme) {
     final filters = [
-      (label: 'Pending', value: ContributionStatus.pending),
-      (label: 'Approved', value: ContributionStatus.approved),
-      (label: 'Rejected', value: ContributionStatus.rejected),
-      (label: 'All', value: null),
+      (label: 'قيد المراجعة', value: ContributionStatus.pending),
+      (label: 'مقبول', value: ContributionStatus.approved),
+      (label: 'مرفوض', value: ContributionStatus.rejected),
+      (label: 'الكل', value: null),
     ];
 
     return Container(
       color: theme.scaffoldBackgroundColor,
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-      child: Row(
-        children: filters.map((f) {
-          final isSelected = _filter == f.value;
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: FilterChip(
-              label: Text(f.label),
-              selected: isSelected,
-              onSelected: (_) => setState(() => _filter = f.value),
-              selectedColor: theme.colorScheme.primary.withValues(alpha: 0.15),
-              checkmarkColor: theme.colorScheme.primary,
-            ),
-          );
-        }).toList(),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: filters.map((f) {
+            final isSelected = _filter == f.value;
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: FilterChip(
+                label: Text(
+                  f.label,
+                  style: TextStyle(
+                    color: isSelected ? AppColors.primary : null,
+                    fontWeight: isSelected ? FontWeight.w600 : null,
+                  ),
+                ),
+                selected: isSelected,
+                onSelected: (_) => setState(() => _filter = f.value),
+                selectedColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                checkmarkColor: AppColors.primary,
+                side: BorderSide(
+                  color: isSelected
+                      ? AppColors.primary
+                      : Colors.grey.withValues(alpha: 0.35),
+                ),
+                showCheckmark: true,
+                pressElevation: 0,
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

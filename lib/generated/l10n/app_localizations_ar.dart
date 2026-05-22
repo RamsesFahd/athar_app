@@ -2814,7 +2814,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String adminRevokeVerificationConfirm(String name) {
-    return 'هل تريد إلغاء توثيق "$name"؟ سيحتاج لإعادة رفع الوثائق.';
+    return 'هل تريد إلغاء توثيق \"$name\"؟ سيحتاج لإعادة رفع الوثائق.';
   }
 
   @override

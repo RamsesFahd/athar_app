@@ -5394,7 +5394,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminRevokeVerificationConfirm.
   ///
   /// In en, this message translates to:
-  /// **'Revoke verification for "{name}"? They will need to resubmit documents.'**
+  /// **'Revoke verification for \"{name}\"? They will need to resubmit documents.'**
   String adminRevokeVerificationConfirm(String name);
 
   /// No description provided for @adminRevokeVerification.

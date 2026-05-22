@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
+import 'package:athar_app/features/admin/screens/booking_detail_screen.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class AllBookingsScreen extends ConsumerWidget {
@@ -63,86 +64,86 @@ class _BookingTile extends StatelessWidget {
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Thumbnail
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                booking.imageUrl,
-                width: 70,
-                height: 70,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => BookingDetailScreen(booking: booking),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.network(
+                  booking.imageUrl,
                   width: 70,
                   height: 70,
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  child: Icon(
-                    Icons.image_not_supported_outlined,
-                    color: theme.colorScheme.onSurfaceVariant,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    width: 70,
+                    height: 70,
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    child: Icon(
+                      Icons.image_not_supported_outlined,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(width: 12),
-
-            // Details
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          booking.tripTitle,
-                          style: theme.textTheme.bodyMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                          overflow: TextOverflow.ellipsis,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            booking.tripTitle,
+                            style: theme.textTheme.bodyMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
+                        const SizedBox(width: 8),
+                        _StatusBadge(status: booking.status),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    _DetailRow(
+                      icon: Icons.calendar_today,
+                      text: Text(
+                        '${booking.date}  •  ${booking.timeSlot}',
+                        style: theme.textTheme.bodySmall,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(width: 8),
-                      _StatusBadge(status: booking.status),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  _DetailRow(
-                    icon: Icons.calendar_today,
-                    text: Text(
-                      '${booking.date}  •  ${booking.timeSlot}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  _DetailRow(
-                    icon: Icons.people_outline,
-                    text: Text(
-                      l10n.adminBookingPeopleSummary(
-                          booking.adultsCount, booking.childrenCount),
-                      style: Theme.of(context).textTheme.bodySmall,
-                      overflow: TextOverflow.ellipsis,
+                    _DetailRow(
+                      icon: Icons.people_outline,
+                      text: Text(
+                        l10n.adminBookingPeopleSummary(
+                            booking.adultsCount, booking.childrenCount),
+                        style: theme.textTheme.bodySmall,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                  ),
-                  _DetailRow(
+                    _DetailRow(
                       icon: Icons.payments_outlined,
                       text: CurrencyFormatter.format(booking.totalPrice,
-                          decimals: 2)),
-                  const SizedBox(height: 4),
-                  Text(l10n.adminTouristId(booking.touristId),
-                      style: theme.textTheme.labelSmall
-                          ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                      overflow: TextOverflow.ellipsis),
-                  Text(l10n.adminTutorId(booking.tutorId),
-                      style: theme.textTheme.labelSmall
-                          ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
-                      overflow: TextOverflow.ellipsis),
-                ],
+                          decimals: 2),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              const SizedBox(width: 4),
+              const Icon(Icons.chevron_right, color: Colors.grey, size: 18),
+            ],
+          ),
         ),
       ),
     );

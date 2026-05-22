@@ -30,11 +30,11 @@ class _AdminNavigationContainerState
   ];
 
   final List<({String label, IconData icon})> _tabs = const [
-    (label: 'People', icon: Icons.people_outline),
-    (label: 'Trips', icon: Icons.card_travel_outlined),
-    (label: 'Archive', icon: Icons.museum_outlined),
-    (label: 'Events', icon: Icons.celebration_outlined),
-    (label: 'Contributions', icon: Icons.volunteer_activism_outlined),
+    (label: 'الأشخاص', icon: Icons.people_outline),
+    (label: 'الرحلات', icon: Icons.card_travel_outlined),
+    (label: 'الأرشيف', icon: Icons.museum_outlined),
+    (label: 'الفعاليات', icon: Icons.celebration_outlined),
+    (label: 'المساهمات', icon: Icons.volunteer_activism_outlined),
   ];
 
   @override

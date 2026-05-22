@@ -2834,7 +2834,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String adminRevokeVerificationConfirm(String name) {
-    return 'Revoke verification for "$name"? They will need to resubmit documents.';
+    return 'Revoke verification for \"$name\"? They will need to resubmit documents.';
   }
 
   @override
@@ -2844,5 +2844,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminVerificationRevoked => 'Verification revoked';
 
   @override
-  String get adminVerificationRevokedSuccess => 'Verification revoked successfully';
+  String get adminVerificationRevokedSuccess =>
+      'Verification revoked successfully';
 }

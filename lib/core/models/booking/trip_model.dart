@@ -21,6 +21,10 @@ class TripModel {
   final String regionId;
   final String? tutorId;
   final String status; // 'pending' | 'approved' | 'rejected'
+  final String? reviewedByAdminId;
+  final String? reviewedByAdminName;
+  final DateTime? reviewedAt;
+  final String? rejectionReason;
   final String tutorType; // 'individual' | 'company'
   final String tripType; // 'shared' | 'private'
   final List<String> accessibilityFeatures;
@@ -81,6 +85,10 @@ class TripModel {
     this.regionId = '',
     this.tutorId,
     this.status = 'pending',
+    this.reviewedByAdminId,
+    this.reviewedByAdminName,
+    this.reviewedAt,
+    this.rejectionReason,
     this.tutorType = 'individual',
     this.tripType = 'shared',
     this.accessibilityFeatures = const [],
@@ -184,6 +192,10 @@ class TripModel {
       regionId: map['regionId'] ?? '',
       tutorId: map['tutorId'],
       status: map['status'] ?? 'pending',
+      reviewedByAdminId: map['reviewedByAdminId'] as String?,
+      reviewedByAdminName: map['reviewedByAdminName'] as String?,
+      reviewedAt: (map['reviewedAt'] as Timestamp?)?.toDate(),
+      rejectionReason: map['rejectionReason'] as String?,
       tutorType: map['tutorType'] ?? 'individual',
       tripType: map['tripType'] as String? ?? 'shared',
       accessibilityFeatures:
@@ -247,6 +259,10 @@ class TripModel {
       'startDate': startDate != null ? Timestamp.fromDate(startDate!) : null,
       'endDate': endDate != null ? Timestamp.fromDate(endDate!) : null,
       'availableSeats': availableSeats,
+      'reviewedByAdminId': reviewedByAdminId,
+      'reviewedByAdminName': reviewedByAdminName,
+      'reviewedAt': reviewedAt != null ? Timestamp.fromDate(reviewedAt!) : null,
+      'rejectionReason': rejectionReason,
     };
   }
 }

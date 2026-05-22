@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,30 +27,19 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
   final _titleEnController = TextEditingController();
   final _descArController = TextEditingController();
   final _descEnController = TextEditingController();
-  // ❌ تم حذف متحكمات الوقت اليدوية
   final _latController = TextEditingController();
   final _lngController = TextEditingController();
   final _ticketUrlController = TextEditingController();
 
   String? _selectedRegionId;
   EventType _selectedEventType = EventType.other;
-  DateTime? _selectedDate;
-  DateTime? _selectedEndDate;
-  TimeOfDay? _selectedTime; // ✅ إضافة متغير للوقت
+  DateTime? _startDate;
+  DateTime? _endDate;
+  TimeOfDay? _startTime;
+  TimeOfDay? _endTime;
   File? _pickedImage;
   bool _isFree = true;
   bool _isSubmitting = false;
-
-  static const List<({String id, String label})> _categories = [
-    (id: 'food', label: 'Traditional Food'),
-    (id: 'craft', label: 'Handicraft'),
-    (id: 'dance', label: 'Dance'),
-    (id: 'architecture', label: 'Architecture'),
-    (id: 'music', label: 'Music'),
-    (id: 'clothing', label: 'Traditional Clothing'),
-  ];
-
-  String _selectedCategory = 'food';
 
   @override
   void dispose() {
@@ -79,46 +69,127 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
     return await task.ref.getDownloadURL();
   }
 
-  Future<void> _pickDate() async {
-    final picked = await showDatePicker(
+  Future<void> _pickDateRange() async {
+    final now = DateTime.now();
+    final range = await showDateRangePicker(
       context: context,
-      initialDate: DateTime.now().add(const Duration(days: 1)),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+      firstDate: now,
+      lastDate: DateTime(now.year + 3),
+      initialDateRange: (_startDate != null && _endDate != null)
+          ? DateTimeRange(start: _startDate!, end: _endDate!)
+          : null,
     );
-    if (picked != null) {
+    if (range != null) {
       setState(() {
-        _selectedDate = picked;
-        if (_selectedEndDate != null && _selectedEndDate!.isBefore(picked)) {
-          _selectedEndDate = null;
-        }
+        _startDate = range.start;
+        _endDate = range.end;
       });
     }
   }
 
-  Future<void> _pickEndDate() async {
-    final firstDate = _selectedDate ?? DateTime.now();
-    final picked = await showDatePicker(
+  Future<void> _pickTime({required bool isStart}) async {
+    final l10n = AppLocalizations.of(context);
+    final current = isStart ? _startTime : _endTime;
+    final initial = current ??
+        (isStart
+            ? const TimeOfDay(hour: 8, minute: 0)
+            : const TimeOfDay(hour: 22, minute: 0));
+
+    final now = DateTime.now();
+    var selected =
+        DateTime(now.year, now.month, now.day, initial.hour, initial.minute);
+
+    await showModalBottomSheet<void>(
       context: context,
-      initialDate: firstDate.add(const Duration(days: 1)),
-      firstDate: firstDate,
-      lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        return SizedBox(
+          height: 320,
+          child: Column(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: Text(l10n.cancel,
+                          style: TextStyle(
+                              color: theme.colorScheme.onSurface
+                                  .withValues(alpha: 0.5))),
+                    ),
+                    Text(
+                      isStart ? 'وقت البداية' : 'وقت النهاية',
+                      style: theme.textTheme.titleSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          final tod = TimeOfDay(
+                              hour: selected.hour, minute: selected.minute);
+                          if (isStart) {
+                            _startTime = tod;
+                          } else {
+                            _endTime = tod;
+                          }
+                        });
+                        Navigator.of(ctx).pop();
+                      },
+                      child: Text(l10n.confirm,
+                          style: TextStyle(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1),
+              Expanded(
+                child: CupertinoTheme(
+                  data: CupertinoThemeData(
+                    brightness: theme.brightness,
+                    primaryColor: theme.colorScheme.primary,
+                    textTheme: CupertinoTextThemeData(
+                      pickerTextStyle: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.time,
+                    use24hFormat: false,
+                    initialDateTime: selected,
+                    onDateTimeChanged: (dt) => selected = dt,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
-    if (picked != null) setState(() => _selectedEndDate = picked);
   }
 
-  // ✅ دالة لاختيار الوقت
-  Future<void> _pickTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (picked != null) {
-      setState(() => _selectedTime = picked);
-    }
-  }
+  String _fmtTime(TimeOfDay t) => t.format(context);
 
-  // ✅ دوال لتنسيق الوقت تلقائياً للغتين
   String _formatTimeEn(TimeOfDay time) {
     final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
     final period = time.period == DayPeriod.am ? 'AM' : 'PM';
@@ -133,13 +204,11 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
     return '$hour:$minute $period';
   }
 
-  // ✅ دالة ذكية لاستخراج الإحداثيات من النصوص المنسوخة أو روابط جوجل ماب
   Future<void> _pasteCoordinates() async {
     final data = await Clipboard.getData(Clipboard.kTextPlain);
     final text = data?.text ?? '';
     if (text.isEmpty) return;
 
-    // يبحث عن الإحداثيات بصيغة: 21.4225, 39.8261 أو من رابط جوجل @21.4225,39.8261
     final regExp = RegExp(r'(-?\d+\.\d+),\s*(-?\d+\.\d+)');
     final match = regExp.firstMatch(text);
 
@@ -166,12 +235,12 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
       _showError(l10n.adminSelectRegion);
       return;
     }
-    if (_selectedDate == null) {
+    if (_startDate == null || _endDate == null) {
       _showError(l10n.adminSelectEventDate);
       return;
     }
-    if (_selectedTime == null) {
-      _showError('الرجاء اختيار وقت الفعالية'); // أضفها في الترجمة لاحقاً
+    if (_startTime == null || _endTime == null) {
+      _showError('الرجاء اختيار وقت البداية والنهاية');
       return;
     }
     if (_pickedImage == null) {
@@ -200,17 +269,18 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
         'descriptionAr': _descArController.text.trim(),
         'descriptionEn': _descEnController.text.trim(),
         'imageUrl': imageUrl,
-        'eventDate': Timestamp.fromDate(_selectedDate!),
-        if (_selectedEndDate != null)
-          'endDate': Timestamp.fromDate(_selectedEndDate!),
-        'timeAr': _formatTimeAr(_selectedTime!), // ✅ توليد الوقت العربي آلياً
-        'timeEn': _formatTimeEn(_selectedTime!), // ✅ توليد الوقت الإنجليزي آلياً
+        'eventDate': Timestamp.fromDate(_startDate!),
+        'endDate': Timestamp.fromDate(_endDate!),
+        'timeAr': _formatTimeAr(_startTime!),
+        'timeEn': _formatTimeEn(_startTime!),
+        'endTimeAr': _formatTimeAr(_endTime!),
+        'endTimeEn': _formatTimeEn(_endTime!),
         'latitude': double.parse(latText),
         'longitude': double.parse(lngText),
         'regionId': _selectedRegionId,
         'regionAr': region.nameAr,
         'regionEn': region.nameEn,
-        'categoryId': _selectedCategory,
+        'categoryId': '',
         'eventType': _selectedEventType.value,
         'isFree': _isFree,
         if (_ticketUrlController.text.trim().isNotEmpty)
@@ -253,12 +323,12 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
     setState(() {
       _selectedRegionId = null;
       _selectedEventType = EventType.other;
-      _selectedDate = null;
-      _selectedEndDate = null;
-      _selectedTime = null; // ✅ تصفير الوقت
+      _startDate = null;
+      _endDate = null;
+      _startTime = null;
+      _endTime = null;
       _pickedImage = null;
       _isFree = true;
-      _selectedCategory = 'food';
     });
   }
 
@@ -267,7 +337,14 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.adminAddEvent),
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        foregroundColor: Theme.of(context).colorScheme.onSurface,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Form(
         key: _formKey,
@@ -342,10 +419,11 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Date picker
+            // Date range picker
             _SectionLabel(l10n.adminEventDate),
-            GestureDetector(
-              onTap: _pickDate,
+            InkWell(
+              onTap: _pickDateRange,
+              borderRadius: BorderRadius.circular(12),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
@@ -357,89 +435,17 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.primary),
+                    Icon(Icons.date_range_outlined,
+                        size: 18, color: AppColors.primary),
                     const SizedBox(width: 10),
                     Text(
-                      _selectedDate != null
-                          ? '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}'
+                      _startDate != null && _endDate != null
+                          ? '${_startDate!.day}/${_startDate!.month}/${_startDate!.year}  –  ${_endDate!.day}/${_endDate!.month}/${_endDate!.year}'
                           : l10n.adminSelectDate,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: _selectedDate != null
-                            ? null
-                            : theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // End Date picker (optional)
-            _SectionLabel(l10n.adminEndDateOptional),
-            GestureDetector(
-              onTap: _pickEndDate,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: theme.colorScheme.outline.withValues(alpha: 0.35),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.event_outlined, size: 18, color: AppColors.primary),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        _selectedEndDate != null
-                            ? '${_selectedEndDate!.day}/${_selectedEndDate!.month}/${_selectedEndDate!.year}'
-                            : l10n.adminSelectEndDate,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: _selectedEndDate != null
-                              ? null
-                              : theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                    if (_selectedEndDate != null)
-                      GestureDetector(
-                        onTap: () => setState(() => _selectedEndDate = null),
-                        child: Icon(Icons.close, size: 16, color: theme.colorScheme.onSurfaceVariant),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // ✅ Time Picker (بدل الإدخال اليدوي)
-            _SectionLabel('وقت الفعالية'), // يمكنك إضافتها لملف الترجمة
-            GestureDetector(
-              onTap: _pickTime,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: theme.colorScheme.outline.withValues(alpha: 0.35),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.access_time, size: 18, color: AppColors.primary),
-                    const SizedBox(width: 10),
-                    Text(
-                      _selectedTime != null
-                          ? _formatTimeAr(_selectedTime!)
-                          : 'اختر وقت الفعالية',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: _selectedTime != null
-                            ? null
-                            : theme.colorScheme.onSurfaceVariant,
+                        color: _startDate == null
+                            ? theme.colorScheme.onSurfaceVariant
+                            : null,
                       ),
                     ),
                   ],
@@ -448,7 +454,18 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             ),
             const SizedBox(height: 24),
 
-            // ✅ Lat / Lng with Smart Paste Button
+            // Time pickers (start / end)
+            _SectionLabel('وقت الفعالية'),
+            Row(
+              children: [
+                Expanded(child: _timePicker(theme, isStart: true)),
+                const SizedBox(width: 12),
+                Expanded(child: _timePicker(theme, isStart: false)),
+              ],
+            ),
+            const SizedBox(height: 24),
+
+            // Lat / Lng with Smart Paste Button
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -456,9 +473,11 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                 TextButton.icon(
                   onPressed: _pasteCoordinates,
                   icon: const Icon(Icons.content_paste, size: 16),
-                  label: const Text('لصق من الخرائط', style: TextStyle(fontSize: 12)),
+                  label: const Text('لصق من الخرائط',
+                      style: TextStyle(fontSize: 12)),
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                     minimumSize: Size.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
@@ -471,18 +490,26 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                 Expanded(
                   child: TextFormField(
                     controller: _latController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true, signed: true),
                     decoration: _inputDecoration(hint: l10n.adminLatitude),
-                    validator: (v) => (v == null || v.trim().isEmpty) ? l10n.requiredField : null,
+                    validator: (v) =>
+                        (v == null || v.trim().isEmpty)
+                            ? l10n.requiredField
+                            : null,
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextFormField(
                     controller: _lngController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true, signed: true),
                     decoration: _inputDecoration(hint: l10n.adminLongitude),
-                    validator: (v) => (v == null || v.trim().isEmpty) ? l10n.requiredField : null,
+                    validator: (v) =>
+                        (v == null || v.trim().isEmpty)
+                            ? l10n.requiredField
+                            : null,
                   ),
                 ),
               ],
@@ -492,7 +519,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             // Event type
             _SectionLabel(l10n.adminEventType),
             DropdownButtonFormField<EventType>(
-              value: _selectedEventType,
+              initialValue: _selectedEventType,
               decoration: _inputDecoration(),
               items: EventType.values
                   .map((t) => DropdownMenuItem(
@@ -505,23 +532,10 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Category
-            _SectionLabel(l10n.adminCategory),
-            DropdownButtonFormField<String>(
-              value: _selectedCategory,
-              decoration: _inputDecoration(),
-              items: _categories
-                  .map((c) =>
-                      DropdownMenuItem(value: c.id, child: Text(c.label)))
-                  .toList(),
-              onChanged: (v) => setState(() => _selectedCategory = v ?? 'food'),
-            ),
-            const SizedBox(height: 16),
-
             // Region
             _SectionLabel(l10n.adminRegion),
             DropdownButtonFormField<String>(
-              value: _selectedRegionId,
+              initialValue: _selectedRegionId,
               decoration: _inputDecoration(hint: l10n.adminSelectRegion),
               items: regionsData
                   .map((r) => DropdownMenuItem(
@@ -543,7 +557,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
               onChanged: (v) => setState(() => _isFree = v),
             ),
 
-            // Ticket URL (only shown when paid)
             if (!_isFree) ...[
               _SectionLabel(l10n.adminTicketUrl),
               _FormField(
@@ -576,12 +589,50 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                             color: Colors.white, strokeWidth: 2.5),
                       )
                     : Text(l10n.adminAddEvent,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ),
 
             const SizedBox(height: 24),
+          ],
+        ),
+      ),
+    ),
+    );
+  }
+
+  Widget _timePicker(ThemeData theme, {required bool isStart}) {
+    final val = isStart ? _startTime : _endTime;
+    return InkWell(
+      onTap: () => _pickTime(isStart: isStart),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: theme.colorScheme.outline.withValues(alpha: 0.35),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isStart ? Icons.schedule_outlined : Icons.timer_off_outlined,
+              size: 18,
+              color: AppColors.primary,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              val != null ? _fmtTime(val) : (isStart ? 'البداية' : 'النهاية'),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: val == null
+                    ? theme.colorScheme.onSurfaceVariant
+                    : null,
+              ),
+            ),
           ],
         ),
       ),
@@ -594,7 +645,8 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
       hintText: hint,
       filled: true,
       fillColor: theme.colorScheme.surface,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(
@@ -656,7 +708,8 @@ class _FormField extends StatelessWidget {
       maxLines: maxLines,
       textDirection: textDirection,
       validator: required
-          ? (v) => (v == null || v.trim().isEmpty) ? l10n.requiredField : null
+          ? (v) =>
+              (v == null || v.trim().isEmpty) ? l10n.requiredField : null
           : null,
       decoration: InputDecoration(
         hintText: hint,
