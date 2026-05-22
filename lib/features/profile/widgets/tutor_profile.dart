@@ -63,11 +63,15 @@ class TutorHeader extends ConsumerWidget {
             children: [
               Text(user.fullName, style: theme.textTheme.titleLarge),
               const SizedBox(width: 8),
-              _buildStatusBadge(theme), // تاق الحالة الملون
+              _buildStatusBadge(theme),
             ],
           ),
           Text(user.email, style: theme.textTheme.bodyMedium),
-          
+          if (user.rating != null && user.rating! > 0) ...[
+            const SizedBox(height: 6),
+            _buildRatingRow(theme),
+          ],
+
           // DONT DELETE - سيتم تفعيل عرض رقم الرخصة في المستقبل
           // if (user.licenceNumber != null) ...[
           // Text(
@@ -82,6 +86,46 @@ class TutorHeader extends ConsumerWidget {
     ),
   );
 }
+
+  Widget _buildRatingRow(ThemeData theme) {
+    final rating = user.rating ?? 0.0;
+    final count = user.reviewsCount ?? 0;
+    final fullStars = rating.floor();
+    final hasHalf = (rating - fullStars) >= 0.5;
+
+    return Row(
+      children: [
+        ...List.generate(5, (i) {
+          IconData icon;
+          if (i < fullStars) {
+            icon = Icons.star_rounded;
+          } else if (i == fullStars && hasHalf) {
+            icon = Icons.star_half_rounded;
+          } else {
+            icon = Icons.star_outline_rounded;
+          }
+          return Icon(icon, size: 16, color: Colors.amber.shade600);
+        }),
+        const SizedBox(width: 4),
+        Text(
+          rating.toStringAsFixed(1),
+          style: theme.textTheme.bodySmall?.copyWith(
+            fontWeight: FontWeight.w700,
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
+        if (count > 0) ...[
+          const SizedBox(width: 2),
+          Text(
+            '($count)',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
 
   Widget _buildStatusBadge(ThemeData theme) {
     Color color;
@@ -130,33 +174,6 @@ class TutorHeader extends ConsumerWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildTutorMetaDetails(ThemeData theme, AppLocalizations l10n) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(user.fullName, style: theme.textTheme.titleLarge), //
-              const SizedBox(width: 8),
-              if (user.verificationStatus == VerificationStatus.verified)
-                Icon(Icons.verified_rounded,
-                    color: theme.colorScheme.primary, size: 18),
-            ],
-          ),
-          Text(user.email, style: theme.textTheme.bodyMedium), //
-          if (user.licenceNumber != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              l10n.tutorLicenseNumberLabel(user.licenceNumber!), // عرض رقم الرخصة
-              style: theme.textTheme.labelSmall,
-            ),
-          ],
-        ],
-      ),
     );
   }
 

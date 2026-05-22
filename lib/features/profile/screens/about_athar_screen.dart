@@ -100,6 +100,30 @@ class AboutAtharScreen extends StatelessWidget {
 
                   const SizedBox(height: 28),
 
+                  _SectionTitle(
+                    title: isAr ? 'شروط الرحلات والحجوزات' : 'Trips & Bookings Policy',
+                    subtitle: isAr
+                        ? 'معلومات مهمة تخص إتمام الرحلة وتقييم المرشد.'
+                        : 'Important information about trip completion and guide rating.',
+                  ),
+                  const SizedBox(height: 16),
+                  _InfoCard(
+                    icon: Icons.access_time_outlined,
+                    title: isAr ? 'الإتمام التلقائي بعد 24 ساعة' : 'Auto-completion after 24 hours',
+                    desc: isAr
+                        ? 'إذا مضت 24 ساعة على موعد الرحلة أو الحجز دون تأكيد، يُعتبر الحجز مكتملاً تلقائياً. في حال وجود أي إشكالية، يمكن التواصل مع الدعم الفني.'
+                        : 'If 24 hours pass after the trip or booking time without confirmation, the booking is automatically marked as completed. For any issues, please contact technical support.',
+                  ),
+                  _InfoCard(
+                    icon: Icons.star_outline_rounded,
+                    title: isAr ? 'تقييم المرشد' : 'Guide Rating',
+                    desc: isAr
+                        ? 'بعد اكتمال الرحلة، يصلك إشعار لتقييم المرشد. تقييمك يساعد السياح الآخرين على اختيار المرشد المناسب.'
+                        : 'After trip completion, you receive a notification to rate your guide. Your rating helps other tourists choose the right guide.',
+                  ),
+
+                  const SizedBox(height: 28),
+
                   Center(
                     child: Text(
                       isAr

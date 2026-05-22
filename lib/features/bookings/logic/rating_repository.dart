@@ -12,6 +12,8 @@ class RatingRepository {
     return snap.docs.isNotEmpty;
   }
 
+  // Rating aggregate (rating + reviewsCount) is updated server-side by the
+  // onRatingCreated Cloud Function — no client-side update needed here.
   Future<void> submitRating({
     required String bookingId,
     required String touristId,
