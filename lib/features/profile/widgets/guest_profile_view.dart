@@ -32,7 +32,7 @@ class GuestProfileView extends StatelessWidget {
               const SizedBox(height: 40),
 
               // 4. قسم المساعدة والدعم
-              _buildSupportGroup(theme, l10n),
+              _buildSupportGroup(context, theme, l10n),
             ],
           ),
         ),
@@ -124,7 +124,7 @@ class GuestProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildSupportGroup(ThemeData theme, AppLocalizations l10n) {
+  Widget _buildSupportGroup(BuildContext context, ThemeData theme, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -148,17 +148,17 @@ class GuestProfileView extends StatelessWidget {
                 //
                 title: l10n.settingsContactUs,
                 leadingIcon: Icons.support_agent_rounded,
-                onTap: () {},
+                 onTap: () => Navigator.pushNamed(context, AppRoutes.contactUs),
               ),
               SettingsTile(
                 title: l10n.settingsAboutAthar,
                 leadingIcon: Icons.info_outline_rounded,
-                onTap: () {},
+                 onTap: () => Navigator.pushNamed(context, AppRoutes.aboutAthar),
               ),
               SettingsTile(
                 title: l10n.settingsPrivacyPolicy,
                 leadingIcon: Icons.privacy_tip_outlined,
-                onTap: () {},
+                onTap: () => Navigator.pushNamed(context, AppRoutes.privacyPolicy),
               ),
             ],
           ),

@@ -1613,7 +1613,7 @@ abstract class AppLocalizations {
   /// No description provided for @view_details.
   ///
   /// In en, this message translates to:
-  /// **'View Details'**
+  /// **'Details'**
   String get view_details;
 
   /// No description provided for @adult_price.

@@ -328,7 +328,7 @@
   "booking_status_completed": "Completed",
   "accept_booking": "Accept",
   "reject_booking": "Reject",
-  "view_details": "View Details",
+  "view_details": "Details",
   "adult_price": "Adult Price (SAR)",
   "child_price": "Child Price (SAR, 0 = free)",
   "pricing": "Pricing",

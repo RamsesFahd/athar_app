@@ -196,8 +196,11 @@ class _PinDetail extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
                       pin.getTitle(isAr),
-                      style:
-                          tt.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                      style: _mapEventArabicStyle(
+                        tt.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                        event,
+                        isAr,
+                      ),
                     ),
                   ),
                 ),
@@ -273,7 +276,11 @@ class _PinDetail extends ConsumerWidget {
                       : isAttraction
                           ? l10n.mapAboutAttraction
                           : l10n.mapAboutLandmark,
-                  style: tt.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                  style: _mapEventArabicStyle(
+                    tt.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                    event,
+                    isAr,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -282,9 +289,13 @@ class _PinDetail extends ConsumerWidget {
                       : (isAr
                           ? 'لا يوجد وصف متاح'
                           : 'No description available'),
-                  style: tt.bodyMedium?.copyWith(
-                    color: cs.onSurface.withValues(alpha: 0.75),
-                    height: 1.6,
+                  style: _mapEventArabicStyle(
+                    tt.bodyMedium?.copyWith(
+                      color: cs.onSurface.withValues(alpha: 0.75),
+                      height: 1.6,
+                    ),
+                    event,
+                    isAr,
                   ),
                 ),
 
@@ -475,6 +486,9 @@ class _PinListCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isAr = ref.watch(settingsProvider).locale.languageCode == 'ar';
     final cs = Theme.of(context).colorScheme;
+    final event = pin.type == MapPinType.event
+        ? pin.sourceModel as EventModel
+        : null;
 
     return InkWell(
       onTap: () => ref.read(mapNotifierProvider.notifier).selectPin(pin),
@@ -508,10 +522,14 @@ class _PinListCard extends ConsumerWidget {
                 children: [
                   Text(
                     pin.getTitle(isAr),
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: _mapEventArabicStyle(
+                      Theme.of(context)
+                          .textTheme
+                          .titleSmall
+                          ?.copyWith(fontWeight: FontWeight.w600),
+                      event,
+                      isAr,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -582,6 +600,23 @@ Color _hexToColor(String hex) {
   return Color(int.parse('FF$n', radix: 16));
 }
 
+TextStyle? _mapEventArabicStyle(
+  TextStyle? style,
+  EventModel? event,
+  bool isAr,
+) {
+  if (!isAr ||
+      event == null ||
+      (event.eventType != EventType.festival &&
+          event.eventType != EventType.exhibition)) {
+    return style;
+  }
+
+  return (style ?? const TextStyle()).copyWith(
+    fontFamily: 'ThmanyahSerifDisplay',
+  );
+}
+
 class _TypeBadge extends StatelessWidget {
   final MapPinModel pin;
   final bool isAr;
@@ -623,10 +658,14 @@ class _TypeBadge extends StatelessWidget {
         label,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: theme.textTheme.labelSmall?.copyWith(
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          color: color,
+        style: _mapEventArabicStyle(
+          theme.textTheme.labelSmall?.copyWith(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
+          pin.type == MapPinType.event ? pin.sourceModel as EventModel : null,
+          isAr,
         ),
       ),
     );
@@ -727,7 +766,14 @@ class _EventTimeRow extends StatelessWidget {
       children: [
         Icon(Icons.access_time_outlined, size: 15, color: cs.primary),
         const SizedBox(width: 6),
-        Text(time, style: Theme.of(context).textTheme.bodyMedium),
+        Text(
+          time,
+          style: _mapEventArabicStyle(
+            Theme.of(context).textTheme.bodyMedium,
+            event,
+            isAr,
+          ),
+        ),
       ],
     );
   }
@@ -864,7 +910,11 @@ class _EventInfoRow extends StatelessWidget {
             time,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall,
+            style: _mapEventArabicStyle(
+              Theme.of(context).textTheme.bodySmall,
+              event,
+              isAr,
+            ),
           ),
         ),
       ],
