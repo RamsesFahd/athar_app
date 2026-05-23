@@ -1162,9 +1162,21 @@ async function createInAppNotification(
     });
 }
 
+// Notification types that map to each user preference key.
+const BOOKING_NOTIF_TYPES = new Set([
+  "booking_new", "booking_approved", "booking_cancelled", "booking_rejected",
+  "booking_auto_approved", "booking_completed", "booking_auto_completed", "booking_reminder",
+]);
+const EVENT_REMINDER_TYPES = new Set([
+  "contribution_approved", "contribution_rejected", "contribution_submitted",
+  "trip_submitted", "trip_approved", "trip_rejected",
+  "guide_verified", "guide_rejected", "points_awarded",
+]);
+
 /**
  * Reads the FCM tokens for a user and sends a multicast push message.
  * Silently ignores users with no tokens (guests, web-only users, etc.).
+ * Respects the user's notification preferences stored under notificationPrefs.
  * Removes any tokens reported as invalid by FCM to keep the list clean.
  */
 async function sendPushToUser(
@@ -1175,8 +1187,20 @@ async function sendPushToUser(
   const userSnap = await db.collection("users").doc(userId).get();
   if (!userSnap.exists) return;
 
-  const tokens: string[] = userSnap.data()?.fcmTokens ?? [];
+  const userData = userSnap.data()!;
+  const tokens: string[] = userData.fcmTokens ?? [];
   if (tokens.length === 0) return;
+
+  // Gate on the user's notification preferences (default ON if not set).
+  const prefs = userData.notificationPrefs ?? {};
+  if (BOOKING_NOTIF_TYPES.has(notif.type) && prefs.bookingNotifications === false) {
+    logger.info(`[FCM] Skipping ${notif.type} for ${userId} — bookingNotifications disabled`);
+    return;
+  }
+  if (EVENT_REMINDER_TYPES.has(notif.type) && prefs.eventReminders === false) {
+    logger.info(`[FCM] Skipping ${notif.type} for ${userId} — eventReminders disabled`);
+    return;
+  }
 
   const title = notif.title; // bilingual; FCM will show one string — we use Arabic as primary
   const body  = bodyOverride ?? notif.body;

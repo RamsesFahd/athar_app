@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import '../../../core/navigation/app_routes.dart';
@@ -62,6 +64,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         },
         data: (user) {
           if (user != null) {
+            TextInput.finishAutofillContext();
             if (user is AdminModel) {
               Navigator.pushReplacementNamed(context, AppRoutes.admin);
               return;
@@ -103,7 +106,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               ),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(24, 35, 24, 20),
-                child: Column(
+                child: AutofillGroup(
+                  child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // --- اختيار الدور ---
@@ -128,20 +132,24 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     ],
                     // --- حقول البيانات ---
                     _buildSectionLabel(l10n.fullNameLabel, theme),
-                    _buildTextField(_fullName, l10n.nameHint, false),
+                    _buildTextField(_fullName, l10n.nameHint, false,
+                        autofillHints: const [AutofillHints.name]),
                     const SizedBox(height: 18),
 
                     _buildSectionLabel(l10n.emailLabel, theme),
-                    _buildTextField(_email, l10n.emailHint, false),
+                    _buildTextField(_email, l10n.emailHint, false,
+                        autofillHints: const [AutofillHints.email]),
                     const SizedBox(height: 18),
 
                     _buildSectionLabel(l10n.passwordLabel, theme),
-                    _buildTextField(_password, l10n.passwordHint, true),
+                    _buildTextField(_password, l10n.passwordHint, true,
+                        autofillHints: const [AutofillHints.newPassword]),
                     const SizedBox(height: 18),
 
                     _buildSectionLabel(l10n.confirmPasswordLabel, theme),
                     _buildTextField(_confirmPassword, l10n.passwordHint, true,
-                        isConfirm: true),
+                        isConfirm: true,
+                        autofillHints: const [AutofillHints.newPassword]),
 
                     const SizedBox(height: 20),
 
@@ -194,6 +202,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                     const SizedBox(height: 25),
                     _buildFooterLinks(l10n, authState.isLoading),
                   ],
+                ),
                 ),
               ),
             ),
@@ -326,13 +335,14 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   Widget _buildTextField(
       TextEditingController controller, String hint, bool isPassword,
-      {bool isConfirm = false}) {
+      {bool isConfirm = false, List<String>? autofillHints}) {
     final theme = Theme.of(context);
     final bool hide = isConfirm ? _hideConfirmPassword : _hidePassword;
 
     return TextField(
       controller: controller,
       obscureText: isPassword ? hide : false,
+      autofillHints: autofillHints,
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         isDense: true,
@@ -423,9 +433,16 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         height: 22,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Image.network(
-                        'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
+                    : CachedNetworkImage(
+                        imageUrl:
+                            'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
                         height: 22,
+                        placeholder: (_, __) => const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(strokeWidth: 2)),
+                        errorWidget: (_, __, ___) =>
+                            const Icon(Icons.g_mobiledata, size: 22),
                       )
                 : Icon(icon, color: fg, size: 24),
           ),
