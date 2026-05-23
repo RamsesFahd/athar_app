@@ -27,14 +27,12 @@ class TutorModel extends UserModel {
   // Individual only
   final String? licenceNumber;
   final DateTime? licenceExpiryDate;
-  final int? experienceYears;
 
   // Company only
   final String? commercialRegistration;
   final DateTime? commercialRegExpiryDate;
   final String? tourismLicenceNumber;
   final DateTime? tourismLicenceExpiryDate;
-  final int? foundedYear;
 
   // Admin audit trail
   final String? verifiedByAdminId;
@@ -63,12 +61,10 @@ class TutorModel extends UserModel {
     this.reviewsCount,
     this.licenceNumber,
     this.licenceExpiryDate,
-    this.experienceYears,
     this.commercialRegistration,
     this.commercialRegExpiryDate,
     this.tourismLicenceNumber,
     this.tourismLicenceExpiryDate,
-    this.foundedYear,
     this.verifiedByAdminId,
     this.verifiedByAdminName,
     this.verificationActionAt,
@@ -89,7 +85,7 @@ class TutorModel extends UserModel {
         ? commercialRegExpiryDate
         : tourismLicenceExpiryDate;
   }
-// gradlew signingReport
+
   bool get isCredentialExpired {
     final expiry = _credentialExpiry;
     if (expiry == null) return false;
@@ -117,20 +113,19 @@ class TutorModel extends UserModel {
       isCredentialValid &&
       phoneVerified &&
       (bio?.isNotEmpty ?? false) &&
-      (languages?.isNotEmpty ?? false);
+      (tutorType == TutorType.company || (languages?.isNotEmpty ?? false));
 
   /// Keys for each unmet requirement. UI uses these to show specific messages.
   List<String> get missingTripRequirements => [
         if (!phoneVerified) 'phone_verification',
         if (verificationStatus != VerificationStatus.verified) 'guide_verification',
         if (bio?.isEmpty ?? true) 'bio',
-        if (languages?.isEmpty ?? true) 'languages',
+        if (tutorType != TutorType.company && (languages?.isEmpty ?? true)) 'languages',
       ];
 
   // ── Profile completeness ──────────────────────────────────────────────────
 
   bool get isProfileComplete {
-    // Common required fields
     if (bio == null || bio!.trim().isEmpty) return false;
     if (languages == null || languages!.isEmpty) return false;
 
@@ -144,15 +139,6 @@ class TutorModel extends UserModel {
           tourismLicenceExpiryDate != null;
     }
     return false;
-  }
-
-  // ── Years active (works for both types) ──────────────────────────────────
-
-  int? get yearsActive {
-    if (tutorType == TutorType.company && foundedYear != null) {
-      return DateTime.now().year - foundedYear!;
-    }
-    return experienceYears;
   }
 
   // ── Serialisation ─────────────────────────────────────────────────────────
@@ -181,7 +167,6 @@ class TutorModel extends UserModel {
         'licenceExpiryDate': licenceExpiryDate != null
             ? Timestamp.fromDate(licenceExpiryDate!)
             : null,
-        'experienceYears': experienceYears,
         // Company
         'commercialRegistration': commercialRegistration,
         'commercialRegExpiryDate': commercialRegExpiryDate != null
@@ -191,7 +176,6 @@ class TutorModel extends UserModel {
         'tourismLicenceExpiryDate': tourismLicenceExpiryDate != null
             ? Timestamp.fromDate(tourismLicenceExpiryDate!)
             : null,
-        'foundedYear': foundedYear,
         // Admin audit
         'verifiedByAdminId': verifiedByAdminId,
         'verifiedByAdminName': verifiedByAdminName,
@@ -250,7 +234,6 @@ class TutorModel extends UserModel {
       licenceNumber: map['licenceNumber'],
       licenceExpiryDate:
           (map['licenceExpiryDate'] as Timestamp?)?.toDate(),
-      experienceYears: map['experienceYears'] as int?,
       // Company
       commercialRegistration: map['commercialRegistration'],
       commercialRegExpiryDate:
@@ -258,7 +241,6 @@ class TutorModel extends UserModel {
       tourismLicenceNumber: map['tourismLicenceNumber'],
       tourismLicenceExpiryDate:
           (map['tourismLicenceExpiryDate'] as Timestamp?)?.toDate(),
-      foundedYear: map['foundedYear'] as int?,
       verifiedByAdminId: map['verifiedByAdminId'],
       verifiedByAdminName: map['verifiedByAdminName'],
       verificationActionAt:

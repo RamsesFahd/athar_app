@@ -783,6 +783,13 @@ Widget _buildBookingItem(
       color = theme.colorScheme.primary;
       icon = Icons.info_outline;
       itemsToList = profileMissing;
+    } else if (isVerified) {
+      // Verified and profile complete, but credential validity issue (e.g. dates)
+      headline = isAr
+          ? 'تحقق من صلاحية وثائق التوثيق'
+          : 'Check your credential validity';
+      color = theme.colorScheme.error;
+      icon = Icons.warning_amber_outlined;
     } else {
       // Credentials submitted, awaiting admin action
       headline = isAr
