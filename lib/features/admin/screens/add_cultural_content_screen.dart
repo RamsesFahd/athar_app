@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:athar_app/core/constants/region_data.dart';
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -184,7 +185,7 @@ class _AddCulturalContentScreenState
             content: Text(_isEditMode
                 ? l10n.adminItemUpdated
                 : l10n.adminCulturalItemAdded),
-            backgroundColor: Colors.green,
+            backgroundColor: Theme.of(context).semanticSuccess,
           ),
         );
         if (_isEditMode) {
@@ -198,7 +199,7 @@ class _AddCulturalContentScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content: Text(l10n.commonErrorWithMessage('')),
-              backgroundColor: Colors.red),
+              backgroundColor: Theme.of(context).colorScheme.error),
         );
       }
     } finally {

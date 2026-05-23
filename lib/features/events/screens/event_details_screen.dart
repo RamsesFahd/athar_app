@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/events/widgets/event_card.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/services/tts_service.dart';
@@ -84,7 +85,8 @@ class EventDetailsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
-    final accent = _accent;
+    final accent =
+        theme.isHighContrast ? theme.colorScheme.secondary : _accent;
     final gallery = event.gallery;
 
     final settings = ref.watch(settingsProvider);
@@ -121,10 +123,15 @@ class EventDetailsScreen extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 5),
                         decoration: BoxDecoration(
-                          color: accent.withValues(alpha: 0.12),
+                          color: theme.isHighContrast
+                              ? theme.colorScheme.surface
+                              : accent.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(20),
-                          border:
-                              Border.all(color: accent.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: theme.isHighContrast
+                                ? accent
+                                : accent.withValues(alpha: 0.3),
+                          ),
                         ),
                         child: Text(
                           isAr
@@ -314,7 +321,7 @@ class EventDetailsScreen extends ConsumerWidget {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: accent,
-                      foregroundColor: Colors.white,
+                      foregroundColor: theme.colorScheme.onSecondary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -371,9 +378,13 @@ class _InfoCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        color: theme.isHighContrast
+            ? theme.colorScheme.surface
+            : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: color.withValues(alpha: 0.15)),
+        border: Border.all(
+          color: theme.isHighContrast ? color : color.withValues(alpha: 0.15),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,11 +400,13 @@ class _InfoCard extends StatelessWidget {
                   style: (isAr
                           ? theme.textTheme.labelSmall ?? const TextStyle()
                           : GoogleFonts.playfairDisplay())
-                      .copyWith(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 11,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
+                    .copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                  color: theme.isHighContrast
+                      ? theme.colorScheme.onSurface
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
                 ),
               ),
             ],

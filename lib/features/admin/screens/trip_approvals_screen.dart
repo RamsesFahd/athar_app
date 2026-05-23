@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 
@@ -280,13 +281,19 @@ class _TripDetailAdminScreenState extends ConsumerState<TripDetailAdminScreen> {
           );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم قبول الرحلة'), backgroundColor: Colors.green),
+        SnackBar(
+          content: const Text('تم قبول الرحلة'),
+          backgroundColor: Theme.of(context).semanticSuccess,
+        ),
       );
       Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('خطأ: $e'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text('خطأ: $e'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -370,13 +377,19 @@ class _TripDetailAdminScreenState extends ConsumerState<TripDetailAdminScreen> {
           );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم رفض الرحلة'), backgroundColor: Colors.orange),
+        SnackBar(
+          content: const Text('تم رفض الرحلة'),
+          backgroundColor: Theme.of(context).semanticWarning,
+        ),
       );
       Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('خطأ: $e'), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text('خطأ: $e'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/navigation/app_routes.dart';
 import '../widgets/custom_button.dart';
 import '../logic/auth_notifier.dart';
@@ -75,9 +76,9 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
         data: (user) {
           if (user != null && user.emailVerified) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                   content: Text("تم تفعيل حسابك بنجاح! أهلاً بك في أثر"),
-                  backgroundColor: Colors.green),
+                  backgroundColor: theme.semanticSuccess),
             );
             final tourist = user is TouristModel ? user : null;
             final hasInterests = tourist?.culturalInterests.isNotEmpty ?? false;
@@ -92,7 +93,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AuthUtils.translateError(error.toString(), l10n)),
-              backgroundColor: AppColors.error,
+              backgroundColor: theme.colorScheme.error,
               behavior: SnackBarBehavior.floating,
             ),
           );

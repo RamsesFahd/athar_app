@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:athar_app/core/models/map/map_pin_model.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/interactive_map/logic/map_notifier.dart';
 import 'package:athar_app/features/interactive_map/widgets/map_filter_chips.dart';
 import 'package:athar_app/features/interactive_map/widgets/map_search_bar.dart';
@@ -38,6 +39,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   // Per-attraction-color icon cache: hex → BitmapDescriptor
   final Map<String, BitmapDescriptor> _attractionColorIcons = {};
   final Map<String, BitmapDescriptor> _attractionColorIconsSelected = {};
+  bool? _lastHighContrast;
 
   // Fallback used before the async per-color icon is built
   BitmapDescriptor _attractionFallback =
@@ -57,7 +59,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   @override
   void initState() {
     super.initState();
-    _initMarkerIcons();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _applyPendingPin();
       // ref.listen in build() fires only on *changes*; seed per-color icons
@@ -65,6 +66,23 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       final pins = ref.read(filteredMapPinsProvider);
       if (pins.isNotEmpty) _preloadAttractionIcons(pins);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isHighContrast = Theme.of(context).isHighContrast;
+    if (_lastHighContrast != isHighContrast) {
+      _lastHighContrast = isHighContrast;
+      _attractionColorIcons.clear();
+      _attractionColorIconsSelected.clear();
+      _initMarkerIcons();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final pins = ref.read(filteredMapPinsProvider);
+        if (pins.isNotEmpty) _preloadAttractionIcons(pins);
+      });
+    }
   }
 
   void _applyPendingPin() {
@@ -75,16 +93,27 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   Future<void> _initMarkerIcons() async {
+    final theme = Theme.of(context);
+    final isHighContrast = theme.isHighContrast;
+    final landmarkColor =
+        isHighContrast ? theme.colorScheme.primary : _sage;
+    final attractionFallbackColor = isHighContrast
+        ? theme.colorScheme.primary
+        : const Color(0xFF3A6EA5);
+    final eventColor =
+        isHighContrast ? theme.colorScheme.secondary : _sand;
+
     final results = await Future.wait([
-      _buildPinMarker(_sage, Icons.account_balance),
-      _buildPinMarker(_sage, Icons.account_balance, selected: true),
+      _buildPinMarker(landmarkColor, Icons.account_balance),
+      _buildPinMarker(landmarkColor, Icons.account_balance, selected: true),
       // Default fallback for attraction pins before per-color icons are ready
-      _buildPinMarker(const Color(0xFF3A6EA5), Icons.place_outlined),
-      _buildPinMarker(const Color(0xFF3A6EA5), Icons.place_outlined, selected: true),
-      _buildPinMarker(_sand, Icons.celebration),
-      _buildPinMarker(_sand, Icons.celebration, selected: true),
+      _buildPinMarker(attractionFallbackColor, Icons.place_outlined),
+      _buildPinMarker(attractionFallbackColor, Icons.place_outlined,
+          selected: true),
+      _buildPinMarker(eventColor, Icons.celebration),
+      _buildPinMarker(eventColor, Icons.celebration, selected: true),
     ]);
-    if (mounted) {
+    if (mounted && _lastHighContrast == isHighContrast) {
       setState(() {
         _landmarkIcon = results[0];
         _landmarkIconSelected = results[1];
@@ -102,6 +131,9 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   }
 
   Future<void> _preloadAttractionIcons(List<MapPinModel> pins) async {
+    final theme = Theme.of(context);
+    final isHighContrast = theme.isHighContrast;
+    final highContrastColor = theme.colorScheme.primary;
     final newHexCodes = pins
         .where((p) =>
             p.type == MapPinType.attraction &&
@@ -114,7 +146,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
 
     final entries = await Future.wait(
       newHexCodes.map((hex) async {
-        final color = _hexToColor(hex);
+        final color = isHighContrast ? highContrastColor : _hexToColor(hex);
         final normal =
             await _buildPinMarker(color, Icons.place_outlined);
         final selected =
@@ -123,7 +155,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
       }),
     );
 
-    if (!mounted) return;
+    if (!mounted || _lastHighContrast != isHighContrast) return;
     setState(() {
       for (final entry in entries) {
         _attractionColorIcons[entry.$1] = entry.$2;

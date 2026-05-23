@@ -126,7 +126,7 @@ class _CredentialVerificationScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.credVerifSuccess),
-          backgroundColor: Colors.green,
+          backgroundColor: Theme.of(context).semanticSuccess,
         ),
       );
       Navigator.of(context).pop();
@@ -135,7 +135,10 @@ class _CredentialVerificationScreenState
 
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      ),
     );
   }
 

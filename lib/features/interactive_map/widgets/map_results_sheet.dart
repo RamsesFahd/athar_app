@@ -11,6 +11,7 @@ import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/core/models/map/map_pin_model.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/interactive_map/logic/map_notifier.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
@@ -141,17 +142,20 @@ class _PinDetail extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isAr = ref.watch(settingsProvider).locale.languageCode == 'ar';
     final l10n = AppLocalizations.of(context);
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+    final tt = theme.textTheme;
     final isEvent = pin.type == MapPinType.event;
     final isAttraction = pin.type == MapPinType.attraction;
     final event = isEvent ? pin.sourceModel as EventModel : null;
     final attraction = isAttraction ? pin.sourceModel as AttractionModel : null;
-    final pinColor = isAttraction && pin.categoryColorCode != null
-        ? _hexToColor(pin.categoryColorCode!)
-        : isEvent
-            ? cs.secondary
-            : cs.primary;
+    final pinColor = theme.isHighContrast
+        ? cs.primary
+        : isAttraction && pin.categoryColorCode != null
+            ? _hexToColor(pin.categoryColorCode!)
+            : isEvent
+                ? cs.secondary
+                : cs.primary;
     final landmark =
         !isEvent && !isAttraction ? pin.sourceModel as CulturalItemModel : null;
     final description = isEvent
@@ -346,7 +350,7 @@ class _PinDetail extends ConsumerWidget {
                           label: Text(l10n.mapDirections),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: pinColor,
-                            foregroundColor: Colors.white,
+                            foregroundColor: cs.onPrimary,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
@@ -364,7 +368,7 @@ class _PinDetail extends ConsumerWidget {
                       label: Text(l10n.mapDirections),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: pinColor,
-                        foregroundColor: Colors.white,
+                        foregroundColor: cs.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
@@ -586,14 +590,19 @@ class _TypeBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
     final String label;
     final Color color;
 
     if (pin.type == MapPinType.attraction) {
       label = AppLocalizations.of(context).mapAttractionLabel;
       final hex = pin.categoryColorCode;
-      color = hex != null ? _hexToColor(hex) : const Color(0xFF3A6EA5);
+      color = theme.isHighContrast
+          ? cs.primary
+          : hex != null
+              ? _hexToColor(hex)
+              : const Color(0xFF3A6EA5);
     } else if (pin.type == MapPinType.landmark) {
       label = AppLocalizations.of(context).mapLandmarkLabel;
       color = cs.primary;
@@ -626,7 +635,12 @@ class _FreeOrPaidBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isFree ? Colors.green : Colors.orange;
+    final theme = Theme.of(context);
+    final color = theme.isHighContrast
+        ? theme.colorScheme.primary
+        : isFree
+            ? Colors.green
+            : Colors.orange;
     final l10n = AppLocalizations.of(context);
     final label = isFree ? l10n.commonFree : l10n.commonPaid;
 
