@@ -643,7 +643,8 @@ class AppLocalizationsAr extends AppLocalizations {
       'فعّل الوصول إلى الميكروفون من الإعدادات لاستخدام الإدخال الصوتي.';
 
   @override
-  String get rawiMicError => 'تعذّر بدء الإدخال الصوتي. يرجى المحاولة مرة أخرى.';
+  String get rawiMicError =>
+      'تعذّر بدء الإدخال الصوتي. يرجى المحاولة مرة أخرى.';
 
   @override
   String get rawiSuggestedItems => 'اقتراحات راوي';
@@ -1462,7 +1463,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String commonErrorWithMessage(String message) {
-    return 'حدث خطأ. يرجى المحاولة مرة أخرى.';
+    String _temp0 = intl.Intl.selectLogic(
+      message,
+      {
+        '_': 'حدث خطأ. يرجى المحاولة مرة أخرى.',
+        'other': 'حدث خطأ. يرجى المحاولة مرة أخرى.',
+      },
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1630,7 +1638,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String contributionErrorWithMessage(String message) {
-    return 'تعذّر إرسال مساهمتك. يرجى المحاولة مرة أخرى.';
+    String _temp0 = intl.Intl.selectLogic(
+      message,
+      {
+        '_': 'تعذّر إرسال مساهمتك. يرجى المحاولة مرة أخرى.',
+        'other': 'تعذّر إرسال مساهمتك. يرجى المحاولة مرة أخرى.',
+      },
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2635,7 +2650,14 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String adminTranslationFailed(String message) {
-    return 'تعذّرت ترجمة هذا المحتوى. يرجى المحاولة مرة أخرى.';
+    String _temp0 = intl.Intl.selectLogic(
+      message,
+      {
+        '_': 'تعذّرت ترجمة هذا المحتوى. يرجى المحاولة مرة أخرى.',
+        'other': 'تعذّرت ترجمة هذا المحتوى. يرجى المحاولة مرة أخرى.',
+      },
+    );
+    return '$_temp0';
   }
 
   @override

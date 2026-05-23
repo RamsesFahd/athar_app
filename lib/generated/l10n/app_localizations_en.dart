@@ -146,8 +146,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorWeakPassword => 'Use a stronger password to continue.';
 
   @override
-  String get errorUnexpected =>
-      'Something went wrong. Please try again.';
+  String get errorUnexpected => 'Something went wrong. Please try again.';
 
   @override
   String get fillAllFieldsError => 'Please fill in all fields';
@@ -1479,7 +1478,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String commonErrorWithMessage(String message) {
-    return 'Something went wrong. Please try again.';
+    String _temp0 = intl.Intl.selectLogic(
+      message,
+      {
+        '_': 'Something went wrong. Please try again.',
+        'other': 'Something went wrong. Please try again.',
+      },
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1647,7 +1653,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String contributionErrorWithMessage(String message) {
-    return 'We couldn’t submit your contribution. Please try again.';
+    String _temp0 = intl.Intl.selectLogic(
+      message,
+      {
+        '_': 'We couldn’t submit your contribution. Please try again.',
+        'other': 'We couldn’t submit your contribution. Please try again.',
+      },
+    );
+    return '$_temp0';
   }
 
   @override
@@ -2653,7 +2666,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String adminTranslationFailed(String message) {
-    return 'We couldn’t translate this content. Please try again.';
+    String _temp0 = intl.Intl.selectLogic(
+      message,
+      {
+        '_': 'We couldn’t translate this content. Please try again.',
+        'other': 'We couldn’t translate this content. Please try again.',
+      },
+    );
+    return '$_temp0';
   }
 
   @override
