@@ -212,9 +212,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(
-              child:
-                  Text(l10n.commonErrorWithMessage('')));
+          return Center(child: Text(l10n.commonErrorWithMessage('')));
         }
         final trips = snapshot.data ?? [];
 
@@ -283,9 +281,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(
-              child:
-                  Text(l10n.commonErrorWithMessage('')));
+          return Center(child: Text(l10n.commonErrorWithMessage('')));
         }
         final bookings = snapshot.data ?? [];
         if (bookings.isEmpty) {
@@ -435,41 +431,6 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
               ),
             ],
           ),
-          if (b.status == BookingStatus.pending) ...[
-            const SizedBox(height: 10),
-            Row(children: [
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12))),
-                  onPressed: () => ref
-                      .read(marketplaceRepositoryProvider)
-                      .acceptBooking(b.bookingId, b.touristId),
-                  child: Text(l10n.accept_booking),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      side: const BorderSide(color: Colors.red),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12))),
-                  onPressed: () => ref
-                      .read(marketplaceRepositoryProvider)
-                      .updateBookingStatus(
-                          b.bookingId, BookingStatus.rejected, b.touristId),
-                  child: Text(l10n.reject_booking,
-                      style: const TextStyle(color: Colors.red)),
-                ),
-              ),
-            ]),
-          ],
         ],
       ),
     );

@@ -404,6 +404,52 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
               ),
             ),
           ],
+          if (isGuide && booking.status == BookingStatus.pending) ...[
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () => ref
+                        .read(marketplaceRepositoryProvider)
+                        .acceptBooking(booking.bookingId, booking.touristId),
+                    child: Text(l10n.accept_booking),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: const BorderSide(color: Colors.red),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () => ref
+                        .read(marketplaceRepositoryProvider)
+                        .updateBookingStatus(
+                          booking.bookingId,
+                          BookingStatus.rejected,
+                          booking.touristId,
+                        ),
+                    child: Text(
+                      l10n.reject_booking,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
