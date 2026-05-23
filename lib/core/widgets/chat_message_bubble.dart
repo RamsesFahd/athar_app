@@ -1,4 +1,4 @@
-import 'package:athar_app/core/theme/app_colors.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/historical_chat/widgets/smart_text_content.dart';
 import 'package:flutter/material.dart';
 
@@ -45,6 +45,9 @@ class ChatMessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isHighContrast = theme.isHighContrast;
     final parts = _splitMessageContent(message);
 
     // For bot messages, use the app locale so the response always renders in
@@ -71,24 +74,30 @@ class ChatMessageBubble extends StatelessWidget {
               constraints: BoxConstraints(
                   maxWidth: MediaQuery.of(context).size.width * 0.75),
               decoration: BoxDecoration(
-                color: isMe ? AppColors.primary : Colors.grey[200],
+                color: isMe
+                    ? colorScheme.primary
+                    : colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(16),
                   topRight: const Radius.circular(16),
                   bottomLeft: isMe ? const Radius.circular(16) : Radius.zero,
                   bottomRight: isMe ? Radius.zero : const Radius.circular(16),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 5,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                border: isHighContrast
+                    ? Border.all(color: colorScheme.outline, width: 1.5)
+                    : null,
+                boxShadow: isHighContrast
+                    ? []
+                    : [
+                        BoxShadow(
+                          color: colorScheme.shadow.withValues(alpha: 0.05),
+                          blurRadius: 5,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
               ),
               child: Directionality(
-                textDirection:
-                    isArabic ? TextDirection.rtl : TextDirection.ltr,
+                textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
                 child: SmartTextContent(
                   text: parts.mainText,
                   isMe: isMe,
@@ -117,10 +126,15 @@ class ChatMessageBubble extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 9),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.12),
+                        color: isHighContrast
+                            ? colorScheme.surface
+                            : colorScheme.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: AppColors.primary.withValues(alpha: 0.35),
+                          color: isHighContrast
+                              ? colorScheme.outline
+                              : colorScheme.primary.withValues(alpha: 0.35),
+                          width: isHighContrast ? 1.5 : 1,
                         ),
                       ),
                       child: Row(
@@ -130,7 +144,7 @@ class ChatMessageBubble extends StatelessWidget {
                           Icon(
                             Icons.auto_awesome_rounded,
                             size: 14,
-                            color: AppColors.primary,
+                            color: colorScheme.primary,
                           ),
                           const SizedBox(width: 6),
                           ConstrainedBox(
@@ -142,10 +156,10 @@ class ChatMessageBubble extends StatelessWidget {
                               reply,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.primary,
+                                color: colorScheme.primary,
                               ),
                             ),
                           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_theme.dart';
 
 enum ButtonVariant { primary, outline }
 
@@ -19,28 +19,35 @@ class AtharButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isPrimary = variant == ButtonVariant.primary;
+    final isHighContrast = theme.isHighContrast;
+
     return SizedBox(
       width: double.infinity,
       height: 54,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: variant == ButtonVariant.primary
-              ? AppColors.primary
-              : Colors.white,
-          foregroundColor: variant == ButtonVariant.primary
-              ? Colors.white
-              : AppColors.primary,
+          backgroundColor:
+              isPrimary ? colorScheme.primary : colorScheme.surface,
+          foregroundColor:
+              isPrimary ? colorScheme.onPrimary : colorScheme.primary,
           elevation: 0,
           side: variant == ButtonVariant.outline
-              ? const BorderSide(color: AppColors.primary, width: 1.5)
+              ? BorderSide(
+                  color: colorScheme.outline,
+                  width: isHighContrast ? 2 : 1.5,
+                )
               : null,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
 
           // handle disabled state based on isLoading
-          disabledBackgroundColor: variant == ButtonVariant.primary
-              ? AppColors.sage500
-              : Colors.white,
+          disabledBackgroundColor:
+              isPrimary ? colorScheme.onSurfaceVariant : colorScheme.surface,
+          disabledForegroundColor:
+              isPrimary ? colorScheme.surface : colorScheme.onSurfaceVariant,
         ),
         // disable the button when loading to prevent multiple taps (New)
         onPressed: isLoading ? null : onPressed,
@@ -50,9 +57,8 @@ class AtharButton extends StatelessWidget {
                 width: 24,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: variant == ButtonVariant.primary
-                      ? Colors.white
-                      : AppColors.primary,
+                  color:
+                      isPrimary ? colorScheme.onPrimary : colorScheme.primary,
                 ),
               )
             : Text(

@@ -44,7 +44,8 @@ class _TripsListScreenState extends ConsumerState<TripsListScreen> {
       ),
       body: tripsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text(error.toString())),
+        error: (error, _) =>
+            Center(child: Text(l10n.commonErrorWithMessage(''))),
         data: (allTrips) {
           // PERFORMANCE OPTIMIZATION: filterAndSort result used directly.
           final displayedTrips =
@@ -102,7 +103,9 @@ class _TripsListScreenState extends ConsumerState<TripsListScreen> {
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge
-                          ?.copyWith(color: Colors.grey.shade500),
+                          ?.copyWith(
+                              color:
+                                  Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ),
                 )

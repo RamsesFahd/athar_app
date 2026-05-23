@@ -457,8 +457,8 @@ STRICT RULE: Your response MUST be in the same language as "Current User Message
       state = false;
       final isAr = _containsArabic(text);
       final errorText = isAr
-          ? 'عذراً، حدث خطأ أثناء المعالجة. حاول مرة أخرى.'
-          : 'Sorry, something went wrong. Please try again.';
+          ? 'تعذّر على راوي الرد الآن. يرجى المحاولة مرة أخرى.'
+          : 'Rawi couldn’t respond right now. Please try again.';
       final authRepo = ref.read(authRepositoryProvider);
       final userId = authRepo.currentUser?.uid ?? 'guest_user';
       final repository = ref.read(chatRepositoryProvider);

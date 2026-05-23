@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -31,8 +32,7 @@ class CulturalItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isArabic = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
-    final isHighContrast =
-    theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     final l10n = AppLocalizations.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1.0) > 1.2;
 
@@ -110,7 +110,7 @@ class CulturalItemCard extends StatelessWidget {
   borderRadius: BorderRadius.circular(15),
 
   border: isHighContrast
-      ? Border.all(color: Colors.black, width: 2)
+      ? Border.all(color: theme.colorScheme.onSurface, width: 2)
       : null,
 
   boxShadow: isHighContrast

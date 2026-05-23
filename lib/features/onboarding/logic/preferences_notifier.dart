@@ -98,7 +98,7 @@ class PreferencesNotifier extends Notifier<PreferencesState> {
     } catch (e) {
       state = state.copyWith(
         isSaving: false,
-        errorMessage: 'حدث خطأ أثناء الحفظ: $e',
+        errorMessage: 'تعذّر حفظ اهتماماتك. يرجى المحاولة مرة أخرى.',
       );
       return false;
     }

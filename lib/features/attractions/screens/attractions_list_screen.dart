@@ -4,6 +4,7 @@ import 'package:athar_app/core/models/attractions/attraction_model.dart';
 import 'package:athar_app/features/attractions/logic/attractions_repository.dart';
 import 'package:athar_app/features/attractions/widgets/attraction_card.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 
 class AttractionsListScreen extends ConsumerStatefulWidget {
   const AttractionsListScreen({super.key});
@@ -122,7 +123,7 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
       ),
       body: attractionsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(e.toString())),
+        error: (e, _) => Center(child: Text(l10n.commonErrorWithMessage(''))),
         data: (_) {
           // Use pre-cached collections. Only the filter pass runs here,
           // which is an O(n) scan — not the O(n) set/map allocations.
@@ -345,7 +346,9 @@ class _FilterRow extends StatelessWidget {
         itemBuilder: (context, index) {
           final value = options[index];
           final isSelected = value == selected;
-          final accent = colorFor?.call(value) ?? theme.colorScheme.primary;
+          final accent = theme.isHighContrast
+              ? theme.colorScheme.primary
+              : colorFor?.call(value) ?? theme.colorScheme.primary;
 
           return GestureDetector(
             onTap: () => onSelected(value),

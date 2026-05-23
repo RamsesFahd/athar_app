@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import '../widgets/recommended_item_details.dart';
 
 class RecommendedItemCard extends StatelessWidget {
@@ -21,7 +22,7 @@ class RecommendedItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     final largeText = MediaQuery.textScalerOf(context).scale(1.0) > 1.2;
 
     return GestureDetector(
@@ -48,7 +49,7 @@ class RecommendedItemCard extends StatelessWidget {
 
           border: Border.all(
            color: isHighContrast
-           ? Colors.black
+           ? theme.colorScheme.onSurface
            : theme.dividerColor.withValues(alpha: 0.55),
            width: isHighContrast ? 2 : 1,
           ),
@@ -133,7 +134,7 @@ class RecommendedItemCard extends StatelessWidget {
                           Icons.location_on,
                           size: 16,
                           color: isHighContrast
-                              ? Colors.black
+                              ? theme.colorScheme.onSurface
                               : theme.colorScheme.primary,
                         ),
                       ),

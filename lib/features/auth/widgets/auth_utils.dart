@@ -16,21 +16,26 @@ class AuthUtils {
 
   // Common divider for auth screens
   static Widget buildDivider(AppLocalizations l10n) {
-    return Row(
-      children: [
-        const Expanded(child: Divider()),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            l10n.orDivider,
-            style: TextStyle(
-              color: Colors.grey[400], 
-              fontWeight: FontWeight.bold,
+    return Builder(
+      builder: (context) {
+        final colorScheme = Theme.of(context).colorScheme;
+        return Row(
+          children: [
+            const Expanded(child: Divider()),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                l10n.orDivider,
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
-        ),
-        const Expanded(child: Divider()),
-      ],
+            const Expanded(child: Divider()),
+          ],
+        );
+      },
     );
   }
 }

@@ -49,16 +49,16 @@
   "touristRole": "سائح",
   "tutorRole": "مرشد سياحي",
 
-  "errorEmailAlreadyInUse": "هذا البريد الإلكتروني مستخدم بالفعل.",
+  "errorEmailAlreadyInUse": "هذا البريد الإلكتروني مسجّل بالفعل.",
   "errorInvalidEmail": "عنوان البريد الإلكتروني غير صحيح.",
-  "errorUserNotFound": "لا يوجد مستخدم مسجل بهذا البريد.",
+  "errorUserNotFound": "لم نتمكن من العثور على حساب بهذا البريد الإلكتروني.",
   "errorWrongPassword": "كلمة المرور خاطئة. حاول مرة أخرى.",
-  "errorWeakPassword": "كلمة المرور ضعيفة جداً.",
-  "errorUnexpected": "حدث خطأ غير متوقع. يرجى المحاولة لاحقاً.",
+  "errorWeakPassword": "استخدم كلمة مرور أقوى للمتابعة.",
+  "errorUnexpected": "حدث خطأ. يرجى المحاولة مرة أخرى.",
   "fillAllFieldsError": "يرجى ملء جميع الحقول",
   "passwordsDoNotMatchError": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى.",
   "guestUser": "ضيف",
-  "errorEmailNotVerified": "يرجى التحقق من بريدك الإلكتروني عبر الرابط المرسل إليك أولًا.",
+  "errorEmailNotVerified": "تحقق من بريدك الإلكتروني عبر الرابط الذي أرسلناه.",
   "homeLabel": "الرئيسية",
   "mapLabel": "الخريطة",
   "assistantLabel": "المساعد",
@@ -233,8 +233,8 @@
   "rawiUntitledEnglish": "محادثة جديدة",
   "rawiMicTooltip": "إدخال صوتي",
   "rawiMicListening": "جارٍ الاستماع...",
-  "rawiMicPermissionDenied": "يرجى السماح بالوصول إلى الميكروفون من الإعدادات",
-  "rawiMicError": "تعذّر بدء التعرف على الصوت",
+  "rawiMicPermissionDenied": "فعّل الوصول إلى الميكروفون من الإعدادات لاستخدام الإدخال الصوتي.",
+  "rawiMicError": "تعذّر بدء الإدخال الصوتي. يرجى المحاولة مرة أخرى.",
   "rawiSuggestedItems": "اقتراحات راوي",
   "all_trips": " استكشف الرحلات",
 "search_trips_hint": "ابحث عن رحلة...",
@@ -523,7 +523,7 @@
 
   "notificationsTitle": "التنبيهات",
   "notificationsSignInRequired": "يرجى تسجيل الدخول",
-  "notificationsLoadError": "حدث خطأ أثناء تحميل التنبيهات",
+  "notificationsLoadError": "تعذّر تحميل التنبيهات. يرجى المحاولة مرة أخرى.",
   "notificationsEmptyState": "لا توجد تنبيهات حتى الآن",
   "notificationContributionApprovedTitle": "تم قبول المساهمة",
   "notificationContributionRejectedTitle": "تم رفض المساهمة",
@@ -554,7 +554,7 @@
   "notificationPointsAwardedBody": "تم منحك نقاطًا إضافية.",
   "notificationDefaultBody": "لديك تنبيه جديد.",
 
-  "commonErrorWithMessage": "خطأ: {message}",
+  "commonErrorWithMessage": "{message, select, _ {حدث خطأ. يرجى المحاولة مرة أخرى.} other {حدث خطأ. يرجى المحاولة مرة أخرى.}}",
   "@commonErrorWithMessage": {
     "placeholders": {
       "message": { "type": "String" }
@@ -612,12 +612,12 @@
   "mapNoResultsInArea": "لا توجد نتائج في هذه المنطقة",
   "mapAttractionLabel": "معلم سياحي",
   "mapLandmarkLabel": "معلم ثقافي",
-  "mapLocationPermissionSettings": "يتطلب الوصول إلى موقعك تفعيل الإذن من الإعدادات",
-  "mapLoadDataError": "تعذّر تحميل البيانات، تحقق من اتصالك بالإنترنت",
+  "mapLocationPermissionSettings": "فعّل الوصول إلى الموقع من الإعدادات لاستخدام موقعك الحالي.",
+  "mapLoadDataError": "تعذّر تحميل الخريطة. تحقق من اتصالك وحاول مرة أخرى.",
 
-  "contributionAuthError": "خطأ في تسجيل الدخول",
-  "contributionUserUnavailable": "المستخدم غير متاح",
-  "contributionErrorWithMessage": "حدث خطأ: {message}",
+  "contributionAuthError": "يرجى تسجيل الدخول مرة أخرى لإضافة مساهمة.",
+  "contributionUserUnavailable": "تعذّر تحميل ملفك الشخصي. يرجى المحاولة مرة أخرى.",
+  "contributionErrorWithMessage": "{message, select, _ {تعذّر إرسال مساهمتك. يرجى المحاولة مرة أخرى.} other {تعذّر إرسال مساهمتك. يرجى المحاولة مرة أخرى.}}",
   "@contributionErrorWithMessage": {
     "placeholders": {
       "message": { "type": "String" }
@@ -651,7 +651,7 @@
   "contributionNoAchievements": "لا توجد إنجازات بعد",
   "contributionNoContributions": "لا توجد مساهمات بعد",
   "contributionArchiveLinkMissing": "هذه المساهمة لا تحتوي على رابط للأرشيف",
-  "contributionArchiveItemNotFound": "تعذّر العثور على العنصر في الأرشيف",
+  "contributionArchiveItemNotFound": "تعذّر العثور على عنصر الأرشيف.",
   "contributionPublished": "منشور",
   "contributionPending": "قيد المراجعة",
   "contributionRejected": "مرفوض",
@@ -712,7 +712,7 @@
   "bookingPhoneLabel": "رقم التواصل",
   "bookingShownAfterConfirmation": "سيظهر بعد التأكيد",
 
-  "tripDayAlreadyBookedError": "هذا اليوم محجوز مسبقًا لهذه الرحلة. يرجى اختيار يوم آخر.",
+  "tripDayAlreadyBookedError": "هذا التاريخ محجوز لهذه الرحلة. اختر تاريخًا آخر.",
   "tripTypeShared": "رحلة جماعية",
   "tripTypePrivate": "رحلة خاصة",
   "tripFullyBooked": "محجوز بالكامل",
@@ -1003,7 +1003,7 @@
   "adminSelectEventDate": "الرجاء اختيار تاريخ الفعالية",
   "adminPickImage": "الرجاء اختيار صورة",
   "adminEventCoordinatesRequired": "خط العرض والطول مطلوبان للفعاليات",
-  "adminImageUploadFailed": "فشل رفع الصورة",
+  "adminImageUploadFailed": "تعذّر رفع الصورة. يرجى المحاولة مرة أخرى.",
   "adminTitleArabic": "العنوان (عربي)",
   "adminTitleEnglish": "العنوان (إنجليزي)",
   "adminTitleArabicHint": "أدخل العنوان بالعربي",
@@ -1030,7 +1030,7 @@
   "adminEmbeddingProgress": "جاري توليد التضمينات...",
   "adminGenerateMissingEmbeddings": "توليد التضمينات الناقصة",
   "adminMigrationComplete": "اكتمل الترحيل",
-  "adminMigrationFailed": "فشل الترحيل",
+  "adminMigrationFailed": "تعذّر إكمال الترحيل.",
   "adminOperationComplete": "اكتملت العملية",
   "adminEmbeddingStatsLine": "{collection}: تم {processed} | متخطى {skipped} | فشل {failed}",
   "@adminEmbeddingStatsLine": {
@@ -1043,7 +1043,7 @@
   },
   "adminDocumentShapes": "شكل المستندات",
   "adminInspectDataShape": "فحص شكل البيانات",
-  "adminTranslationFailed": "فشل الترجمة: {message}",
+  "adminTranslationFailed": "{message, select, _ {تعذّرت ترجمة هذا المحتوى. يرجى المحاولة مرة أخرى.} other {تعذّرت ترجمة هذا المحتوى. يرجى المحاولة مرة أخرى.}}",
   "@adminTranslationFailed": {
     "placeholders": {
       "message": { "type": "String" }

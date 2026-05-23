@@ -77,7 +77,7 @@ class GuestProfileView extends StatelessWidget {
         onPressed: () => Navigator.pushNamed(context, AppRoutes.signUp), //
         style: ElevatedButton.styleFrom(
           backgroundColor: theme.colorScheme.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: theme.colorScheme.onPrimary,
           elevation: 2,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

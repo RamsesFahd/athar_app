@@ -335,7 +335,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorEmailAlreadyInUse.
   ///
   /// In en, this message translates to:
-  /// **'This email is already in use.'**
+  /// **'This email is already registered.'**
   String get errorEmailAlreadyInUse;
 
   /// No description provided for @errorInvalidEmail.
@@ -347,7 +347,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorUserNotFound.
   ///
   /// In en, this message translates to:
-  /// **'No user found with this email.'**
+  /// **'We couldn’t find an account with that email.'**
   String get errorUserNotFound;
 
   /// No description provided for @errorWrongPassword.
@@ -359,13 +359,13 @@ abstract class AppLocalizations {
   /// No description provided for @errorWeakPassword.
   ///
   /// In en, this message translates to:
-  /// **'The password is too weak.'**
+  /// **'Use a stronger password to continue.'**
   String get errorWeakPassword;
 
   /// No description provided for @errorUnexpected.
   ///
   /// In en, this message translates to:
-  /// **'An unexpected error occurred. Please try again later.'**
+  /// **'Something went wrong. Please try again.'**
   String get errorUnexpected;
 
   /// No description provided for @fillAllFieldsError.
@@ -389,7 +389,7 @@ abstract class AppLocalizations {
   /// Error message
   ///
   /// In en, this message translates to:
-  /// **'Please verify your email via the link sent to you.'**
+  /// **'Verify your email using the link we sent.'**
   String get errorEmailNotVerified;
 
   /// Label for Home tab
@@ -1319,13 +1319,13 @@ abstract class AppLocalizations {
   /// No description provided for @rawiMicPermissionDenied.
   ///
   /// In en, this message translates to:
-  /// **'Please allow microphone access in settings'**
+  /// **'Turn on microphone access in Settings to use voice input.'**
   String get rawiMicPermissionDenied;
 
   /// No description provided for @rawiMicError.
   ///
   /// In en, this message translates to:
-  /// **'Could not start voice recognition'**
+  /// **'Voice input couldn’t start. Please try again.'**
   String get rawiMicError;
 
   /// No description provided for @rawiSuggestedItems.
@@ -2711,7 +2711,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsLoadError.
   ///
   /// In en, this message translates to:
-  /// **'Failed to load notifications'**
+  /// **'We couldn’t load your notifications. Please try again.'**
   String get notificationsLoadError;
 
   /// No description provided for @notificationsEmptyState.
@@ -2891,7 +2891,7 @@ abstract class AppLocalizations {
   /// No description provided for @commonErrorWithMessage.
   ///
   /// In en, this message translates to:
-  /// **'Error: {message}'**
+  /// **'{message, select, _ {Something went wrong. Please try again.} other {Something went wrong. Please try again.}}'**
   String commonErrorWithMessage(String message);
 
   /// No description provided for @commonFree.
@@ -3191,31 +3191,31 @@ abstract class AppLocalizations {
   /// No description provided for @mapLocationPermissionSettings.
   ///
   /// In en, this message translates to:
-  /// **'Location access requires enabling permission from settings'**
+  /// **'Turn on location access in Settings to use your current location.'**
   String get mapLocationPermissionSettings;
 
   /// No description provided for @mapLoadDataError.
   ///
   /// In en, this message translates to:
-  /// **'Could not load data. Check your internet connection'**
+  /// **'We couldn’t load the map. Check your connection and try again.'**
   String get mapLoadDataError;
 
   /// No description provided for @contributionAuthError.
   ///
   /// In en, this message translates to:
-  /// **'Authentication error'**
+  /// **'Please sign in again to add a contribution.'**
   String get contributionAuthError;
 
   /// No description provided for @contributionUserUnavailable.
   ///
   /// In en, this message translates to:
-  /// **'User not available'**
+  /// **'We couldn’t load your profile. Please try again.'**
   String get contributionUserUnavailable;
 
   /// No description provided for @contributionErrorWithMessage.
   ///
   /// In en, this message translates to:
-  /// **'Error: {message}'**
+  /// **'{message, select, _ {We couldn’t submit your contribution. Please try again.} other {We couldn’t submit your contribution. Please try again.}}'**
   String contributionErrorWithMessage(String message);
 
   /// No description provided for @contributionGoToProfile.
@@ -3389,7 +3389,7 @@ abstract class AppLocalizations {
   /// No description provided for @contributionArchiveItemNotFound.
   ///
   /// In en, this message translates to:
-  /// **'Could not find the archive item'**
+  /// **'We couldn’t find that archive item.'**
   String get contributionArchiveItemNotFound;
 
   /// No description provided for @contributionPublished.
@@ -3605,7 +3605,7 @@ abstract class AppLocalizations {
   /// No description provided for @tripDayAlreadyBookedError.
   ///
   /// In en, this message translates to:
-  /// **'This day is already booked for this trip. Please choose a different day.'**
+  /// **'That date is already booked for this trip. Choose another date.'**
   String get tripDayAlreadyBookedError;
 
   /// No description provided for @tripTypeShared.
@@ -4883,7 +4883,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminImageUploadFailed.
   ///
   /// In en, this message translates to:
-  /// **'Image upload failed'**
+  /// **'We couldn’t upload the image. Please try again.'**
   String get adminImageUploadFailed;
 
   /// No description provided for @adminTitleArabic.
@@ -5045,7 +5045,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminMigrationFailed.
   ///
   /// In en, this message translates to:
-  /// **'Migration Failed'**
+  /// **'Migration couldn’t be completed.'**
   String get adminMigrationFailed;
 
   /// No description provided for @adminOperationComplete.
@@ -5076,7 +5076,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminTranslationFailed.
   ///
   /// In en, this message translates to:
-  /// **'Translation failed: {message}'**
+  /// **'{message, select, _ {We couldn’t translate this content. Please try again.} other {We couldn’t translate this content. Please try again.}}'**
   String adminTranslationFailed(String message);
 
   /// No description provided for @adminApproveContribution.

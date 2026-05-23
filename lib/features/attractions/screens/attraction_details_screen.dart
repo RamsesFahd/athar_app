@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:athar_app/core/models/attractions/attraction_model.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -82,7 +83,9 @@ class AttractionDetailsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
-    final accent = _hexColor(attraction.categoryColorCode);
+    final accent = theme.isHighContrast
+        ? theme.colorScheme.primary
+        : _hexColor(attraction.categoryColorCode);
     final gallery = attraction.gallery;
 
     final settings = ref.watch(settingsProvider);
@@ -145,9 +148,11 @@ class AttractionDetailsScreen extends ConsumerWidget {
                                     ? Text(l10n.commonFree)
                                     : CurrencyFormatter.format(
                                         attraction.entryFee),
-                                color: attraction.entryFee == 0
-                                    ? Colors.green.shade600
-                                    : accent,
+                                color: theme.isHighContrast
+                                    ? theme.colorScheme.primary
+                                    : attraction.entryFee == 0
+                                        ? Colors.green.shade600
+                                        : accent,
                                 isAr: isAr,
                               ),
                             ),
@@ -292,7 +297,7 @@ class AttractionDetailsScreen extends ConsumerWidget {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: accent,
-                      foregroundColor: Colors.white,
+                      foregroundColor: theme.colorScheme.onPrimary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),

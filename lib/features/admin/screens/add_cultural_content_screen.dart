@@ -197,7 +197,7 @@ class _AddCulturalContentScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(l10n.commonErrorWithMessage(e.toString())),
+              content: Text(l10n.commonErrorWithMessage('')),
               backgroundColor: Colors.red),
         );
       }

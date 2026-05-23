@@ -488,8 +488,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
           SnackBar(
             content: Text(
               isAr
-                  ? 'لم نجد "$entityName" في الأرشيف'
-                  : 'No record for "$entityName"',
+                  ? 'تعذّر العثور على تفاصيل "$entityName".'
+                  : 'We couldn’t find details for "$entityName".',
             ),
             backgroundColor: const Color(0xFF1B5E20),
             duration: const Duration(seconds: 2),

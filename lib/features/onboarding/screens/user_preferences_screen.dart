@@ -64,22 +64,37 @@ class _UserPreferencesScreenState
     final taxonomyAsync = ref.watch(taxonomyProvider);
     final prefsState = ref.watch(preferencesNotifierProvider);
     final theme = Theme.of(context);
+    final isAr = Directionality.of(context) == TextDirection.rtl;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Stack(
           children: [
-            Column(
-              children: [
-                _Header(selectedCount: prefsState.selectedIds.length),
+           Column(
+  children: [
+    if (widget.isEditMode)
+      Padding(
+        padding: const EdgeInsets.only(left: 12, top: 12),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+      ),
+
+            _Header(selectedCount: prefsState.selectedIds.length),
                 Expanded(
                   child: taxonomyAsync.when(
                     data: (interests) => _InterestsGrid(interests: interests),
                     loading: () =>
                         const Center(child: CircularProgressIndicator()),
                     error: (err, _) => _ErrorView(
-                      message: 'تعذر تحميل الاهتمامات',
+                      message: isAr
+                          ? 'تعذّر تحميل الاهتمامات. يرجى المحاولة مرة أخرى.'
+                          : 'We couldn’t load your interests. Please try again.',
                       onRetry: () => ref.invalidate(taxonomyProvider),
                     ),
                   ),
@@ -180,7 +195,7 @@ class _Header extends StatelessWidget {
                 color: theme.colorScheme.primary,
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: const Icon(Icons.interests, color: Colors.white),
+              child: Icon(Icons.interests, color: theme.colorScheme.onPrimary),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -277,7 +292,7 @@ class _InterestTile extends StatelessWidget {
                 border: Border.all(
                   color: isSelected
                       ? theme.colorScheme.primary
-                      : Colors.grey.shade300,
+                      : theme.colorScheme.outlineVariant,
                   width: isSelected ? 2 : 1,
                 ),
               ),
@@ -351,12 +366,12 @@ class _ContinueButton extends ConsumerWidget {
           ),
         ),
         child: prefsState.isSaving
-            ? const CircularProgressIndicator(color: Colors.white)
+            ? CircularProgressIndicator(color: theme.colorScheme.onPrimary)
             : Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: theme.colorScheme.onPrimary,
                 ),
               ),
       ),
@@ -380,7 +395,8 @@ class _ErrorView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.error_outline, size: 48, color: Colors.grey.shade400),
+          Icon(Icons.error_outline,
+              size: 48, color: Theme.of(context).colorScheme.onSurfaceVariant),
           const SizedBox(height: 12),
           Text(message),
           const SizedBox(height: 16),

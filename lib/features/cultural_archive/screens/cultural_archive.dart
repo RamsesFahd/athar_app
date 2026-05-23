@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../cultural_archive/widgets/cultural_item_card.dart';
-import '../../../core/theme/app_colors.dart';
 import '../logic/cultural_notifier.dart';
 
 class CulturalArchive extends ConsumerWidget {
@@ -12,8 +12,22 @@ class CulturalArchive extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isHighContrast = theme.isHighContrast;
     final l10n = AppLocalizations.of(context);
     final largeText = MediaQuery.textScalerOf(context).scale(1.0) > 1.2;
+    final defaultBorderColor = isHighContrast
+        ? colorScheme.outline
+        : colorScheme.primary.withValues(alpha: 0.10);
+    final focusedBorderColor = isHighContrast
+        ? colorScheme.primary
+        : colorScheme.primary.withValues(alpha: 0.22);
+    final borderWidth = isHighContrast ? 2.0 : 1.0;
+    final activeBackgroundColor = isHighContrast
+        ? colorScheme.primary
+        : colorScheme.primary.withValues(alpha: 0.12);
+    final activeForegroundColor =
+        isHighContrast ? colorScheme.onPrimary : colorScheme.primary;
 
     final viewMode = ref.watch(viewModeProvider);
     final showFilters = ref.watch(showFiltersProvider);
@@ -41,34 +55,34 @@ class CulturalArchive extends ConsumerWidget {
                       decoration: InputDecoration(
                         hintText: l10n.searchHint,
                         hintStyle: theme.textTheme.bodyMedium
-                            ?.copyWith(color: AppColors.sage800),
+                            ?.copyWith(color: colorScheme.onSurfaceVariant),
                         prefixIcon:
-                            Icon(Icons.search, color: AppColors.primary),
+                            Icon(Icons.search, color: colorScheme.primary),
                         filled: true,
-                        fillColor: AppColors.surface,
+                        fillColor: colorScheme.surface,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 12,
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(
-                            color: AppColors.sage800.withValues(alpha: 0.35),
-                            width: 1.2,
+                            color: defaultBorderColor,
+                            width: borderWidth,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(
-                            color: AppColors.sage800.withValues(alpha: 0.7),
-                            width: 1.4,
+                            color: focusedBorderColor,
+                            width: isHighContrast ? 2 : 1.2,
                           ),
                         ),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(
-                            color: AppColors.sage800.withValues(alpha: 0.35),
-                            width: 1.2,
+                            color: defaultBorderColor,
+                            width: borderWidth,
                           ),
                         ),
                       ),
@@ -87,12 +101,16 @@ class CulturalArchive extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     decoration: BoxDecoration(
                       color: showFilters
-                          ? AppColors.primary
-                          : AppColors.background,
-                      borderRadius: BorderRadius.circular(12),
+                          ? activeBackgroundColor
+                          : colorScheme.surface,
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: AppColors.primary,
-                        width: 1.5,
+                        color: isHighContrast
+                            ? colorScheme.outline
+                            : colorScheme.primary.withValues(
+                                alpha: showFilters ? 0.28 : 0.10,
+                              ),
+                        width: borderWidth,
                       ),
                     ),
                     child: Row(
@@ -101,13 +119,14 @@ class CulturalArchive extends ConsumerWidget {
                         Icon(
                           Icons.tune,
                           size: 20,
-                          color: showFilters ? Colors.white : AppColors.primary,
+                          color: showFilters
+                              ? activeForegroundColor
+                              : colorScheme.primary,
                         ),
                         const SizedBox(width: 6),
                         ConstrainedBox(
                           constraints: BoxConstraints(
-                            maxWidth:
-                                MediaQuery.of(context).size.width * 0.22,
+                            maxWidth: MediaQuery.of(context).size.width * 0.22,
                           ),
                           child: Text(
                             l10n.filter,
@@ -116,8 +135,8 @@ class CulturalArchive extends ConsumerWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: showFilters
-                                  ? Colors.white
-                                  : AppColors.primary,
+                                  ? activeForegroundColor
+                                  : colorScheme.primary,
                             ),
                           ),
                         ),
@@ -133,9 +152,15 @@ class CulturalArchive extends ConsumerWidget {
                   constraints: const BoxConstraints(minHeight: 44),
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
+                      backgroundColor: colorScheme.surface,
+                      foregroundColor: colorScheme.primary,
+                      side: BorderSide(
+                        color: defaultBorderColor,
+                        width: borderWidth,
+                      ),
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                     ),
                     onPressed: () => ref.read(viewModeProvider.notifier).state =
@@ -168,7 +193,7 @@ class CulturalArchive extends ConsumerWidget {
                       : _buildGridView(filteredItems.filteredItems, largeText),
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) =>
-                  const Center(child: Text('Error loading items')),
+                  Center(child: Text(l10n.commonErrorWithMessage(''))),
             ),
           ),
         ],
@@ -283,8 +308,9 @@ class CulturalArchive extends ConsumerWidget {
               child: Text(
                 label,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color:
-                      isSelected ? Colors.white : theme.colorScheme.onSurface,
+                  color: isSelected
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),

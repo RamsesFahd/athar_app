@@ -128,7 +128,7 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
                 shape: chipShape(_ascending == true),
                 labelStyle: TextStyle(
                   color: _ascending == true
-                      ? Colors.white
+                      ? theme.colorScheme.onPrimary
                       : theme.colorScheme.primary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -143,7 +143,7 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
                 shape: chipShape(_ascending == false),
                 labelStyle: TextStyle(
                   color: _ascending == false
-                      ? Colors.white
+                      ? theme.colorScheme.onPrimary
                       : theme.colorScheme.primary,
                   fontWeight: FontWeight.w600,
                 ),
@@ -237,7 +237,9 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
                 backgroundColor: theme.colorScheme.surface,
                 shape: chipShape(isSelected),
                 labelStyle: TextStyle(
-                  color: isSelected ? Colors.white : theme.colorScheme.primary,
+                  color: isSelected
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.primary,
                   fontWeight: FontWeight.w600,
                 ),
                 onSelected: (selected) {

@@ -14,10 +14,11 @@ class PrivacyPolicyScreen extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: theme.colorScheme.primary,
-        foregroundColor: Colors.white,
+        foregroundColor: theme.colorScheme.onPrimary,
         title: Text(
           l10n.privacyPolicyTitle,
-          style: theme.textTheme.titleLarge?.copyWith(color: Colors.white),
+          style: theme.textTheme.titleLarge
+              ?.copyWith(color: theme.colorScheme.onPrimary),
         ),
         elevation: 0,
       ),
@@ -100,7 +101,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
         ),
         if (!isLast) ...[
           const SizedBox(height: 20),
-          Divider(color: Colors.grey.shade200),
+          Divider(color: theme.colorScheme.outlineVariant),
           const SizedBox(height: 20),
         ],
       ],

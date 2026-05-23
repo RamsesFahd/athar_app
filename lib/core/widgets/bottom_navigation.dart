@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 
 class AtharBottomNavigation extends StatelessWidget {
   final int currentIndex;
@@ -16,22 +17,25 @@ class AtharBottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isHighContrast = theme.isHighContrast;
 
     final l10n = AppLocalizations.of(context);
 
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
-          ),
-        ],
+        boxShadow: isHighContrast
+            ? []
+            : [
+                BoxShadow(
+                  color: theme.colorScheme.shadow.withValues(alpha: 0.03),
+                  blurRadius: 20,
+                  offset: const Offset(0, -5),
+                ),
+              ],
         border: Border(
           top: BorderSide(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
             width: 1,
           ),
         ),
@@ -44,7 +48,7 @@ class AtharBottomNavigation extends StatelessWidget {
           backgroundColor: Colors.transparent,
           elevation: 0,
           selectedItemColor: theme.colorScheme.primary,
-          unselectedItemColor: Colors.grey.shade400,
+          unselectedItemColor: theme.colorScheme.onSurfaceVariant,
           selectedLabelStyle: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.bold,

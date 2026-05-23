@@ -221,7 +221,9 @@ class BookingFormScreen extends ConsumerWidget {
           icon,
           color: isPrimary
               ? theme.colorScheme.onPrimary
-              : (isEnabled ? theme.colorScheme.primary : Colors.grey),
+              : (isEnabled
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurfaceVariant),
           size: 20,
         ),
       ),
@@ -252,14 +254,19 @@ class BookingFormScreen extends ConsumerWidget {
           children: [
             Icon(icon, color: theme.colorScheme.primary, size: 24),
             const SizedBox(width: 16),
-            Expanded(
-              child: Text(label, style: theme.textTheme.bodyLarge),
-            ),
+     Flexible(
+  fit: FlexFit.tight,
+  child: Text(
+    label,
+    style: theme.textTheme.bodyLarge,
+    overflow: TextOverflow.ellipsis,
+  ),
+),
             const SizedBox(width: 12),
-            Flexible(
-              child: Text(
-                value,
-                maxLines: 2,
+            Expanded(
+  child: Text(
+    value,
+    maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.end,
                 style: theme.textTheme.bodyLarge?.copyWith(

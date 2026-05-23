@@ -253,14 +253,15 @@ class _InfoRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: Colors.grey),
+          Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
           const SizedBox(width: 8),
           SizedBox(
             width: 80,
             child: Text(
               '$label:',
               style:
-                  theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
+                  theme.textTheme.bodySmall
+                      ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),
           Expanded(

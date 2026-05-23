@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/core/models/notification/app_notification_model.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class NotificationCard extends StatelessWidget {
@@ -16,7 +17,7 @@ class NotificationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
 
     final title = isAr
@@ -47,7 +48,7 @@ class NotificationCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(22),
             border: Border.all(
               color: isHighContrast
-                  ? Colors.black
+                  ? theme.colorScheme.onSurface
                   : notification.isRead
                       ? theme.dividerColor.withValues(alpha: 0.08)
                       : theme.colorScheme.primary.withValues(alpha: 0.18),
@@ -72,10 +73,11 @@ class NotificationCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isHighContrast
-                      ? Colors.white
+                      ? theme.colorScheme.surface
                       : theme.colorScheme.primary.withValues(alpha: 0.12),
                   border: isHighContrast
-                      ? Border.all(color: Colors.black, width: 2)
+                      ? Border.all(
+                          color: theme.colorScheme.onSurface, width: 2)
                       : null,
                 ),
                 child: Icon(

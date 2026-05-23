@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 
 class AboutAtharScreen extends StatelessWidget {
   const AboutAtharScreen({super.key});
@@ -249,7 +250,7 @@ class _QuoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
 
     return Container(
       width: double.infinity,
@@ -259,7 +260,7 @@ class _QuoteCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isHighContrast
-              ? Colors.black
+              ? theme.colorScheme.onSurface
               : theme.colorScheme.primary.withValues(alpha: 0.12),
           width: isHighContrast ? 2 : 1,
         ),
@@ -298,7 +299,7 @@ class _InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -308,7 +309,7 @@ class _InfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isHighContrast
-              ? Colors.black
+              ? theme.colorScheme.onSurface
               : theme.dividerColor.withValues(alpha: 0.12),
           width: isHighContrast ? 2 : 1,
         ),

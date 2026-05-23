@@ -242,8 +242,8 @@ class SmartTextContent extends ConsumerWidget {
                         ? 'جاري جلب بيانات الأرشيف...'
                         : 'Loading archive...')
                     : (isAr
-                        ? 'لم نجد $cleanTagName في الأرشيف'
-                        : 'No record for $cleanTagName');
+                        ? 'تعذّر العثور على تفاصيل $cleanTagName.'
+                        : 'We couldn’t find details for $cleanTagName.');
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

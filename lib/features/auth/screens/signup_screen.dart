@@ -249,14 +249,18 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             children: [
               Icon(
                 icon,
-                color: isSelected ? Colors.white : theme.colorScheme.primary,
+                color: isSelected
+                    ? theme.colorScheme.onPrimary
+                    : theme.colorScheme.primary,
                 size: 28,
               ),
               const SizedBox(height: 8),
               Text(
                 label,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: isSelected ? Colors.white : theme.colorScheme.primary,
+                  color: isSelected
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -477,7 +481,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 : theme.colorScheme.outline.withValues(alpha: 0.35),
           ),
           foregroundColor:
-              isSelected ? Colors.white : theme.colorScheme.primary,
+              isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.primary,
         ),
         onPressed: () => setState(() => _selectedTutorType = type),
         child: Text(label),

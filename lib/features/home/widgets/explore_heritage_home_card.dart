@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -23,20 +24,22 @@ class ExploreHeritageHomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isHighContrast = theme.colorScheme.primary == Colors.black;
+    final isHighContrast = theme.isHighContrast;
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
     final largeText = textScale > 1.2;
 
     final cardColor = theme.colorScheme.surface;
     final borderColor = isHighContrast
-        ? Colors.black
+        ? theme.colorScheme.onSurface
         : theme.dividerColor.withValues(alpha: 0.55);
 
     final placeholderColor =
-        isHighContrast ? Colors.white : Colors.grey.shade200;
+        isHighContrast
+            ? theme.colorScheme.surface
+            : theme.colorScheme.surfaceContainerHighest;
 
     final iconColor =
-        isHighContrast ? Colors.black : theme.colorScheme.primary;
+        isHighContrast ? theme.colorScheme.onSurface : theme.colorScheme.primary;
 
     return GestureDetector(
       onTap: onTap == null
@@ -110,7 +113,8 @@ class ExploreHeritageHomeCard extends StatelessWidget {
                         color: theme.colorScheme.primary,
                         borderRadius: BorderRadius.circular(24),
                         border: isHighContrast
-                            ? Border.all(color: Colors.black, width: 1.5)
+                            ? Border.all(
+                                color: theme.colorScheme.onSurface, width: 1.5)
                             : null,
                       ),
                       child: showRiyalIcon

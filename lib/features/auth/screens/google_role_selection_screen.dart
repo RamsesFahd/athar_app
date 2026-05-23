@@ -32,7 +32,9 @@ class _GoogleRoleSelectionScreenState
         error: (error, _) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(error.toString()),
+              content: Text(isAr
+                  ? 'تعذّر إكمال تسجيل الدخول. يرجى المحاولة مرة أخرى.'
+                  : 'We couldn’t finish signing you in. Please try again.'),
               backgroundColor: theme.colorScheme.error,
             ),
           );
@@ -127,7 +129,9 @@ class _GoogleRoleSelectionScreenState
             color: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(15),
             border: Border.all(
-              color: isSelected ? theme.colorScheme.primary : Colors.grey.shade300,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.outlineVariant,
               width: 2,
             ),
             boxShadow: isSelected
@@ -141,14 +145,18 @@ class _GoogleRoleSelectionScreenState
             children: [
               Icon(
                 icon,
-                color: isSelected ? Colors.white : theme.colorScheme.primary,
+                color: isSelected
+                    ? theme.colorScheme.onPrimary
+                    : theme.colorScheme.primary,
                 size: 28,
               ),
               const SizedBox(height: 8),
               Text(
                 label,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: isSelected ? Colors.white : theme.colorScheme.primary,
+                  color: isSelected
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -164,11 +172,15 @@ class _GoogleRoleSelectionScreenState
     return Expanded(
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          backgroundColor: isSelected ? theme.colorScheme.primary : Colors.transparent,
+          backgroundColor:
+              isSelected ? theme.colorScheme.primary : Colors.transparent,
           side: BorderSide(
-            color: isSelected ? theme.colorScheme.primary : Colors.grey.shade300,
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.outlineVariant,
           ),
-          foregroundColor: isSelected ? Colors.white : theme.colorScheme.primary,
+          foregroundColor:
+              isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.primary,
         ),
         onPressed: () => setState(() => _selectedTutorType = type),
         child: Text(label),

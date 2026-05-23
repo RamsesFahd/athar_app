@@ -33,7 +33,7 @@ class TutorVerificationScreen extends ConsumerWidget {
                 Text(
                   'لا توجد طلبات توثيق معلّقة',
                   style: theme.textTheme.bodyLarge
-                      ?.copyWith(color: Colors.grey.shade500),
+                      ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
               ],
             ),
@@ -110,7 +110,7 @@ class _PendingTutorCard extends StatelessWidget {
                   Text(
                     tutor.email,
                     style: theme.textTheme.bodySmall
-                        ?.copyWith(color: Colors.grey.shade500),
+                        ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
@@ -119,7 +119,8 @@ class _PendingTutorCard extends StatelessWidget {
             const SizedBox(width: 8),
             _typeBadge(isIndividual),
             const SizedBox(width: 8),
-            const Icon(Icons.chevron_right, color: Colors.grey),
+            Icon(Icons.chevron_right,
+                color: theme.colorScheme.onSurfaceVariant),
           ],
         ),
       ),

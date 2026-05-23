@@ -26,7 +26,7 @@ class GeminiService {
       {required String prompt, required String systemInstruction, Uint8List? imageBytes}) async {
     if (_apiKey.isEmpty) {
       throw Exception(
-          'GEMINI_API_KEY is empty. Please check your .env file and restart the app.');
+          'Rawi couldn’t respond right now. Please try again.');
     }
 
     // إعادة تعريف الموديل مع التعليمات البرمجية لضمان الشخصية واللغة
@@ -49,10 +49,10 @@ class GeminiService {
           : "عذراً، لم أفهم ذلك.";
     } on GenerativeAIException catch (e) {
       print('❌ Gemini API error: ${e.message}');
-      throw Exception('Gemini API error: ${e.message}');
+      throw Exception('Rawi couldn’t respond right now. Please try again.');
     } catch (e) {
       print('❌ Unexpected Gemini error: $e');
-      throw Exception('Unexpected Gemini error: $e');
+      throw Exception('Rawi couldn’t respond right now. Please try again.');
     }
   }
 }

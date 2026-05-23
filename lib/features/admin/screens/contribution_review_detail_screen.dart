@@ -83,7 +83,7 @@ class _ContributionReviewDetailScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context).adminTranslationFailed(e.toString())),
+          content: Text(AppLocalizations.of(context).adminTranslationFailed('')),
           backgroundColor: Colors.red,
         ),
       );
@@ -260,7 +260,7 @@ class _ContributionReviewDetailScreenState
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
+        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage('')), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -298,7 +298,7 @@ class _ContributionReviewDetailScreenState
               const SizedBox(height: 4),
               Text(
                 l10n.adminRejectContributionHelp,
-                style: const TextStyle(color: Colors.grey),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: 16),
               TextField(
@@ -358,7 +358,7 @@ class _ContributionReviewDetailScreenState
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage(e.toString())), backgroundColor: Colors.red),
+        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage('')), backgroundColor: Colors.red),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -716,14 +716,14 @@ class _InfoRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: Colors.grey),
+          Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
           const SizedBox(width: 8),
           SizedBox(
             width: 90,
             child: Text(
               '$label:',
               style: theme.textTheme.bodySmall
-                  ?.copyWith(color: Colors.grey),
+                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
           ),
           Expanded(
