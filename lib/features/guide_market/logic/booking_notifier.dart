@@ -33,6 +33,7 @@ class BookingNotifier extends _$BookingNotifier {
       totalPrice: 0.0,
       createdAt: DateTime.now(),
       imageUrl: trip.imageUrl,
+      tripDurationDays: trip.tripDurationDays,
     );
   }
 

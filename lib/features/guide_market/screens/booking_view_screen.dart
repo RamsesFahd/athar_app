@@ -315,7 +315,7 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
             style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 12),
-          _modernInfoRow(theme, Icons.calendar_today, l10n.date, booking.date),
+          _modernInfoRow(theme, Icons.calendar_today, l10n.date, _dateRangeLabel(booking)),
           _modernInfoRow(
             theme,
             Icons.access_time,
@@ -404,6 +404,52 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
               ),
             ),
           ],
+          if (isGuide && booking.status == BookingStatus.pending) ...[
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () => ref
+                        .read(marketplaceRepositoryProvider)
+                        .acceptBooking(booking.bookingId, booking.touristId),
+                    child: Text(l10n.accept_booking),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      side: const BorderSide(color: Colors.red),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () => ref
+                        .read(marketplaceRepositoryProvider)
+                        .updateBookingStatus(
+                          booking.bookingId,
+                          BookingStatus.rejected,
+                          booking.touristId,
+                        ),
+                    child: Text(
+                      l10n.reject_booking,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -489,6 +535,17 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
         ],
       ),
     );
+  }
+
+  String _dateRangeLabel(BookingModel booking) {
+    final duration = booking.tripDurationDays ?? 1;
+    if (duration <= 1) return booking.date;
+    final start = DateTime.tryParse(booking.date);
+    if (start == null) return booking.date;
+    final end = start.add(Duration(days: duration - 1));
+    String fmt(DateTime d) =>
+        '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+    return '${fmt(start)} – ${fmt(end)}';
   }
 
   String _localizedTimeSlot(String timeSlot, bool isAr, AppLocalizations l10n) {

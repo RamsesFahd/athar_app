@@ -24,11 +24,15 @@ DateTime? bookingScheduledEnd(BookingModel booking) {
   final timeParts = _extractTimeParts(booking.timeSlot);
   if (timeParts.isEmpty) return null;
 
+  // For multi-day trips, the end is on the last day of the booking.
+  final duration = booking.tripDurationDays ?? 1;
+  final lastDay = bookingDate.add(Duration(days: duration - 1));
+
   final endTime = timeParts.length > 1 ? timeParts.last : timeParts.first;
   var scheduledEnd = DateTime(
-    bookingDate.year,
-    bookingDate.month,
-    bookingDate.day,
+    lastDay.year,
+    lastDay.month,
+    lastDay.day,
     endTime.$1,
     endTime.$2,
   );

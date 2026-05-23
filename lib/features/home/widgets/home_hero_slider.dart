@@ -16,6 +16,7 @@ import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 import 'package:athar_app/features/events/logic/events_repository.dart';
+import 'package:athar_app/features/events/screens/event_details_screen.dart';
 import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
 import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
 import 'package:athar_app/features/home/models/hero_ai_text.dart';
@@ -326,9 +327,12 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
           subtitleAr: 'فعالية ثقافية تقترب من لحظتها',
           subtitleEn: 'A cultural moment is almost here',
           countdownDate: event.eventDate,
-          ctaAr: 'استعد للتجربة',
-          ctaEn: 'Get Ready',
-          onTap: null,
+          ctaAr: 'اكتشف المزيد',
+          ctaEn: 'Discover More',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => EventDetailsScreen(event: event)),
+          ),
         ));
       }
 
@@ -375,9 +379,14 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
           subtitleAr: 'فعالية ثقافية تقترب من لحظتها',
           subtitleEn: 'A cultural moment is almost here',
           countdownDate: event.eventDate,
-          ctaAr: 'استعد للتجربة',
-          ctaEn: 'Get Ready',
-          onTap: null,
+          ctaAr: 'اكتشف المزيد',
+          ctaEn: 'Discover More',
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => EventDetailsScreen(event: event),
+            ),
+          ),
         ),
       );
     }

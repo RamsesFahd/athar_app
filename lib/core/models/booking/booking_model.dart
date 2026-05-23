@@ -19,10 +19,14 @@ class BookingModel {
   final BookingStatus status;
   final DateTime createdAt;
   final String imageUrl;
+  /// How many consecutive days this booking spans. null/1 = single day.
+  final int? tripDurationDays;
   @Deprecated('Read live from users collection — see booking_view_screen')
   final String? tutorPhone;
   @Deprecated('Read live from users collection — see booking_view_screen')
   final String? tutorName;
+
+  bool get isMultiDay => (tripDurationDays ?? 1) > 1;
 
   BookingModel({
     required this.bookingId,
@@ -41,6 +45,7 @@ class BookingModel {
     this.status = BookingStatus.pending,
     required this.createdAt,
     required this.imageUrl,
+    this.tripDurationDays,
     this.tutorPhone,
     this.tutorName,
   });
@@ -63,6 +68,7 @@ class BookingModel {
       'status': status.name,
       'createdAt': Timestamp.fromDate(createdAt),
       'imageUrl': imageUrl,
+      'tripDurationDays': tripDurationDays,
       'tutorPhone': tutorPhone,
       'tutorName': tutorName,
     };
@@ -89,6 +95,7 @@ class BookingModel {
       ),
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       imageUrl: map['imageUrl'] ?? '',
+      tripDurationDays: map['tripDurationDays'] as int?,
       tutorPhone: map['tutorPhone'] as String?,
       tutorName: map['tutorName'] as String?,
     );
@@ -111,6 +118,7 @@ class BookingModel {
     BookingStatus? status,
     DateTime? createdAt,
     String? imageUrl,
+    int? tripDurationDays,
     String? tutorPhone,
     String? tutorName,
   }) {
@@ -131,6 +139,7 @@ class BookingModel {
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       imageUrl: imageUrl ?? this.imageUrl,
+      tripDurationDays: tripDurationDays ?? this.tripDurationDays,
       tutorPhone: tutorPhone ?? this.tutorPhone,
       tutorName: tutorName ?? this.tutorName,
     );

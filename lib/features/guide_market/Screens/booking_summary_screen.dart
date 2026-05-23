@@ -18,6 +18,7 @@ class BookingSummaryScreen extends ConsumerStatefulWidget {
   final double childPrice;
   final double totalPrice;
   final String imageUrl;
+  final int? tripDurationDays;
 
   const BookingSummaryScreen({
     super.key,
@@ -31,6 +32,7 @@ class BookingSummaryScreen extends ConsumerStatefulWidget {
     this.childPrice = 0.0,
     required this.totalPrice,
     required this.imageUrl,
+    this.tripDurationDays,
   });
 
   @override
@@ -39,6 +41,17 @@ class BookingSummaryScreen extends ConsumerStatefulWidget {
 
 class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
   bool _isLoading = false;
+
+  String _displayDate() {
+    final duration = widget.tripDurationDays ?? 1;
+    if (duration <= 1) return widget.date;
+    final start = DateTime.tryParse(widget.date);
+    if (start == null) return widget.date;
+    final end = start.add(Duration(days: duration - 1));
+    String fmt(DateTime d) =>
+        '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+    return '${fmt(start)} – ${fmt(end)}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +107,7 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                               const Divider(height: 40),
 
                               _buildInfoRow(Icons.person_outline, l10n.guide, widget.guideName, theme),
-                              _buildInfoRow(Icons.calendar_today, l10n.date, widget.date, theme),
+                              _buildInfoRow(Icons.calendar_today, l10n.date, _displayDate(), theme),
                               _buildInfoRow(Icons.access_time, l10n.time, widget.time, theme),
                               _buildInfoRow(
                                 Icons.people_outline,

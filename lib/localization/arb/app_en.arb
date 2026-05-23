@@ -558,6 +558,8 @@
   "notificationsSignInRequired": "Please sign in",
   "notificationsLoadError": "We couldn’t load your notifications. Please try again.",
   "notificationsEmptyState": "No notifications yet",
+  "notificationsDeleteAll": "Delete All",
+  "notificationsDeleteAllConfirm": "Are you sure you want to delete all notifications?",
   "notificationContributionApprovedTitle": "Contribution Approved",
   "notificationContributionRejectedTitle": "Contribution Rejected",
   "notificationContributionSubmittedTitle": "New Contribution Awaiting Review",

@@ -40,6 +40,45 @@ class NotificationsScreen extends ConsumerWidget {
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
+        actions: [
+          notificationsAsync.maybeWhen(
+            data: (notifications) => notifications.isEmpty
+                ? const SizedBox.shrink()
+                : IconButton(
+                    tooltip: l10n.notificationsDeleteAll,
+                    icon: const Icon(Icons.delete_sweep_rounded),
+                    color: Colors.red.shade600,
+                    onPressed: () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text(l10n.notificationsDeleteAll),
+                          content: Text(l10n.notificationsDeleteAllConfirm),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, false),
+                              child: Text(l10n.bookingCancelNo),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, true),
+                              child: Text(
+                                l10n.bookingCancelYes,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (confirmed == true) {
+                        await ref
+                            .read(notificationsRepositoryProvider)
+                            .deleteAllNotifications(user.uId);
+                      }
+                    },
+                  ),
+            orElse: () => const SizedBox.shrink(),
+          ),
+        ],
       ),
       body: notificationsAsync.when(
         loading: () => const Center(
@@ -72,13 +111,35 @@ class NotificationsScreen extends ConsumerWidget {
             itemBuilder: (context, index) {
               final notification = notifications[index];
 
-              return NotificationCard(
-                notification: notification,
-                onTap: () {
+              return Dismissible(
+                key: ValueKey(notification.id),
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  alignment: AlignmentDirectional.centerEnd,
+                  padding: const EdgeInsetsDirectional.only(end: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade600,
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: Colors.white,
+                    size: 26,
+                  ),
+                ),
+                onDismissed: (_) {
                   ref
                       .read(notificationsRepositoryProvider)
-                      .markAsRead(user.uId, notification.id);
+                      .deleteNotification(user.uId, notification.id);
                 },
+                child: NotificationCard(
+                  notification: notification,
+                  onTap: () {
+                    ref
+                        .read(notificationsRepositoryProvider)
+                        .markAsRead(user.uId, notification.id);
+                  },
+                ),
               );
             },
           );
