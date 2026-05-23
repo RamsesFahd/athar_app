@@ -24,9 +24,8 @@ class TripCard extends ConsumerWidget {
     final theme = Theme.of(context);
 
     final isFullyBooked = trip.isPrivate
-        ? ref
-              .watch(bookedDatesForTripProvider(trip.id))
-              .whenOrNull(data: (dates) => trip.isPrivateFullyBooked(dates)) ??
+        ? ref.watch(bookedDatesForTripProvider(trip.id)).whenOrNull(
+                data: (dates) => trip.isPrivateFullyBooked(dates)) ??
             false
         : trip.isFullyBooked;
 
@@ -120,7 +119,7 @@ class TripCard extends ConsumerWidget {
         PositionedDirectional(
           top: 10,
           start: 10,
-          child: _buildTripTypeBadge(l10n, isFullyBooked: false),
+          child: _buildTripTypeBadge(l10n, theme, isAr, isFullyBooked: false),
         ),
 
         // 5. Fully booked badge (top-end)
@@ -128,7 +127,7 @@ class TripCard extends ConsumerWidget {
           PositionedDirectional(
             top: 10,
             end: 10,
-            child: _buildFullyBookedBadge(l10n),
+            child: _buildFullyBookedBadge(l10n, theme, isAr),
           ),
 
         // 6. Content
@@ -151,9 +150,7 @@ class TripCard extends ConsumerWidget {
                     height: 1.2,
                   ),
                 ),
-
                 const SizedBox(height: 6),
-
                 Row(
                   children: [
                     Icon(
@@ -175,9 +172,7 @@ class TripCard extends ConsumerWidget {
                     ),
                   ],
                 ),
-
                 const Spacer(),
-
                 Row(
                   children: [
                     Directionality(
@@ -206,14 +201,11 @@ class TripCard extends ConsumerWidget {
                         ],
                       ),
                     ),
-
                     const Spacer(),
-
                     Flexible(
                       child: Align(
-                        alignment: isAr
-                            ? Alignment.centerLeft
-                            : Alignment.centerRight,
+                        alignment:
+                            isAr ? Alignment.centerLeft : Alignment.centerRight,
                         child: GestureDetector(
                           onTap: isFullyBooked
                               ? null
@@ -353,7 +345,12 @@ class TripCard extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      _buildTripTypeBadge(l10n, isFullyBooked: isFullyBooked),
+                      _buildTripTypeBadge(
+                        l10n,
+                        theme,
+                        isAr,
+                        isFullyBooked: isFullyBooked,
+                      ),
                     ],
                   ),
 
@@ -378,12 +375,11 @@ class TripCard extends ConsumerWidget {
                       runSpacing: 6,
                       children: trip.accessibilityFeatures.map((key) {
                         final label = switch (key) {
-                          'wheelchair' =>
-                            l10n.tripAccessibilityWheelchairShort,
+                          'wheelchair' => l10n.tripAccessibilityWheelchairShort,
                           'family' => l10n.tripAccessibilityFamilyShort,
                           _ => key,
                         };
-                        return _buildTag(label, theme);
+                        return _buildTag(label, theme, isAr);
                       }).toList(),
                     ),
 
@@ -437,8 +433,12 @@ class TripCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildTripTypeBadge(AppLocalizations l10n,
-      {required bool isFullyBooked}) {
+  Widget _buildTripTypeBadge(
+    AppLocalizations l10n,
+    ThemeData theme,
+    bool isAr, {
+    required bool isFullyBooked,
+  }) {
     final isPrivate = trip.isPrivate;
     const color = Colors.teal;
     final label = isPrivate ? l10n.tripTypePrivate : l10n.tripTypeShared;
@@ -457,11 +457,13 @@ class TripCard extends ConsumerWidget {
           const SizedBox(width: 3),
           Text(
             label,
-            style: TextStyle(
+            style: (isAr
+                    ? theme.textTheme.labelSmall ?? const TextStyle()
+                    : const TextStyle(fontFamily: 'Tajawal'))
+                .copyWith(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: color,
-              fontFamily: 'Tajawal',
             ),
           ),
         ],
@@ -469,7 +471,11 @@ class TripCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildFullyBookedBadge(AppLocalizations l10n) {
+  Widget _buildFullyBookedBadge(
+    AppLocalizations l10n,
+    ThemeData theme,
+    bool isAr,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -478,11 +484,13 @@ class TripCard extends ConsumerWidget {
       ),
       child: Text(
         l10n.tripFullyBooked,
-        style: const TextStyle(
+        style: (isAr
+                ? theme.textTheme.labelSmall ?? const TextStyle()
+                : const TextStyle(fontFamily: 'Tajawal'))
+            .copyWith(
           color: Colors.white,
           fontSize: 11,
           fontWeight: FontWeight.bold,
-          fontFamily: 'Tajawal',
         ),
       ),
     );
@@ -533,7 +541,7 @@ class TripCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildTag(String text, ThemeData theme) {
+  Widget _buildTag(String text, ThemeData theme, bool isAr) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -547,11 +555,13 @@ class TripCard extends ConsumerWidget {
         text,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(
+        style: (isAr
+                ? theme.textTheme.labelSmall ?? const TextStyle()
+                : const TextStyle(fontFamily: 'Tajawal'))
+            .copyWith(
           fontSize: 11,
           fontWeight: FontWeight.w600,
           color: theme.colorScheme.primary,
-          fontFamily: 'Tajawal',
         ),
       ),
     );

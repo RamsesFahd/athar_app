@@ -110,6 +110,20 @@ flutter:
     - assets/icons/saudi_riyal.svg
     - .env
 
+  fonts:
+    - family: ThmanyahSerifDisplay
+      fonts:
+        - asset: assets/fonts/thmanyahserifdisplay-Light.otf
+          weight: 300
+        - asset: assets/fonts/thmanyahserifdisplay-Regular.otf
+          weight: 400
+        - asset: assets/fonts/thmanyahserifdisplay-Medium.otf
+          weight: 500
+        - asset: assets/fonts/thmanyahserifdisplay-Bold.otf
+          weight: 700
+        - asset: assets/fonts/thmanyahserifdisplay-Black.otf
+          weight: 900
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

@@ -136,11 +136,9 @@ class AttractionCard extends StatelessWidget {
 
                     overflow: TextOverflow.ellipsis,
                     style: isAr
-                        ? GoogleFonts.ibmPlexSansArabic(
-                            textStyle: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              height: 1.1,
-                            ),
+                        ? theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            height: 1.1,
                           )
                         : GoogleFonts.playfairDisplay(
                             textStyle: theme.textTheme.bodyMedium?.copyWith(
@@ -245,11 +243,9 @@ class AttractionCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: isAr
-                          ? GoogleFonts.ibmPlexSansArabic(
-                              textStyle: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                height: 1.25,
-                              ),
+                          ? theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              height: 1.25,
                             )
                           : GoogleFonts.playfairDisplay(
                               textStyle: theme.textTheme.titleMedium?.copyWith(

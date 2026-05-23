@@ -24,7 +24,8 @@ class SmartTextContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final culturalState = ref.watch(culturalNotifierProvider);
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
 
@@ -59,7 +60,7 @@ class SmartTextContent extends ConsumerWidget {
           isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         _buildRichTextWithTags(mainText, context, isAr,
-            culturalState.value?.allItems ?? [], validEntityNames, colorScheme),
+            culturalState.value?.allItems ?? [], validEntityNames, theme),
         if (quickReplyLines.isNotEmpty && !isMe) ...[
           const SizedBox(height: 16),
           Wrap(
@@ -82,11 +83,7 @@ class SmartTextContent extends ConsumerWidget {
                     cleanText,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.cairo(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.primary,
-                    ),
+                    style: _quickReplyStyle(theme, colorScheme, cleanText),
                   ),
                 ),
                 onPressed: () => onTapQuickReply?.call(cleanText),
@@ -120,14 +117,19 @@ class SmartTextContent extends ConsumerWidget {
       .replaceAll('ى', 'ي')
       .replaceAll(RegExp(r'\s+'), ' ');
 
+  bool _containsArabic(String value) {
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(value);
+  }
+
   // Parses **bold** text into either a clickable entity span (if the name is a
   // known platform item) or a non-interactive bold span (if not). Also handles
   // *italic* emphasis by stripping the asterisks and rendering as plain text.
   List<InlineSpan> _parseInlineEntities(
     String segment,
     Set<String> validEntityNames,
-    ColorScheme colorScheme,
+    ThemeData theme,
   ) {
+    final colorScheme = theme.colorScheme;
     // Only match **bold** and *italic* — quoted strings are not entity markers.
     final entityExp = RegExp(r'\*\*(.*?)\*\*|\*(.*?)\*');
     final matches = entityExp.allMatches(segment);
@@ -149,16 +151,11 @@ class SmartTextContent extends ConsumerWidget {
         final isKnown = _isKnownEntity(entityText, validEntityNames);
         spans.add(TextSpan(
           text: entityText,
-          style: GoogleFonts.cairo(
-            fontSize: 15,
+          style: _messageTextStyle(theme, entityText).copyWith(
             fontWeight: FontWeight.w700,
-            // Clickable entities use the primary brand color; unrecognised bold
-            // text stays in the default message color so it is not misleadingly
-            // interactive.
             color: isKnown
                 ? (isMe ? colorScheme.onPrimary : colorScheme.primary)
                 : null,
-            height: 1.5,
           ),
           recognizer: isKnown
               ? (TapGestureRecognizer()
@@ -186,17 +183,18 @@ class SmartTextContent extends ConsumerWidget {
     bool isAr,
     List<CulturalItemModel> allItems,
     Set<String> validEntityNames,
-    ColorScheme colorScheme,
+    ThemeData theme,
   ) {
+    final colorScheme = theme.colorScheme;
     final RegExp tagExp = RegExp(r"#[^#]+#");
     final Iterable<RegExpMatch> matches = tagExp.allMatches(content);
 
     if (matches.isEmpty) {
-      if (isMe) return Text(content, style: _textStyle(colorScheme));
-      final spans =
-          _parseInlineEntities(content, validEntityNames, colorScheme);
+      if (isMe) return Text(content, style: _messageTextStyle(theme, content));
+      final spans = _parseInlineEntities(content, validEntityNames, theme);
       return RichText(
-          text: TextSpan(style: _textStyle(colorScheme), children: spans));
+          text: TextSpan(
+              style: _messageTextStyle(theme, content), children: spans));
     }
 
     List<InlineSpan> spans = [];
@@ -208,8 +206,7 @@ class SmartTextContent extends ConsumerWidget {
         if (isMe) {
           spans.add(TextSpan(text: segment));
         } else {
-          spans.addAll(
-              _parseInlineEntities(segment, validEntityNames, colorScheme));
+          spans.addAll(_parseInlineEntities(segment, validEntityNames, theme));
         }
       }
 
@@ -219,8 +216,7 @@ class SmartTextContent extends ConsumerWidget {
       spans.add(
         TextSpan(
           text: cleanTagName,
-          style: GoogleFonts.cairo(
-            fontSize: 15,
+          style: _messageTextStyle(theme, cleanTagName).copyWith(
             fontWeight: FontWeight.w700,
             color: isMe ? colorScheme.onPrimary : colorScheme.primary,
           ),
@@ -264,13 +260,13 @@ class SmartTextContent extends ConsumerWidget {
       if (isMe) {
         spans.add(TextSpan(text: segment));
       } else {
-        spans.addAll(
-            _parseInlineEntities(segment, validEntityNames, colorScheme));
+        spans.addAll(_parseInlineEntities(segment, validEntityNames, theme));
       }
     }
 
     return RichText(
-        text: TextSpan(style: _textStyle(colorScheme), children: spans));
+        text: TextSpan(
+            style: _messageTextStyle(theme, content), children: spans));
   }
 
   CulturalItemModel? _searchForItem(
@@ -293,9 +289,30 @@ class SmartTextContent extends ConsumerWidget {
     }
   }
 
-  TextStyle _textStyle(ColorScheme colorScheme) => GoogleFonts.cairo(
-        color: isMe ? colorScheme.onPrimary : colorScheme.onSurface,
-        fontSize: 15,
-        height: 1.5,
-      );
+  TextStyle _quickReplyStyle(
+    ThemeData theme,
+    ColorScheme colorScheme,
+    String value,
+  ) {
+    final base = _containsArabic(value)
+        ? theme.textTheme.bodyMedium ?? const TextStyle()
+        : GoogleFonts.cairo();
+    return base.copyWith(
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+      color: colorScheme.primary,
+    );
+  }
+
+  TextStyle _messageTextStyle(ThemeData theme, String value) {
+    final colorScheme = theme.colorScheme;
+    final base = _containsArabic(value)
+        ? theme.textTheme.bodyMedium ?? const TextStyle()
+        : GoogleFonts.cairo();
+    return base.copyWith(
+      color: isMe ? colorScheme.onPrimary : colorScheme.onSurface,
+      fontSize: 15,
+      height: 1.5,
+    );
+  }
 }

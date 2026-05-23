@@ -74,8 +74,8 @@ class TripDetailsScreen extends ConsumerWidget {
                         spacing: 8,
                         runSpacing: 8,
                         children: [
-                          _buildTripTypeBadge(theme, l10n),
-                          ..._buildAccessibilityBadgeList(theme, l10n),
+                          _buildTripTypeBadge(theme, l10n, isAr),
+                          ..._buildAccessibilityBadgeList(theme, l10n, isAr),
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -295,7 +295,11 @@ class TripDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTripTypeBadge(ThemeData theme, AppLocalizations l10n) {
+  Widget _buildTripTypeBadge(
+    ThemeData theme,
+    AppLocalizations l10n,
+    bool isAr,
+  ) {
     final isPrivate = trip.isPrivate;
     final color = theme.colorScheme.primary;
     return Container(
@@ -316,11 +320,13 @@ class TripDetailsScreen extends ConsumerWidget {
           const SizedBox(width: 6),
           Text(
             isPrivate ? l10n.tripTypePrivate : l10n.tripTypeShared,
-            style: TextStyle(
+            style: (isAr
+                    ? theme.textTheme.labelSmall ?? const TextStyle()
+                    : const TextStyle(fontFamily: 'Tajawal'))
+                .copyWith(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: color,
-              fontFamily: 'Tajawal',
             ),
           ),
         ],
@@ -396,7 +402,10 @@ class TripDetailsScreen extends ConsumerWidget {
   }
 
   List<Widget> _buildAccessibilityBadgeList(
-      ThemeData theme, AppLocalizations l10n) {
+    ThemeData theme,
+    AppLocalizations l10n,
+    bool isAr,
+  ) {
     const badgeInfo = {
       'wheelchair': (icon: Icons.accessible_forward_rounded,),
       'family': (icon: Icons.family_restroom_rounded,),
@@ -422,11 +431,13 @@ class TripDetailsScreen extends ConsumerWidget {
               key == 'wheelchair'
                   ? l10n.tripAccessibilityWheelchairShort
                   : l10n.tripAccessibilityFamilyShort,
-              style: TextStyle(
+              style: (isAr
+                      ? theme.textTheme.labelSmall ?? const TextStyle()
+                      : const TextStyle(fontFamily: 'Tajawal'))
+                  .copyWith(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-                fontFamily: 'Tajawal',
               ),
             ),
           ],
@@ -513,10 +524,14 @@ class TripDetailsScreen extends ConsumerWidget {
                           children: [
                             Text(
                               liveName,
-                              style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Tajawal'),
+                              style: (isAr
+                                      ? theme.textTheme.titleLarge ??
+                                          const TextStyle()
+                                      : const TextStyle(fontFamily: 'Tajawal'))
+                                  .copyWith(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             if (rating != null) ...[
                               const SizedBox(height: 12),
@@ -567,11 +582,15 @@ class TripDetailsScreen extends ConsumerWidget {
                                   bio,
                                   textAlign:
                                       isAr ? TextAlign.right : TextAlign.left,
-                                  style: TextStyle(
+                                  style: (isAr
+                                          ? theme.textTheme.bodyMedium ??
+                                              const TextStyle()
+                                          : const TextStyle(
+                                              fontFamily: 'Tajawal'))
+                                      .copyWith(
                                     color: theme.colorScheme.onSurfaceVariant,
                                     height: 1.6,
                                     fontSize: 14,
-                                    fontFamily: 'Tajawal',
                                   ),
                                 ),
                               ),
@@ -611,11 +630,18 @@ class TripDetailsScreen extends ConsumerWidget {
                                             ),
                                             child: Text(
                                               lang,
-                                              style: TextStyle(
-                                                  color:
-                                                      theme.colorScheme.primary,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: 'Tajawal'),
+                                              style: (isAr
+                                                      ? theme.textTheme
+                                                              .labelSmall ??
+                                                          const TextStyle()
+                                                      : const TextStyle(
+                                                          fontFamily:
+                                                              'Tajawal'))
+                                                  .copyWith(
+                                                color:
+                                                    theme.colorScheme.primary,
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ))
                                       .toList(),

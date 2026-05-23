@@ -84,8 +84,7 @@ class EventCard extends StatelessWidget {
                     color: theme.colorScheme.surfaceContainerHighest,
                     child: Icon(
                       Icons.image_not_supported_outlined,
-                      color:
-                          theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                       size: 36,
                     ),
                   ),
@@ -127,11 +126,9 @@ class EventCard extends StatelessWidget {
                     maxLines: largeText ? 2 : 1,
                     overflow: TextOverflow.ellipsis,
                     style: isAr
-                        ? GoogleFonts.ibmPlexSansArabic(
-                            textStyle: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              height: 1.1,
-                            ),
+                        ? theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            height: 1.1,
                           )
                         : GoogleFonts.playfairDisplay(
                             textStyle: theme.textTheme.bodyMedium?.copyWith(
@@ -206,8 +203,7 @@ class EventCard extends StatelessWidget {
                   color: theme.colorScheme.surfaceContainerHighest,
                   child: Icon(
                     Icons.image_not_supported_outlined,
-                    color:
-                        theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                   ),
                 ),
               ),
@@ -224,11 +220,9 @@ class EventCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: isAr
-                          ? GoogleFonts.ibmPlexSansArabic(
-                              textStyle: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                height: 1.25,
-                              ),
+                          ? theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              height: 1.25,
                             )
                           : GoogleFonts.playfairDisplay(
                               textStyle: theme.textTheme.titleMedium?.copyWith(

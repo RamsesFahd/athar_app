@@ -152,6 +152,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fillAllFieldsError => 'يرجى ملء جميع الحقول';
 
   @override
+  String get emptyLoginFieldsError =>
+      'يرجى تعبئة البريد الإلكتروني وكلمة المرور للمتابعة';
+
+  @override
   String get passwordsDoNotMatchError =>
       'كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى.';
 

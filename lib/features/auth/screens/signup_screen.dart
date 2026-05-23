@@ -484,7 +484,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.primary,
         ),
         onPressed: () => setState(() => _selectedTutorType = type),
-        child: Text(label),
+        child: Text(label, style: theme.textTheme.bodyMedium),
       ),
     );
   }
