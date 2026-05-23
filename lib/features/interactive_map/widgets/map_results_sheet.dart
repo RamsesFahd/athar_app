@@ -621,8 +621,13 @@ class _TypeBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style:
-            TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: color),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: theme.textTheme.labelSmall?.copyWith(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
       ),
     );
   }
@@ -662,8 +667,11 @@ class _FreeOrPaidBadge extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             label,
-            style: TextStyle(
-                fontSize: 11, fontWeight: FontWeight.w600, color: color),
+            style: theme.textTheme.labelSmall?.copyWith(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
           ),
         ],
       ),
@@ -851,7 +859,14 @@ class _EventInfoRow extends StatelessWidget {
         const SizedBox(width: 8),
         Icon(Icons.access_time_outlined, size: 12, color: cs.primary),
         const SizedBox(width: 4),
-        Text(time, style: Theme.of(context).textTheme.bodySmall),
+        Flexible(
+          child: Text(
+            time,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+        ),
       ],
     );
   }

@@ -404,6 +404,8 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap),
                       child: Row(mainAxisSize: MainAxisSize.min, children: [
                         Text(l10n.view_details,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.primary,
                                 fontWeight: FontWeight.w700)),
@@ -581,6 +583,9 @@ class _TripCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 10),
+                          textStyle: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
@@ -597,6 +602,9 @@ class _TripCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                           ),
                           padding: const EdgeInsets.symmetric(vertical: 10),
+                          textStyle: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
