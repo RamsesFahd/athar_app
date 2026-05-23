@@ -147,6 +147,11 @@ class _PinDetail extends ConsumerWidget {
     final isAttraction = pin.type == MapPinType.attraction;
     final event = isEvent ? pin.sourceModel as EventModel : null;
     final attraction = isAttraction ? pin.sourceModel as AttractionModel : null;
+    final pinColor = isAttraction && pin.categoryColorCode != null
+        ? _hexToColor(pin.categoryColorCode!)
+        : isEvent
+            ? cs.secondary
+            : cs.primary;
     final landmark =
         !isEvent && !isAttraction ? pin.sourceModel as CulturalItemModel : null;
     final description = isEvent
@@ -335,11 +340,13 @@ class _PinDetail extends ConsumerWidget {
                         const SizedBox(width: 12),
                       ],
                       Expanded(
-                        child: OutlinedButton.icon(
+                        child: ElevatedButton.icon(
                           onPressed: _openDirections,
                           icon: const Icon(Icons.directions_outlined, size: 16),
                           label: Text(l10n.mapDirections),
-                          style: OutlinedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: pinColor,
+                            foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 12),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
@@ -356,8 +363,8 @@ class _PinDetail extends ConsumerWidget {
                       icon: const Icon(Icons.directions_outlined),
                       label: Text(l10n.mapDirections),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: cs.primary,
-                        foregroundColor: cs.onPrimary,
+                        backgroundColor: pinColor,
+                        foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
