@@ -369,6 +369,7 @@ class BookingFormScreen extends ConsumerWidget {
           totalPrice: (trip.adultPrice * form.adults) +
               (trip.childPrice * form.children),
           imageUrl: trip.imageUrl,
+          tripDurationDays: trip.tripDurationDays,
         ),
       ),
     );

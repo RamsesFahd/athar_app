@@ -94,6 +94,15 @@ class NotificationsRepository {
             .toList());
   }
 
+  Future<void> deleteNotification(String userId, String notificationId) async {
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('notifications')
+        .doc(notificationId)
+        .delete();
+  }
+
   Stream<int> getUnreadCount(String userId) {
     return _firestore
         .collection('users')

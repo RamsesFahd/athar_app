@@ -315,7 +315,7 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
             style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 12),
-          _modernInfoRow(theme, Icons.calendar_today, l10n.date, booking.date),
+          _modernInfoRow(theme, Icons.calendar_today, l10n.date, _dateRangeLabel(booking)),
           _modernInfoRow(
             theme,
             Icons.access_time,
@@ -535,6 +535,17 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
         ],
       ),
     );
+  }
+
+  String _dateRangeLabel(BookingModel booking) {
+    final duration = booking.tripDurationDays ?? 1;
+    if (duration <= 1) return booking.date;
+    final start = DateTime.tryParse(booking.date);
+    if (start == null) return booking.date;
+    final end = start.add(Duration(days: duration - 1));
+    String fmt(DateTime d) =>
+        '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+    return '${fmt(start)} – ${fmt(end)}';
   }
 
   String _localizedTimeSlot(String timeSlot, bool isAr, AppLocalizations l10n) {

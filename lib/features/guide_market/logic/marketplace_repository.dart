@@ -21,6 +21,9 @@ class MarketplaceRepository {
   CollectionReference get _bookings => _firestore.collection('bookings');
   CollectionReference get _users => _firestore.collection('users');
 
+  static String _fmtDate(DateTime d) =>
+      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
   // 1. جلب كل الرحلات المتاحة
   Stream<List<TripModel>> fetchAllTrips() {
     return _trips
@@ -46,17 +49,34 @@ class MarketplaceRepository {
 
   // 3. حفظ الحجز الجديد في Firestore
   Future<void> createBooking(BookingModel booking) async {
-    // Guard: for private trips, ensure this specific day is not already booked.
+    // Guard: for private trips, ensure no day in the new booking's range overlaps
+    // with an existing active booking (handles single-day and multi-day trips).
     final tripDoc = await _trips.doc(booking.tripId).get();
     if (tripDoc.exists) {
       final tripData = tripDoc.data() as Map<String, dynamic>?;
       if ((tripData?['tripType'] as String?) == 'private') {
-        final existing = await _bookings
-            .where('tripId', isEqualTo: booking.tripId)
-            .where('date', isEqualTo: booking.date)
-            .where('status', whereIn: ['pending', 'approved']).get();
-        if (existing.docs.isNotEmpty) {
-          throw Exception('tripDayAlreadyBookedError');
+        final newStart = DateTime.tryParse(booking.date);
+        final newDuration = booking.tripDurationDays ?? 1;
+        if (newStart != null) {
+          final newDates = <String>{
+            for (int i = 0; i < newDuration; i++)
+              _fmtDate(newStart.add(Duration(days: i))),
+          };
+          final existing = await _bookings
+              .where('tripId', isEqualTo: booking.tripId)
+              .where('status', whereIn: ['pending', 'approved']).get();
+          for (final doc in existing.docs) {
+            final data = doc.data() as Map<String, dynamic>;
+            final dateStr = data['date'] as String? ?? '';
+            final duration = (data['tripDurationDays'] as int?) ?? 1;
+            final start = DateTime.tryParse(dateStr);
+            if (start == null) continue;
+            for (int i = 0; i < duration; i++) {
+              if (newDates.contains(_fmtDate(start.add(Duration(days: i))))) {
+                throw Exception('tripDayAlreadyBookedError');
+              }
+            }
+          }
         }
       }
     }
@@ -73,14 +93,27 @@ class MarketplaceRepository {
   /// Returns the set of dates (yyyy-MM-dd) that have an active (pending or
   /// approved) booking for the given trip. Used to block days in the date
   /// picker and to determine if a private trip is fully booked.
+  /// For multi-day bookings, all days in the range are included.
   Future<Set<String>> fetchBookedDates(String tripId) async {
     final snap = await _bookings
         .where('tripId', isEqualTo: tripId)
         .where('status', whereIn: ['pending', 'approved']).get();
-    return snap.docs
-        .map((d) => (d.data() as Map<String, dynamic>)['date'] as String? ?? '')
-        .where((d) => d.isNotEmpty)
-        .toSet();
+    final Set<String> dates = {};
+    for (final doc in snap.docs) {
+      final data = doc.data() as Map<String, dynamic>;
+      final dateStr = data['date'] as String? ?? '';
+      if (dateStr.isEmpty) continue;
+      final duration = (data['tripDurationDays'] as int?) ?? 1;
+      final start = DateTime.tryParse(dateStr);
+      if (start == null) continue;
+      for (int i = 0; i < duration; i++) {
+        final day = start.add(Duration(days: i));
+        dates.add(
+          '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}',
+        );
+      }
+    }
+    return dates;
   }
 
   // 5. تقديم رحلة جديدة من قِبل المرشد (تُحفظ بحالة pending حتى يوافق الأدمن)

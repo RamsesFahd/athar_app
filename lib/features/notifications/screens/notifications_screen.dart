@@ -72,13 +72,35 @@ class NotificationsScreen extends ConsumerWidget {
             itemBuilder: (context, index) {
               final notification = notifications[index];
 
-              return NotificationCard(
-                notification: notification,
-                onTap: () {
+              return Dismissible(
+                key: ValueKey(notification.id),
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  alignment: AlignmentDirectional.centerEnd,
+                  padding: const EdgeInsetsDirectional.only(end: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade600,
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: Colors.white,
+                    size: 26,
+                  ),
+                ),
+                onDismissed: (_) {
                   ref
                       .read(notificationsRepositoryProvider)
-                      .markAsRead(user.uId, notification.id);
+                      .deleteNotification(user.uId, notification.id);
                 },
+                child: NotificationCard(
+                  notification: notification,
+                  onTap: () {
+                    ref
+                        .read(notificationsRepositoryProvider)
+                        .markAsRead(user.uId, notification.id);
+                  },
+                ),
               );
             },
           );
