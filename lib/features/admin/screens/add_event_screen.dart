@@ -38,8 +38,12 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
   File? _pickedImage;
+  List<File> _galleryFiles = [];
+  File? _videoFile;
   bool _isFree = true;
   bool _isSubmitting = false;
+
+  int get _totalGalleryCount => _galleryFiles.length;
 
   @override
   void dispose() {
@@ -60,11 +64,33 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
     if (picked != null) setState(() => _pickedImage = File(picked.path));
   }
 
-  Future<String?> _uploadImage(File file) async {
+  Future<void> _addGalleryImage() async {
+    if (_totalGalleryCount >= 8) return;
+    final picked = await ImagePicker()
+        .pickImage(source: ImageSource.gallery, imageQuality: 80);
+    if (picked != null) setState(() => _galleryFiles.add(File(picked.path)));
+  }
+
+  Future<void> _pickVideo() async {
+    final picked = await ImagePicker().pickVideo(source: ImageSource.gallery);
+    if (picked != null) setState(() => _videoFile = File(picked.path));
+  }
+
+  Future<String> _uploadImage(File file, [String folder = 'events/main']) async {
     final ref = FirebaseStorage.instance
         .ref()
-        .child('events')
+        .child(folder)
         .child('${DateTime.now().millisecondsSinceEpoch}.jpg');
+    final task = await ref.putFile(file);
+    return await task.ref.getDownloadURL();
+  }
+
+  Future<String> _uploadVideo(File file) async {
+    final ext = file.path.split('.').last;
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('events/videos')
+        .child('${DateTime.now().millisecondsSinceEpoch}.$ext');
     final task = await ref.putFile(file);
     return await task.ref.getDownloadURL();
   }
@@ -258,7 +284,15 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
 
     try {
       final imageUrl = await _uploadImage(_pickedImage!);
-      if (imageUrl == null) throw Exception(l10n.adminImageUploadFailed);
+
+      final newGalleryUrls = await Future.wait(
+        _galleryFiles.map((f) => _uploadImage(f, 'events/gallery')),
+      );
+
+      String? videoUrl;
+      if (_videoFile != null) {
+        videoUrl = await _uploadVideo(_videoFile!);
+      }
 
       final region =
           regionsData.firstWhere((r) => r.regionId == _selectedRegionId);
@@ -269,6 +303,8 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
         'descriptionAr': _descArController.text.trim(),
         'descriptionEn': _descEnController.text.trim(),
         'imageUrl': imageUrl,
+        'gallery': newGalleryUrls,
+        if (videoUrl != null) 'videoUrl': videoUrl,
         'eventDate': Timestamp.fromDate(_startDate!),
         'endDate': Timestamp.fromDate(_endDate!),
         'timeAr': _formatTimeAr(_startTime!),
@@ -328,8 +364,49 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
       _startTime = null;
       _endTime = null;
       _pickedImage = null;
+      _galleryFiles = [];
+      _videoFile = null;
       _isFree = true;
     });
+  }
+
+  Widget _buildGallerySection(ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (_galleryFiles.isEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              'لا توجد صور إضافية',
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            ),
+          ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (int i = 0; i < _galleryFiles.length; i++)
+              _GalleryFileTile(
+                file: _galleryFiles[i],
+                onRemove: () => setState(() => _galleryFiles.removeAt(i)),
+              ),
+            if (_totalGalleryCount < 8)
+              _AddGalleryTile(onTap: _addGalleryImage),
+          ],
+        ),
+        if (_totalGalleryCount >= 8)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              'الحد الأقصى 8 صور',
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+            ),
+          ),
+      ],
+    );
   }
 
   @override
@@ -385,6 +462,20 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
                         ],
                       ),
               ),
+            ),
+            const SizedBox(height: 24),
+
+            // Gallery images
+            _SectionLabel('صور إضافية (اختياري)'),
+            _buildGallerySection(theme),
+            const SizedBox(height: 24),
+
+            // Video
+            _SectionLabel('فيديو (اختياري)'),
+            _VideoPickerTile(
+              file: _videoFile,
+              onTap: _pickVideo,
+              onRemove: () => setState(() => _videoFile = null),
             ),
             const SizedBox(height: 24),
 
@@ -733,6 +824,171 @@ class _FormField extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.primary, width: 1.5),
         ),
+      ),
+    );
+  }
+}
+
+class _GalleryFileTile extends StatelessWidget {
+  final File file;
+  final VoidCallback onRemove;
+
+  const _GalleryFileTile({required this.file, required this.onRemove});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 90,
+      height: 90,
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.file(file, width: 90, height: 90, fit: BoxFit.cover),
+          ),
+          Positioned(
+            top: 4,
+            right: 4,
+            child: GestureDetector(
+              onTap: onRemove,
+              child: Container(
+                padding: const EdgeInsets.all(3),
+                decoration: const BoxDecoration(
+                    color: Colors.red, shape: BoxShape.circle),
+                child: const Icon(Icons.close, size: 12, color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AddGalleryTile extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _AddGalleryTile({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 90,
+        height: 90,
+        decoration: BoxDecoration(
+          color: AppColors.primary.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            width: 1.5,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.add_photo_alternate_outlined,
+                size: 28, color: AppColors.primary.withValues(alpha: 0.5)),
+            const SizedBox(height: 4),
+            Text(
+              'إضافة',
+              style: TextStyle(
+                  fontSize: 11,
+                  color: AppColors.primary.withValues(alpha: 0.6)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _VideoPickerTile extends StatelessWidget {
+  final File? file;
+  final VoidCallback onTap;
+  final VoidCallback onRemove;
+
+  const _VideoPickerTile({
+    required this.file,
+    required this.onTap,
+    required this.onRemove,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasVideo = file != null;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 100,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: hasVideo
+              ? Colors.grey.shade900
+              : AppColors.primary.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: hasVideo
+                ? Colors.grey.shade700
+                : AppColors.primary.withValues(alpha: 0.3),
+            width: 1.5,
+          ),
+        ),
+        child: hasVideo
+            ? Stack(
+                children: [
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.play_circle_outline,
+                            size: 40, color: Colors.white70),
+                        const SizedBox(height: 4),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            file!.path.split('/').last.split('\\').last,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                color: Colors.white70, fontSize: 11),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: GestureDetector(
+                      onTap: onRemove,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                            color: Colors.red, shape: BoxShape.circle),
+                        child: const Icon(Icons.close,
+                            size: 14, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.videocam_outlined,
+                      size: 36,
+                      color: AppColors.primary.withValues(alpha: 0.5)),
+                  const SizedBox(height: 6),
+                  Text(
+                    'اختر فيديو',
+                    style: TextStyle(
+                        color: AppColors.primary.withValues(alpha: 0.6),
+                        fontSize: 12),
+                  ),
+                ],
+              ),
       ),
     );
   }

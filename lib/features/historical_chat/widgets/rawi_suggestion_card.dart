@@ -9,6 +9,7 @@ import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class RawiSuggestionsRow extends StatelessWidget {
   final List<Map<String, dynamic>> items;
@@ -158,9 +159,19 @@ class RawiSuggestionCard extends StatelessWidget {
     } catch (_) {}
   }
 
+  Future<void> _openUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   void _showEventSheet(BuildContext context, EventModel event) {
     final isAr = this.isAr;
     final theme = Theme.of(context);
+    final images = <String>[event.imageUrl, ...event.gallery]
+        .where((url) => url.trim().isNotEmpty)
+        .toList();
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -175,6 +186,13 @@ class RawiSuggestionCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (images.isNotEmpty) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: _EventMediaCarousel(images: images),
+                ),
+                const SizedBox(height: 16),
+              ],
               Text(
                 isAr
                     ? (event.titleAr.isNotEmpty ? event.titleAr : event.titleEn)
@@ -198,6 +216,17 @@ class RawiSuggestionCard extends StatelessWidget {
                   color: theme.colorScheme.onSurface,
                 ),
               ),
+              if (event.videoUrl != null) ...[
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    onPressed: () => _openUrl(event.videoUrl!),
+                    icon: const Icon(Icons.play_circle_outline, size: 18),
+                    label: Text(isAr ? 'مشاهدة الفيديو' : 'Watch video'),
+                  ),
+                ),
+              ],
               const SizedBox(height: 16),
             ],
           ),
@@ -289,6 +318,90 @@ class RawiSuggestionCard extends StatelessWidget {
           color: colorScheme.primary.withValues(alpha: 0.4),
           size: 32,
         ),
+      ),
+    );
+  }
+}
+
+class _EventMediaCarousel extends StatefulWidget {
+  final List<String> images;
+
+  const _EventMediaCarousel({required this.images});
+
+  @override
+  State<_EventMediaCarousel> createState() => _EventMediaCarouselState();
+}
+
+class _EventMediaCarouselState extends State<_EventMediaCarousel> {
+  int _currentPage = 0;
+  late final PageController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return SizedBox(
+      height: 200,
+      width: double.infinity,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          PageView.builder(
+            controller: _controller,
+            itemCount: widget.images.length,
+            onPageChanged: (i) => setState(() => _currentPage = i),
+            itemBuilder: (context, index) => CachedNetworkImage(
+              imageUrl: widget.images[index],
+              fit: BoxFit.cover,
+              memCacheWidth: 720,
+              fadeInDuration: const Duration(milliseconds: 150),
+              placeholder: (_, __) =>
+                  ColoredBox(color: cs.surfaceContainerHighest),
+              errorWidget: (_, __, ___) => Container(
+                color: cs.surfaceContainerHighest,
+                child: Icon(Icons.image_not_supported,
+                    color: cs.onSurfaceVariant, size: 40),
+              ),
+            ),
+          ),
+          if (widget.images.length > 1)
+            Positioned(
+              bottom: 8,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    widget.images.length,
+                    (i) => AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      width: i == _currentPage ? 16 : 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: i == _currentPage
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.45),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

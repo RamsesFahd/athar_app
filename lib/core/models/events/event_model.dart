@@ -72,6 +72,8 @@ class EventModel {
   final String descriptionAr;
   final String descriptionEn;
   final String imageUrl;
+  final List<String> gallery;
+  final String? videoUrl;
   final DateTime eventDate;
   final String timeAr;
   final String timeEn;
@@ -99,6 +101,8 @@ class EventModel {
     required this.descriptionAr,
     required this.descriptionEn,
     required this.imageUrl,
+    this.gallery = const [],
+    this.videoUrl,
     required this.eventDate,
     required this.timeAr,
     required this.timeEn,
@@ -137,6 +141,8 @@ class EventModel {
       'descriptionAr': descriptionAr,
       'descriptionEn': descriptionEn,
       'imageUrl': imageUrl,
+      'gallery': gallery,
+      if (videoUrl != null) 'videoUrl': videoUrl,
       'eventDate': Timestamp.fromDate(eventDate),
       'timeAr': timeAr,
       'timeEn': timeEn,
@@ -165,6 +171,11 @@ class EventModel {
       descriptionAr: map['descriptionAr'] ?? '',
       descriptionEn: map['descriptionEn'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
+      gallery: (map['gallery'] as List<dynamic>? ?? const [])
+          .map((e) => e.toString())
+          .where((e) => e.trim().isNotEmpty)
+          .toList(),
+      videoUrl: map['videoUrl']?.toString(),
       eventDate: map['eventDate'] != null
           ? (map['eventDate'] as Timestamp).toDate()
           : DateTime.now(),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -200,7 +202,17 @@ class _PinDetail extends ConsumerWidget {
               ],
             ),
           ),
-          if (pin.imageUrl.isNotEmpty)
+          if (isEvent && event != null && pin.imageUrl.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: _EventImageCarousel(
+                  images: [pin.imageUrl, ...event.gallery],
+                ),
+              ),
+            )
+          else if (!isEvent && pin.imageUrl.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ClipRRect(
@@ -266,6 +278,23 @@ class _PinDetail extends ConsumerWidget {
                     height: 1.6,
                   ),
                 ),
+
+                if (isEvent && event!.videoUrl != null) ...[
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => _openUrl(event.videoUrl!),
+                      icon: const Icon(Icons.play_circle_outline, size: 18),
+                      label: Text(isAr ? 'مشاهدة الفيديو' : 'Watch video'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                  ),
+                ],
 
                 if (isEvent && event!.ticketUrl != null && !event.isFree) ...[
                   const SizedBox(height: 20),
@@ -671,6 +700,110 @@ class _EventTimeRow extends StatelessWidget {
         const SizedBox(width: 6),
         Text(time, style: Theme.of(context).textTheme.bodyMedium),
       ],
+    );
+  }
+}
+
+class _EventImageCarousel extends StatefulWidget {
+  final List<String> images;
+
+  const _EventImageCarousel({required this.images});
+
+  @override
+  State<_EventImageCarousel> createState() => _EventImageCarouselState();
+}
+
+class _EventImageCarouselState extends State<_EventImageCarousel> {
+  int _currentPage = 0;
+  late final PageController _controller;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    if (widget.images.length <= 1) return;
+    _timer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (!mounted) return;
+      final next = (_currentPage + 1) % widget.images.length;
+      _controller.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return SizedBox(
+      height: 200,
+      width: double.infinity,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          PageView.builder(
+            controller: _controller,
+            itemCount: widget.images.length,
+            onPageChanged: (i) {
+              _timer?.cancel();
+              setState(() => _currentPage = i);
+              _startTimer();
+            },
+            itemBuilder: (context, index) => CachedNetworkImage(
+              imageUrl: widget.images[index],
+              fit: BoxFit.cover,
+              memCacheWidth: 720,
+              fadeInDuration: const Duration(milliseconds: 150),
+              placeholder: (_, __) =>
+                  ColoredBox(color: cs.surfaceContainerHighest),
+              errorWidget: (_, __, ___) => Container(
+                color: cs.surfaceContainerHighest,
+                child: Icon(Icons.image_not_supported,
+                    color: cs.onSurfaceVariant, size: 40),
+              ),
+            ),
+          ),
+          if (widget.images.length > 1)
+            Positioned(
+              bottom: 8,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    widget.images.length,
+                    (i) => AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      width: i == _currentPage ? 16 : 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: i == _currentPage
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.45),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

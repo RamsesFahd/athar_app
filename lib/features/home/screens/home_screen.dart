@@ -27,11 +27,13 @@ import 'package:athar_app/features/home/models/recommended_item.dart';
 // provider changes only rebuild the affected section, not the entire screen.
 class HomeScreen extends StatelessWidget {
   final VoidCallback? onSeeAllArchive;
+  final VoidCallback? onSeeAllEvents;
   final void Function(EventModel event)? onEventTap;
 
   const HomeScreen({
     super.key,
     this.onSeeAllArchive,
+    this.onSeeAllEvents,
     this.onEventTap,
   });
 
@@ -111,7 +113,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: _sectionGap),
               const _TripsSection(),
               const SizedBox(height: _sectionGap),
-              _EventsSection(onEventTap: onEventTap),
+              _EventsSection(onEventTap: onEventTap, onSeeAll: onSeeAllEvents),
               const SizedBox(height: _sectionGap),
             ],
           ),
@@ -456,7 +458,8 @@ class _TripsSection extends ConsumerWidget {
 
 class _EventsSection extends ConsumerWidget {
   final void Function(EventModel event)? onEventTap;
-  const _EventsSection({this.onEventTap});
+  final VoidCallback? onSeeAll;
+  const _EventsSection({this.onEventTap, this.onSeeAll});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -470,7 +473,7 @@ class _EventsSection extends ConsumerWidget {
       children: [
         _SectionHeader(
           title: l10n.homeEventsSectionTitle,
-          onTap: null,
+          onTap: onSeeAll,
         ),
         const SizedBox(height: HomeScreen._headerToContent),
         eventsAsync.when(

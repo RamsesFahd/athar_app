@@ -424,6 +424,14 @@ class _TripDetailAdminScreenState extends ConsumerState<TripDetailAdminScreen> {
                   ),
                   const SizedBox(height: 16),
                   _buildInfoCard(theme),
+                  const SizedBox(height: 12),
+                  _buildDescriptionCard(theme),
+                  const SizedBox(height: 12),
+                  _buildGuideCard(theme),
+                  if (_hasTripExtras) ...[
+                    const SizedBox(height: 12),
+                    _buildExtrasCard(theme),
+                  ],
                   if (trip.status != 'pending' &&
                       trip.reviewedByAdminName != null) ...[
                     const SizedBox(height: 16),
@@ -439,7 +447,16 @@ class _TripDetailAdminScreenState extends ConsumerState<TripDetailAdminScreen> {
     );
   }
 
-  Widget _buildInfoCard(ThemeData theme) {
+  bool get _hasTripExtras =>
+      (trip.tripLanguages?.isNotEmpty ?? false) ||
+      trip.accessibilityFeatures.isNotEmpty ||
+      (trip.interestIds.isNotEmpty);
+
+  Widget _sectionCard({
+    required ThemeData theme,
+    required String title,
+    required List<Widget> children,
+  }) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -458,24 +475,181 @@ class _TripDetailAdminScreenState extends ConsumerState<TripDetailAdminScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('بيانات الرحلة',
+          Text(title,
               style: theme.textTheme.titleMedium
                   ?.copyWith(fontWeight: FontWeight.bold)),
           const Divider(height: 24),
-          _infoRow(theme, Icons.location_city_outlined, 'المدينة',
-              '${trip.cityAr} · ${trip.cityEn}'),
-          const SizedBox(height: 12),
-          _infoRow(theme, Icons.person_outline, 'المرشد', trip.guide),
-          if (trip.company.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _infoRow(theme, Icons.business_outlined, 'الشركة', trip.company),
-          ],
-          const SizedBox(height: 12),
-          _infoRow(theme, Icons.payments_outlined, 'السعر', trip.price),
-          const SizedBox(height: 12),
-          _infoRow(theme, Icons.verified_outlined, 'الرخصة', trip.license),
+          ...children,
         ],
       ),
+    );
+  }
+
+  Widget _buildInfoCard(ThemeData theme) {
+    final tripTypeLabel = trip.tripType == 'private' ? 'خاصة' : 'مشتركة';
+    final tutorTypeLabel = trip.tutorType == 'company' ? 'شركة' : 'فرد';
+
+    return _sectionCard(
+      theme: theme,
+      title: 'بيانات الرحلة',
+      children: [
+        _infoRow(theme, Icons.location_city_outlined, 'المدينة',
+            '${trip.cityAr} · ${trip.cityEn}'),
+        const SizedBox(height: 12),
+        _infoRow(theme, Icons.alt_route_outlined, 'نوع الرحلة', tripTypeLabel),
+        const SizedBox(height: 12),
+        _infoRow(theme, Icons.badge_outlined, 'نوع المرشد', tutorTypeLabel),
+        const SizedBox(height: 12),
+        _infoRow(
+          theme,
+          Icons.payments_outlined,
+          'السعر (بالغ)',
+          trip.price,
+        ),
+        if (trip.allowsKids && trip.childPrice > 0) ...[
+          const SizedBox(height: 12),
+          _infoRow(
+            theme,
+            Icons.child_care_outlined,
+            'السعر (طفل)',
+            trip.childPrice.toStringAsFixed(0),
+          ),
+        ],
+        if (!trip.allowsKids) ...[
+          const SizedBox(height: 12),
+          _infoRow(theme, Icons.child_care_outlined, 'الأطفال', 'غير مسموح'),
+        ],
+        if (trip.maxCapacity != null) ...[
+          const SizedBox(height: 12),
+          _infoRow(
+            theme,
+            Icons.group_outlined,
+            'الطاقة الاستيعابية',
+            '${trip.maxCapacity} شخص',
+          ),
+        ],
+        if (trip.timeRange != null) ...[
+          const SizedBox(height: 12),
+          _infoRow(theme, Icons.schedule_outlined, 'وقت الرحلة', trip.timeRange!),
+        ],
+        if (trip.tripDurationDays != null && trip.tripDurationDays! > 1) ...[
+          const SizedBox(height: 12),
+          _infoRow(
+            theme,
+            Icons.calendar_month_outlined,
+            'مدة الرحلة',
+            '${trip.tripDurationDays} أيام',
+          ),
+        ],
+        if (trip.startDate != null) ...[
+          const SizedBox(height: 12),
+          _infoRow(
+            theme,
+            Icons.date_range_outlined,
+            'الفترة',
+            '${DateFormat('yyyy-MM-dd').format(trip.startDate!)}'
+                '${trip.endDate != null ? ' ← ${DateFormat('yyyy-MM-dd').format(trip.endDate!)}' : ''}',
+          ),
+        ],
+        const SizedBox(height: 12),
+        _infoRow(theme, Icons.verified_outlined, 'الرخصة', trip.license),
+      ],
+    );
+  }
+
+  Widget _buildDescriptionCard(ThemeData theme) {
+    return _sectionCard(
+      theme: theme,
+      title: 'الوصف',
+      children: [
+        if (trip.shortDescriptionAr.isNotEmpty) ...[
+          Text('مختصر',
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+          const SizedBox(height: 4),
+          Text(trip.shortDescriptionAr,
+              style: theme.textTheme.bodyMedium),
+          const SizedBox(height: 16),
+        ],
+        if (trip.descriptionAr.isNotEmpty) ...[
+          Text('تفصيلي',
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+          const SizedBox(height: 4),
+          Text(trip.descriptionAr, style: theme.textTheme.bodyMedium),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildGuideCard(ThemeData theme) {
+    return _sectionCard(
+      theme: theme,
+      title: 'المرشد',
+      children: [
+        _infoRow(theme, Icons.person_outline, 'الاسم', trip.guide),
+        if (trip.company.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _infoRow(theme, Icons.business_outlined, 'الشركة', trip.company),
+        ],
+        if (trip.guideBio != null && trip.guideBio!.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _infoRow(theme, Icons.info_outline, 'نبذة', trip.guideBio!),
+        ],
+        if (trip.guideLanguages != null && trip.guideLanguages!.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          _infoRow(
+            theme,
+            Icons.translate_outlined,
+            'لغات المرشد',
+            trip.guideLanguages!.join(' · '),
+          ),
+        ],
+        if (trip.guideRating != null) ...[
+          const SizedBox(height: 12),
+          _infoRow(
+            theme,
+            Icons.star_outline,
+            'التقييم',
+            '${trip.guideRating!.toStringAsFixed(1)}'
+                '${trip.guideReviewsCount != null ? ' (${trip.guideReviewsCount} تقييم)' : ''}',
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildExtrasCard(ThemeData theme) {
+    return _sectionCard(
+      theme: theme,
+      title: 'معلومات إضافية',
+      children: [
+        if (trip.tripLanguages != null && trip.tripLanguages!.isNotEmpty) ...[
+          _infoRow(
+            theme,
+            Icons.language_outlined,
+            'لغات الرحلة',
+            trip.tripLanguages!.join(' · '),
+          ),
+          const SizedBox(height: 12),
+        ],
+        if (trip.accessibilityFeatures.isNotEmpty) ...[
+          _infoRow(
+            theme,
+            Icons.accessible_outlined,
+            'إمكانية الوصول',
+            trip.accessibilityFeatures.join(' · '),
+          ),
+          const SizedBox(height: 12),
+        ],
+        if (trip.interestIds.isNotEmpty)
+          _infoRow(
+            theme,
+            Icons.category_outlined,
+            'الاهتمامات',
+            trip.interestIds.join(' · '),
+          ),
+      ],
     );
   }
 
