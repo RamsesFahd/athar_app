@@ -526,6 +526,8 @@
   "notificationsSignInRequired": "يرجى تسجيل الدخول",
   "notificationsLoadError": "تعذّر تحميل التنبيهات. يرجى المحاولة مرة أخرى.",
   "notificationsEmptyState": "لا توجد تنبيهات حتى الآن",
+  "notificationsDeleteAll": "حذف الكل",
+  "notificationsDeleteAllConfirm": "هل أنت متأكد من حذف جميع الإشعارات؟",
   "notificationContributionApprovedTitle": "تم قبول المساهمة",
   "notificationContributionRejectedTitle": "تم رفض المساهمة",
   "notificationContributionSubmittedTitle": "مساهمة جديدة بانتظار المراجعة",

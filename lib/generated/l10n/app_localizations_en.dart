@@ -1392,6 +1392,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsEmptyState => 'No notifications yet';
 
   @override
+  String get notificationsDeleteAll => 'Delete All';
+
+  @override
+  String get notificationsDeleteAllConfirm =>
+      'Are you sure you want to delete all notifications?';
+
+  @override
   String get notificationContributionApprovedTitle => 'Contribution Approved';
 
   @override

@@ -1384,6 +1384,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationsEmptyState => 'لا توجد تنبيهات حتى الآن';
 
   @override
+  String get notificationsDeleteAll => 'حذف الكل';
+
+  @override
+  String get notificationsDeleteAllConfirm =>
+      'هل أنت متأكد من حذف جميع الإشعارات؟';
+
+  @override
   String get notificationContributionApprovedTitle => 'تم قبول المساهمة';
 
   @override

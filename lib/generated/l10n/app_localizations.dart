@@ -2726,6 +2726,18 @@ abstract class AppLocalizations {
   /// **'No notifications yet'**
   String get notificationsEmptyState;
 
+  /// No description provided for @notificationsDeleteAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All'**
+  String get notificationsDeleteAll;
+
+  /// No description provided for @notificationsDeleteAllConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all notifications?'**
+  String get notificationsDeleteAllConfirm;
+
   /// No description provided for @notificationContributionApprovedTitle.
   ///
   /// In en, this message translates to:

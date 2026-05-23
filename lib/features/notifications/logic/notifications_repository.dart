@@ -94,6 +94,19 @@ class NotificationsRepository {
             .toList());
   }
 
+  Future<void> deleteAllNotifications(String userId) async {
+    final snap = await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('notifications')
+        .get();
+    final batch = _firestore.batch();
+    for (final doc in snap.docs) {
+      batch.delete(doc.reference);
+    }
+    await batch.commit();
+  }
+
   Future<void> deleteNotification(String userId, String notificationId) async {
     await _firestore
         .collection('users')
