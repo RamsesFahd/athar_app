@@ -53,7 +53,6 @@ void main() {
       DateTime? licenceExpiryDate,
       DateTime? commercialRegExpiryDate,
       DateTime? tourismLicenceExpiryDate,
-      int? foundedYear,
     }) {
       return TutorModel(
         uId: 'tutor-1',
@@ -69,13 +68,11 @@ void main() {
         licenceNumber: 'LIC-1',
         licenceExpiryDate:
             licenceExpiryDate ?? DateTime.now().add(const Duration(days: 90)),
-        experienceYears: 5,
         companyName: tutorType == TutorType.company ? 'Company' : null,
         commercialRegistration: tutorType == TutorType.company ? 'CR-1' : null,
         commercialRegExpiryDate: commercialRegExpiryDate,
         tourismLicenceNumber: tutorType == TutorType.company ? 'TL-1' : null,
         tourismLicenceExpiryDate: tourismLicenceExpiryDate,
-        foundedYear: foundedYear,
       );
     }
 
@@ -114,16 +111,5 @@ void main() {
       expect(tutor.isCredentialValid, isFalse);
     });
 
-    test('UT-72: company yearsActive uses foundedYear', () {
-      final tutor = makeTutor(
-        tutorType: TutorType.company,
-        commercialRegExpiryDate: DateTime.now().add(const Duration(days: 60)),
-        tourismLicenceExpiryDate: DateTime.now().add(const Duration(days: 90)),
-        foundedYear: DateTime.now().year - 7,
-      );
-
-      expect(tutor.isProfileComplete, isTrue);
-      expect(tutor.yearsActive, 7);
-    });
   });
 }
