@@ -56,6 +56,7 @@
   "errorWeakPassword": "استخدم كلمة مرور أقوى للمتابعة.",
   "errorUnexpected": "حدث خطأ. يرجى المحاولة مرة أخرى.",
   "fillAllFieldsError": "يرجى ملء جميع الحقول",
+  "emptyLoginFieldsError": "يرجى تعبئة البريد الإلكتروني وكلمة المرور للمتابعة",
   "passwordsDoNotMatchError": "كلمتا المرور غير متطابقتين، يرجى المحاولة مرة أخرى.",
   "guestUser": "ضيف",
   "errorEmailNotVerified": "تحقق من بريدك الإلكتروني عبر الرابط الذي أرسلناه.",

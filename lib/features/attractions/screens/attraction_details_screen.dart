@@ -28,7 +28,7 @@ class AttractionDetailsScreen extends ConsumerWidget {
       height: 1.15,
     );
     return isAr
-        ? GoogleFonts.ibmPlexSansArabic(textStyle: base)
+        ? base ?? const TextStyle()
         : GoogleFonts.playfairDisplay(textStyle: base);
   }
 
@@ -37,14 +37,14 @@ class AttractionDetailsScreen extends ConsumerWidget {
       fontWeight: FontWeight.w800,
     );
     return isAr
-        ? GoogleFonts.ibmPlexSansArabic(textStyle: base)
+        ? base ?? const TextStyle()
         : GoogleFonts.playfairDisplay(textStyle: base);
   }
 
   TextStyle _bodyStyle(bool isAr, ThemeData theme) {
     final base = theme.textTheme.bodyLarge?.copyWith(height: 1.8);
     return isAr
-        ? GoogleFonts.ibmPlexSansArabic(textStyle: base)
+        ? base ?? const TextStyle()
         : GoogleFonts.playfairDisplay(textStyle: base);
   }
 
@@ -370,7 +370,7 @@ class _InfoCard extends StatelessWidget {
               Text(
                 title,
                 style: (isAr
-                        ? GoogleFonts.ibmPlexSansArabic()
+                        ? theme.textTheme.labelSmall ?? const TextStyle()
                         : GoogleFonts.playfairDisplay())
                     .copyWith(
                   fontWeight: FontWeight.w700,
@@ -383,7 +383,7 @@ class _InfoCard extends StatelessWidget {
           const SizedBox(height: 6),
           DefaultTextStyle(
             style: (isAr
-                    ? GoogleFonts.ibmPlexSansArabic()
+                    ? theme.textTheme.bodyMedium ?? const TextStyle()
                     : GoogleFonts.playfairDisplay())
                 .copyWith(
               fontWeight: FontWeight.w700,

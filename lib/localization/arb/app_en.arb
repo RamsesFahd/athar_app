@@ -88,6 +88,7 @@
   "errorWeakPassword": "Use a stronger password to continue.",
   "errorUnexpected": "Something went wrong. Please try again.",
   "fillAllFieldsError": "Please fill in all fields",
+  "emptyLoginFieldsError": "Please enter your email and password to continue.",
   "passwordsDoNotMatchError": "Passwords do not match. Please try again.",
   "guestUser": "Guest",
   "@guestUser": { "description": "Default name for anonymous users" },

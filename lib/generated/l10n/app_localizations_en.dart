@@ -152,6 +152,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fillAllFieldsError => 'Please fill in all fields';
 
   @override
+  String get emptyLoginFieldsError =>
+      'Please enter your email and password to continue.';
+
+  @override
   String get passwordsDoNotMatchError =>
       'Passwords do not match. Please try again.';
 

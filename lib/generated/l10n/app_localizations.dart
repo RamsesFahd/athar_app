@@ -374,6 +374,12 @@ abstract class AppLocalizations {
   /// **'Please fill in all fields'**
   String get fillAllFieldsError;
 
+  /// No description provided for @emptyLoginFieldsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email and password to continue.'**
+  String get emptyLoginFieldsError;
+
   /// No description provided for @passwordsDoNotMatchError.
   ///
   /// In en, this message translates to:

@@ -116,12 +116,24 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                       onPressed: authState.isLoading
                           ? null
                           : () async {
+                              final email = _email.text.trim();
+                              final password = _password.text.trim();
+                              if (email.isEmpty || password.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      l10n.emptyLoginFieldsError,
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
                               setState(() => _isLoginLoading = true);
                               await ref
                                   .read(authNotifierProvider.notifier)
                                   .signIn(
-                                    email: _email.text.trim(),
-                                    password: _password.text.trim(),
+                                    email: email,
+                                    password: password,
                                   );
                               if (mounted)
                                 setState(() => _isLoginLoading = false);

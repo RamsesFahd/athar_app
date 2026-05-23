@@ -74,7 +74,7 @@ class AppTheme {
     // 3. Using Google Fonts with proper fallbacks for Arabic and English text
     final String? englishFont = GoogleFonts.playfairDisplay().fontFamily;
     final List<String> fallbackArabicFont = [
-      GoogleFonts.ibmPlexSansArabic().fontFamily!
+      'ThmanyahSerifDisplay',
     ];
 
     return ThemeData(
@@ -230,6 +230,14 @@ class AppTheme {
             fontWeight: FontWeight.bold,
             fontSize: baseFontSize, // ✨ linked for dynamic font size
           ),
+        ),
+      ),
+
+      snackBarTheme: SnackBarThemeData(
+        contentTextStyle: TextStyle(
+          fontFamily: englishFont,
+          fontFamilyFallback: fallbackArabicFont,
+          fontSize: baseFontSize - 2,
         ),
       ),
     );

@@ -31,21 +31,22 @@ class EventDetailsScreen extends ConsumerWidget {
       height: 1.15,
     );
     return isAr
-        ? GoogleFonts.ibmPlexSansArabic(textStyle: base)
+        ? base ?? const TextStyle()
         : GoogleFonts.playfairDisplay(textStyle: base);
   }
 
   TextStyle _sectionTitleStyle(bool isAr, ThemeData theme) {
-    final base = theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800);
+    final base =
+        theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800);
     return isAr
-        ? GoogleFonts.ibmPlexSansArabic(textStyle: base)
+        ? base ?? const TextStyle()
         : GoogleFonts.playfairDisplay(textStyle: base);
   }
 
   TextStyle _bodyStyle(bool isAr, ThemeData theme) {
     final base = theme.textTheme.bodyLarge?.copyWith(height: 1.8);
     return isAr
-        ? GoogleFonts.ibmPlexSansArabic(textStyle: base)
+        ? base ?? const TextStyle()
         : GoogleFonts.playfairDisplay(textStyle: base);
   }
 
@@ -122,8 +123,8 @@ class EventDetailsScreen extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: accent.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: accent.withValues(alpha: 0.3)),
+                          border:
+                              Border.all(color: accent.withValues(alpha: 0.3)),
                         ),
                         child: Text(
                           isAr
@@ -225,8 +226,7 @@ class EventDetailsScreen extends ConsumerWidget {
                               const SizedBox(width: 8),
                               Text(
                                 l10n.attractionTicketLink,
-                                style:
-                                    theme.textTheme.bodyMedium?.copyWith(
+                                style: theme.textTheme.bodyMedium?.copyWith(
                                   color: accent,
                                   fontWeight: FontWeight.w700,
                                   decoration: TextDecoration.underline,
@@ -387,13 +387,12 @@ class _InfoCard extends StatelessWidget {
                 child: Text(
                   title,
                   style: (isAr
-                          ? GoogleFonts.ibmPlexSansArabic()
+                          ? theme.textTheme.labelSmall ?? const TextStyle()
                           : GoogleFonts.playfairDisplay())
                       .copyWith(
                     fontWeight: FontWeight.w700,
                     fontSize: 11,
-                    color:
-                        theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ),
@@ -402,7 +401,7 @@ class _InfoCard extends StatelessWidget {
           const SizedBox(height: 6),
           DefaultTextStyle(
             style: (isAr
-                    ? GoogleFonts.ibmPlexSansArabic()
+                    ? theme.textTheme.bodyMedium ?? const TextStyle()
                     : GoogleFonts.playfairDisplay())
                 .copyWith(
               fontWeight: FontWeight.w700,
@@ -499,8 +498,7 @@ class _HeroCarouselState extends State<_HeroCarousel> {
                 child: Icon(
                   Icons.image_not_supported_outlined,
                   size: 48,
-                  color:
-                      theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                 ),
               ),
             ),
