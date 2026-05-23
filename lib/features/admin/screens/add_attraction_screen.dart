@@ -8,6 +8,7 @@ import 'package:athar_app/core/constants/region_data.dart';
 import 'package:athar_app/core/constants/region_city_constants.dart';
 import 'package:athar_app/core/models/attractions/attraction_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
@@ -324,10 +325,12 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
   }
 
   void _showSnackBar(String msg, {bool isError = false}) {
+    final theme = Theme.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: isError ? Colors.red : Colors.green,
+        backgroundColor:
+            isError ? theme.colorScheme.error : theme.semanticSuccess,
       ),
     );
   }

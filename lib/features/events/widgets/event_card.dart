@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:athar_app/core/models/events/event_model.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/events/screens/event_details_screen.dart';
 
 class EventCard extends StatelessWidget {
@@ -34,7 +35,9 @@ class EventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final theme = Theme.of(context);
-    final accent = typeColor(event.eventType);
+    final accent = theme.isHighContrast
+        ? theme.colorScheme.secondary
+        : typeColor(event.eventType);
 
     return Container(
       margin: const EdgeInsets.all(4),
@@ -148,8 +151,10 @@ class EventCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.onSurface
-                                .withValues(alpha: 0.55),
+                            color: theme.isHighContrast
+                                ? theme.colorScheme.onSurface
+                                : theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.55),
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
                           ),
@@ -255,15 +260,19 @@ class EventCard extends StatelessWidget {
                         Icon(
                           Icons.calendar_today_outlined,
                           size: 11,
-                          color: theme.colorScheme.onSurface
-                              .withValues(alpha: 0.55),
+                          color: theme.isHighContrast
+                              ? theme.colorScheme.onSurface
+                              : theme.colorScheme.onSurface
+                                  .withValues(alpha: 0.55),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           dateStr,
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.onSurface
-                                .withValues(alpha: 0.55),
+                            color: theme.isHighContrast
+                                ? theme.colorScheme.onSurface
+                                : theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.55),
                             fontWeight: FontWeight.w500,
                           ),
                         ),

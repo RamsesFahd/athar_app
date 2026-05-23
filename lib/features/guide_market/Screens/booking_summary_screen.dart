@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import '../widgets/custom_stepper.dart';
 
 class BookingSummaryScreen extends ConsumerStatefulWidget {
@@ -195,7 +196,10 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
       await ref.read(bookingNotifierProvider.notifier).confirmBooking();
       if (!mounted) return;
       messenger.showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).bookingConfirmedMessage), backgroundColor: Colors.green),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).bookingConfirmedMessage),
+          backgroundColor: Theme.of(context).semanticSuccess,
+        ),
       );
       navigator.pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
     } catch (e) {
@@ -205,7 +209,10 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
           ? l10n.tripDayAlreadyBookedError
           : l10n.commonErrorWithMessage('');
       messenger.showSnackBar(
-        SnackBar(content: Text(msg), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(msg),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);

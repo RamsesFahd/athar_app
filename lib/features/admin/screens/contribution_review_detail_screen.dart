@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:athar_app/core/models/contribution/contribution_model.dart';
 import 'package:athar_app/core/constants/region_city_constants.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/services/gemini_service.dart';
@@ -84,7 +85,7 @@ class _ContributionReviewDetailScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context).adminTranslationFailed('')),
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     } finally {
@@ -107,7 +108,7 @@ class _ContributionReviewDetailScreenState
                 ? l10n.adminFillEnglishBeforeApprove
                 : l10n.adminFillArabicBeforeApprove,
           ),
-          backgroundColor: Colors.orange,
+          backgroundColor: Theme.of(context).semanticWarning,
         ),
       );
       return;
@@ -253,14 +254,17 @@ class _ContributionReviewDetailScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(AppLocalizations.of(context).adminContributionApproved),
-          backgroundColor: Colors.green,
+          backgroundColor: Theme.of(context).semanticSuccess,
         ),
       );
       Navigator.of(context).pop();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage('')), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).commonErrorWithMessage('')),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -315,7 +319,7 @@ class _ContributionReviewDetailScreenState
                 width: double.infinity,
                 child: FilledButton(
                   style: FilledButton.styleFrom(
-                      backgroundColor: Colors.red),
+                      backgroundColor: Theme.of(context).colorScheme.error),
                   onPressed: () async {
                     final reason = reasonController.text.trim();
                     if (reason.isEmpty) {
@@ -358,7 +362,10 @@ class _ContributionReviewDetailScreenState
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context).commonErrorWithMessage('')), backgroundColor: Colors.red),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).commonErrorWithMessage('')),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);

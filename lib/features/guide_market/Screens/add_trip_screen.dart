@@ -10,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -335,7 +336,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
           content: Text(_isEditing
               ? l10n.addTripUpdatedSuccess
               : l10n.addTripSubmittedSuccess),
-          backgroundColor: Colors.green,
+          backgroundColor: Theme.of(context).semanticSuccess,
           duration: const Duration(seconds: 4),
         ),
       );
@@ -343,7 +344,11 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
     } catch (e) {
       if (!mounted) return;
       messenger.showSnackBar(
-          SnackBar(content: Text(l10n.commonErrorWithMessage('')), backgroundColor: Colors.red));
+        SnackBar(
+          content: Text(l10n.commonErrorWithMessage('')),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -359,9 +364,11 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   }
 
   void _snack(String msg, {bool isError = false}) {
+    final theme = Theme.of(context);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(msg),
-      backgroundColor: isError ? Colors.red : Colors.green,
+      backgroundColor:
+          isError ? theme.colorScheme.error : theme.semanticSuccess,
     ));
   }
 

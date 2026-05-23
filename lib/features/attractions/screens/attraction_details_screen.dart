@@ -355,9 +355,13 @@ class _InfoCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        color: theme.isHighContrast
+            ? theme.colorScheme.surface
+            : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: color.withValues(alpha: 0.15)),
+        border: Border.all(
+          color: theme.isHighContrast ? color : color.withValues(alpha: 0.15),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,7 +379,9 @@ class _InfoCard extends StatelessWidget {
                     .copyWith(
                   fontWeight: FontWeight.w700,
                   fontSize: 11,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: theme.isHighContrast
+                      ? theme.colorScheme.onSurface
+                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ],

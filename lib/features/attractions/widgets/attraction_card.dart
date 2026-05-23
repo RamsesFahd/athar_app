@@ -161,8 +161,10 @@ class AttractionCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.labelSmall?.copyWith(
-                            color: theme.colorScheme.onSurface
-                                .withValues(alpha: 0.55),
+                            color: theme.isHighContrast
+                                ? theme.colorScheme.onSurface
+                                : theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.55),
 
                             // ✨ تصغير الموقع
                             fontSize: 10,
@@ -280,8 +282,10 @@ class AttractionCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color:
-                            theme.colorScheme.onSurface.withValues(alpha: 0.55),
+                        color: theme.isHighContrast
+                            ? theme.colorScheme.onSurface
+                            : theme.colorScheme.onSurface
+                                .withValues(alpha: 0.55),
                         fontWeight: FontWeight.w500,
                       ),
                     ),

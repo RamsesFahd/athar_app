@@ -1125,7 +1125,7 @@ border: Border.all(
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text(msg),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
             
             duration: const Duration(seconds: 5)),
       );
@@ -1151,7 +1151,8 @@ border: Border.all(
             child: Text(isAr ? 'إلغاء' : 'Cancel'),
           ),
           TextButton(
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.error),
             onPressed: () => Navigator.pop(context, true),
             child: Text(
               isAr ? 'حذف حسابي نهائياً' : 'Delete My Account',

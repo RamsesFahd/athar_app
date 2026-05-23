@@ -29,6 +29,12 @@ class AtharThemeExtension extends ThemeExtension<AtharThemeExtension> {
 extension AtharThemeDataX on ThemeData {
   bool get isHighContrast =>
       extension<AtharThemeExtension>()?.highContrast ?? false;
+
+  Color get semanticSuccess =>
+      isHighContrast ? colorScheme.primary : Colors.green;
+
+  Color get semanticWarning =>
+      isHighContrast ? colorScheme.primary : Colors.orange;
 }
 
 class AppTheme {

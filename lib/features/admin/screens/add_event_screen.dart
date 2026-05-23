@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:athar_app/core/constants/region_data.dart';
 import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/interactive_map/logic/map_notifier.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -244,9 +245,9 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
         _lngController.text = match.group(2)!;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('تم استخراج الإحداثيات بنجاح'),
-          backgroundColor: Colors.green,
+          backgroundColor: Theme.of(context).semanticSuccess,
         ),
       );
     } else {
@@ -329,7 +330,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.adminEventAdded),
-            backgroundColor: Colors.green,
+            backgroundColor: Theme.of(context).semanticSuccess,
           ),
         );
         _resetForm();
@@ -343,7 +344,10 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
 
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      ),
     );
   }
 
