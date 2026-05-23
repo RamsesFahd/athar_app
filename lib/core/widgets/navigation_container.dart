@@ -35,6 +35,13 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
   List<Widget>? _screens;
   bool? _lastIsTutor;
 
+  // LAZY LOADING: tracks which tabs the user has actually opened. A tab's heavy
+  // widget tree (e.g. MapScreen's GoogleMap) is only built the first time its
+  // index is visited — not all five at once on first paint. Once visited, the
+  // tab stays in this set so its state is preserved across further navigation
+  // (the IndexedStack keeps it mounted), exactly like before.
+  final Set<int> _visitedIndexes = {0};
+
   List<Widget> _buildScreens(bool isTutor) {
     return [
       HomeScreen(
@@ -125,12 +132,17 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
                 ),
           body: Stack(
             children: [
-              // IndexedStack keeps all tab screens mounted (just hidden).
-              // _HomeHeroSliderState — and every other tab's state — survives
-              // tab switches, so the slider never resets to skeleton on return.
+              // IndexedStack keeps visited tab screens mounted (just hidden).
+              // _HomeHeroSliderState — and every other visited tab's state —
+              // survives tab switches, so the slider never resets to skeleton.
+              // Unvisited tabs render as a cheap placeholder until first opened,
+              // so heavy screens (MapScreen's GoogleMap) don't build on startup.
               IndexedStack(
                 index: _currentIndex,
-                children: _screens!,
+                children: List.generate(_screens!.length, (i) {
+                  if (_visitedIndexes.contains(i)) return _screens![i];
+                  return const SizedBox.shrink();
+                }),
               ),
               // Sub-pages (e.g. CulturalArchive) slide in over the tabs and
               // are disposed when the user goes back. This is the only place
@@ -163,6 +175,8 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
                 setState(() {
                   _currentIndex = index;
                   _subPage = null;
+                  // Mark this tab visited so it builds now and stays mounted.
+                  _visitedIndexes.add(index);
                 });
               }
             },

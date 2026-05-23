@@ -463,6 +463,33 @@ class TripDetailsScreen extends ConsumerWidget {
     );
   }
 
+  String _localizeLanguage(String lang, bool isAr) {
+    if (!isAr) return lang;
+    const map = {
+      'arabic': 'العربية',
+      'english': 'الإنجليزية',
+      'french': 'الفرنسية',
+      'german': 'الألمانية',
+      'spanish': 'الإسبانية',
+      'italian': 'الإيطالية',
+      'chinese': 'الصينية',
+      'japanese': 'اليابانية',
+      'korean': 'الكورية',
+      'portuguese': 'البرتغالية',
+      'russian': 'الروسية',
+      'turkish': 'التركية',
+      'urdu': 'الأردية',
+      'hindi': 'الهندية',
+      'malay': 'الملايوية',
+      'indonesian': 'الإندونيسية',
+      'persian': 'الفارسية',
+      'dutch': 'الهولندية',
+      'greek': 'اليونانية',
+      'swedish': 'السويدية',
+    };
+    return map[lang.toLowerCase()] ?? lang;
+  }
+
   void _showGuideDetailsPopUp(
       BuildContext context, AppLocalizations l10n, bool isAr) {
     final theme = Theme.of(context);
@@ -610,7 +637,7 @@ class TripDetailsScreen extends ConsumerWidget {
                                                   width: 1.5),
                                             ),
                                             child: Text(
-                                              lang,
+                                              _localizeLanguage(lang, isAr),
                                               style: TextStyle(
                                                   color:
                                                       theme.colorScheme.primary,
