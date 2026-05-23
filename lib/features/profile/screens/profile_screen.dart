@@ -1,5 +1,8 @@
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
+import 'package:athar_app/core/services/notification_service.dart';
+import 'package:athar_app/features/profile/logic/profile_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:athar_app/core/utils/booking_status_helper.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
@@ -38,15 +41,78 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   int _activeTabIndex = 0;
 
+  // ── Notification preferences ──────────────────────────────────────────────
+  static const _kBookingNotif  = 'notif_booking';
+  static const _kEventReminders = 'notif_events';
+  static const _kMarketingEmails = 'notif_marketing';
+
+  bool _bookingNotifications = true;
+  bool _eventReminders       = true;
+  bool _marketingEmails      = false;
+
   @override
   void initState() {
     super.initState();
+    _loadNotificationPrefs();
     SchedulerBinding.instance.addPostFrameCallback((_) {
       final user = ref.read(authNotifierProvider).value;
       if (user is TutorModel) {
         ref.read(profileNotifierProvider.notifier).checkAndExpireCredentials(user);
       }
     });
+  }
+
+  Future<void> _loadNotificationPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      _bookingNotifications = prefs.getBool(_kBookingNotif)  ?? true;
+      _eventReminders       = prefs.getBool(_kEventReminders) ?? true;
+      _marketingEmails      = prefs.getBool(_kMarketingEmails) ?? false;
+    });
+  }
+
+  /// Toggles a notification preference:
+  /// - Requests OS permission when enabling push topics.
+  /// - Subscribes / unsubscribes from the FCM topic.
+  /// - Persists the choice to SharedPreferences.
+  /// Returns false (and reverts) if permission is denied.
+  /// Toggles a notification preference.
+  /// - Requests OS permission when enabling.
+  /// - Persists the choice to SharedPreferences (local) AND Firestore (so the
+  ///   Cloud Function respects it before sending the push).
+  /// - Reverts the toggle if the OS permission is denied.
+  Future<void> _onNotificationToggle({
+    required bool value,
+    required String prefKey,
+    required void Function(bool) setter,
+    String? firestoreKey,
+  }) async {
+    // Update UI immediately so the switch responds on tap.
+    setState(() => setter(value));
+
+    if (value) {
+      final granted = await NotificationService.instance.requestPermissions();
+      if (!granted) {
+        if (mounted) setState(() => setter(!value));
+        return;
+      }
+    }
+
+    // Persist locally.
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(prefKey, value);
+
+    // Persist to Firestore so the Cloud Function can gate push delivery.
+    if (firestoreKey != null) {
+      final user = ref.read(authNotifierProvider).value;
+      if (user != null) {
+        await ref.read(profileRepositoryProvider).updateUserData(
+          user.uId,
+          {'notificationPrefs.$firestoreKey': value},
+        );
+      }
+    }
   }
 
   @override
@@ -342,27 +408,45 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           leadingIcon: Icons.notifications_none_rounded,
                           showDivider: false,
                           trailing: Switch(
-                              value: true,
-                              onChanged: (v) {},
-                              activeThumbColor: theme.colorScheme.primary),
+                            value: _bookingNotifications,
+                            onChanged: (v) => _onNotificationToggle(
+                              value: v,
+                              prefKey: _kBookingNotif,
+                              setter: (val) => _bookingNotifications = val,
+                              firestoreKey: 'bookingNotifications',
+                            ),
+                            activeThumbColor: theme.colorScheme.primary,
+                          ),
                         ),
                         SettingsTile(
                           title: l10n.profileEventReminders,
                           leadingIcon: Icons.calendar_today_outlined,
                           showDivider: false,
                           trailing: Switch(
-                              value: true,
-                              onChanged: (v) {},
-                              activeThumbColor: theme.colorScheme.primary),
+                            value: _eventReminders,
+                            onChanged: (v) => _onNotificationToggle(
+                              value: v,
+                              prefKey: _kEventReminders,
+                              setter: (val) => _eventReminders = val,
+                              firestoreKey: 'eventReminders',
+                            ),
+                            activeThumbColor: theme.colorScheme.primary,
+                          ),
                         ),
                         SettingsTile(
                           title: l10n.profileMarketingEmails,
                           leadingIcon: Icons.mail_outline_rounded,
                           showDivider: false,
                           trailing: Switch(
-                              value: false,
-                              onChanged: (v) {},
-                              activeThumbColor: theme.colorScheme.primary),
+                            value: _marketingEmails,
+                            onChanged: (v) => _onNotificationToggle(
+                              value: v,
+                              prefKey: _kMarketingEmails,
+                              setter: (val) => _marketingEmails = val,
+                              firestoreKey: 'marketingEmails',
+                            ),
+                            activeThumbColor: theme.colorScheme.primary,
+                          ),
                         ),
                       ],
                     ),

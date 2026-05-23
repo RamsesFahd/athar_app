@@ -70,19 +70,45 @@ class NotificationService {
 
   // ── Permissions ────────────────────────────────────────────────────────────
 
-  Future<void> _requestPermissions() async {
+  Future<void> _requestPermissions() => requestPermissions();
+
+  /// Requests notification permission and returns true if granted.
+  Future<bool> requestPermissions() async {
     if (Platform.isAndroid) {
-      // Android 13+ requires runtime POST_NOTIFICATIONS permission.
-      await Permission.notification.request();
+      final status = await Permission.notification.request();
+      return status.isGranted;
     }
     if (Platform.isIOS) {
-      await _fcm.requestPermission(
+      final settings = await _fcm.requestPermission(
         alert: true,
         badge: true,
         sound: true,
       );
+      return settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional;
     }
+    return true;
   }
+
+  /// Returns true if the user has already granted notification permission.
+  Future<bool> hasPermission() async {
+    if (Platform.isAndroid) {
+      return await Permission.notification.isGranted;
+    }
+    if (Platform.isIOS) {
+      final settings = await _fcm.getNotificationSettings();
+      return settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional;
+    }
+    return true;
+  }
+
+  /// Subscribe this device to an FCM topic (e.g. 'booking_notifications').
+  Future<void> subscribeToTopic(String topic) => _fcm.subscribeToTopic(topic);
+
+  /// Unsubscribe this device from an FCM topic.
+  Future<void> unsubscribeFromTopic(String topic) =>
+      _fcm.unsubscribeFromTopic(topic);
 
   // ── FCM configuration ──────────────────────────────────────────────────────
 

@@ -1,4 +1,5 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
 import '../widgets/recommended_item_details.dart';
@@ -73,11 +74,25 @@ class RecommendedItemCard extends StatelessWidget {
             // Image + Badge
             Stack(
               children: [
-                Image.network(
-                  image,
+                CachedNetworkImage(
+                  imageUrl: image,
                   height: 140,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  placeholder: (_, __) => Container(
+                    height: 140,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .surfaceContainerHighest,
+                  ),
+                  errorWidget: (_, __, ___) => Container(
+                    height: 140,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .surfaceContainerHighest,
+                    child: const Icon(Icons.image_not_supported_outlined,
+                        size: 36),
+                  ),
                 ),
                 Positioned(
                   top: 8,

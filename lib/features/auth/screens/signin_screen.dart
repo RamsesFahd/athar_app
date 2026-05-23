@@ -1,5 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import '../../../core/navigation/app_routes.dart';
 import '../../../core/models/user/user_model.dart';
@@ -22,6 +25,45 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   bool _rememberMe = false;
   bool _isLoginLoading = false;
   bool _isGoogleLoading = false;
+
+  static const _kRememberMeKey = 'remember_me';
+  static const _kSavedEmailKey = 'saved_email';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRememberMe();
+  }
+
+  @override
+  void dispose() {
+    _email.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadRememberMe() async {
+    final prefs = await SharedPreferences.getInstance();
+    final remember = prefs.getBool(_kRememberMeKey) ?? false;
+    final savedEmail = prefs.getString(_kSavedEmailKey) ?? '';
+    if (mounted && remember && savedEmail.isNotEmpty) {
+      setState(() {
+        _rememberMe = true;
+        _email.text = savedEmail;
+      });
+    }
+  }
+
+  Future<void> _persistRememberMe() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (_rememberMe) {
+      await prefs.setBool(_kRememberMeKey, true);
+      await prefs.setString(_kSavedEmailKey, _email.text.trim());
+    } else {
+      await prefs.remove(_kRememberMeKey);
+      await prefs.remove(_kSavedEmailKey);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +88,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         },
         data: (user) {
           if (user != null) {
+            _persistRememberMe();
+            TextInput.finishAutofillContext();
             if (user is AdminModel) {
               Navigator.pushReplacementNamed(context, AppRoutes.admin);
               return;
@@ -88,64 +132,61 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               ),
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(24, 35, 24, 20),
-                // using a column to layout the form fields, buttons, and links vertically with appropriate spacing
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Email label
-                    Text(l10n.emailLabel,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                            fontSize: theme.textTheme.bodyLarge?.fontSize)),
-                    const SizedBox(height: 8),
-                    _buildTextField(_email, l10n.emailHint, false),
-                    const SizedBox(height: 18),
-                    // Password label
-                    Text(l10n.passwordLabel,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                            fontSize: theme.textTheme.bodyLarge?.fontSize)),
-                    const SizedBox(height: 8),
-                    _buildTextField(_password, l10n.passwordHint, true),
-                    const SizedBox(height: 10),
-                    // Remember me checkbox
-                    _buildRememberMeRow(l10n),
-                    const SizedBox(height: 20),
-                    // Sign in button
-                    AtharButton(
-                      label: l10n.continueButton,
-                      isLoading: _isLoginLoading,
-                      onPressed: authState.isLoading
-                          ? null
-                          : () async {
-                              final email = _email.text.trim();
-                              final password = _password.text.trim();
-                              if (email.isEmpty || password.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      l10n.emptyLoginFieldsError,
+                child: AutofillGroup(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.emailLabel,
+                          style: theme.textTheme.titleLarge?.copyWith(
+                              fontSize: theme.textTheme.bodyLarge?.fontSize)),
+                      const SizedBox(height: 8),
+                      _buildTextField(_email, l10n.emailHint, false,
+                          autofillHints: const [AutofillHints.email]),
+                      const SizedBox(height: 18),
+                      Text(l10n.passwordLabel,
+                          style: theme.textTheme.titleLarge?.copyWith(
+                              fontSize: theme.textTheme.bodyLarge?.fontSize)),
+                      const SizedBox(height: 8),
+                      _buildTextField(_password, l10n.passwordHint, true,
+                          autofillHints: const [AutofillHints.password]),
+                      const SizedBox(height: 10),
+                      _buildRememberMeRow(l10n),
+                      const SizedBox(height: 20),
+                      AtharButton(
+                        label: l10n.continueButton,
+                        isLoading: _isLoginLoading,
+                        onPressed: authState.isLoading
+                            ? null
+                            : () async {
+                                final email = _email.text.trim();
+                                final password = _password.text.trim();
+                                if (email.isEmpty || password.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(l10n.emptyLoginFieldsError),
                                     ),
-                                  ),
-                                );
-                                return;
-                              }
-                              setState(() => _isLoginLoading = true);
-                              await ref
-                                  .read(authNotifierProvider.notifier)
-                                  .signIn(
-                                    email: email,
-                                    password: password,
                                   );
-                              if (mounted)
-                                setState(() => _isLoginLoading = false);
-                            },
-                    ),
-                    const SizedBox(height: 25),
-                    AuthUtils.buildDivider(l10n),
-                    const SizedBox(height: 25),
-                    _buildSocialButtons(),
-                    const SizedBox(height: 25),
-                    _buildFooterLinks(l10n, authState.isLoading),
-                  ],
+                                  return;
+                                }
+                                setState(() => _isLoginLoading = true);
+                                await ref
+                                    .read(authNotifierProvider.notifier)
+                                    .signIn(
+                                      email: email,
+                                      password: password,
+                                    );
+                                if (mounted)
+                                  setState(() => _isLoginLoading = false);
+                              },
+                      ),
+                      const SizedBox(height: 25),
+                      AuthUtils.buildDivider(l10n),
+                      const SizedBox(height: 25),
+                      _buildSocialButtons(),
+                      const SizedBox(height: 25),
+                      _buildFooterLinks(l10n, authState.isLoading),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -156,11 +197,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   }
 
   Widget _buildTextField(
-      TextEditingController controller, String hint, bool isPassword) {
+      TextEditingController controller, String hint, bool isPassword,
+      {List<String>? autofillHints}) {
     final theme = Theme.of(context);
     return TextField(
       controller: controller,
       obscureText: isPassword ? _hidePassword : false,
+      autofillHints: autofillHints,
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         hintText: hint,
@@ -267,9 +310,17 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                         height: 22,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : Image.network(
-                        'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
-                        height: 28)
+                    : CachedNetworkImage(
+                        imageUrl:
+                            'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
+                        height: 28,
+                        placeholder: (_, __) => const SizedBox(
+                            width: 28,
+                            height: 28,
+                            child: CircularProgressIndicator(strokeWidth: 2)),
+                        errorWidget: (_, __, ___) =>
+                            const Icon(Icons.g_mobiledata, size: 28),
+                      )
                 : Icon(icon, color: fg, size: 24),
           ),
         ),
