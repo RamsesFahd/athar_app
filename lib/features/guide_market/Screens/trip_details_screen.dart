@@ -50,7 +50,7 @@ class TripDetailsScreen extends ConsumerWidget {
                 CachedNetworkImage(
                   imageUrl: trip.imageUrl,
                   width: double.infinity,
-                  height: 300,
+                  height: MediaQuery.of(context).size.height * 0.35,
                   fit: BoxFit.cover,
                   memCacheWidth: 1080,
                   fadeInDuration: const Duration(milliseconds: 150),
@@ -656,7 +656,7 @@ class TripDetailsScreen extends ConsumerWidget {
                                                   width: 1.5),
                                             ),
                                             child: Text(
-                                              lang,
+                                              _localizeLanguage(lang, isAr),
                                               style: (isAr
                                                       ? theme.textTheme
                                                               .labelSmall ??

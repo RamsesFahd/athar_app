@@ -45,7 +45,9 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
   List<Widget> _buildScreens(bool isTutor) {
     return [
       HomeScreen(
-        onSeeAllArchive: () => _onNavigateToSubPage(const CulturalArchive()),
+        onSeeAllArchive: () => _onNavigateToSubPage(
+              CulturalArchive(onBack: () => setState(() => _subPage = null)),
+            ),
         onSeeAllEvents: () => Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const EventsListScreen()),
@@ -167,7 +169,7 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
                 ),
             ],
           ),
-          bottomNavigationBar: AtharBottomNavigation(
+          bottomNavigationBar: _subPage != null ? null : AtharBottomNavigation(
             currentIndex: _currentIndex,
             isTutor: isTutor,
             onTap: (index) {

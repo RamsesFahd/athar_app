@@ -1,14 +1,14 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
-import '../../../core/navigation/app_routes.dart';
-import '../../../core/models/user/user_model.dart';
-import '../widgets/custom_header.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/auth_utils.dart';
-import '../logic/auth_notifier.dart';
+import 'package:athar_app/core/navigation/app_routes.dart';
+import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/features/auth/widgets/custom_header.dart';
+import 'package:athar_app/features/auth/widgets/custom_button.dart';
+import 'package:athar_app/features/auth/widgets/auth_utils.dart';
+import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 
 class SignUpScreen extends ConsumerStatefulWidget {
   const SignUpScreen({super.key});
@@ -76,7 +76,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                 arguments: _email.text,
               );
             } else {
-              Navigator.pushReplacementNamed(context, AppRoutes.home);
+              final tourist = user is TouristModel ? user : null;
+              final hasInterests =
+                  tourist?.culturalInterests.isNotEmpty ?? false;
+              if (tourist != null && !hasInterests) {
+                Navigator.pushReplacementNamed(
+                    context, AppRoutes.userPreferences);
+              } else {
+                Navigator.pushReplacementNamed(context, AppRoutes.home);
+              }
             }
           }
         },
@@ -433,16 +441,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         height: 22,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : CachedNetworkImage(
-                        imageUrl:
-                            'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png',
+                    : SvgPicture.asset(
+                        'assets/icons/google_logo.svg',
                         height: 22,
-                        placeholder: (_, __) => const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(strokeWidth: 2)),
-                        errorWidget: (_, __, ___) =>
-                            const Icon(Icons.g_mobiledata, size: 22),
+                        width: 22,
                       )
                 : Icon(icon, color: fg, size: 24),
           ),

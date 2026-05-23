@@ -170,8 +170,11 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
       ),
       builder: (ctx) {
         final theme = Theme.of(ctx);
-        return SizedBox(
-          height: 320,
+        return ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(ctx).size.height * 0.45,
+            minHeight: 280,
+          ),
           child: Column(
             children: [
               // Handle bar
@@ -550,7 +553,7 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
         children: [
           Container(
             width: double.infinity,
-            height: 180,
+            constraints: const BoxConstraints(minHeight: 150, maxHeight: 220),
             decoration: BoxDecoration(
               color: theme.colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),

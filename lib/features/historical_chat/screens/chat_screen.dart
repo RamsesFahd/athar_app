@@ -49,7 +49,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     _micPulse = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
-    )..repeat(reverse: true);
+    );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.region != null) {
@@ -80,6 +80,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     if (_isListening) {
       await _speech.stop();
       setState(() => _isListening = false);
+      _micPulse.stop();
+      _micPulse.reset();
       return;
     }
 
@@ -96,6 +98,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     }
 
     setState(() => _isListening = true);
+    _micPulse.repeat(reverse: true);
 
     final localeId = isAr ? 'ar-SA' : 'en-US';
     await _speech.listen(
@@ -109,6 +112,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
         }
         if (result.finalResult) {
           setState(() => _isListening = false);
+          _micPulse.stop();
+          _micPulse.reset();
         }
       },
       listenOptions: SpeechListenOptions(
@@ -373,21 +378,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     return null;
   }
 
+  static String _normalizeArabic(String t) => t
+      .trim()
+      .toLowerCase()
+      .replaceAll(RegExp(r'^(ال)'), '')
+      .replaceAll(RegExp(r'[أإآ]'), 'ا')
+      .replaceAll('ة', 'ه')
+      .replaceAll('ى', 'ي')
+      .replaceAll(RegExp(r'\s+'), ' ');
+
   CulturalItemModel? _findCulturalItem(
       List<CulturalItemModel> items, String query) {
-    String normalize(String t) => t
-        .trim()
-        .toLowerCase()
-        .replaceAll(RegExp(r'^(ال)'), '')
-        .replaceAll(RegExp(r'[أإآ]'), 'ا')
-        .replaceAll('ة', 'ه')
-        .replaceAll('ى', 'ي')
-        .replaceAll(RegExp(r'\s+'), ' ');
-
-    final cleanQuery = normalize(query);
+    final cleanQuery = _normalizeArabic(query);
     try {
       return items.firstWhere((item) {
-        final nameAr = normalize(item.titleAr);
+        final nameAr = _normalizeArabic(item.titleAr);
         final nameEn = item.titleEn.toLowerCase().trim();
         final qEn = query.toLowerCase().trim();
         return nameAr.contains(cleanQuery) ||
@@ -438,7 +443,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               ));
           break;
       }
-    } catch (_) {}
+    } catch (_) {
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.commonErrorWithMessage(''))),
+      );
+    }
   }
 
   Widget _buildMessageBubble({
@@ -501,19 +512,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
 
   Map<String, dynamic>? _findInSuggestedItems(
       List<Map<String, dynamic>> items, String query) {
-    String normalize(String t) => t
-        .trim()
-        .toLowerCase()
-        .replaceAll(RegExp(r'^(ال)'), '')
-        .replaceAll(RegExp(r'[أإآ]'), 'ا')
-        .replaceAll('ة', 'ه')
-        .replaceAll('ى', 'ي')
-        .replaceAll(RegExp(r'\s+'), ' ');
-
-    final cleanQuery = normalize(query);
+    final cleanQuery = _normalizeArabic(query);
     try {
       return items.firstWhere((item) {
-        final titleAr = normalize(item['titleAr']?.toString() ?? '');
+        final titleAr = _normalizeArabic(item['titleAr']?.toString() ?? '');
         final titleEn =
             (item['titleEn']?.toString() ?? '').toLowerCase().trim();
         final qEn = query.toLowerCase().trim();
@@ -668,7 +670,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
             child: TextField(
               controller: _messageController,
               textAlign: isAr ? TextAlign.right : TextAlign.left,
-              textDirection: TextDirection.rtl,
+              textDirection: isAr ? TextDirection.rtl : TextDirection.ltr,
               style: TextStyle(
                 color: theme.colorScheme.onSurface,
                 fontSize: 16,

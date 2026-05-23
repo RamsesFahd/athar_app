@@ -64,7 +64,9 @@ class ChatSessionModel {
       titleAr: arTitle,
       titleEn: enTitle,
       title: legacyTitle,
-      lastMessageTime: (map['lastMessageTime'] as Timestamp).toDate(),
+      lastMessageTime: map['lastMessageTime'] is Timestamp
+          ? (map['lastMessageTime'] as Timestamp).toDate()
+          : DateTime.now(),
     );
   }
 }

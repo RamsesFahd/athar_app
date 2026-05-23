@@ -50,8 +50,7 @@ Future<String?> signUp({
       );
       
       final String uId = cred.user!.uid;
-      await sendEmailVerification();
-      
+
       UserModel newUser;
       // in case the user is a tutor, we create a TutorModel with the provided information, and if they are a tourist, we create a TouristModel. Both models extend UserModel, so we can store them in the same 'users' collection in Firestore.
       final consentTimestamp = DateTime.now();
@@ -76,8 +75,11 @@ Future<String?> signUp({
           privacyPolicyAcceptedAt: consentTimestamp,
         );
       }
-      
+
+      // Write Firestore document BEFORE sending verification email so that
+      // a failed email send does not leave an Auth account with no Firestore doc.
       await _users.doc(uId).set(newUser.toMap());
+      await sendEmailVerification();
       return null;
     } on FirebaseAuthException catch (e) {
       return _mapFirebaseError(e);
@@ -183,6 +185,11 @@ Future<String?> signUp({
 // guest login method that allows users to sign in anonymously without creating an account. This is useful for users who want to try the app without committing to creating an account, and we can still track them in our database as guest users.
 Future<String?> guestLogin() async {
     try {
+      // Reuse an existing anonymous session to avoid orphaned Auth accounts
+      // accumulating on repeated taps of "Continue as Guest".
+      if (_auth.currentUser != null && _auth.currentUser!.isAnonymous) {
+        return null;
+      }
       UserCredential cred = await _auth.signInAnonymously();
       final String uId = cred.user!.uid;
 

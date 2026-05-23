@@ -459,7 +459,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
             builder: (context, extent, child) {
               if (extent > 0.7) return const SizedBox.shrink();
               return Positioned(
-                bottom: MediaQuery.of(context).size.height * extent + 12,
+                bottom: MediaQuery.of(context).size.height * extent +
+                    MediaQuery.of(context).padding.bottom + 12,
                 right: 16,
                 child: FloatingActionButton.small(
                   onPressed: _goToUserLocation,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,6 +21,7 @@ class NotificationService {
 
   final _fcm = FirebaseMessaging.instance;
   final _localNotifications = FlutterLocalNotificationsPlugin();
+  StreamSubscription<String>? _tokenRefreshSub;
 
   static const _channelId = 'athar_high_importance';
   static const _channelName = 'Athar Notifications';
@@ -189,7 +191,9 @@ class NotificationService {
     if (token != null) {
       await _saveToken(userId, token);
     }
-    _fcm.onTokenRefresh.listen((newToken) => _saveToken(userId, newToken));
+    await _tokenRefreshSub?.cancel();
+    _tokenRefreshSub =
+        _fcm.onTokenRefresh.listen((newToken) => _saveToken(userId, newToken));
   }
 
   Future<void> _saveToken(String userId, String token) async {

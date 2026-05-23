@@ -61,17 +61,19 @@ class FavoriteItemModel {
   factory FavoriteItemModel.fromMap(Map<String, dynamic> map, String docId) {
     return FavoriteItemModel(
       id: docId,
-      itemId: map['itemId'] as String,
+      itemId: map['itemId'] as String? ?? '',
       itemType: FavoriteItemType.values.firstWhere(
         (e) => e.name == map['itemType'],
         orElse: () => FavoriteItemType.cultural,
       ),
-      titleAr: map['titleAr'] as String,
-      titleEn: map['titleEn'] as String,
-      locationAr: map['locationAr'] as String,
-      locationEn: map['locationEn'] as String,
-      imageUrl: map['imageUrl'] as String,
-      savedAt: (map['savedAt'] as Timestamp).toDate(),
+      titleAr: map['titleAr'] as String? ?? '',
+      titleEn: map['titleEn'] as String? ?? '',
+      locationAr: map['locationAr'] as String? ?? '',
+      locationEn: map['locationEn'] as String? ?? '',
+      imageUrl: map['imageUrl'] as String? ?? '',
+      savedAt: map['savedAt'] is Timestamp
+          ? (map['savedAt'] as Timestamp).toDate()
+          : DateTime.now(),
       contributionId: map['contributionId'] as String?,
     );
   }

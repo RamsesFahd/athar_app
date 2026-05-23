@@ -102,7 +102,15 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 arguments: _email.text,
               );
             } else {
-              Navigator.pushReplacementNamed(context, AppRoutes.home);
+              final tourist = user is TouristModel ? user : null;
+              final hasInterests =
+                  tourist?.culturalInterests.isNotEmpty ?? false;
+              if (tourist != null && !hasInterests) {
+                Navigator.pushReplacementNamed(
+                    context, AppRoutes.userPreferences);
+              } else {
+                Navigator.pushReplacementNamed(context, AppRoutes.home);
+              }
             }
           }
         },

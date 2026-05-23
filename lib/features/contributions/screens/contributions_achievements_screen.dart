@@ -453,11 +453,10 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
           value: '$totalShares',
           label: l10n.contributionShares,
           icon: Icons.share_outlined),
-      if (qualityBonusCount > 0)
-        _StatItem(
-            value: '$qualityBonusCount',
-            label: l10n.contributionQuality,
-            icon: Icons.stars_rounded),
+      _StatItem(
+          value: '$qualityBonusCount',
+          label: l10n.contributionQuality,
+          icon: Icons.stars_rounded),
     ];
 
     return SingleChildScrollView(

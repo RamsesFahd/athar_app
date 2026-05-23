@@ -283,15 +283,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             // Sort: pending first for tutors
             List<BookingModel> sorted = List.from(bookings);
             if (isTutor) {
-              sorted.sort((a, b) =>
-                  a.status == BookingStatus.pending ? -1 : 1);
+              sorted.sort((a, b) {
+                if (a.status == b.status) return 0;
+                if (a.status == BookingStatus.pending) return -1;
+                if (b.status == BookingStatus.pending) return 1;
+                return 0;
+              });
             }
+            final isHighContrast = ref.watch(settingsProvider).highContrast;
             return ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 12),
               itemCount: sorted.length,
               itemBuilder: (context, index) {
                 final b = sorted[index];
-                return _buildBookingItem(context, b, theme, l10n, user);
+                return _buildBookingItem(context, b, theme, l10n, user, isHighContrast);
               },
             );
           },
@@ -527,12 +532,10 @@ Widget _buildBookingItem(
   ThemeData theme,
   AppLocalizations l10n,
   UserModel user,
+  bool isHighContrast,
 ) {
   final isTutor = user is TutorModel;
   final statusColor = _statusColor(b.status, theme);
-
-  final isHighContrast =
-  ref.watch(settingsProvider).highContrast;
 
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

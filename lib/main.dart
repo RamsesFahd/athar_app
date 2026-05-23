@@ -30,26 +30,25 @@ void main() async {
   // navigatorKey must be set before runApp so NotificationService can navigate.
   NotificationService.navigatorKey = navigatorKey;
 
+  // Activate App Check before runApp so the token is ready for the first
+  // Firestore call made from the splash screen.
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
+  );
+
+  if (kDebugMode) {
+    await FirebaseAuth.instance.setSettings(
+      appVerificationDisabledForTesting: true,
+    );
+  }
+
+  await NotificationService.instance.init();
+
   runApp(
     const ProviderScope(
       child: AtharApp(),
     ),
   );
-
-  // Everything below runs after the first frame is painted.
-  // AppCheck, auth settings, and notifications don't block UI rendering.
-  // AppCheck will be ready long before the first Firestore call (after splash).
-  FirebaseAppCheck.instance.activate(
-    androidProvider: kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
-  );
-
-  if (kDebugMode) {
-    FirebaseAuth.instance.setSettings(
-      appVerificationDisabledForTesting: true,
-    );
-  }
-
-  NotificationService.instance.init();
 }
 
 class AtharApp extends ConsumerWidget {

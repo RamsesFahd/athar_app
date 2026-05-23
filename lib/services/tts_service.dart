@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-// استيراد المزود الخاص بك لمعرفة اللغة وحالة التفعيل
 import 'package:athar_app/core/providers/settings_provider.dart';
 
 class TtsService {
@@ -11,11 +11,11 @@ class TtsService {
   // [test injection] The optional `tts` parameter allows unit tests to inject a
   // mock FlutterTts without hitting the platform plugin.
   TtsService(this.ref, {FlutterTts? tts}) : _flutterTts = tts ?? FlutterTts() {
-    _initTts();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _initTts());
   }
 
   // تهيئة إعدادات الصوت الأساسية
-  void _initTts() async {
+  Future<void> _initTts() async {
     await _flutterTts.setVolume(1.0);
     // تقليل السرعة قليلاً لتكون مريحة لكبار السن وذوي الاحتياجات
     await _flutterTts.setSpeechRate(0.52);

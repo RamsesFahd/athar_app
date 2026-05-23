@@ -427,7 +427,7 @@ class _TripsSection extends ConsumerWidget {
                     child: ExploreHeritageHomeCard(
                       title: trip.getTitle(isAr),
                       image: trip.imageUrl,
-                      categoryLabel: trip.price.replaceAll('ر.س', '').replaceAll('SAR', '').replaceAll('﷼', '').trim(),
+                      categoryLabel: trip.price,
                       locationLabel: trip.getCity(isAr),
                       showRiyalIcon: true,
                       onTap: () => Navigator.push(

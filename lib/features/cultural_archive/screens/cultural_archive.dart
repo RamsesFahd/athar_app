@@ -6,7 +6,8 @@ import '../../cultural_archive/widgets/cultural_item_card.dart';
 import '../logic/cultural_notifier.dart';
 
 class CulturalArchive extends ConsumerWidget {
-  const CulturalArchive({super.key});
+  final VoidCallback? onBack;
+  const CulturalArchive({super.key, this.onBack});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,7 +39,7 @@ class CulturalArchive extends ConsumerWidget {
       color: theme.scaffoldBackgroundColor,
       child: Column(
         children: [
-          _buildHeader(isAr, theme, l10n),
+          _buildHeader(isAr, theme, l10n, context),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
@@ -201,9 +202,9 @@ class CulturalArchive extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(bool isAr, ThemeData theme, AppLocalizations l10n) {
+  Widget _buildHeader(bool isAr, ThemeData theme, AppLocalizations l10n, BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(minHeight: 180),
+      constraints: const BoxConstraints(minHeight: 230),
       width: double.infinity,
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -211,46 +212,76 @@ class CulturalArchive extends ConsumerWidget {
           fit: BoxFit.cover,
         ),
       ),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.black.withValues(alpha: 0.3),
-              Colors.black.withValues(alpha: 0.8)
-            ],
+      child: Stack(
+        children: [
+          // Gradient overlay + title text — fills the full header height
+          Positioned.fill(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.3),
+                    Colors.black.withValues(alpha: 0.8)
+                  ],
+                ),
+              ),
+              alignment: isAr ? Alignment.bottomRight : Alignment.bottomLeft,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.culturalArchiveTitle,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.displayLarge?.copyWith(
+                      color: Colors.white,
+                      height: isAr ? 1.4 : 1.1,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    isAr
+                        ? 'اكتشف الثقافة السعودية الغنية'
+                        : 'Discover Saudi heritage',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: Colors.white.withValues(alpha: 0.8),
+                      height: isAr ? 1.4 : 1.1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-        alignment: isAr ? Alignment.bottomRight : Alignment.bottomLeft,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.culturalArchiveTitle,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.displayLarge?.copyWith(
-                color: Colors.white,
-                height: isAr ? 1.4 : 1.1,
+          // Floating back button
+          if (onBack != null)
+            SafeArea(
+              child: Align(
+                alignment: isAr ? Alignment.topRight : Alignment.topLeft,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Material(
+                    color: Colors.black.withValues(alpha: 0.35),
+                    shape: const CircleBorder(),
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: onBack,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Icon(Icons.arrow_back_ios_new,
+                            color: Colors.white, size: 20),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              isAr
-                  ? 'اكتشف الثقافة السعودية الغنية'
-                  : 'Discover Saudi heritage',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.white.withValues(alpha: 0.8),
-                height: isAr ? 1.4 : 1.1,
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
