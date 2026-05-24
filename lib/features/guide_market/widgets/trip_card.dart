@@ -202,7 +202,7 @@ class TripCard extends ConsumerWidget {
                       ),
                     ),
                     const Spacer(),
-                    Flexible(
+                   Expanded(
                       child: Align(
                         alignment:
                             isAr ? Alignment.centerLeft : Alignment.centerRight,
@@ -413,7 +413,7 @@ class TripCard extends ConsumerWidget {
                         ),
                       ),
                       const Spacer(),
-                      Flexible(
+                      Expanded(
                         child: Align(
                           alignment: isAr
                               ? Alignment.centerLeft
@@ -512,7 +512,7 @@ class TripCard extends ConsumerWidget {
               );
             },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: isFullyBooked
               ? theme.colorScheme.onSurface.withValues(alpha: 0.12)
@@ -520,8 +520,8 @@ class TripCard extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
-          isFullyBooked ? l10n.tripFullyBooked : l10n.tripCardViewDetails,
-          maxLines: 2,
+          isFullyBooked ? l10n.tripFullyBooked : l10n.tripCardDetails,
+          maxLines: 1,
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
           style: theme.textTheme.labelSmall?.copyWith(

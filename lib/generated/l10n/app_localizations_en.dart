@@ -791,7 +791,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reject_booking => 'Reject';
 
   @override
-  String get view_details => 'View Details';
+  String get view_details => 'Details';
 
   @override
   String get adult_price => 'Adult Price (SAR)';

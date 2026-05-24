@@ -753,7 +753,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get trip => 'الرحلة';
 
   @override
-  String get details => 'عرض التفاصيل';
+  String get details => 'التفاصيل';
 
   @override
   String get guide => 'المرشد';

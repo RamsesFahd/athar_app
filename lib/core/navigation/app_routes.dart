@@ -14,6 +14,8 @@ import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
 import 'package:athar_app/features/auth/screens/google_role_selection_screen.dart';
 import 'package:athar_app/features/onboarding/screens/user_preferences_screen.dart';
+import 'package:athar_app/features/profile/screens/contact_us_screen.dart';
+import 'package:athar_app/features/profile/screens/about_athar_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -29,6 +31,8 @@ class AppRoutes {
   static const String historicalChat = '/historical-chat';
   static const String privacyPolicy = '/privacy-policy';
   static const String userPreferences = '/user-preferences';
+  static const String contactUs = '/contact-us';
+  static const String aboutAthar = '/about-athar';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -39,6 +43,8 @@ class AppRoutes {
       verifyEmail: (context) => const VerifyEmailScreen(),
       googleRoleSelection: (context) => const GoogleRoleSelectionScreen(),
       privacyPolicy: (context) => const PrivacyPolicyScreen(),
+      contactUs: (context) => const ContactUsScreen(),
+      aboutAthar: (context) => const AboutAtharScreen(),
 
       home: (context) => const NavigationContainer(),
       admin: (context) => const AdminNavigationContainer(),

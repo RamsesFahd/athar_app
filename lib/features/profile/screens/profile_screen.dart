@@ -105,7 +105,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     // Persist to Firestore so the Cloud Function can gate push delivery.
     if (firestoreKey != null) {
-      final user = ref.read(authNotifierProvider).value;
+     final user = ref.read(authNotifierProvider).valueOrNull;
       if (user != null) {
         await ref.read(profileRepositoryProvider).updateUserData(
           user.uId,

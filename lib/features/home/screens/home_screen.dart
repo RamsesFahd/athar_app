@@ -25,7 +25,7 @@ import 'package:athar_app/features/home/models/recommended_item.dart';
 // PERFORMANCE OPTIMIZATION: HomeScreen converted from ConsumerWidget to
 // StatelessWidget. Each carousel section is now its own ConsumerWidget so
 // provider changes only rebuild the affected section, not the entire screen.
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   final VoidCallback? onSeeAllArchive;
   final VoidCallback? onSeeAllEvents;
   final void Function(EventModel event)? onEventTap;
@@ -91,9 +91,10 @@ class HomeScreen extends StatelessWidget {
 }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-
+    final user = ref.watch(authNotifierProvider).valueOrNull;
+    final isGuest = user?.role == UserRole.guest;
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
@@ -105,8 +106,11 @@ class HomeScreen extends StatelessWidget {
             children: [
               const RepaintBoundary(child: HomeHeroSlider()),
               const SizedBox(height: _sectionGap),
+
+              if (!isGuest) ...[
               _YouMayLikeSection(onEventTap: onEventTap),
               const SizedBox(height: _sectionGap),
+               ],
               _HeritageSection(onSeeAll: onSeeAllArchive),
               const SizedBox(height: _sectionGap),
               const _AttractionsSection(),
