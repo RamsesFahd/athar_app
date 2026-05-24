@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
+import 'package:athar_app/core/providers/settings_provider.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/admin/screens/trip_bookings_screen.dart';
 import 'package:athar_app/features/admin/screens/users_management_screen.dart';
@@ -38,47 +40,65 @@ class _AdminNavigationContainerState
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(
-          _tabs[_currentIndex].label,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            onPressed: () async {
-              final navigator = Navigator.of(context);
-              await ref.read(authNotifierProvider.notifier).logout();
-              navigator.pushNamedAndRemoveUntil(
-                AppRoutes.signIn,
-                (route) => false,
-              );
-            },
-          ),
-        ],
+    final adminTheme = AppTheme.getTheme(
+      AppSettings(fontSize: AppFontSize.medium, locale: const Locale('ar')),
+    );
+    final fixedTheme = adminTheme.copyWith(
+      colorScheme: adminTheme.colorScheme.copyWith(
+        brightness: Brightness.light,
       ),
-      body: _screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: theme.colorScheme.primary,
-        unselectedItemColor: theme.colorScheme.onSurfaceVariant,
-        selectedLabelStyle:
-            const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
-        items: _tabs
-            .map((t) => BottomNavigationBarItem(
-                  icon: Icon(t.icon),
-                  label: t.label,
-                ))
-            .toList(),
+      textTheme: adminTheme.textTheme.apply(fontSizeFactor: 1.0),
+      primaryTextTheme:
+          adminTheme.primaryTextTheme.apply(fontSizeFactor: 1.0),
+    );
+    final theme = fixedTheme;
+
+    return Theme(
+      data: fixedTheme,
+      child: MediaQuery(
+        data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
+        child: Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Text(
+              _tabs[_currentIndex].label,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.logout),
+                tooltip: 'Logout',
+                onPressed: () async {
+                  final navigator = Navigator.of(context);
+                  await ref.read(authNotifierProvider.notifier).logout();
+                  navigator.pushNamedAndRemoveUntil(
+                    AppRoutes.signIn,
+                    (route) => false,
+                  );
+                },
+              ),
+            ],
+          ),
+          body: _screens[_currentIndex],
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: (i) => setState(() => _currentIndex = i),
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: theme.colorScheme.primary,
+            unselectedItemColor: theme.colorScheme.onSurfaceVariant,
+            selectedLabelStyle:
+                const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+            items: _tabs
+                .map((t) => BottomNavigationBarItem(
+                      icon: Icon(t.icon),
+                      label: t.label,
+                    ))
+                .toList(),
+          ),
+        ),
       ),
     );
   }

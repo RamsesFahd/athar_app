@@ -115,14 +115,7 @@ class TripCard extends ConsumerWidget {
             ),
           ),
 
-        // 4. Trip-type badge (top-start)
-        PositionedDirectional(
-          top: 10,
-          start: 10,
-          child: _buildTripTypeBadge(l10n, theme, isAr, isFullyBooked: false),
-        ),
-
-        // 5. Fully booked badge (top-end)
+        // 4. Fully booked badge (top-end)
         if (isFullyBooked)
           PositionedDirectional(
             top: 10,
@@ -130,7 +123,7 @@ class TripCard extends ConsumerWidget {
             child: _buildFullyBookedBadge(l10n, theme, isAr),
           ),
 
-        // 6. Content
+        // 5. Content
         Positioned(
           left: 12,
           right: 12,
@@ -346,12 +339,6 @@ class TripCard extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      _buildTripTypeBadge(
-                        l10n,
-                        theme,
-                        isAr,
-                        isFullyBooked: isFullyBooked,
-                      ),
                     ],
                   ),
 
@@ -367,22 +354,6 @@ class TripCard extends ConsumerWidget {
                       color: theme.textTheme.bodyLarge?.color,
                     ),
                   ),
-
-                  const SizedBox(height: 6),
-
-                  if (trip.accessibilityFeatures.isNotEmpty)
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
-                      children: trip.accessibilityFeatures.map((key) {
-                        final label = switch (key) {
-                          'wheelchair' => l10n.tripAccessibilityWheelchairShort,
-                          'family' => l10n.tripAccessibilityFamilyShort,
-                          _ => key,
-                        };
-                        return _buildTag(label, theme, isAr);
-                      }).toList(),
-                    ),
 
                   const Spacer(),
 
@@ -434,42 +405,6 @@ class TripCard extends ConsumerWidget {
       ),
     );
   }
-
-  Widget _buildTripTypeBadge(
-    AppLocalizations l10n,
-    ThemeData theme,
-    bool isAr, {
-    required bool isFullyBooked,
-  }) {
-    final isPrivate = trip.isPrivate;
-    const color = Colors.teal;
-    final label = isPrivate ? l10n.tripTypePrivate : l10n.tripTypeShared;
-    final icon = isPrivate ? Icons.lock_outline : Icons.group_outlined;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 11, color: color),
-          const SizedBox(width: 3),
-          Text(
-            label,
-            style: (theme.textTheme.labelSmall ?? const TextStyle()).copyWith(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildFullyBookedBadge(
     AppLocalizations l10n,
     ThemeData theme,
@@ -536,27 +471,5 @@ class TripCard extends ConsumerWidget {
       ),
     );
   }
-
-  Widget _buildTag(String text, ThemeData theme, bool isAr) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: theme.colorScheme.primary.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Text(
-        text,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: (theme.textTheme.labelSmall ?? const TextStyle()).copyWith(
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          color: theme.colorScheme.primary,
-        ),
-      ),
-    );
   }
-}
+

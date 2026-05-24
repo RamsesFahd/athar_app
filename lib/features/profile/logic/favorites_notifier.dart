@@ -7,6 +7,9 @@ import 'package:athar_app/features/profile/logic/favorites_repository.dart';
 
 part 'favorites_notifier.g.dart';
 
+final optimisticFavoriteStateProvider =
+    StateProvider.family<bool?, String>((ref, itemId) => null);
+
 /// Live stream of the current user's saved items. Returns [] for guests.
 @riverpod
 Stream<List<FavoriteItemModel>> favoritesStream(Ref ref) {
@@ -35,12 +38,24 @@ class FavoritesNotifier extends _$FavoritesNotifier {
     final user = ref.read(authNotifierProvider).value;
     if (user == null || user.role == UserRole.guest) return;
 
+    final optimisticState = optimisticFavoriteStateProvider(item.itemId);
+    final previousValue = ref.read(optimisticState) ??
+        ref.read(isFavoriteProvider(item.itemId)).valueOrNull ??
+        false;
+    final nextValue = !previousValue;
+
+    ref.read(optimisticState.notifier).state = nextValue;
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      await ref
+    try {
+      final confirmedValue = await ref
           .read(favoritesRepositoryProvider)
           .toggleFavorite(user.uId, item);
+      ref.read(optimisticState.notifier).state = confirmedValue;
       ref.invalidate(isFavoriteProvider(item.itemId));
-    });
+      state = const AsyncData(null);
+    } catch (error, stackTrace) {
+      ref.read(optimisticState.notifier).state = previousValue;
+      state = AsyncError(error, stackTrace);
+    }
   }
 }

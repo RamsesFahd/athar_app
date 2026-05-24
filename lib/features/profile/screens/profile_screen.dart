@@ -237,6 +237,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             itemCount: favorites.length,
             itemBuilder: (context, index) {
               final item = favorites[index];
+              final optimisticSaved =
+                  ref.watch(optimisticFavoriteStateProvider(item.itemId));
               final typeText = item.itemType == FavoriteItemType.cultural
                   ? (isAr ? 'تراث ثقافي' : 'Cultural')
                   : (isAr ? 'رحلة' : 'Trip');
@@ -245,7 +247,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 location: isAr ? item.locationAr : item.locationEn,
                 typeText: typeText,
                 image: item.imageUrl,
-                isSaved: true,
+                isSaved: optimisticSaved ?? true,
                 onToggleSave: () => ref
                     .read(favoritesNotifierProvider.notifier)
                     .toggle(item),

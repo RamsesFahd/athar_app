@@ -184,7 +184,11 @@ class TripDetailsScreen extends ConsumerWidget {
                       builder: (ctx, consumerRef, _) {
                         final isFavAsync =
                             consumerRef.watch(isFavoriteProvider(trip.id));
-                        final isFav = isFavAsync.valueOrNull ?? false;
+                        final optimisticFav = consumerRef.watch(
+                          optimisticFavoriteStateProvider(trip.id),
+                        );
+                        final isFav =
+                            optimisticFav ?? isFavAsync.valueOrNull ?? false;
                         return CircleAvatar(
                           backgroundColor: Colors.black54,
                           child: IconButton(
