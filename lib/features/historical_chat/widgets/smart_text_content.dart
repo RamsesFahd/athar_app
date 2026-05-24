@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../cultural_archive/widgets/cultural_item_details.dart';
 import '../../cultural_archive/logic/cultural_notifier.dart';
 import '../../../core/models/cultural/cultural_item_model.dart';
@@ -294,10 +293,7 @@ class SmartTextContent extends ConsumerWidget {
     ColorScheme colorScheme,
     String value,
   ) {
-    final base = _containsArabic(value)
-        ? theme.textTheme.bodyMedium ?? const TextStyle()
-        : GoogleFonts.cairo();
-    return base.copyWith(
+    return (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(
       fontSize: 13,
       fontWeight: FontWeight.w600,
       color: colorScheme.primary,
@@ -306,10 +302,8 @@ class SmartTextContent extends ConsumerWidget {
 
   TextStyle _messageTextStyle(ThemeData theme, String value) {
     final colorScheme = theme.colorScheme;
-    final base = _containsArabic(value)
-        ? theme.textTheme.bodyMedium ?? const TextStyle()
-        : GoogleFonts.cairo();
-    return base.copyWith(
+
+    return (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(
       color: isMe ? colorScheme.onPrimary : colorScheme.onSurface,
       fontSize: 15,
       height: 1.5,

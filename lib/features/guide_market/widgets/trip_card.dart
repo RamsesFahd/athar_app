@@ -457,10 +457,7 @@ class TripCard extends ConsumerWidget {
           const SizedBox(width: 3),
           Text(
             label,
-            style: (isAr
-                    ? theme.textTheme.labelSmall ?? const TextStyle()
-                    : const TextStyle(fontFamily: 'Tajawal'))
-                .copyWith(
+            style: (theme.textTheme.labelSmall ?? const TextStyle()).copyWith(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: color,
@@ -484,10 +481,7 @@ class TripCard extends ConsumerWidget {
       ),
       child: Text(
         l10n.tripFullyBooked,
-        style: (isAr
-                ? theme.textTheme.labelSmall ?? const TextStyle()
-                : const TextStyle(fontFamily: 'Tajawal'))
-            .copyWith(
+        style: (theme.textTheme.labelSmall ?? const TextStyle()).copyWith(
           color: Colors.white,
           fontSize: 11,
           fontWeight: FontWeight.bold,
@@ -555,10 +549,7 @@ class TripCard extends ConsumerWidget {
         text,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
-        style: (isAr
-                ? theme.textTheme.labelSmall ?? const TextStyle()
-                : const TextStyle(fontFamily: 'Tajawal'))
-            .copyWith(
+        style: (theme.textTheme.labelSmall ?? const TextStyle()).copyWith(
           fontSize: 11,
           fontWeight: FontWeight.w600,
           color: theme.colorScheme.primary,

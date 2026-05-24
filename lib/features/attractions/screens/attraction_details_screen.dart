@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:athar_app/core/models/attractions/attraction_model.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
@@ -22,30 +21,23 @@ class AttractionDetailsScreen extends ConsumerWidget {
     return Color(int.parse('FF$n', radix: 16));
   }
 
-  TextStyle _nameStyle(bool isAr, ThemeData theme) {
-    final base = theme.textTheme.displaySmall?.copyWith(
+  TextStyle _nameStyle(ThemeData theme) {
+    return (theme.textTheme.displaySmall ?? const TextStyle()).copyWith(
       fontWeight: FontWeight.w800,
       height: 1.15,
     );
-    return isAr
-        ? base ?? const TextStyle()
-        : GoogleFonts.playfairDisplay(textStyle: base);
   }
 
-  TextStyle _sectionTitleStyle(bool isAr, ThemeData theme) {
-    final base = theme.textTheme.titleLarge?.copyWith(
+  TextStyle _sectionTitleStyle(ThemeData theme) {
+    return (theme.textTheme.titleLarge ?? const TextStyle()).copyWith(
       fontWeight: FontWeight.w800,
-    );
-    return isAr
-        ? base ?? const TextStyle()
-        : GoogleFonts.playfairDisplay(textStyle: base);
-  }
+      );
+    }
 
-  TextStyle _bodyStyle(bool isAr, ThemeData theme) {
-    final base = theme.textTheme.bodyLarge?.copyWith(height: 1.8);
-    return isAr
-        ? base ?? const TextStyle()
-        : GoogleFonts.playfairDisplay(textStyle: base);
+  TextStyle _bodyStyle(ThemeData theme) {
+    return (theme.textTheme.bodyLarge ?? const TextStyle()).copyWith(
+      height: 1.8,
+    );
   }
 
   Future<void> _openUrl(String url) async {
@@ -118,7 +110,7 @@ class AttractionDetailsScreen extends ConsumerWidget {
                       // ── Name ────────────────────────────────────────
                       Text(
                         attraction.getName(isAr),
-                        style: _nameStyle(isAr, theme),
+                        style: _nameStyle(theme),
                       ),
 
                       const SizedBox(height: 20),
@@ -165,19 +157,19 @@ class AttractionDetailsScreen extends ConsumerWidget {
                       // ── Description ──────────────────────────────────
                       Text(
                         l10n.attractionAbout,
-                        style: _sectionTitleStyle(isAr, theme),
+                        style: _sectionTitleStyle(theme),
                       ),
                       const SizedBox(height: 10),
                       Text(
                         attraction.getDescription(isAr),
-                        style: _bodyStyle(isAr, theme),
+                        style: _bodyStyle(theme),
                       ),
 
                       // ── Location ─────────────────────────────────────
                       const SizedBox(height: 24),
                       Text(
                         l10n.locationLabel,
-                        style: _sectionTitleStyle(isAr, theme),
+                        style: _sectionTitleStyle(theme),
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -188,7 +180,7 @@ class AttractionDetailsScreen extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               attraction.getCity(isAr),
-                              style: _bodyStyle(isAr, theme),
+                              style: _bodyStyle(theme),
                             ),
                           ),
                         ],
@@ -373,10 +365,7 @@ class _InfoCard extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 title,
-                style: (isAr
-                        ? theme.textTheme.labelSmall ?? const TextStyle()
-                        : GoogleFonts.playfairDisplay())
-                    .copyWith(
+                style: theme.textTheme.labelSmall!.copyWith(
                   fontWeight: FontWeight.w700,
                   fontSize: 11,
                   color: theme.isHighContrast
@@ -388,10 +377,7 @@ class _InfoCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           DefaultTextStyle(
-            style: (isAr
-                    ? theme.textTheme.bodyMedium ?? const TextStyle()
-                    : GoogleFonts.playfairDisplay())
-                .copyWith(
+            style: theme.textTheme.bodyMedium!.copyWith(
               fontWeight: FontWeight.w700,
               fontSize: 14,
               color: color,
