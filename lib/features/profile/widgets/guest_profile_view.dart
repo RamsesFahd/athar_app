@@ -50,12 +50,13 @@ class GuestProfileView extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          l10n.welcomeToAthar,
-          style: theme.textTheme.displayMedium?.copyWith(
-            color: theme.colorScheme.primary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+         l10n.welcomeToAthar,
+  textAlign: TextAlign.center,
+  style: theme.textTheme.displayLarge?.copyWith(
+    color: theme.colorScheme.primary,
+    fontWeight: FontWeight.bold,
+  ),
+),
         const SizedBox(height: 12),
         Text(
           l10n.startYourJourney,

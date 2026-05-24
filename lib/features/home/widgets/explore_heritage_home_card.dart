@@ -52,6 +52,7 @@ class ExploreHeritageHomeCard extends StatelessWidget {
             },
       child: Container(
         width: 270,
+        height: 235,
         margin: const EdgeInsets.only(right: 16),
         decoration: BoxDecoration(
           color: cardColor,
@@ -78,17 +79,17 @@ class ExploreHeritageHomeCard extends StatelessWidget {
               children: [
                 CachedNetworkImage(
                   imageUrl: image,
-                  height: 195,
+                  height: 210,
                   width: double.infinity,
                   fit: BoxFit.cover,
                   memCacheWidth: 800,
                   fadeInDuration: const Duration(milliseconds: 200),
                   placeholder: (_, __) => Container(
-                    height: 195,
+                    height: 210,
                     color: placeholderColor,
                   ),
                   errorWidget: (_, __, ___) => Container(
-                    height: 195,
+                    height: 210,
                     color: placeholderColor,
                     child: Icon(
                       Icons.broken_image,
@@ -164,7 +165,7 @@ class ExploreHeritageHomeCard extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+              padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -174,12 +175,12 @@ class ExploreHeritageHomeCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontSize:
-                          (theme.textTheme.titleLarge?.fontSize ?? 18) - 2,
+                          (theme.textTheme.titleLarge?.fontSize ?? 18) - 3,
                       fontWeight: FontWeight.w700,
                       color: theme.colorScheme.onSurface,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 2),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -187,24 +188,25 @@ class ExploreHeritageHomeCard extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 2),
                         child: Icon(
                           Icons.location_on,
-                          size: 16,
+                          size: 14,
                           color: iconColor,
                         ),
                       ),
                       const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          locationLabel,
-                          maxLines: largeText ? 2 : 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface,
-                            fontWeight: isHighContrast
-                                ? FontWeight.w600
-                                : FontWeight.normal,
-                          ),
-                        ),
-                      ),
+                Expanded(
+                  child: Text(
+                    locationLabel,
+                    maxLines: 1, 
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: 12, 
+                      color: theme.colorScheme.onSurface,
+                      fontWeight: isHighContrast
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ),
                     ],
                   ),
                 ],

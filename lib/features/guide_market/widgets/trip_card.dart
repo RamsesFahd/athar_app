@@ -59,7 +59,7 @@ class TripCard extends ConsumerWidget {
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
-    final contentExtra = ((textScale - 1.0).clamp(0.0, 1.0) * 34).toDouble();
+    final contentExtra = ((textScale - 1.0).clamp(0.0, 1.0) * 40).toDouble();
 
     return Stack(
       children: [
@@ -97,7 +97,7 @@ class TripCard extends ConsumerWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withValues(alpha: 0.6),
+                  Colors.black.withValues(alpha: 0.75),
                 ],
               ),
             ),
@@ -136,7 +136,7 @@ class TripCard extends ConsumerWidget {
           right: 12,
           bottom: 12,
           child: SizedBox(
-            height: 110 + contentExtra,
+            height: 120 + contentExtra, // عطينا مساحة إضافية مريحة للكارد عشان الزر ما ينقص
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -150,7 +150,7 @@ class TripCard extends ConsumerWidget {
                     height: 1.2,
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 Row(
                   children: [
                     Icon(
@@ -174,6 +174,7 @@ class TripCard extends ConsumerWidget {
                 ),
                 const Spacer(),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // يوزع السعر والزر على الأطراف بالملي
                   children: [
                     Directionality(
                       textDirection: TextDirection.ltr,
@@ -183,8 +184,8 @@ class TripCard extends ConsumerWidget {
                         children: [
                           SvgPicture.asset(
                             'assets/icons/saudi_riyal.svg',
-                            width: 16,
-                            height: 16,
+                            width: 15,
+                            height: 15,
                             colorFilter: ColorFilter.mode(
                               colorScheme.onPrimary,
                               BlendMode.srcIn,
@@ -201,11 +202,9 @@ class TripCard extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    const Spacer(),
-                   Expanded(
+                    Flexible( // يخلي الزر ياخذ مساحته الطبيعية بدون ما ينعفط أو يختفي
                       child: Align(
-                        alignment:
-                            isAr ? Alignment.centerLeft : Alignment.centerRight,
+                        alignment: isAr ? Alignment.centerLeft : Alignment.centerRight,
                         child: GestureDetector(
                           onTap: isFullyBooked
                               ? null
@@ -226,7 +225,7 @@ class TripCard extends ConsumerWidget {
                                 },
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
+                                horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
                               color: isFullyBooked
                                   ? Colors.white.withValues(alpha: 0.25)
@@ -237,12 +236,12 @@ class TripCard extends ConsumerWidget {
                               isFullyBooked
                                   ? l10n.tripFullyBooked
                                   : l10n.tripCardDetails,
-                              maxLines: 2,
+                              maxLines: 1, // حماية عشان ما ينزل سطر ثاني وينقَص
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
                               style: textTheme.labelSmall?.copyWith(
                                 color: colorScheme.onPrimary,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                           ),
@@ -270,7 +269,8 @@ class TripCard extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
     final cardExtra = ((textScale - 1.0).clamp(0.0, 1.0) * 42).toDouble();
-    final cardHeight = 150 + cardExtra;
+    // 1. 👈 زدنا الارتفاع هنا إلى 170 عشان ندفن الأوفر فلو الخايس ونعطي الزر والنصوص مساحتها الكاملة
+    final cardHeight = 170 + cardExtra;
 
     return SizedBox(
       height: cardHeight,
@@ -284,18 +284,19 @@ class TripCard extends ConsumerWidget {
                 child: CachedNetworkImage(
                   imageUrl: trip.imageUrl,
                   width: 130,
-                  height: 150,
+                  // 2. 👈 خليناها تاخذ نفس ارتفاع الكارد بالكامل عشان ما تسبب تعارض وأوفر فلو عمودي
+                  height: cardHeight, 
                   fit: BoxFit.cover,
                   memCacheWidth: 400,
                   fadeInDuration: const Duration(milliseconds: 200),
                   placeholder: (_, __) => Container(
                     width: 130,
-                    height: 150,
+                    height: cardHeight,
                     color: colorScheme.surfaceContainerHighest,
                   ),
                   errorWidget: (_, __, ___) => Container(
                     width: 130,
-                    height: 150,
+                    height: cardHeight,
                     color: colorScheme.surface,
                     alignment: Alignment.center,
                     child: Icon(
@@ -385,7 +386,9 @@ class TripCard extends ConsumerWidget {
 
                   const Spacer(),
 
+                  // 👈 التعديل حق السعر والزر بداخل صفك الأصلي
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween, 
                     children: [
                       Directionality(
                         textDirection: TextDirection.ltr,
@@ -394,8 +397,8 @@ class TripCard extends ConsumerWidget {
                           children: [
                             SvgPicture.asset(
                               'assets/icons/saudi_riyal.svg',
-                              width: 16,
-                              height: 16,
+                              width: 15, 
+                              height: 15,
                               colorFilter: ColorFilter.mode(
                                 colorScheme.primary,
                                 BlendMode.srcIn,
@@ -412,8 +415,7 @@ class TripCard extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      const Spacer(),
-                      Expanded(
+                      Flexible( // يحمي الزر حق تفاصيل الرحلة ويخليه يطلع طبيعي وينزل للمكان الصح
                         child: Align(
                           alignment: isAr
                               ? Alignment.centerLeft

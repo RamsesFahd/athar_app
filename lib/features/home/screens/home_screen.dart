@@ -40,7 +40,7 @@ class HomeScreen extends ConsumerWidget {
   static const double _pageH = 16;
   static const double _sectionGap = 26;
   static const double _headerToContent = 16;
-  static const double _homeCardListHeight = 285;
+  static const double _homeCardListHeight = 300;
 
   static double _largeTextExtra(BuildContext context, double maxExtra) {
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
@@ -164,6 +164,7 @@ class _YouMayLikeSection extends ConsumerWidget {
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: HomeScreen._pageH),
+                clipBehavior: Clip.none,
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   final item = items[index];
@@ -276,6 +277,7 @@ class _HeritageSection extends ConsumerWidget {
               height: listHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
+                clipBehavior: Clip.none,
                 padding: const EdgeInsets.symmetric(
                     horizontal: HomeScreen._pageH),
                 itemCount: items.length,
@@ -351,6 +353,7 @@ class _AttractionsSection extends ConsumerWidget {
               height: listHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
+                clipBehavior: Clip.none,
                 padding: const EdgeInsets.symmetric(
                     horizontal: HomeScreen._pageH),
                 itemCount: shown.length,
@@ -421,6 +424,7 @@ class _TripsSection extends ConsumerWidget {
               height: listHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
+                clipBehavior: Clip.none,
                 padding: const EdgeInsets.symmetric(
                     horizontal: HomeScreen._pageH),
                 itemCount: shown.length,
@@ -489,6 +493,7 @@ class _EventsSection extends ConsumerWidget {
               height: listHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
+                clipBehavior: Clip.none,
                 padding: const EdgeInsets.symmetric(
                     horizontal: HomeScreen._pageH),
                 itemCount: shown.length,
