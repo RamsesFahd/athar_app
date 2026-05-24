@@ -530,9 +530,7 @@ class _PinListCard extends ConsumerWidget {
               ),
             ),
             Icon(
-              Directionality.of(context) == TextDirection.rtl
-                  ? Icons.chevron_left
-                  : Icons.chevron_right,
+              Icons.chevron_right,
               color: cs.onSurface.withValues(alpha: 0.4),
             ),
           ],
