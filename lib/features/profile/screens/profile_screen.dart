@@ -42,13 +42,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   int _activeTabIndex = 0;
 
   // ── Notification preferences ──────────────────────────────────────────────
-  static const _kBookingNotif  = 'notif_booking';
+  static const _kBookingNotif = 'notif_booking';
   static const _kEventReminders = 'notif_events';
   static const _kMarketingEmails = 'notif_marketing';
 
   bool _bookingNotifications = true;
-  bool _eventReminders       = true;
-  bool _marketingEmails      = false;
+  bool _eventReminders = true;
+  bool _marketingEmails = false;
 
   @override
   void initState() {
@@ -57,7 +57,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       final user = ref.read(authNotifierProvider).value;
       if (user is TutorModel) {
-        ref.read(profileNotifierProvider.notifier).checkAndExpireCredentials(user);
+        ref
+            .read(profileNotifierProvider.notifier)
+            .checkAndExpireCredentials(user);
       }
     });
   }
@@ -66,9 +68,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
     setState(() {
-      _bookingNotifications = prefs.getBool(_kBookingNotif)  ?? true;
-      _eventReminders       = prefs.getBool(_kEventReminders) ?? true;
-      _marketingEmails      = prefs.getBool(_kMarketingEmails) ?? false;
+      _bookingNotifications = prefs.getBool(_kBookingNotif) ?? true;
+      _eventReminders = prefs.getBool(_kEventReminders) ?? true;
+      _marketingEmails = prefs.getBool(_kMarketingEmails) ?? false;
     });
   }
 
@@ -105,7 +107,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     // Persist to Firestore so the Cloud Function can gate push delivery.
     if (firestoreKey != null) {
-     final user = ref.read(authNotifierProvider).valueOrNull;
+      final user = ref.read(authNotifierProvider).valueOrNull;
       if (user != null) {
         await ref.read(profileRepositoryProvider).updateUserData(
           user.uId,
@@ -161,7 +163,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  Widget _buildNavigationTabs(ThemeData theme, AppLocalizations l10n, UserModel user) {
+  Widget _buildNavigationTabs(
+      ThemeData theme, AppLocalizations l10n, UserModel user) {
     final isTutor = user is TutorModel;
     return Container(
       color: theme.colorScheme.surface,
@@ -189,11 +192,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 title,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                 color: isSelected
-    ? theme.colorScheme.primary
-    : isHighContrast
-        ? theme.colorScheme.onSurface
-        : theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.5),
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : isHighContrast
+                          ? theme.colorScheme.onSurface
+                          : theme.textTheme.bodyMedium?.color
+                              ?.withValues(alpha: 0.5),
                 ),
               ),
             ),
@@ -226,7 +230,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           if (favorites.isEmpty) {
             return Center(
               child: Text(
-                isAr ? 'لا توجد عناصر محفوظة' : 'No saved items yet',
+                l10n.profileNoSavedItems,
                 style: theme.textTheme.bodyLarge
                     ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
               ),
@@ -240,17 +244,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               final optimisticSaved =
                   ref.watch(optimisticFavoriteStateProvider(item.itemId));
               final typeText = item.itemType == FavoriteItemType.cultural
-                  ? (isAr ? 'تراث ثقافي' : 'Cultural')
-                  : (isAr ? 'رحلة' : 'Trip');
+                  ? l10n.profileFavoriteTypeCultural
+                  : l10n.trip;
               return SavedCard(
                 title: isAr ? item.titleAr : item.titleEn,
                 location: isAr ? item.locationAr : item.locationEn,
                 typeText: typeText,
                 image: item.imageUrl,
                 isSaved: optimisticSaved ?? true,
-                onToggleSave: () => ref
-                    .read(favoritesNotifierProvider.notifier)
-                    .toggle(item),
+                onToggleSave: () =>
+                    ref.read(favoritesNotifierProvider.notifier).toggle(item),
                 onTap: () => _openFavoriteItem(context, item),
               );
             },
@@ -275,7 +278,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             if (bookings.isEmpty) {
               return Center(
                 child: Text(
-                  'No bookings yet',
+                  l10n.profileNoBookingsYet,
                   style: theme.textTheme.bodyLarge
                       ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
@@ -298,7 +301,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               itemCount: sorted.length,
               itemBuilder: (context, index) {
                 final b = sorted[index];
-                return _buildBookingItem(context, b, theme, l10n, user, isHighContrast);
+                return _buildBookingItem(
+                    context, b, theme, l10n, user, isHighContrast);
               },
             );
           },
@@ -312,8 +316,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 constraints: const BoxConstraints(maxWidth: 800),
                 child: Column(
                   children: [
-                        if (user is TutorModel)
-                          _buildTutorCompletenessCard(user, theme, isAr, context),
+                    if (user is TutorModel)
+                      _buildTutorCompletenessCard(user, theme, l10n, context),
                     _buildSettingsGroup(
                       title: l10n.profileSettingsTitle,
                       theme: theme,
@@ -321,28 +325,36 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         SettingsTile(
                           title: l10n.profileEditProfileTitle,
                           leadingIcon: Icons.mode_edit,
-                          onTap: () => _showEditProfileSheet(context, l10n, user),
+                          onTap: () =>
+                              _showEditProfileSheet(context, l10n, user),
                         ),
                         if (user is TutorModel) ...[
-                          if (user.verificationStatus != VerificationStatus.verified) ...[
+                          if (user.verificationStatus !=
+                              VerificationStatus.verified) ...[
                             SettingsTile(
-                              title: user.verificationStatus == VerificationStatus.expired
-                                  ? (isAr ? 'رخصتك منتهية — جدّد وأعد التوثيق' : 'Credential Expired — Re-verify')
+                              title: user.verificationStatus ==
+                                      VerificationStatus.expired
+                                  ? l10n.profileCredentialExpiredReverify
                                   : l10n.tutorLicenseNumberTitle,
-                              subtitle: user.verificationStatus == VerificationStatus.rejected
+                              subtitle: user.verificationStatus ==
+                                      VerificationStatus.rejected
                                   ? (user.rejectionReason != null
-                                      ? '${isAr ? 'سبب الرفض: ' : 'Reason: '}${user.rejectionReason}'
-                                      : (isAr ? 'تم رفض طلبك، يمكنك إعادة التقديم' : 'Request rejected, you may resubmit'))
+                                      ? l10n.profileRejectionReason(
+                                          user.rejectionReason!)
+                                      : l10n
+                                          .profileVerificationRejectedResubmit)
                                   : l10n.tutorCompleteVerificationSubtitle,
                               leadingIcon: Icons.assignment_ind_outlined,
-                              titleColor: user.verificationStatus == VerificationStatus.expired
+                              titleColor: user.verificationStatus ==
+                                      VerificationStatus.expired
                                   ? Colors.red
                                   : theme.colorScheme.primary,
                               onTap: () {
                                 if (!user.phoneVerified) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text(l10n.credVerifPhoneRequiredFirst),
+                                      content: Text(
+                                          l10n.credVerifPhoneRequiredFirst),
                                       backgroundColor: Colors.orange,
                                     ),
                                   );
@@ -351,7 +363,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => const CredentialVerificationScreen(),
+                                    builder: (_) =>
+                                        const CredentialVerificationScreen(),
                                   ),
                                 );
                               },
@@ -367,8 +380,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               MaterialPageRoute(
                                 builder: (_) => UserPreferencesScreen(
                                   isEditMode: true,
-                                  initialInterests:
-                                      user.culturalInterests,
+                                  initialInterests: user.culturalInterests,
                                 ),
                               ),
                             ),
@@ -380,10 +392,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           onTap: () async {
                             final email = user.email;
                             final messenger = ScaffoldMessenger.of(context);
-                            await ref.read(authNotifierProvider.notifier).resetPassword(email: email);
-                            messenger.showSnackBar(
-                              const SnackBar(content: Text("تم إرسال رابط تغيير كلمة المرور إلى بريدك الإلكتروني")),
-                            );
+                            final errorColor =
+                                Theme.of(context).colorScheme.error;
+                            final success = await ref
+                                .read(authNotifierProvider.notifier)
+                                .resetPassword(email: email);
+                            if (success) {
+                              messenger.showSnackBar(SnackBar(
+                                content:
+                                    Text(l10n.profilePasswordResetLinkSent),
+                              ));
+                            } else {
+                              messenger.showSnackBar(SnackBar(
+                                content:
+                                    Text(l10n.profilePasswordResetLinkFailed),
+                                backgroundColor: errorColor,
+                              ));
+                            }
                           },
                           showDivider: false,
                         ),
@@ -391,7 +416,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           title: l10n.profileEditPhone,
                           subtitle: user.phoneNumber,
                           leadingIcon: Icons.phone_android_outlined,
-                          onTap: () => _showPhoneInputDialog(context, l10n, user.phoneNumber),
+                          onTap: () => _showPhoneInputDialog(
+                              context, l10n, user.phoneNumber),
                           showDivider: false,
                         ),
                         SettingsTile(
@@ -465,37 +491,38 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         SettingsTile(
                           title: l10n.settingsContactUs,
                           leadingIcon: Icons.support_agent_rounded,
-onTap: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => const ContactUsScreen(),
-    ),
-  );
-},                        ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ContactUsScreen(),
+                              ),
+                            );
+                          },
+                        ),
                         SettingsTile(
                           title: l10n.settingsPrivacyPolicy,
                           leadingIcon: Icons.privacy_tip_outlined,
                           onTap: () {
-                          Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                          builder: (_) => const PrivacyPolicyScreen(),
-                            ),
-                          );
-                        },
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const PrivacyPolicyScreen(),
+                              ),
+                            );
+                          },
                         ),
                         SettingsTile(
                           title: l10n.settingsAboutAthar,
                           leadingIcon: Icons.info_outline_rounded,
-                         onTap: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => const AboutAtharScreen(),
-    ),
-  );
-},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const AboutAtharScreen(),
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -513,295 +540,296 @@ onTap: () {
   }
 
   Color _statusColor(BookingStatus status, ThemeData theme) {
-  switch (status) {
-    case BookingStatus.approved:
-      return Colors.green;
-    case BookingStatus.rejected:
-      return Colors.red;
-    case BookingStatus.cancelled:
-      return theme.colorScheme.onSurfaceVariant;
-    case BookingStatus.completed:
-      return theme.colorScheme.primary;
-    case BookingStatus.pending:
-      return Colors.amber.shade700;
+    switch (status) {
+      case BookingStatus.approved:
+        return Colors.green;
+      case BookingStatus.rejected:
+        return Colors.red;
+      case BookingStatus.cancelled:
+        return theme.colorScheme.onSurfaceVariant;
+      case BookingStatus.completed:
+        return theme.colorScheme.primary;
+      case BookingStatus.pending:
+        return Colors.amber.shade700;
+    }
   }
-}
 
+  Widget _buildBookingItem(
+    BuildContext context,
+    BookingModel b,
+    ThemeData theme,
+    AppLocalizations l10n,
+    UserModel user,
+    bool isHighContrast,
+  ) {
+    final isTutor = user is TutorModel;
+    final statusColor = _statusColor(b.status, theme);
 
-Widget _buildBookingItem(
-  BuildContext context,
-  BookingModel b,
-  ThemeData theme,
-  AppLocalizations l10n,
-  UserModel user,
-  bool isHighContrast,
-) {
-  final isTutor = user is TutorModel;
-  final statusColor = _statusColor(b.status, theme);
-
-  return Container(
-    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: theme.colorScheme.surface,
-      borderRadius: BorderRadius.circular(18),
-      border: Border.all(
-        color: isHighContrast
-        ? theme.colorScheme.onSurface
-        : theme.colorScheme.primary.withValues(alpha: 0.08),
-      ),
-      boxShadow: isHighContrast
-    ? []
-    : [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.04),
-          blurRadius: 14,
-          offset: const Offset(0, 6),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: isHighContrast
+              ? theme.colorScheme.onSurface
+              : theme.colorScheme.primary.withValues(alpha: 0.08),
         ),
-      ],
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // الصورة
-            if (b.imageUrl.isNotEmpty)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: CachedNetworkImage(
-                  imageUrl: b.imageUrl,
-                  width: 64,
-                  height: 64,
-                  fit: BoxFit.cover,
-                  memCacheWidth: 200,
-                  fadeInDuration: const Duration(milliseconds: 200),
-                  placeholder: (_, __) => Container(
+        boxShadow: isHighContrast
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 14,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // الصورة
+              if (b.imageUrl.isNotEmpty)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: CachedNetworkImage(
+                    imageUrl: b.imageUrl,
                     width: 64,
                     height: 64,
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  ),
-                  errorWidget: (_, __, ___) => Container(
-                    width: 64,
-                    height: 64,
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                    child: const Icon(Icons.image_not_supported_outlined, size: 28),
+                    fit: BoxFit.cover,
+                    memCacheWidth: 200,
+                    fadeInDuration: const Duration(milliseconds: 200),
+                    placeholder: (_, __) => Container(
+                      width: 64,
+                      height: 64,
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                    ),
+                    errorWidget: (_, __, ___) => Container(
+                      width: 64,
+                      height: 64,
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                      child: const Icon(Icons.image_not_supported_outlined,
+                          size: 28),
+                    ),
                   ),
                 ),
-              ),
 
-            const SizedBox(width: 12),
+              const SizedBox(width: 12),
 
-            // النصوص
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    b.tripTitle,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      height: 1.25,
-                    ),
-                  ),
-
-                  if (b.tripCity.isNotEmpty) ...[
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on_outlined,
-                          size: 15,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            b.tripCity,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodySmall,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-
-                  const SizedBox(height: 6),
-
-                  //  زر التفاصيل  
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: TextButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => BookingViewScreen(booking: b),
-                        ),
+              // النصوص
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      b.tripTitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        height: 1.25,
                       ),
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    ),
+
+                    if (b.tripCity.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Row(
                         children: [
-                          Text(
-                            l10n.view_details,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.w700,
-                            ),
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: 15,
+                            color: theme.colorScheme.primary,
                           ),
                           const SizedBox(width: 4),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            size: 12,
-                            color: theme.colorScheme.primary,
+                          Expanded(
+                            child: Text(
+                              b.tripCity,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.bodySmall,
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                    ],
 
-            const SizedBox(width: 8),
+                    const SizedBox(height: 6),
 
-            // الحالة
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: statusColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: Text(
-                bookingStatusLabel(status: b.status, isGuide: isTutor, l10n: l10n),
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: statusColor,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
-        ),
-
-        // أزرار المرشد
-        if (isTutor && b.status == BookingStatus.pending) ...[
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isHighContrast
-                    ? theme.colorScheme.primary
-                    : Colors.green,
-                    foregroundColor: theme.colorScheme.onPrimary,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () => ref
-                      .read(marketplaceRepositoryProvider)
-                      .acceptBooking(
-                        b.bookingId,
-                        b.touristId,
+                    //  زر التفاصيل
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: TextButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BookingViewScreen(booking: b),
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              l10n.view_details,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 12,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ],
+                        ),
                       ),
-                  child: Text(l10n.accept_booking),
+                    ),
+                  ],
                 ),
               ),
+
               const SizedBox(width: 8),
-              Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    side: BorderSide(
-                    color: isHighContrast
-                    ? theme.colorScheme.onSurface
-                    : Colors.red,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () => ref
-                      .read(marketplaceRepositoryProvider)
-                      .updateBookingStatus(
-                        b.bookingId,
-                        BookingStatus.rejected,
-                        b.touristId
-                      ),
-                  child: Text(
-                    l10n.reject_booking,
-                    style: TextStyle(
-                    color: isHighContrast
-                    ? theme.colorScheme.onSurface
-                    : Colors.red,
-                    ),
+
+              // الحالة
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: statusColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  bookingStatusLabel(
+                      status: b.status, isGuide: isTutor, l10n: l10n),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: statusColor,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ],
           ),
+
+          // أزرار المرشد
+          if (isTutor && b.status == BookingStatus.pending) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isHighContrast
+                          ? theme.colorScheme.primary
+                          : Colors.green,
+                      foregroundColor: theme.colorScheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () =>
+                        ref.read(marketplaceRepositoryProvider).acceptBooking(
+                              b.bookingId,
+                              b.touristId,
+                            ),
+                    child: Text(l10n.accept_booking),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      side: BorderSide(
+                        color: isHighContrast
+                            ? theme.colorScheme.onSurface
+                            : Colors.red,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () => ref
+                        .read(marketplaceRepositoryProvider)
+                        .updateBookingStatus(
+                            b.bookingId, BookingStatus.rejected, b.touristId),
+                    child: Text(
+                      l10n.reject_booking,
+                      style: TextStyle(
+                        color: isHighContrast
+                            ? theme.colorScheme.onSurface
+                            : Colors.red,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
-      ],
-    ),
-  );
-}
+      ),
+    );
+  }
   // ── Tutor-specific helpers ────────────────────────────────────────────────
 
   /// Profile-level requirements (bio, languages for individuals, phone for contact).
   /// These are independent of admin verification — the user controls them.
-  List<String> _missingProfileFields(TutorModel tutor, bool isAr) {
+  List<String> _missingProfileFields(TutorModel tutor, AppLocalizations l10n) {
     final missing = <String>[];
     if (tutor.bio == null || tutor.bio!.trim().isEmpty) {
-      missing.add(isAr ? 'نبذة شخصية' : 'Bio');
+      missing.add(l10n.profileBioLabel);
     }
     if (!tutor.phoneVerified) {
-      missing.add(isAr ? 'رقم الهاتف (يجب التحقق منه)' : 'Phone number (must be verified)');
+      missing.add(l10n.profilePhoneMustBeVerified);
     }
     // Languages live on the profile for individuals only.
     // Companies pick languages per-trip (different employees, different langs).
     if (tutor.tutorType == TutorType.individual) {
       if (tutor.languages == null || tutor.languages!.isEmpty) {
-        missing.add(isAr ? 'اللغات' : 'Languages');
+        missing.add(l10n.profileLanguagesLabel);
       }
     }
     return missing;
   }
 
   /// Credential/verification requirements — what admin needs to approve the tutor.
-  List<String> _missingVerificationFields(TutorModel tutor, bool isAr) {
+  List<String> _missingVerificationFields(
+      TutorModel tutor, AppLocalizations l10n) {
     final missing = <String>[];
     if (tutor.tutorType == TutorType.individual) {
       if (tutor.licenceNumber == null) {
-        missing.add(isAr ? 'رقم الرخصة' : 'Licence number');
+        missing.add(l10n.profileMissingLicenceNumber);
       }
       if (tutor.licenceExpiryDate == null) {
-        missing.add(isAr ? 'تاريخ انتهاء الرخصة' : 'Licence expiry date');
+        missing.add(l10n.profileMissingLicenceExpiryDate);
       }
     } else if (tutor.tutorType == TutorType.company) {
       if (tutor.companyName == null) {
-        missing.add(isAr ? 'اسم الشركة' : 'Company name');
+        missing.add(l10n.profileMissingCompanyName);
       }
       if (tutor.commercialRegistration == null) {
-        missing.add(isAr ? 'رقم السجل التجاري' : 'Commercial registration');
+        missing.add(l10n.profileMissingCommercialRegistration);
       }
       if (tutor.commercialRegExpiryDate == null) {
-        missing.add(isAr ? 'تاريخ انتهاء السجل التجاري' : 'Commercial reg. expiry');
+        missing.add(l10n.profileMissingCommercialRegExpiry);
       }
       if (tutor.tourismLicenceNumber == null) {
-        missing.add(isAr ? 'رقم الترخيص السياحي' : 'Tourism licence number');
+        missing.add(l10n.profileMissingTourismLicenceNumber);
       }
       if (tutor.tourismLicenceExpiryDate == null) {
-        missing.add(isAr ? 'تاريخ انتهاء الترخيص السياحي' : 'Tourism licence expiry');
+        missing.add(l10n.profileMissingTourismLicenceExpiry);
       }
     }
     return missing;
@@ -812,13 +840,13 @@ Widget _buildBookingItem(
   Widget _buildTutorCompletenessCard(
     TutorModel tutor,
     ThemeData theme,
-    bool isAr,
+    AppLocalizations l10n,
     BuildContext context,
   ) {
     if (_canAddTrip(tutor)) return const SizedBox.shrink();
 
-    final profileMissing = _missingProfileFields(tutor, isAr);
-    final verificationMissing = _missingVerificationFields(tutor, isAr);
+    final profileMissing = _missingProfileFields(tutor, l10n);
+    final verificationMissing = _missingVerificationFields(tutor, l10n);
     final isExpired = tutor.verificationStatus == VerificationStatus.expired;
     final isPending = tutor.verificationStatus == VerificationStatus.pending;
     final isRejected = tutor.verificationStatus == VerificationStatus.rejected;
@@ -833,60 +861,40 @@ Widget _buildBookingItem(
 
     // Priority order matters here — show the most blocking state first.
     if (isExpired) {
-      headline = isAr
-          ? 'رخصتك منتهية — جدّد وأعد التوثيق'
-          : 'Credential expired — renew and re-verify';
+      headline = l10n.profileCredentialExpiredReverify;
       color = theme.colorScheme.error;
       icon = Icons.lock_outline;
     } else if (isRejected) {
-      headline = isAr
-          ? 'تم رفض طلب التوثيق'
-          : 'Verification request rejected';
+      headline = l10n.profileVerificationRejectedTitle;
       subtext = tutor.rejectionReason;
       color = theme.colorScheme.error;
       icon = Icons.error_outline;
     } else if (isPending) {
-      headline = isAr
-          ? 'طلب التوثيق قيد المراجعة'
-          : 'Verification request under review';
-      subtext = isAr
-          ? 'سنُعلمك حالما يتم اعتماد طلبك'
-          : "We'll notify you once your request is approved";
-      color = isHighContrast
-      ? theme.colorScheme.primary
-      : Colors.orange;
+      headline = l10n.profileVerificationPendingTitle;
+      subtext = l10n.profileVerificationPendingSubtitle;
+      color = isHighContrast ? theme.colorScheme.primary : Colors.orange;
       icon = Icons.hourglass_top_outlined;
     } else if (verificationMissing.isNotEmpty) {
       // Not yet submitted for verification
-      headline = isAr
-          ? 'أكمل بيانات التوثيق لإضافة رحلات'
-          : 'Complete verification to add trips';
+      headline = l10n.profileCompleteVerificationToAddTrips;
       color = theme.colorScheme.primary;
       icon = Icons.assignment_ind_outlined;
       itemsToList = verificationMissing;
     } else if (isVerified && profileMissing.isNotEmpty) {
       // Verified but profile still incomplete
-      headline = isAr
-          ? 'أكمل ملفك الشخصي لإضافة رحلات'
-          : 'Complete your profile to add trips';
+      headline = l10n.profileCompleteProfileToAddTrips;
       color = theme.colorScheme.primary;
       icon = Icons.info_outline;
       itemsToList = profileMissing;
     } else if (isVerified) {
       // Verified and profile complete, but credential validity issue (e.g. dates)
-      headline = isAr
-          ? 'تحقق من صلاحية وثائق التوثيق'
-          : 'Check your credential validity';
+      headline = l10n.profileCheckCredentialValidity;
       color = theme.colorScheme.error;
       icon = Icons.warning_amber_outlined;
     } else {
       // Credentials submitted, awaiting admin action
-      headline = isAr
-          ? 'في انتظار التوثيق من الإدارة'
-          : 'Awaiting admin verification';
-      color = isHighContrast
-    ? theme.colorScheme.primary
-    : Colors.orange;
+      headline = l10n.profileAwaitingAdminVerification;
+      color = isHighContrast ? theme.colorScheme.primary : Colors.orange;
       icon = Icons.pending_outlined;
     }
 
@@ -960,37 +968,38 @@ Widget _buildBookingItem(
     );
   }
 
-  Widget _buildSettingsGroup(
-      {required String title,
-      required List<Widget> tiles,
-       required ThemeData theme,
-}) {
-  final isHighContrast = ref.watch(settingsProvider).highContrast;
+  Widget _buildSettingsGroup({
+    required String title,
+    required List<Widget> tiles,
+    required ThemeData theme,
+  }) {
+    final isHighContrast = ref.watch(settingsProvider).highContrast;
 
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
-       boxShadow: isHighContrast
-       ? []
-       : [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.05),
-          blurRadius: 10,
-        ),
-      ],
+        boxShadow: isHighContrast
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                ),
+              ],
         border: Border.all(
-  color: isHighContrast
-      ? theme.colorScheme.onSurface
-      : theme.dividerColor.withValues(alpha: 0.1),
-  width: isHighContrast ? 2 : 1,
-),
+          color: isHighContrast
+              ? theme.colorScheme.onSurface
+              : theme.dividerColor.withValues(alpha: 0.1),
+          width: isHighContrast ? 2 : 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-           padding: const EdgeInsetsDirectional.only(start: 16, top: 16, bottom: 8),
+            padding:
+                const EdgeInsetsDirectional.only(start: 16, top: 16, bottom: 8),
             child: Text(title,
                 style: theme.textTheme.titleLarge?.copyWith(fontSize: 16)),
           ),
@@ -1002,38 +1011,36 @@ Widget _buildBookingItem(
 
   Widget _buildAccountSection(
       ThemeData theme, AppLocalizations l10n, UserModel user) {
-        final isHighContrast = ref.watch(settingsProvider).highContrast;
-        final isAr = Localizations.localeOf(context).languageCode == 'ar';
-        final showDelete = user is TutorModel || user is TouristModel;
+    final isHighContrast = ref.watch(settingsProvider).highContrast;
+    final showDelete = user is TutorModel || user is TouristModel;
 
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(15),
         boxShadow: isHighContrast
-    ? []
-    : [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.05),
-          blurRadius: 10,
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                ),
+              ],
+        border: Border.all(
+          color: isHighContrast
+              ? theme.colorScheme.onSurface
+              : theme.dividerColor.withValues(alpha: 0.1),
+          width: isHighContrast ? 2 : 1,
         ),
-      ],
-
-border: Border.all(
-  color: isHighContrast
-      ? theme.colorScheme.onSurface
-      : theme.dividerColor.withValues(alpha: 0.1),
-  width: isHighContrast ? 2 : 1,
-),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.only(
-                start: 16, top: 16, bottom: 8),
+            padding:
+                const EdgeInsetsDirectional.only(start: 16, top: 16, bottom: 8),
             child: Text(
-              isAr ? 'الحساب' : 'Account',
+              l10n.profileAccountTitle,
               style: theme.textTheme.titleLarge?.copyWith(fontSize: 16),
             ),
           ),
@@ -1053,10 +1060,10 @@ border: Border.all(
             _buildDestructiveTile(
               theme: theme,
               icon: Icons.delete_forever_outlined,
-              title: isAr ? 'حذف الحساب' : 'Delete Account',
+              title: l10n.profileDeleteAccount,
               color: Colors.red.shade800,
               showDivider: false,
-              onTap: () => _handleDeleteAccount(context, user, isAr),
+              onTap: () => _handleDeleteAccount(context, user, l10n),
             ),
         ],
       ),
@@ -1108,7 +1115,7 @@ border: Border.all(
   }
 
   Future<void> _handleDeleteAccount(
-      BuildContext context, UserModel user, bool isAr) async {
+      BuildContext context, UserModel user, AppLocalizations l10n) async {
     // Safety check: fetch active bookings before showing the dialog
     final bookings = await ref
         .read(marketplaceRepositoryProvider)
@@ -1121,17 +1128,12 @@ border: Border.all(
     if (hasActive) {
       if (!context.mounted) return;
       final msg = user is TouristModel
-          ? (isAr
-              ? 'لا يمكن حذف حسابك لوجود حجوزات نشطة. يرجى إلغاء رحلاتك القادمة أولاً.'
-              : 'Cannot delete your account while you have active bookings. Please cancel your upcoming trips first.')
-          : (isAr
-              ? 'لا يمكن حذف حسابك لوجود حجوزات نشطة من السياح. يرجى إنهاء التزاماتك أولاً.'
-              : 'Cannot delete your account while tourists have active bookings with you. Please fulfill or cancel these first.');
+          ? l10n.profileDeleteAccountActiveBookingsTourist
+          : l10n.profileDeleteAccountActiveBookingsTutor;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text(msg),
             backgroundColor: Theme.of(context).colorScheme.error,
-            
             duration: const Duration(seconds: 5)),
       );
       return;
@@ -1144,23 +1146,21 @@ border: Border.all(
       context: context,
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        title: Text(isAr ? 'حذف الحساب' : 'Delete Account'),
+        title: Text(l10n.profileDeleteAccount),
         content: Text(
-          isAr
-              ? 'هل أنت متأكد أنك تريد حذف حسابك نهائياً؟\nسيتم حذف جميع بياناتك ولا يمكن التراجع عن هذا الإجراء.'
-              : 'Are you sure you want to permanently delete your account?\nAll your data will be erased and this cannot be undone.',
+          l10n.profileDeleteAccountConfirmBody,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(isAr ? 'إلغاء' : 'Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             style: TextButton.styleFrom(
                 foregroundColor: Theme.of(context).colorScheme.error),
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              isAr ? 'حذف حسابي نهائياً' : 'Delete My Account',
+              l10n.profileDeleteAccountConfirmButton,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
@@ -1175,25 +1175,41 @@ border: Border.all(
 
   //
 // أضيفي هذه الدالة داخل كلاس _ProfileScreenState
-void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? currentPhone) {
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (_) => PhoneOtpDialog(currentPhone: currentPhone),
-  );
-}
+  void _showPhoneInputDialog(
+      BuildContext context, AppLocalizations l10n, String? currentPhone) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => PhoneOtpDialog(currentPhone: currentPhone),
+    );
+  }
+
 //
   static const _allLanguages = [
-    'Arabic', 'English', 'French', 'German', 'Spanish', 'Italian',
-    'Chinese', 'Japanese', 'Korean', 'Russian', 'Turkish', 'Portuguese',
-    'Hindi', 'Urdu', 'Malay', 'Indonesian',
+    'Arabic',
+    'English',
+    'French',
+    'German',
+    'Spanish',
+    'Italian',
+    'Chinese',
+    'Japanese',
+    'Korean',
+    'Russian',
+    'Turkish',
+    'Portuguese',
+    'Hindi',
+    'Urdu',
+    'Malay',
+    'Indonesian',
   ];
 
-  void _showEditProfileSheet(BuildContext context, AppLocalizations l10n, UserModel user) {
-    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+  void _showEditProfileSheet(
+      BuildContext context, AppLocalizations l10n, UserModel user) {
     final tutor = user is TutorModel ? user : null;
     final isTutor = tutor != null;
-    final isIndividualTutor = isTutor && tutor.tutorType == TutorType.individual;
+    final isIndividualTutor =
+        isTutor && tutor.tutorType == TutorType.individual;
     final nameController = TextEditingController(text: user.fullName);
     final bioController = TextEditingController(text: tutor?.bio ?? '');
     final selectedLanguages = List<String>.from(tutor?.languages ?? []);
@@ -1241,8 +1257,9 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                     controller: nameController,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
-                      labelText: isAr ? 'الاسم الكامل' : 'Full Name',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      labelText: l10n.fullNameLabel,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
                   if (isTutor) ...[
@@ -1253,10 +1270,8 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                       maxLength: 200,
                       textInputAction: TextInputAction.newline,
                       decoration: InputDecoration(
-                        labelText: isAr ? 'نبذة شخصية' : 'Bio',
-                        hintText: isAr
-                            ? 'تحدث قليلاً عن نفسك وخبراتك...'
-                            : 'Tell us a bit about yourself and your experience...',
+                        labelText: l10n.profileBioLabel,
+                        hintText: l10n.profileBioHint,
                         alignLabelWithHint: true,
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12)),
@@ -1267,13 +1282,14 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                     if (isIndividualTutor) ...[
                       const SizedBox(height: 16),
                       Text(
-                        isAr ? 'اللغات التي تتحدث بها' : 'Languages spoken',
+                        l10n.profileLanguagesSpoken,
                         style: theme.textTheme.bodyMedium
                             ?.copyWith(fontWeight: FontWeight.w600),
                       ),
                       const SizedBox(height: 10),
                       _buildLanguagePicker(
                         theme: theme,
+                        l10n: l10n,
                         selected: selectedLanguages,
                         onToggle: (lang, isNowSelected) => setSheetState(() {
                           if (isNowSelected) {
@@ -1288,20 +1304,18 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.06),
+                          color:
+                              theme.colorScheme.primary.withValues(alpha: 0.06),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Row(
                           children: [
                             Icon(Icons.info_outline,
-                                size: 16,
-                                color: theme.colorScheme.primary),
+                                size: 16, color: theme.colorScheme.primary),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                isAr
-                                    ? 'بصفتك شركة، حدد اللغات لكل رحلة على حدة عند إنشائها'
-                                    : 'As a company, specify languages per-trip when creating it',
+                                l10n.profileCompanyLanguagesHint,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: theme.colorScheme.primary,
                                 ),
@@ -1320,20 +1334,32 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                         final name = nameController.text.trim();
                         if (name.isEmpty) return;
                         final nav = Navigator.of(sheetCtx);
-                        await ref.read(profileNotifierProvider.notifier).updateProfileData(
-                          name: name,
-                          bio: isTutor ? bioController.text.trim() : null,
-                          languages: isIndividualTutor
-                              ? List<String>.from(selectedLanguages)
-                              : null,
-                        );
-                        nav.pop();
+                        final messenger = ScaffoldMessenger.of(context);
+                        final errorColor = Theme.of(context).colorScheme.error;
+                        final success = await ref
+                            .read(profileNotifierProvider.notifier)
+                            .updateProfileData(
+                              name: name,
+                              bio: isTutor ? bioController.text.trim() : null,
+                              languages: isIndividualTutor
+                                  ? List<String>.from(selectedLanguages)
+                                  : null,
+                            );
+                        if (success) {
+                          nav.pop();
+                        } else {
+                          messenger.showSnackBar(SnackBar(
+                            content: Text(l10n.errorNoInternetConnection),
+                            backgroundColor: errorColor,
+                          ));
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
-                      child: Text(isAr ? 'حفظ' : 'Save'),
+                      child: Text(l10n.profileSave),
                     ),
                   ),
                 ],
@@ -1344,10 +1370,12 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
       ),
     );
   }
+
   /// Clean rectangular language picker — selected = filled primary + white text,
   /// unselected = transparent with primary outline.
   Widget _buildLanguagePicker({
     required ThemeData theme,
+    required AppLocalizations l10n,
     required List<String> selected,
     required void Function(String lang, bool isNowSelected) onToggle,
   }) {
@@ -1356,6 +1384,7 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
       runSpacing: 8,
       children: _allLanguages.map((lang) {
         final isSelected = selected.contains(lang);
+        final label = _languageLabel(lang, l10n);
         return InkWell(
           onTap: () => onToggle(lang, !isSelected),
           borderRadius: BorderRadius.circular(10),
@@ -1363,9 +1392,8 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
             duration: const Duration(milliseconds: 180),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: isSelected
-                  ? theme.colorScheme.primary
-                  : Colors.transparent,
+              color:
+                  isSelected ? theme.colorScheme.primary : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color: isSelected
@@ -1383,11 +1411,10 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                   const SizedBox(width: 6),
                 ],
                 Text(
-                  lang,
+                  label,
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.w500,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     color: isSelected
                         ? theme.colorScheme.onPrimary
                         : theme.colorScheme.primary,
@@ -1401,7 +1428,47 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
     );
   }
 
-  Future<void> _openFavoriteItem(BuildContext context, FavoriteItemModel item) async {
+  String _languageLabel(String lang, AppLocalizations l10n) {
+    switch (lang) {
+      case 'Arabic':
+        return l10n.arabic;
+      case 'English':
+        return l10n.english;
+      case 'French':
+        return l10n.french;
+      case 'German':
+        return l10n.german;
+      case 'Spanish':
+        return l10n.spanish;
+      case 'Italian':
+        return l10n.italian;
+      case 'Chinese':
+        return l10n.chinese;
+      case 'Japanese':
+        return l10n.japanese;
+      case 'Korean':
+        return l10n.korean;
+      case 'Russian':
+        return l10n.russian;
+      case 'Turkish':
+        return l10n.turkish;
+      case 'Portuguese':
+        return l10n.portuguese;
+      case 'Hindi':
+        return l10n.hindi;
+      case 'Urdu':
+        return l10n.urdu;
+      case 'Malay':
+        return l10n.malay;
+      case 'Indonesian':
+        return l10n.indonesian;
+      default:
+        return lang;
+    }
+  }
+
+  Future<void> _openFavoriteItem(
+      BuildContext context, FavoriteItemModel item) async {
     if (item.itemType == FavoriteItemType.cultural) {
       final cultural = await ref
           .read(culturalRepositoryProvider)
@@ -1445,7 +1512,7 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                     color: theme.colorScheme.onSurfaceVariant,
+                      color: theme.colorScheme.onSurfaceVariant,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -1462,7 +1529,9 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                   label: l10n.profileLanguageArabic,
                   isSelected: currentLocale == 'ar',
                   onTap: () {
-                    ref.read(settingsProvider.notifier).setLocale(const Locale('ar'));
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setLocale(const Locale('ar'));
                     Navigator.pop(sheetCtx);
                   },
                 ),
@@ -1472,7 +1541,9 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                   label: l10n.profileLanguageEnglish,
                   isSelected: currentLocale == 'en',
                   onTap: () {
-                    ref.read(settingsProvider.notifier).setLocale(const Locale('en'));
+                    ref
+                        .read(settingsProvider.notifier)
+                        .setLocale(const Locale('en'));
                     Navigator.pop(sheetCtx);
                   },
                 ),
@@ -1500,9 +1571,7 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: isSelected
-              ? theme.colorScheme.primary
-              : Colors.transparent,
+          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
@@ -1518,8 +1587,7 @@ void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? 
                 label,
                 style: TextStyle(
                   fontSize: 15,
-                  fontWeight:
-                      isSelected ? FontWeight.w600 : FontWeight.w500,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected
                       ? theme.colorScheme.onPrimary
                       : theme.colorScheme.primary,

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -92,8 +93,25 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                    child: Image.network(widget.imageUrl,
-                                        width: 90, height: 90, fit: BoxFit.cover),
+                                    child: CachedNetworkImage(
+                                      imageUrl: widget.imageUrl,
+                                      width: 90,
+                                      height: 90,
+                                      fit: BoxFit.cover,
+                                      placeholder: (_, __) => ColoredBox(
+                                        color: theme.colorScheme.surfaceContainerHighest,
+                                      ),
+                                      errorWidget: (_, __, ___) => Container(
+                                        width: 90,
+                                        height: 90,
+                                        color: theme.colorScheme.surfaceContainerHighest,
+                                        child: Icon(
+                                          Icons.image_not_supported_outlined,
+                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                                          size: 28,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                   const SizedBox(width: 16),
                                   Expanded(

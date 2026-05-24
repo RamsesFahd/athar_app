@@ -183,17 +183,14 @@ class AuthNotifier extends _$AuthNotifier {
     });
   }
 
-  // reset password method that takes an email address and sends a password reset email to the user. This allows users who have forgotten their password to regain access to their account by following the instructions in the email.
-  Future<void> resetPassword({required String email}) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
+  Future<bool> resetPassword({required String email}) async {
+    try {
       final repo = ref.read(authRepositoryProvider);
       final error = await repo.resetPassword(email);
-
-      if (error != null) throw error;
-
-      return state.value; // return the current user data without changing it, since resetting the password doesn't affect the authentication status
-    });
+      return error == null;
+    } catch (_) {
+      return false;
+    }
   }
 
   // send verfication link method

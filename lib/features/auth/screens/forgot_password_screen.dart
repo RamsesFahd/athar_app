@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
-import '../../../core/models/user/user_model.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/auth_utils.dart';
 import '../logic/auth_notifier.dart';
@@ -17,6 +16,7 @@ class ForgotPasswordScreen extends ConsumerStatefulWidget {
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
   bool _isSubmitted = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -28,30 +28,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
-      next.whenOrNull(
-        error: (error, stack) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AuthUtils.translateError(error.toString(), l10n)),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-        },
-        data: (_) {
-          if (previous is AsyncLoading) {
-            setState(() => _isSubmitted = true);
-          }
-        },
-      );
-    });
-
-    final authState = ref.watch(authNotifierProvider);
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.transparent, // ليظهر لون خلفية Scaffold
+        backgroundColor: Colors.transparent,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, size: 24),
           onPressed: () => Navigator.pop(context),
@@ -61,7 +41,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: _isSubmitted
             ? _buildSuccessState(l10n)
-            : _buildFormState(l10n, authState.isLoading),
+            : _buildFormState(l10n, _isLoading),
       ),
     );
   }
@@ -85,8 +65,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         Text(
           l10n.emailLabel,
           style: theme.textTheme.titleLarge?.copyWith(
-            fontSize:
-                theme.textTheme.bodyLarge?.fontSize, // يتبع الحجم الأساسي للثيم
+            fontSize: theme.textTheme.bodyLarge?.fontSize,
           ),
         ),
         const SizedBox(height: 8),
@@ -121,7 +100,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         AtharButton(
           label: l10n.sendLinkButton,
           isLoading: isLoading,
-          onPressed: () {
+          onPressed: () async {
             final email = _emailController.text.trim();
             if (email.isEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -129,7 +108,21 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               );
               return;
             }
-            ref.read(authNotifierProvider.notifier).resetPassword(email: email);
+            final errorColor = Theme.of(context).colorScheme.error;
+            setState(() => _isLoading = true);
+            final success = await ref
+                .read(authNotifierProvider.notifier)
+                .resetPassword(email: email);
+            if (!mounted) return;
+            setState(() => _isLoading = false);
+            if (success) {
+              setState(() => _isSubmitted = true);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(AuthUtils.translateError('errorUnexpected', l10n)),
+                backgroundColor: errorColor,
+              ));
+            }
           },
         ),
       ],
@@ -148,8 +141,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             l10n.emailSentTitle,
             textAlign: TextAlign.center,
             style: theme.textTheme.displayLarge?.copyWith(
-              fontSize: (theme.textTheme.displayLarge?.fontSize ?? 32) *
-                  0.8, // نسبة وتناسب مع حجم الثيم
+              fontSize: (theme.textTheme.displayLarge?.fontSize ?? 32) * 0.8,
             ),
           ),
           const SizedBox(height: 12),

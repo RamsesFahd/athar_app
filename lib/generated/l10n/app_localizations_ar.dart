@@ -149,6 +149,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get errorUnexpected => 'حدث خطأ. يرجى المحاولة مرة أخرى.';
 
   @override
+  String get errorNoInternetConnection =>
+      'لا يوجد اتصال بالإنترنت. يرجى المحاولة مرة أخرى.';
+
+  @override
   String get fillAllFieldsError => 'يرجى ملء جميع الحقول';
 
   @override
@@ -360,6 +364,119 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profileAccountTitle => 'الحساب';
+
+  @override
+  String get profileNoSavedItems => 'لا توجد عناصر محفوظة';
+
+  @override
+  String get profileFavoriteTypeCultural => 'تراث ثقافي';
+
+  @override
+  String get profileCredentialExpiredReverify =>
+      'رخصتك منتهية — جدّد وأعد التوثيق';
+
+  @override
+  String profileRejectionReason(String reason) {
+    return 'سبب الرفض: $reason';
+  }
+
+  @override
+  String get profileVerificationRejectedResubmit =>
+      'تم رفض طلبك، يمكنك إعادة التقديم';
+
+  @override
+  String get profilePasswordResetLinkSent =>
+      'تم إرسال رابط تغيير كلمة المرور إلى بريدك الإلكتروني';
+
+  @override
+  String get profilePasswordResetLinkFailed =>
+      'تعذّر إرسال الرابط. يرجى التحقق من اتصالك بالإنترنت.';
+
+  @override
+  String get profileBioLabel => 'نبذة شخصية';
+
+  @override
+  String get profileBioHint => 'تحدث قليلاً عن نفسك وخبراتك...';
+
+  @override
+  String get profileLanguagesLabel => 'اللغات';
+
+  @override
+  String get profileLanguagesSpoken => 'اللغات التي تتحدث بها';
+
+  @override
+  String get profileCompanyLanguagesHint =>
+      'بصفتك شركة، حدد اللغات لكل رحلة على حدة عند إنشائها';
+
+  @override
+  String get profilePhoneMustBeVerified => 'رقم الهاتف (يجب التحقق منه)';
+
+  @override
+  String get profileMissingLicenceNumber => 'رقم الرخصة';
+
+  @override
+  String get profileMissingLicenceExpiryDate => 'تاريخ انتهاء الرخصة';
+
+  @override
+  String get profileMissingCompanyName => 'اسم الشركة';
+
+  @override
+  String get profileMissingCommercialRegistration => 'رقم السجل التجاري';
+
+  @override
+  String get profileMissingCommercialRegExpiry => 'تاريخ انتهاء السجل التجاري';
+
+  @override
+  String get profileMissingTourismLicenceNumber => 'رقم الترخيص السياحي';
+
+  @override
+  String get profileMissingTourismLicenceExpiry =>
+      'تاريخ انتهاء الترخيص السياحي';
+
+  @override
+  String get profileVerificationRejectedTitle => 'تم رفض طلب التوثيق';
+
+  @override
+  String get profileVerificationPendingTitle => 'طلب التوثيق قيد المراجعة';
+
+  @override
+  String get profileVerificationPendingSubtitle =>
+      'سنُعلمك حالما يتم اعتماد طلبك';
+
+  @override
+  String get profileCompleteVerificationToAddTrips =>
+      'أكمل بيانات التوثيق لإضافة رحلات';
+
+  @override
+  String get profileCompleteProfileToAddTrips =>
+      'أكمل ملفك الشخصي لإضافة رحلات';
+
+  @override
+  String get profileCheckCredentialValidity => 'تحقق من صلاحية وثائق التوثيق';
+
+  @override
+  String get profileAwaitingAdminVerification => 'في انتظار التوثيق من الإدارة';
+
+  @override
+  String get profileDeleteAccount => 'حذف الحساب';
+
+  @override
+  String get profileDeleteAccountConfirmBody =>
+      'هل أنت متأكد أنك تريد حذف حسابك نهائياً؟\nسيتم حذف جميع بياناتك ولا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get profileDeleteAccountConfirmButton => 'حذف حسابي نهائياً';
+
+  @override
+  String get profileNoBookingsYet => 'لا توجد حجوزات بعد';
+
+  @override
+  String get profileDeleteAccountActiveBookingsTourist =>
+      'لا يمكن حذف حسابك لوجود حجوزات نشطة. يرجى إلغاء رحلاتك القادمة أولاً.';
+
+  @override
+  String get profileDeleteAccountActiveBookingsTutor =>
+      'لا يمكن حذف حسابك لوجود حجوزات نشطة من السياح. يرجى إنهاء التزاماتك أولاً.';
 
   @override
   String get profileBookingNotifications => 'إشعارات الحجوزات';
@@ -875,6 +992,30 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get chinese => 'الصينية';
+
+  @override
+  String get italian => 'الإيطالية';
+
+  @override
+  String get japanese => 'اليابانية';
+
+  @override
+  String get korean => 'الكورية';
+
+  @override
+  String get russian => 'الروسية';
+
+  @override
+  String get portuguese => 'البرتغالية';
+
+  @override
+  String get hindi => 'الهندية';
+
+  @override
+  String get malay => 'الماليزية';
+
+  @override
+  String get indonesian => 'الإندونيسية';
 
   @override
   String get myCulturalAchievements => 'إنجازاتي الثقافية';

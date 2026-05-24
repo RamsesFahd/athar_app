@@ -149,6 +149,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorUnexpected => 'Something went wrong. Please try again.';
 
   @override
+  String get errorNoInternetConnection =>
+      'No internet connection. Please try again.';
+
+  @override
   String get fillAllFieldsError => 'Please fill in all fields';
 
   @override
@@ -359,6 +363,121 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileAccountTitle => 'Account';
+
+  @override
+  String get profileNoSavedItems => 'No saved items yet';
+
+  @override
+  String get profileFavoriteTypeCultural => 'Cultural';
+
+  @override
+  String get profileCredentialExpiredReverify =>
+      'Credential expired — renew and re-verify';
+
+  @override
+  String profileRejectionReason(String reason) {
+    return 'Reason: $reason';
+  }
+
+  @override
+  String get profileVerificationRejectedResubmit =>
+      'Request rejected, you may resubmit';
+
+  @override
+  String get profilePasswordResetLinkSent =>
+      'A password reset link has been sent to your email.';
+
+  @override
+  String get profilePasswordResetLinkFailed =>
+      'Failed to send the link. Please check your internet connection.';
+
+  @override
+  String get profileBioLabel => 'Bio';
+
+  @override
+  String get profileBioHint =>
+      'Tell us a bit about yourself and your experience...';
+
+  @override
+  String get profileLanguagesLabel => 'Languages';
+
+  @override
+  String get profileLanguagesSpoken => 'Languages spoken';
+
+  @override
+  String get profileCompanyLanguagesHint =>
+      'As a company, specify languages per-trip when creating it';
+
+  @override
+  String get profilePhoneMustBeVerified => 'Phone number (must be verified)';
+
+  @override
+  String get profileMissingLicenceNumber => 'License number';
+
+  @override
+  String get profileMissingLicenceExpiryDate => 'License expiry date';
+
+  @override
+  String get profileMissingCompanyName => 'Company name';
+
+  @override
+  String get profileMissingCommercialRegistration => 'Commercial registration';
+
+  @override
+  String get profileMissingCommercialRegExpiry => 'Commercial reg. expiry';
+
+  @override
+  String get profileMissingTourismLicenceNumber => 'Tourism license number';
+
+  @override
+  String get profileMissingTourismLicenceExpiry => 'Tourism license expiry';
+
+  @override
+  String get profileVerificationRejectedTitle =>
+      'Verification request rejected';
+
+  @override
+  String get profileVerificationPendingTitle =>
+      'Verification request under review';
+
+  @override
+  String get profileVerificationPendingSubtitle =>
+      'We\'ll notify you once your request is approved';
+
+  @override
+  String get profileCompleteVerificationToAddTrips =>
+      'Complete verification to add trips';
+
+  @override
+  String get profileCompleteProfileToAddTrips =>
+      'Complete your profile to add trips';
+
+  @override
+  String get profileCheckCredentialValidity => 'Check your credential validity';
+
+  @override
+  String get profileAwaitingAdminVerification => 'Awaiting admin verification';
+
+  @override
+  String get profileDeleteAccount => 'Delete Account';
+
+  @override
+  String get profileDeleteAccountConfirmBody =>
+      'Are you sure you want to permanently delete your account?\nAll your data will be erased and this cannot be undone.';
+
+  @override
+  String get profileDeleteAccountConfirmButton => 'Delete My Account';
+
+  @override
+  String get profileNoBookingsYet => 'No bookings yet';
+
+  @override
+  String get profileDeleteAccountActiveBookingsTourist =>
+      'Cannot delete your account while you have active bookings. Please cancel your upcoming trips first.';
+
+  @override
+  String get profileDeleteAccountActiveBookingsTutor =>
+      'Cannot delete your account while tourists have active bookings with you. Please fulfill or cancel these first.';
 
   @override
   String get profileBookingNotifications => 'Booking Notifications';
@@ -875,6 +994,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chinese => 'Chinese';
+
+  @override
+  String get italian => 'Italian';
+
+  @override
+  String get japanese => 'Japanese';
+
+  @override
+  String get korean => 'Korean';
+
+  @override
+  String get russian => 'Russian';
+
+  @override
+  String get portuguese => 'Portuguese';
+
+  @override
+  String get hindi => 'Hindi';
+
+  @override
+  String get malay => 'Malay';
+
+  @override
+  String get indonesian => 'Indonesian';
 
   @override
   String get myCulturalAchievements => 'My Cultural Achievements';

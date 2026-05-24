@@ -150,6 +150,14 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
           placeholder: (_, __) => ColoredBox(
             color: theme.colorScheme.surfaceContainerHighest,
           ),
+          errorWidget: (_, __, ___) => Container(
+            color: theme.colorScheme.surfaceContainerHighest,
+            child: Icon(
+              Icons.image_not_supported_outlined,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+              size: 36,
+            ),
+          ),
         ),
         SafeArea(
           child: Align(

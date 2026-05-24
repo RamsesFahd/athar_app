@@ -29,13 +29,13 @@ class ProfileNotifier extends _$ProfileNotifier {
     });
   }
 
-  Future<void> updateProfileData({
+  Future<bool> updateProfileData({
     required String name,
     String? bio,
     List<String>? languages,
   }) async {
     final user = ref.read(authNotifierProvider).value;
-    if (user == null) return;
+    if (user == null) return false;
 
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
@@ -46,6 +46,8 @@ class ProfileNotifier extends _$ProfileNotifier {
       if (error != null) throw Exception(error);
       // Stream in AuthNotifier propagates the Firestore update automatically.
     });
+
+    return !state.hasError;
   }
 
   // Step 1: Send OTP — calls onCodeSent() when SMS is dispatched, onError(msg) on failure.

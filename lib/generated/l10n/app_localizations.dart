@@ -368,6 +368,12 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Please try again.'**
   String get errorUnexpected;
 
+  /// No description provided for @errorNoInternetConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Please try again.'**
+  String get errorNoInternetConnection;
+
   /// No description provided for @fillAllFieldsError.
   ///
   /// In en, this message translates to:
@@ -781,6 +787,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account'**
   String get profileAccountTitle;
+
+  /// No description provided for @profileNoSavedItems.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved items yet'**
+  String get profileNoSavedItems;
+
+  /// No description provided for @profileFavoriteTypeCultural.
+  ///
+  /// In en, this message translates to:
+  /// **'Cultural'**
+  String get profileFavoriteTypeCultural;
+
+  /// No description provided for @profileCredentialExpiredReverify.
+  ///
+  /// In en, this message translates to:
+  /// **'Credential expired — renew and re-verify'**
+  String get profileCredentialExpiredReverify;
+
+  /// No description provided for @profileRejectionReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason: {reason}'**
+  String profileRejectionReason(String reason);
+
+  /// No description provided for @profileVerificationRejectedResubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Request rejected, you may resubmit'**
+  String get profileVerificationRejectedResubmit;
+
+  /// No description provided for @profilePasswordResetLinkSent.
+  ///
+  /// In en, this message translates to:
+  /// **'A password reset link has been sent to your email.'**
+  String get profilePasswordResetLinkSent;
+
+  /// No description provided for @profilePasswordResetLinkFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send the link. Please check your internet connection.'**
+  String get profilePasswordResetLinkFailed;
+
+  /// No description provided for @profileBioLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bio'**
+  String get profileBioLabel;
+
+  /// No description provided for @profileBioHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us a bit about yourself and your experience...'**
+  String get profileBioHint;
+
+  /// No description provided for @profileLanguagesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages'**
+  String get profileLanguagesLabel;
+
+  /// No description provided for @profileLanguagesSpoken.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages spoken'**
+  String get profileLanguagesSpoken;
+
+  /// No description provided for @profileCompanyLanguagesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'As a company, specify languages per-trip when creating it'**
+  String get profileCompanyLanguagesHint;
+
+  /// No description provided for @profilePhoneMustBeVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number (must be verified)'**
+  String get profilePhoneMustBeVerified;
+
+  /// No description provided for @profileMissingLicenceNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'License number'**
+  String get profileMissingLicenceNumber;
+
+  /// No description provided for @profileMissingLicenceExpiryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'License expiry date'**
+  String get profileMissingLicenceExpiryDate;
+
+  /// No description provided for @profileMissingCompanyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Company name'**
+  String get profileMissingCompanyName;
+
+  /// No description provided for @profileMissingCommercialRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial registration'**
+  String get profileMissingCommercialRegistration;
+
+  /// No description provided for @profileMissingCommercialRegExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Commercial reg. expiry'**
+  String get profileMissingCommercialRegExpiry;
+
+  /// No description provided for @profileMissingTourismLicenceNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourism license number'**
+  String get profileMissingTourismLicenceNumber;
+
+  /// No description provided for @profileMissingTourismLicenceExpiry.
+  ///
+  /// In en, this message translates to:
+  /// **'Tourism license expiry'**
+  String get profileMissingTourismLicenceExpiry;
+
+  /// No description provided for @profileVerificationRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification request rejected'**
+  String get profileVerificationRejectedTitle;
+
+  /// No description provided for @profileVerificationPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification request under review'**
+  String get profileVerificationPendingTitle;
+
+  /// No description provided for @profileVerificationPendingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll notify you once your request is approved'**
+  String get profileVerificationPendingSubtitle;
+
+  /// No description provided for @profileCompleteVerificationToAddTrips.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete verification to add trips'**
+  String get profileCompleteVerificationToAddTrips;
+
+  /// No description provided for @profileCompleteProfileToAddTrips.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile to add trips'**
+  String get profileCompleteProfileToAddTrips;
+
+  /// No description provided for @profileCheckCredentialValidity.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your credential validity'**
+  String get profileCheckCredentialValidity;
+
+  /// No description provided for @profileAwaitingAdminVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting admin verification'**
+  String get profileAwaitingAdminVerification;
+
+  /// No description provided for @profileDeleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get profileDeleteAccount;
+
+  /// No description provided for @profileDeleteAccountConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to permanently delete your account?\nAll your data will be erased and this cannot be undone.'**
+  String get profileDeleteAccountConfirmBody;
+
+  /// No description provided for @profileDeleteAccountConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete My Account'**
+  String get profileDeleteAccountConfirmButton;
+
+  /// No description provided for @profileNoBookingsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No bookings yet'**
+  String get profileNoBookingsYet;
+
+  /// No description provided for @profileDeleteAccountActiveBookingsTourist.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete your account while you have active bookings. Please cancel your upcoming trips first.'**
+  String get profileDeleteAccountActiveBookingsTourist;
+
+  /// No description provided for @profileDeleteAccountActiveBookingsTutor.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete your account while tourists have active bookings with you. Please fulfill or cancel these first.'**
+  String get profileDeleteAccountActiveBookingsTutor;
 
   /// No description provided for @profileBookingNotifications.
   ///
@@ -1777,6 +1981,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Chinese'**
   String get chinese;
+
+  /// No description provided for @italian.
+  ///
+  /// In en, this message translates to:
+  /// **'Italian'**
+  String get italian;
+
+  /// No description provided for @japanese.
+  ///
+  /// In en, this message translates to:
+  /// **'Japanese'**
+  String get japanese;
+
+  /// No description provided for @korean.
+  ///
+  /// In en, this message translates to:
+  /// **'Korean'**
+  String get korean;
+
+  /// No description provided for @russian.
+  ///
+  /// In en, this message translates to:
+  /// **'Russian'**
+  String get russian;
+
+  /// No description provided for @portuguese.
+  ///
+  /// In en, this message translates to:
+  /// **'Portuguese'**
+  String get portuguese;
+
+  /// No description provided for @hindi.
+  ///
+  /// In en, this message translates to:
+  /// **'Hindi'**
+  String get hindi;
+
+  /// No description provided for @malay.
+  ///
+  /// In en, this message translates to:
+  /// **'Malay'**
+  String get malay;
+
+  /// No description provided for @indonesian.
+  ///
+  /// In en, this message translates to:
+  /// **'Indonesian'**
+  String get indonesian;
 
   /// No description provided for @myCulturalAchievements.
   ///
