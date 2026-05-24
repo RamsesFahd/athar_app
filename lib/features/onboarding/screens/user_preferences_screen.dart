@@ -22,6 +22,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
 import 'package:athar_app/core/utils/taxonomy_repository.dart';
 import 'package:athar_app/core/widgets/interest_image_widget.dart';
+import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/onboarding/logic/preferences_notifier.dart';
 
@@ -61,10 +62,29 @@ class _UserPreferencesScreenState
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authNotifierProvider);
+    final user = authState.valueOrNull;
     final taxonomyAsync = ref.watch(taxonomyProvider);
     final prefsState = ref.watch(preferencesNotifierProvider);
     final theme = Theme.of(context);
     final isAr = Directionality.of(context) == TextDirection.rtl;
+
+    if (authState.isLoading && user == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (user == null || user.role == UserRole.guest) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!context.mounted) return;
+        Navigator.pushReplacementNamed(
+          context,
+          user == null ? AppRoutes.signIn : AppRoutes.home,
+        );
+      });
+      return const SizedBox.shrink();
+    }
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,

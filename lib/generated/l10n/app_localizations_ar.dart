@@ -177,7 +177,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mapLabel => 'الخريطة';
 
   @override
-  String get assistantLabel => 'المساعد';
+  String get assistantLabel => 'راوي';
 
   @override
   String get calendarLabel => 'رحلاتي';
@@ -246,13 +246,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get points => 'نقطة';
 
   @override
-  String get contributions => 'مساهمة';
+  String get contributions => 'إثراء المحتوى الثقافي';
+
+  @override
+  String get contributionShortLabel => 'إثراء';
 
   @override
   String get myInterests => 'اهتماماتي';
 
   @override
-  String get manageContributions => 'إدارة المساهمات';
+  String get manageContributions => 'إدارة إثراء المحتوى الثقافي';
 
   @override
   String get editPicture => 'تعديل الصورة';
@@ -291,7 +294,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profileNotifications => 'الإشعارات';
 
   @override
-  String get profileContributeContent => 'المساهمة بالمحتوى';
+  String get profileContributeContent => 'إثراء المحتوى الثقافي';
 
   @override
   String get profileLogout => 'تسجيل الخروج';
@@ -1109,19 +1112,19 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get addContributionTitle => 'إضافة مساهمة';
+  String get addContributionTitle => 'إثراء المحتوى الثقافي';
 
   @override
   String get titleLabel => 'العنوان';
 
   @override
-  String get titleHint => 'أدخل عنوان المساهمة';
+  String get titleHint => 'أدخل عنوان المحتوى';
 
   @override
   String get descriptionLabel => 'الوصف';
 
   @override
-  String get descriptionHint => 'اكتب وصف المساهمة';
+  String get descriptionHint => 'اكتب وصف المحتوى';
 
   @override
   String get categoryLabel => 'التصنيف';
@@ -1173,10 +1176,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mediaRequiredError => 'الوسائط مطلوبة';
 
   @override
-  String get submitContribution => 'إرسال المساهمة';
+  String get submitContribution => 'إرسال إثراء المحتوى الثقافي';
 
   @override
-  String get submissionSuccessMessage => 'تم إرسال المساهمة للمراجعة بنجاح';
+  String get submissionSuccessMessage => 'تم إرسال الإثراء للمراجعة بنجاح';
 
   @override
   String get requiredField => 'هذا الحقل مطلوب';
@@ -1487,7 +1490,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contactUsGuideSupport => 'دعم المرشدين';
 
   @override
-  String get contactUsContributions => 'المساهمات الثقافية';
+  String get contactUsContributions => 'إثراء المحتوى الثقافي';
 
   @override
   String get contactUsSendMessageTitle => 'أرسل رسالة';
@@ -1789,19 +1792,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get contributionAuthError =>
-      'يرجى تسجيل الدخول مرة أخرى لإضافة مساهمة.';
+      'يرجى تسجيل الدخول مرة أخرى لاستخدام إثراء المحتوى الثقافي.';
 
   @override
   String get contributionUserUnavailable =>
       'تعذّر تحميل ملفك الشخصي. يرجى المحاولة مرة أخرى.';
 
   @override
+  String get contributionGuestAccessMessage =>
+      'يجب إنشاء حساب أو تسجيل الدخول لاستخدام ميزة المحتوى الثقافي.';
+
+  @override
   String contributionErrorWithMessage(String message) {
     String _temp0 = intl.Intl.selectLogic(
       message,
       {
-        '_': 'تعذّر إرسال مساهمتك. يرجى المحاولة مرة أخرى.',
-        'other': 'تعذّر إرسال مساهمتك. يرجى المحاولة مرة أخرى.',
+        '_': 'تعذّر إرسال إثراء المحتوى الثقافي. يرجى المحاولة مرة أخرى.',
+        'other': 'تعذّر إرسال إثراء المحتوى الثقافي. يرجى المحاولة مرة أخرى.',
       },
     );
     return '$_temp0';
@@ -1811,7 +1818,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contributionGoToProfile => 'العودة للملف الشخصي';
 
   @override
-  String get contributionTypeLabel => 'نوع المساهمة';
+  String get contributionTypeLabel => 'نوع المحتوى';
 
   @override
   String get contributionTitleExampleHint => 'مثال: رقصة الخطوة - عسير';
@@ -1842,7 +1849,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contributionSubmittedDateLabel => 'تاريخ الإرسال';
 
   @override
-  String get contributionSubmitNew => 'إرسال مساهمة جديدة';
+  String get contributionSubmitNew => 'إرسال إثراء جديد للمحتوى الثقافي';
 
   @override
   String get contributionRejectionReason => 'سبب الرفض';
@@ -1851,7 +1858,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contributionAchievementsSection => 'الإنجازات';
 
   @override
-  String get contributionMyContributionsSection => 'مساهماتي';
+  String get contributionMyContributionsSection =>
+      'إثراء المحتوى الثقافي الخاص بي';
 
   @override
   String get contributionPhoneVerificationRequiredTitle =>
@@ -1859,7 +1867,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get contributionPhoneVerificationRequiredBody =>
-      'يجب التحقق من رقم جوالك أولًا لإضافة مساهمة. توجّه إلى الملف الشخصي لإكمال التحقق.';
+      'يجب التحقق من رقم جوالك أولًا لاستخدام إثراء المحتوى الثقافي. توجّه إلى الملف الشخصي لإكمال التحقق.';
 
   @override
   String get contributionCompleted => 'مكتمل';
@@ -1883,17 +1891,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contributionQuality => 'جودة عالية';
 
   @override
-  String get contributionTopContributions => 'مساهمات متميزة';
+  String get contributionTopContributions => 'إثراءات متميزة';
 
   @override
   String get contributionNoAchievements => 'لا توجد إنجازات بعد';
 
   @override
-  String get contributionNoContributions => 'لا توجد مساهمات بعد';
+  String get contributionNoContributions => 'لا يوجد إثراء للمحتوى الثقافي بعد';
 
   @override
   String get contributionArchiveLinkMissing =>
-      'هذه المساهمة لا تحتوي على رابط للأرشيف';
+      'هذا الإرسال لا يحتوي على رابط للأرشيف';
 
   @override
   String get contributionArchiveItemNotFound =>
@@ -1912,7 +1920,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contributionWaitingForReview => 'بانتظار مراجعة المشرف';
 
   @override
-  String get contributionRejectedDefault => 'تم رفض المساهمة';
+  String get contributionRejectedDefault => 'تم رفض الإرسال';
 
   @override
   String get bookingAdultsAgeSubtitle => '12 سنة فما فوق';
@@ -2474,19 +2482,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminCancel => 'إلغاء';
 
   @override
-  String get adminAddAttraction => 'إضافة معلم';
+  String get adminAddAttraction => 'إضافة معلم سياحي';
 
   @override
-  String get adminEditAttraction => 'تعديل معلم';
+  String get adminEditAttraction => 'تعديل معلم سياحي';
 
   @override
-  String get adminNoAttractions => 'لا توجد معالم بعد. اضغط + لإضافة معلم.';
+  String get adminNoAttractions =>
+      'لا توجد معالم سياحية بعد. اضغط + لإضافة معلم سياحي.';
 
   @override
   String get adminNoEvents => 'لا توجد فعاليات بعد. اضغط + لإضافة فعالية.';
 
   @override
-  String get adminDeleteAttraction => 'حذف المعلم';
+  String get adminDeleteAttraction => 'حذف المعلم السياحي';
 
   @override
   String adminDeleteAttractionConfirm(String name) {
@@ -2494,16 +2503,16 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get adminAttractionDeleted => 'تم حذف المعلم';
+  String get adminAttractionDeleted => 'تم حذف المعلم السياحي';
 
   @override
-  String get adminAddItem => 'إضافة عنصر';
+  String get adminAddItem => 'إضافة عنصر للأرشيف الثقافي';
 
   @override
-  String get adminEditArchiveItem => 'تعديل عنصر أرشيفي';
+  String get adminEditArchiveItem => 'تعديل عنصر في الأرشيف الثقافي';
 
   @override
-  String get adminAddArchiveItem => 'إضافة عنصر أرشيفي';
+  String get adminAddArchiveItem => 'إضافة عنصر للأرشيف الثقافي';
 
   @override
   String get adminUpdateItem => 'تحديث العنصر';
@@ -2527,7 +2536,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminLongitudeExample => 'خط الطول (مثال: 46.72)';
 
   @override
-  String get adminNoCulturalItems => 'لا توجد عناصر ثقافية بعد';
+  String get adminNoCulturalItems => 'لا توجد عناصر في الأرشيف الثقافي بعد';
 
   @override
   String get adminDeleteItem => 'حذف العنصر';
@@ -2559,11 +2568,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'الرجاء إدخال الإحداثيات (خط العرض والطول)';
 
   @override
-  String get adminAttractionUpdated => 'تم تحديث المعلم!';
+  String get adminAttractionUpdated => 'تم تحديث المعلم السياحي!';
 
   @override
   String get adminAttractionAdded =>
-      'تمت إضافة المعلم! سيتم تشغيل الوسوم الذكية قريباً.';
+      'تمت إضافة المعلم السياحي! سيتم تشغيل الوسوم الذكية قريباً.';
 
   @override
   String get adminMainImage => 'الصورة الرئيسية *';
@@ -2584,7 +2593,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminNameArabicHint => 'أدخل الاسم بالعربي';
 
   @override
-  String get adminNameEnglishHint => 'أدخل اسم المعلم بالإنجليزية';
+  String get adminNameEnglishHint => 'أدخل اسم المعلم السياحي بالإنجليزية';
 
   @override
   String get adminDescriptionArabic => 'الوصف (عربي)';
@@ -2677,7 +2686,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminTicketBookingUrl => 'رابط حجز التذاكر';
 
   @override
-  String get adminUpdateAttraction => 'تحديث المعلم';
+  String get adminUpdateAttraction => 'تحديث المعلم السياحي';
 
   @override
   String get adminTapToChange => 'اضغط للتغيير';
@@ -2771,7 +2780,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminMigrateAllBody =>
-      'سيتم تصنيف كل المعالم والرحلات والفعاليات والعناصر الثقافية باستخدام Gemini AI. قد تستغرق العملية 3-7 دقائق. تأكد من اتصال الإنترنت ثم تابع.';
+      'سيتم تصنيف كل المعالم السياحية والرحلات والفعاليات والعناصر الثقافية باستخدام Gemini AI. قد تستغرق العملية 3-7 دقائق. تأكد من اتصال الإنترنت ثم تابع.';
 
   @override
   String get adminRunMigration => 'تشغيل الترحيل';
@@ -2781,7 +2790,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminMigrationDescription =>
-      'يولد معرفات الاهتمامات ومتجهات التضمين لكل المعالم والرحلات والفعاليات والعناصر الثقافية.';
+      'يولد معرفات الاهتمامات ومتجهات التضمين لكل المعالم السياحية والرحلات والفعاليات والعناصر الثقافية.';
 
   @override
   String get adminMigratingProgress => 'جاري الترحيل... (3-7 دقائق)';

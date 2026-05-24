@@ -69,7 +69,7 @@ class AtharBottomNavigation extends StatelessWidget {
               activeIcon: const Icon(Icons.map),
               label: l10n.mapLabel,
             ),
-            // AI Chatbot
+            // Rawi
             BottomNavigationBarItem(
               icon: const Icon(Icons.message_outlined),
               activeIcon: const Icon(Icons.message),
@@ -86,7 +86,7 @@ class AtharBottomNavigation extends StatelessWidget {
               BottomNavigationBarItem(
                 icon: const Icon(Icons.volunteer_activism_outlined),
                 activeIcon: const Icon(Icons.volunteer_activism),
-                label: l10n.contributions,
+                label: l10n.contributionShortLabel,
               ),
             // Profile
             BottomNavigationBarItem(

@@ -43,7 +43,9 @@ class _GoogleRoleSelectionScreenState
           if (user != null) {
             final tourist = user is TouristModel ? user : null;
             final hasInterests = tourist?.culturalInterests.isNotEmpty ?? false;
-            if (tourist != null && !hasInterests) {
+            if (tourist != null &&
+                tourist.role != UserRole.guest &&
+                !hasInterests) {
               Navigator.pushReplacementNamed(context, AppRoutes.userPreferences);
             } else {
               Navigator.pushReplacementNamed(context, AppRoutes.home);

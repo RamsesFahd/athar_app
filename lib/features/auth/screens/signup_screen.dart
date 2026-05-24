@@ -79,7 +79,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               final tourist = user is TouristModel ? user : null;
               final hasInterests =
                   tourist?.culturalInterests.isNotEmpty ?? false;
-              if (tourist != null && !hasInterests) {
+              if (tourist != null &&
+                  tourist.role != UserRole.guest &&
+                  !hasInterests) {
                 Navigator.pushReplacementNamed(
                     context, AppRoutes.userPreferences);
               } else {

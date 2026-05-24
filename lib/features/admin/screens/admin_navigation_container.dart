@@ -31,9 +31,9 @@ class _AdminNavigationContainerState
   ];
 
   final List<({String label, IconData icon})> _tabs = const [
-    (label: 'الأشخاص', icon: Icons.people_outline),
+    (label: 'المستخدمون', icon: Icons.people_outline),
     (label: 'الرحلات', icon: Icons.card_travel_outlined),
-    (label: 'الأرشيف', icon: Icons.museum_outlined),
+    (label: 'الأرشيف الثقافي', icon: Icons.museum_outlined),
     (label: 'الفعاليات', icon: Icons.celebration_outlined),
     (label: 'المساهمات', icon: Icons.volunteer_activism_outlined),
   ];
@@ -53,50 +53,55 @@ class _AdminNavigationContainerState
     );
     final theme = fixedTheme;
 
-    return Theme(
-      data: fixedTheme,
-      child: MediaQuery(
-        data: MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
-        child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: Text(
-              _tabs[_currentIndex].label,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            backgroundColor: theme.colorScheme.primary,
-            foregroundColor: theme.colorScheme.onPrimary,
-            elevation: 0,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.logout),
-                tooltip: 'Logout',
-                onPressed: () async {
-                  final navigator = Navigator.of(context);
-                  await ref.read(authNotifierProvider.notifier).logout();
-                  navigator.pushNamedAndRemoveUntil(
-                    AppRoutes.signIn,
-                    (route) => false,
-                  );
-                },
+    return Localizations.override(
+      context: context,
+      locale: const Locale('ar'),
+      child: Theme(
+        data: fixedTheme,
+        child: MediaQuery(
+          data:
+              MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),
+          child: Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              title: Text(
+                _tabs[_currentIndex].label,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
-            ],
-          ),
-          body: _screens[_currentIndex],
-          bottomNavigationBar: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (i) => setState(() => _currentIndex = i),
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: theme.colorScheme.primary,
-            unselectedItemColor: theme.colorScheme.onSurfaceVariant,
-            selectedLabelStyle:
-                const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
-            items: _tabs
-                .map((t) => BottomNavigationBarItem(
-                      icon: Icon(t.icon),
-                      label: t.label,
-                    ))
-                .toList(),
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
+              elevation: 0,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  tooltip: 'تسجيل الخروج',
+                  onPressed: () async {
+                    final navigator = Navigator.of(context);
+                    await ref.read(authNotifierProvider.notifier).logout();
+                    navigator.pushNamedAndRemoveUntil(
+                      AppRoutes.signIn,
+                      (route) => false,
+                    );
+                  },
+                ),
+              ],
+            ),
+            body: _screens[_currentIndex],
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: (i) => setState(() => _currentIndex = i),
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: theme.colorScheme.primary,
+              unselectedItemColor: theme.colorScheme.onSurfaceVariant,
+              selectedLabelStyle:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+              items: _tabs
+                  .map((t) => BottomNavigationBarItem(
+                        icon: Icon(t.icon),
+                        label: t.label,
+                      ))
+                  .toList(),
+            ),
           ),
         ),
       ),

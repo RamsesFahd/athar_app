@@ -67,6 +67,21 @@ class _AttractionAdminTile extends ConsumerWidget {
   final AttractionModel attraction;
   const _AttractionAdminTile({required this.attraction});
 
+  String _categoryLabel(String category) {
+    switch (category) {
+      case 'Heritage':
+        return 'تراث';
+      case 'Nature':
+        return 'طبيعة';
+      case 'Arts':
+        return 'فنون';
+      case 'Modern':
+        return 'حديث';
+      default:
+        return category;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -109,7 +124,7 @@ class _AttractionAdminTile extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  attraction.getName(false),
+                  attraction.getName(true),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleSmall
@@ -117,7 +132,7 @@ class _AttractionAdminTile extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${attraction.category} • ${attraction.getCity(false)}',
+                  '${_categoryLabel(attraction.category)} • ${attraction.getCity(true)}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -163,7 +178,7 @@ class _AttractionAdminTile extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         title: Text(AppLocalizations.of(context).adminDeleteAttraction),
         content: Text(AppLocalizations.of(context)
-            .adminDeleteAttractionConfirm(attraction.getName(false))),
+            .adminDeleteAttractionConfirm(attraction.getName(true))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),

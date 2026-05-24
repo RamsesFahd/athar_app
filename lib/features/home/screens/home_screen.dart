@@ -94,7 +94,7 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final user = ref.watch(authNotifierProvider).valueOrNull;
-    final isGuest = user?.role == UserRole.guest;
+    final isGuest = user == null || user.role == UserRole.guest;
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(

@@ -69,6 +69,36 @@ class _ArchiveItemTile extends ConsumerWidget {
   final CulturalItemModel item;
   const _ArchiveItemTile({required this.item});
 
+  String _categoryLabel(String categoryId, AppLocalizations l10n) {
+    switch (categoryId) {
+      case 'food':
+      case 'traditional_food':
+        return l10n.cat_food;
+      case 'craft':
+      case 'handicraft':
+        return l10n.cat_craft;
+      case 'dance':
+        return l10n.cat_dance;
+      case 'architecture':
+        return l10n.cat_architecture;
+      case 'music':
+        return l10n.cat_music;
+      case 'clothing':
+      case 'traditional_clothing':
+        return l10n.cat_clothing;
+      default:
+        return categoryId;
+    }
+  }
+
+  String _arabicTitle(CulturalItemModel item) {
+    return item.titleAr.trim().isNotEmpty ? item.titleAr : item.titleEn;
+  }
+
+  String _arabicRegion(CulturalItemModel item) {
+    return item.regionAr.trim().isNotEmpty ? item.regionAr : item.regionEn;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -114,7 +144,7 @@ class _ArchiveItemTile extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        item.titleEn,
+                        _arabicTitle(item),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleSmall
@@ -132,7 +162,7 @@ class _ArchiveItemTile extends ConsumerWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '${item.categoryId} • ${item.regionEn}',
+                  '${_categoryLabel(item.categoryId, l10n)} • ${_arabicRegion(item)}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -188,7 +218,8 @@ class _ArchiveItemTile extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(AppLocalizations.of(context).adminDeleteItem),
-        content: Text(AppLocalizations.of(context).adminDeleteItemConfirm(item.titleEn)),
+        content: Text(AppLocalizations.of(context)
+            .adminDeleteItemConfirm(_arabicTitle(item))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
