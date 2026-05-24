@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../core/navigation/app_routes.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -22,36 +21,31 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> _initApp() async {
-    // We wait for auth to resolve, plus a short minimum so the splash doesn't
-    // flash by too fast. 500ms (was 2s) keeps it graceful without adding delay:
-    // the splash now disappears as soon as auth is ready, not on a fixed timer.
-    final results = await Future.wait([
-      ref.read(authNotifierProvider.future),
-      Future.delayed(const Duration(milliseconds: 500)),
-    ]);
+    // We wait only for auth to resolve, then route immediately. The previous
+    // 500ms minimum-display delay was purely cosmetic and added dead time to
+    // every launch — removed so the splash disappears the moment auth is ready.
+    final user = await ref.read(authNotifierProvider.future);
 
     if (!mounted) return;
 
-    final user = results[0];
-
     if (user != null) {
-        if (user is AdminModel) {
-          Navigator.pushReplacementNamed(context, AppRoutes.admin);
-        } else if (!user.emailVerified && user.role != UserRole.guest) {
-          Navigator.pushReplacementNamed(
-            context,
-            AppRoutes.verifyEmail,
-            arguments: user.email,
-          );
+      if (user is AdminModel) {
+        Navigator.pushReplacementNamed(context, AppRoutes.admin);
+      } else if (!user.emailVerified && user.role != UserRole.guest) {
+        Navigator.pushReplacementNamed(
+          context,
+          AppRoutes.verifyEmail,
+          arguments: user.email,
+        );
+      } else {
+        final tourist = user is TouristModel ? user : null;
+        final hasInterests = tourist?.culturalInterests.isNotEmpty ?? false;
+        if (tourist != null && !hasInterests) {
+          Navigator.pushReplacementNamed(context, AppRoutes.userPreferences);
         } else {
-          final tourist = user is TouristModel ? user : null;
-          final hasInterests = tourist?.culturalInterests.isNotEmpty ?? false;
-          if (tourist != null && !hasInterests) {
-            Navigator.pushReplacementNamed(context, AppRoutes.userPreferences);
-          } else {
-            Navigator.pushReplacementNamed(context, AppRoutes.home);
-          }
+          Navigator.pushReplacementNamed(context, AppRoutes.home);
         }
+      }
     } else {
       Navigator.pushReplacementNamed(context, AppRoutes.signIn);
     }
@@ -64,6 +58,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     // is a static image + logo; it renders instantly without waiting on any data.
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -73,6 +69,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             child: Image.asset(
               'assets/images/splash_bg.png',
               fit: BoxFit.cover,
+              // Decode the background at screen resolution rather than full
+              // source size — faster decode, lower memory, no visible quality
+              // loss for a full-bleed background.
+              cacheWidth: (screenWidth * devicePixelRatio).round(),
             ),
           ),
           Container(
@@ -95,6 +95,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 Image.asset(
                   'assets/images/athar_logo_white.png',
                   width: 280,
+                  // Logo is shown at 280 logical px — decode it at that size.
+                  cacheWidth: (280 * devicePixelRatio).round(),
                 ),
                 const SizedBox(height: 25),
                 Text(

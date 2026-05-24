@@ -103,7 +103,7 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const HomeHeroSlider(),
+              const RepaintBoundary(child: HomeHeroSlider()),
               const SizedBox(height: _sectionGap),
               _YouMayLikeSection(onEventTap: onEventTap),
               const SizedBox(height: _sectionGap),
