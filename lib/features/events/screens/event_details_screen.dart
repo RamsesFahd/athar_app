@@ -3,7 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:athar_app/core/models/events/event_model.dart';
@@ -26,29 +25,23 @@ class EventDetailsScreen extends ConsumerWidget {
       .replaceAll('مساءً', 'م')
       .replaceAll('مساء', 'م');
 
-  TextStyle _nameStyle(bool isAr, ThemeData theme) {
-    final base = theme.textTheme.displaySmall?.copyWith(
+  TextStyle _nameStyle(ThemeData theme) {
+    return (theme.textTheme.displaySmall ?? const TextStyle()).copyWith(
       fontWeight: FontWeight.w800,
       height: 1.15,
     );
-    return isAr
-        ? base ?? const TextStyle()
-        : GoogleFonts.playfairDisplay(textStyle: base);
   }
 
-  TextStyle _sectionTitleStyle(bool isAr, ThemeData theme) {
-    final base =
-        theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800);
-    return isAr
-        ? base ?? const TextStyle()
-        : GoogleFonts.playfairDisplay(textStyle: base);
+  TextStyle _sectionTitleStyle(ThemeData theme) {
+    return (theme.textTheme.titleLarge ?? const TextStyle()).copyWith(
+      fontWeight: FontWeight.w800,
+    );
   }
 
-  TextStyle _bodyStyle(bool isAr, ThemeData theme) {
-    final base = theme.textTheme.bodyLarge?.copyWith(height: 1.8);
-    return isAr
-        ? base ?? const TextStyle()
-        : GoogleFonts.playfairDisplay(textStyle: base);
+  TextStyle _bodyStyle(ThemeData theme) {
+    return (theme.textTheme.bodyLarge ?? const TextStyle()).copyWith(
+      height: 1.8,
+    );
   }
 
   Future<void> _openUrl(String url) async {
@@ -149,7 +142,7 @@ class EventDetailsScreen extends ConsumerWidget {
                       // ── Title ───────────────────────────────────────
                       Text(
                         titleText,
-                        style: _nameStyle(isAr, theme),
+                        style: _nameStyle(theme),
                       ),
 
                       const SizedBox(height: 20),
@@ -187,19 +180,19 @@ class EventDetailsScreen extends ConsumerWidget {
                       // ── Description ──────────────────────────────────
                       Text(
                         l10n.mapAboutEvent,
-                        style: _sectionTitleStyle(isAr, theme),
+                        style: _sectionTitleStyle(theme),
                       ),
                       const SizedBox(height: 10),
                       Text(
                         descriptionText,
-                        style: _bodyStyle(isAr, theme),
+                        style: _bodyStyle(theme),
                       ),
 
                       // ── Location ─────────────────────────────────────
                       const SizedBox(height: 24),
                       Text(
                         l10n.locationLabel,
-                        style: _sectionTitleStyle(isAr, theme),
+                        style: _sectionTitleStyle(theme),
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -210,7 +203,7 @@ class EventDetailsScreen extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               event.getRegion(isAr),
-                              style: _bodyStyle(isAr, theme),
+                              style: _bodyStyle(theme),
                             ),
                           ),
                         ],
@@ -397,26 +390,20 @@ class _InfoCard extends StatelessWidget {
               Flexible(
                 child: Text(
                   title,
-                  style: (isAr
-                          ? theme.textTheme.labelSmall ?? const TextStyle()
-                          : GoogleFonts.playfairDisplay())
-                    .copyWith(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 11,
-                  color: theme.isHighContrast
-                      ? theme.colorScheme.onSurface
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
+                  style: (theme.textTheme.labelSmall ?? const TextStyle()).copyWith(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11,
+                    color: theme.isHighContrast
+                        ? theme.colorScheme.onSurface
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 6),
           DefaultTextStyle(
-            style: (isAr
-                    ? theme.textTheme.bodyMedium ?? const TextStyle()
-                    : GoogleFonts.playfairDisplay())
-                .copyWith(
+            style: (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(
               fontWeight: FontWeight.w700,
               fontSize: 14,
               color: color,

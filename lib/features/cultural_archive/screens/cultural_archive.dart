@@ -356,6 +356,7 @@ class CulturalArchive extends ConsumerWidget {
     return ListView.builder(
       itemCount: filteredItems.length,
       padding: EdgeInsets.zero,
+      cacheExtent: 600,
       itemBuilder: (context, index) =>
           _buildCard(context, filteredItems[index], CardLayout.horizontal),
     );
@@ -364,6 +365,7 @@ class CulturalArchive extends ConsumerWidget {
   Widget _buildGridView(List filteredItems, bool largeText) {
     return GridView.builder(
       padding: const EdgeInsets.all(16),
+      cacheExtent: 600,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: largeText ? 0.68 : 0.8,
@@ -379,15 +381,17 @@ class CulturalArchive extends ConsumerWidget {
   Widget _buildCard(BuildContext context, item, CardLayout layout) {
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
 
-    return CulturalItemCard(
-      id: item.id,
-      item: item,
-      title: isAr ? item.titleAr : item.titleEn,
-      description: isAr ? item.descriptionAr : item.descriptionEn,
-      imageUrl: item.imageUrl,
-      categoryId: item.categoryId,
-      region: isAr ? item.regionAr : item.regionEn,
-      layout: layout,
+    return RepaintBoundary(
+      child: CulturalItemCard(
+        id: item.id,
+        item: item,
+        title: isAr ? item.titleAr : item.titleEn,
+        description: isAr ? item.descriptionAr : item.descriptionEn,
+        imageUrl: item.imageUrl,
+        categoryId: item.categoryId,
+        region: isAr ? item.regionAr : item.regionEn,
+        layout: layout,
+      ),
     );
   }
 }

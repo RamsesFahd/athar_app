@@ -578,16 +578,7 @@ class _CinematicHeroSlide extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          TweenAnimationBuilder<double>(
-            tween: Tween<double>(
-              begin: 1.0,
-              end: isActive ? 1.08 : 1.0,
-            ),
-            duration: const Duration(seconds: 6),
-            curve: Curves.easeOutCubic,
-            builder: (context, scale, child) {
-              return Transform.scale(scale: scale, child: child);
-            },
+          RepaintBoundary(
             child: _HeroImage(
               key: ValueKey(
                 !isAr && slide.imageUrlEn != null
@@ -668,7 +659,7 @@ class _AdContent extends StatelessWidget {
             height: 1.06,
             fontWeight: FontWeight.w900,
             shadows: const [
-              Shadow(color: Colors.black87, blurRadius: 14),
+              Shadow(color: Colors.black87, blurRadius: 4),
             ],
           ),
         ),
@@ -682,7 +673,7 @@ class _AdContent extends StatelessWidget {
             fontWeight: FontWeight.w600,
             height: 1.45,
             shadows: const [
-              Shadow(color: Colors.black87, blurRadius: 10),
+              Shadow(color: Colors.black87, blurRadius: 3),
             ],
           ),
         ),

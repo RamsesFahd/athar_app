@@ -104,7 +104,7 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const HomeHeroSlider(),
+              const RepaintBoundary(child: HomeHeroSlider()),
               const SizedBox(height: _sectionGap),
 
               if (!isGuest) ...[

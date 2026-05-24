@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
@@ -128,17 +127,10 @@ class EventCard extends StatelessWidget {
                     event.getTitle(isAr),
                     maxLines: largeText ? 2 : 1,
                     overflow: TextOverflow.ellipsis,
-                    style: isAr
-                        ? theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            height: 1.1,
-                          )
-                        : GoogleFonts.playfairDisplay(
-                            textStyle: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w700,
-                              height: 1.1,
-                            ),
-                          ),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      height: 1.1,
+                    ),
                   ),
                   const SizedBox(height: 3),
                   Row(
@@ -224,17 +216,10 @@ class EventCard extends StatelessWidget {
                       event.getTitle(isAr),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: isAr
-                          ? theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              height: 1.25,
-                            )
-                          : GoogleFonts.playfairDisplay(
-                              textStyle: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                height: 1.25,
-                              ),
-                            ),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        height: 1.25,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Row(
