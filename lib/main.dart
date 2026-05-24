@@ -15,6 +15,7 @@ import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
 import 'package:athar_app/core/services/notification_service.dart';
+import 'package:athar_app/core/widgets/offline_banner.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -108,7 +109,7 @@ class AtharApp extends ConsumerWidget {
 
       navigatorKey: navigatorKey,
       initialRoute: AppRoutes.splash,
-
+      builder: (context, child) => OfflineBanner(child: child!),
       routes: AppRoutes.getRoutes(),
     );
   }

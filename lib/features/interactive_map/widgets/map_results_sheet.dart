@@ -316,76 +316,62 @@ class _PinDetail extends ConsumerWidget {
                   ),
                 ],
 
-                if (isEvent && event!.ticketUrl != null && !event.isFree) ...[
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () => _openUrl(event.ticketUrl!),
-                      icon: const Icon(Icons.confirmation_number_outlined),
-                      label: Text(l10n.mapBookTicket),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: cs.primary,
-                        foregroundColor: cs.onPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
+                if (isEvent &&
+                    event!.ticketUrl != null &&
+                    event.ticketUrl!.isNotEmpty) ...[
+                  const SizedBox(height: 24),
+                  GestureDetector(
+                    onTap: () => _openUrl(event.ticketUrl!),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.confirmation_number_outlined,
+                          color: pinColor,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.attractionTicketLink,
+                          style: tt.bodyMedium?.copyWith(
+                            color: pinColor,
+                            fontWeight: FontWeight.w700,
+                            decoration: TextDecoration.underline,
+                            decorationColor: pinColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
 
                 const SizedBox(height: 16),
-                if (isEvent)
-                  Row(
-                    children: [
-                      if (event!.ticketUrl != null) ...[
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () => _openUrl(event.ticketUrl!),
-                            icon: const Icon(Icons.open_in_new, size: 16),
-                            label: Text(l10n.mapSource),
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                      ],
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: _openDirections,
-                          icon: const Icon(Icons.directions_outlined, size: 16),
-                          label: Text(l10n.mapDirections),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: pinColor,
-                            foregroundColor: cs.onPrimary,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                else
-                  SizedBox(
-                    width: double.infinity,
+                SizedBox(
+                  width: double.infinity,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 52),
                     child: ElevatedButton.icon(
                       onPressed: _openDirections,
-                      icon: const Icon(Icons.directions_outlined),
-                      label: Text(l10n.mapDirections),
+                      icon: Transform.flip(
+                        flipX: isAr,
+                        child: const Icon(Icons.directions_outlined),
+                      ),
+                      label: Text(
+                        l10n.attractionGetDirections,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                      ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: pinColor,
                         foregroundColor: cs.onPrimary,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                     ),
                   ),
+                ),
               ],
             ),
           ),
