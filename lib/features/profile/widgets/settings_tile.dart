@@ -82,13 +82,10 @@ class SettingsTile extends StatelessWidget {
                 if (trailing != null)
                   trailing!
                 else if (onTap != null)
-                  RotatedBox(
-                    quarterTurns: Directionality.of(context) == TextDirection.rtl ? 2 : 0,
-                    child: Icon(
-                      Icons.chevron_right_rounded,
-                      size: 22,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
-                    ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 22,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                   ),
               ],
             ),
