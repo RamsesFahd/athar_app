@@ -305,7 +305,10 @@ class EventDetailsScreen extends ConsumerWidget {
                   constraints: const BoxConstraints(minHeight: 52),
                   child: ElevatedButton.icon(
                     onPressed: _openDirections,
-                    icon: const Icon(Icons.directions_outlined),
+                    icon: Transform.flip(
+                      flipX: isAr,
+                      child: const Icon(Icons.directions_outlined),
+                    ),
                     label: Text(
                       l10n.attractionGetDirections,
                       maxLines: 2,

@@ -117,9 +117,12 @@ class _RatingStarsWidgetState extends State<RatingStarsWidget> {
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
-            height: 46,
             child: ElevatedButton(
               onPressed: _selected > 0 && !_submitting ? _submit : null,
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(56),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
               child: _submitting
                   ? const SizedBox(
                       width: 20,

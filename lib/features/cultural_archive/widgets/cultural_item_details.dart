@@ -152,15 +152,22 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
           ),
         ),
         SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: CircleAvatar(
-              backgroundColor:
-                  isHighContrast ? theme.colorScheme.primary : Colors.black26,
-              child: IconButton(
-                icon: Icon(isAr ? Icons.chevron_right : Icons.chevron_left,
-                    color: theme.colorScheme.onPrimary),
-                onPressed: () => Navigator.pop(context),
+          child: Align(
+            alignment: isAr ? Alignment.topRight : Alignment.topLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Material(
+                color: Colors.black.withValues(alpha: 0.35),
+                shape: const CircleBorder(),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: () => Navigator.pop(context),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Icon(Icons.arrow_back_ios_new,
+                        color: Colors.white, size: 20),
+                  ),
+                ),
               ),
             ),
           ),

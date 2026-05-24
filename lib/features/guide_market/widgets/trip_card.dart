@@ -139,6 +139,7 @@ class TripCard extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                   style: textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onPrimary,
+                    fontFamily: isAr ? 'ThmanyahSerifDisplay' : null,
                     fontWeight: FontWeight.w800,
                     height: 1.2,
                   ),
@@ -349,6 +350,7 @@ class TripCard extends ConsumerWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: textTheme.bodyLarge?.copyWith(
+                      fontFamily: isAr ? 'ThmanyahSerifDisplay' : null,
                       fontWeight: FontWeight.w800,
                       height: 1.25,
                       color: theme.textTheme.bodyLarge?.color,

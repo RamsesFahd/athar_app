@@ -224,7 +224,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                             ),
                             if (hasSuggestions)
                               Align(
-                                alignment: Alignment.centerLeft,
+                                alignment: AlignmentDirectional.centerStart,
                                 child: RawiSuggestionsRow(
                                   items: msg.suggestedItems!,
                                   isAr: isAr,

@@ -141,12 +141,14 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                 ),
               if (isTourist && liveBooking.status == BookingStatus.completed)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: RatingStarsWidget(
-                    bookingId: liveBooking.bookingId,
-                    touristId: liveBooking.touristId,
-                    tutorId: liveBooking.tutorId,
-                    tripId: liveBooking.tripId,
+                  padding: const EdgeInsets.only(bottom: 40.0),
+                  child: SafeArea(
+                    child: RatingStarsWidget(
+                      bookingId: liveBooking.bookingId,
+                      touristId: liveBooking.touristId,
+                      tutorId: liveBooking.tutorId,
+                      tripId: liveBooking.tripId,
+                    ),
                   ),
                 ),
               if (isTourist && liveBooking.status == BookingStatus.pending)
