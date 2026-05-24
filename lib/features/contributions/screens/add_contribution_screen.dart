@@ -216,9 +216,7 @@ class _AddContributionScreenState
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      isArabic
-                          ? 'يجب التحقق من رقم جوالك أولاً لإضافة مساهمة. توجّه إلى صفحة الملف الشخصي لإكمال التحقق.'
-                          : 'You must verify your phone number before adding a contribution. Go to your profile to complete verification.',
+                      l10n.contributionPhoneVerificationRequiredBody,
                       style: theme.textTheme.bodyMedium
                           ?.copyWith(height: 1.6),
                       textAlign: TextAlign.center,
@@ -421,8 +419,8 @@ class _AddContributionScreenState
           const SizedBox(height: 8),
           Text(
             isArabic
-                ? 'الرجاء اختيار نوع المساهمة'
-                : 'Please select a contribution type',
+                ? 'الرجاء اختيار نوع المحتوى'
+                : 'Please select a content type',
             style: theme.textTheme.bodySmall
                 ?.copyWith(color: theme.colorScheme.error),
           ),

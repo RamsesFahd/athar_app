@@ -375,7 +375,6 @@ class _GuideTile extends StatelessWidget {
   }
 
   Widget _typeBadge(BuildContext context, bool isIndividual) {
-    final l10n = AppLocalizations.of(context);
     final color = isIndividual ? Colors.orange : Colors.blue;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -385,7 +384,7 @@ class _GuideTile extends StatelessWidget {
         border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Text(
-        isIndividual ? l10n.adminGuideTypeIndividual : l10n.adminGuideTypeCompany,
+        isIndividual ? 'Individual' : 'Company',
         style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w600,
@@ -405,17 +404,16 @@ class _RoleBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     Color color;
     String label;
-    final l10n = AppLocalizations.of(context);
     switch (role) {
       case UserRole.tutor:
         color = Colors.blue;
-        label = l10n.adminRoleTutor;
+        label = 'Guide';
       case UserRole.admin:
         color = Colors.purple;
-        label = l10n.adminRoleAdmin;
+        label = 'Admin';
       default:
         color = Colors.teal;
-        label = l10n.adminRoleTourist;
+        label = 'Tourist';
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -462,7 +460,7 @@ class _VerificationBadge extends StatelessWidget {
       default:
         color = theme.colorScheme.onSurfaceVariant;
         icon = Icons.help_outline;
-        label = status.name;
+        label = 'غير معروف';
     }
     return Row(
       mainAxisSize: MainAxisSize.min,

@@ -416,10 +416,10 @@ abstract class AppLocalizations {
   /// **'Map'**
   String get mapLabel;
 
-  /// Label for Chatbot tab
+  /// Label for Rawi tab
   ///
   /// In en, this message translates to:
-  /// **'AI Chat'**
+  /// **'Rawi'**
   String get assistantLabel;
 
   /// Label for Trip Management tab
@@ -551,8 +551,14 @@ abstract class AppLocalizations {
   /// No description provided for @contributions.
   ///
   /// In en, this message translates to:
-  /// **'Contributions'**
+  /// **'Cultural Content Enrichment'**
   String get contributions;
+
+  /// No description provided for @contributionShortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Enrichment'**
+  String get contributionShortLabel;
 
   /// No description provided for @myInterests.
   ///
@@ -563,7 +569,7 @@ abstract class AppLocalizations {
   /// No description provided for @manageContributions.
   ///
   /// In en, this message translates to:
-  /// **'Manage Contributions'**
+  /// **'Manage Cultural Content Enrichment'**
   String get manageContributions;
 
   /// No description provided for @editPicture.
@@ -641,7 +647,7 @@ abstract class AppLocalizations {
   /// No description provided for @profileContributeContent.
   ///
   /// In en, this message translates to:
-  /// **'Contribute Content'**
+  /// **'Cultural Content Enrichment'**
   String get profileContributeContent;
 
   /// No description provided for @profileLogout.
@@ -2195,7 +2201,7 @@ abstract class AppLocalizations {
   /// No description provided for @addContributionTitle.
   ///
   /// In en, this message translates to:
-  /// **'Add Contribution'**
+  /// **'Cultural Content Enrichment'**
   String get addContributionTitle;
 
   /// No description provided for @titleLabel.
@@ -2207,7 +2213,7 @@ abstract class AppLocalizations {
   /// No description provided for @titleHint.
   ///
   /// In en, this message translates to:
-  /// **'Enter contribution title'**
+  /// **'Enter content title'**
   String get titleHint;
 
   /// No description provided for @descriptionLabel.
@@ -2219,7 +2225,7 @@ abstract class AppLocalizations {
   /// No description provided for @descriptionHint.
   ///
   /// In en, this message translates to:
-  /// **'Describe your contribution'**
+  /// **'Describe your content'**
   String get descriptionHint;
 
   /// No description provided for @categoryLabel.
@@ -2321,7 +2327,7 @@ abstract class AppLocalizations {
   /// No description provided for @submitContribution.
   ///
   /// In en, this message translates to:
-  /// **'Submit Contribution'**
+  /// **'Submit Cultural Content Enrichment'**
   String get submitContribution;
 
   /// No description provided for @submissionSuccessMessage.
@@ -2909,7 +2915,7 @@ abstract class AppLocalizations {
   /// No description provided for @contactUsContributions.
   ///
   /// In en, this message translates to:
-  /// **'Contributions'**
+  /// **'Cultural Content Enrichment'**
   String get contactUsContributions;
 
   /// No description provided for @contactUsSendMessageTitle.
@@ -3473,7 +3479,7 @@ abstract class AppLocalizations {
   /// No description provided for @contributionAuthError.
   ///
   /// In en, this message translates to:
-  /// **'Please sign in again to add a contribution.'**
+  /// **'Please sign in again to use cultural content enrichment.'**
   String get contributionAuthError;
 
   /// No description provided for @contributionUserUnavailable.
@@ -3482,10 +3488,16 @@ abstract class AppLocalizations {
   /// **'We couldn’t load your profile. Please try again.'**
   String get contributionUserUnavailable;
 
+  /// No description provided for @contributionGuestAccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to create an account or sign in to use the cultural content feature.'**
+  String get contributionGuestAccessMessage;
+
   /// No description provided for @contributionErrorWithMessage.
   ///
   /// In en, this message translates to:
-  /// **'{message, select, _ {We couldn’t submit your contribution. Please try again.} other {We couldn’t submit your contribution. Please try again.}}'**
+  /// **'{message, select, _ {We couldn’t submit your cultural content enrichment. Please try again.} other {We couldn’t submit your cultural content enrichment. Please try again.}}'**
   String contributionErrorWithMessage(String message);
 
   /// No description provided for @contributionGoToProfile.
@@ -3497,7 +3509,7 @@ abstract class AppLocalizations {
   /// No description provided for @contributionTypeLabel.
   ///
   /// In en, this message translates to:
-  /// **'Contribution Type'**
+  /// **'Content Type'**
   String get contributionTypeLabel;
 
   /// No description provided for @contributionTitleExampleHint.
@@ -3557,7 +3569,7 @@ abstract class AppLocalizations {
   /// No description provided for @contributionSubmitNew.
   ///
   /// In en, this message translates to:
-  /// **'Submit New Contribution'**
+  /// **'Submit New Cultural Content Enrichment'**
   String get contributionSubmitNew;
 
   /// No description provided for @contributionRejectionReason.
@@ -3575,7 +3587,7 @@ abstract class AppLocalizations {
   /// No description provided for @contributionMyContributionsSection.
   ///
   /// In en, this message translates to:
-  /// **'My Contributions'**
+  /// **'My Cultural Content Enrichment'**
   String get contributionMyContributionsSection;
 
   /// No description provided for @contributionPhoneVerificationRequiredTitle.
@@ -3587,7 +3599,7 @@ abstract class AppLocalizations {
   /// No description provided for @contributionPhoneVerificationRequiredBody.
   ///
   /// In en, this message translates to:
-  /// **'You must verify your phone number before adding a contribution. Go to your profile to complete verification.'**
+  /// **'You must verify your phone number before using cultural content enrichment. Go to your profile to complete verification.'**
   String get contributionPhoneVerificationRequiredBody;
 
   /// No description provided for @contributionCompleted.
@@ -3635,7 +3647,7 @@ abstract class AppLocalizations {
   /// No description provided for @contributionTopContributions.
   ///
   /// In en, this message translates to:
-  /// **'Top contributions'**
+  /// **'Top enrichments'**
   String get contributionTopContributions;
 
   /// No description provided for @contributionNoAchievements.
@@ -3647,13 +3659,13 @@ abstract class AppLocalizations {
   /// No description provided for @contributionNoContributions.
   ///
   /// In en, this message translates to:
-  /// **'No contributions yet'**
+  /// **'No cultural content enrichment yet'**
   String get contributionNoContributions;
 
   /// No description provided for @contributionArchiveLinkMissing.
   ///
   /// In en, this message translates to:
-  /// **'This contribution has no archive link'**
+  /// **'This submission has no archive link'**
   String get contributionArchiveLinkMissing;
 
   /// No description provided for @contributionArchiveItemNotFound.
@@ -3689,7 +3701,7 @@ abstract class AppLocalizations {
   /// No description provided for @contributionRejectedDefault.
   ///
   /// In en, this message translates to:
-  /// **'Contribution was rejected'**
+  /// **'Submission was rejected'**
   String get contributionRejectedDefault;
 
   /// No description provided for @bookingAdultsAgeSubtitle.

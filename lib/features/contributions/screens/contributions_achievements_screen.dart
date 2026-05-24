@@ -75,7 +75,45 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
       data: (user) {
         if (user == null || user.role == UserRole.guest) {
           return Scaffold(
-            body: Center(child: Text(l10n.contributionUserUnavailable)),
+            backgroundColor: theme.scaffoldBackgroundColor,
+            body: SafeArea(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surface,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color:
+                            theme.colorScheme.primary.withValues(alpha: 0.12),
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.lock_outline_rounded,
+                          size: 44,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(height: 14),
+                        Text(
+                          l10n.contributionGuestAccessMessage,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            height: 1.5,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           );
         }
 
@@ -232,8 +270,8 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
     final defs = [
       (
         id: 'first_contribution',
-        titleAr: 'أول مساهمة',
-        titleEn: 'First Contribution',
+        titleAr: 'أول إثراء',
+        titleEn: 'First Enrichment',
         icon: Icons.flag_rounded,
         color: theme.colorScheme.primary,
       ),

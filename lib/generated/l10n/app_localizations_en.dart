@@ -177,7 +177,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mapLabel => 'Map';
 
   @override
-  String get assistantLabel => 'AI Chat';
+  String get assistantLabel => 'Rawi';
 
   @override
   String get calendarLabel => 'Trips';
@@ -245,13 +245,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get points => 'Points';
 
   @override
-  String get contributions => 'Contributions';
+  String get contributions => 'Cultural Content Enrichment';
+
+  @override
+  String get contributionShortLabel => 'Enrichment';
 
   @override
   String get myInterests => 'My Interests';
 
   @override
-  String get manageContributions => 'Manage Contributions';
+  String get manageContributions => 'Manage Cultural Content Enrichment';
 
   @override
   String get editPicture => 'Edit Picture';
@@ -290,7 +293,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileNotifications => 'Notifications';
 
   @override
-  String get profileContributeContent => 'Contribute Content';
+  String get profileContributeContent => 'Cultural Content Enrichment';
 
   @override
   String get profileLogout => 'Logout';
@@ -1112,19 +1115,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get addContributionTitle => 'Add Contribution';
+  String get addContributionTitle => 'Cultural Content Enrichment';
 
   @override
   String get titleLabel => 'Title';
 
   @override
-  String get titleHint => 'Enter contribution title';
+  String get titleHint => 'Enter content title';
 
   @override
   String get descriptionLabel => 'Description';
 
   @override
-  String get descriptionHint => 'Describe your contribution';
+  String get descriptionHint => 'Describe your content';
 
   @override
   String get categoryLabel => 'Category';
@@ -1176,7 +1179,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mediaRequiredError => 'Media is required';
 
   @override
-  String get submitContribution => 'Submit Contribution';
+  String get submitContribution => 'Submit Cultural Content Enrichment';
 
   @override
   String get submissionSuccessMessage => 'Submitted successfully for review';
@@ -1497,7 +1500,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contactUsGuideSupport => 'Guide Support';
 
   @override
-  String get contactUsContributions => 'Contributions';
+  String get contactUsContributions => 'Cultural Content Enrichment';
 
   @override
   String get contactUsSendMessageTitle => 'Send a Message';
@@ -1806,19 +1809,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contributionAuthError =>
-      'Please sign in again to add a contribution.';
+      'Please sign in again to use cultural content enrichment.';
 
   @override
   String get contributionUserUnavailable =>
       'We couldn’t load your profile. Please try again.';
 
   @override
+  String get contributionGuestAccessMessage =>
+      'You need to create an account or sign in to use the cultural content feature.';
+
+  @override
   String contributionErrorWithMessage(String message) {
     String _temp0 = intl.Intl.selectLogic(
       message,
       {
-        '_': 'We couldn’t submit your contribution. Please try again.',
-        'other': 'We couldn’t submit your contribution. Please try again.',
+        '_':
+            'We couldn’t submit your cultural content enrichment. Please try again.',
+        'other':
+            'We couldn’t submit your cultural content enrichment. Please try again.',
       },
     );
     return '$_temp0';
@@ -1828,7 +1837,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contributionGoToProfile => 'Go to Profile';
 
   @override
-  String get contributionTypeLabel => 'Contribution Type';
+  String get contributionTypeLabel => 'Content Type';
 
   @override
   String get contributionTitleExampleHint => 'Example: Al-Khatwa Dance - Asir';
@@ -1859,7 +1868,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contributionSubmittedDateLabel => 'Submitted';
 
   @override
-  String get contributionSubmitNew => 'Submit New Contribution';
+  String get contributionSubmitNew => 'Submit New Cultural Content Enrichment';
 
   @override
   String get contributionRejectionReason => 'Rejection Reason';
@@ -1868,7 +1877,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contributionAchievementsSection => 'Achievements';
 
   @override
-  String get contributionMyContributionsSection => 'My Contributions';
+  String get contributionMyContributionsSection =>
+      'My Cultural Content Enrichment';
 
   @override
   String get contributionPhoneVerificationRequiredTitle =>
@@ -1876,7 +1886,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get contributionPhoneVerificationRequiredBody =>
-      'You must verify your phone number before adding a contribution. Go to your profile to complete verification.';
+      'You must verify your phone number before using cultural content enrichment. Go to your profile to complete verification.';
 
   @override
   String get contributionCompleted => 'Completed';
@@ -1900,17 +1910,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contributionQuality => 'Quality';
 
   @override
-  String get contributionTopContributions => 'Top contributions';
+  String get contributionTopContributions => 'Top enrichments';
 
   @override
   String get contributionNoAchievements => 'No achievements yet';
 
   @override
-  String get contributionNoContributions => 'No contributions yet';
+  String get contributionNoContributions =>
+      'No cultural content enrichment yet';
 
   @override
   String get contributionArchiveLinkMissing =>
-      'This contribution has no archive link';
+      'This submission has no archive link';
 
   @override
   String get contributionArchiveItemNotFound =>
@@ -1929,7 +1940,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contributionWaitingForReview => 'Waiting for admin review';
 
   @override
-  String get contributionRejectedDefault => 'Contribution was rejected';
+  String get contributionRejectedDefault => 'Submission was rejected';
 
   @override
   String get bookingAdultsAgeSubtitle => '12+ years';

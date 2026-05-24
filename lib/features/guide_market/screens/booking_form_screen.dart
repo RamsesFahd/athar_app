@@ -241,8 +241,7 @@ class BookingFormScreen extends ConsumerWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(18),
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         decoration: BoxDecoration(
           color: theme.colorScheme.primary.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(18),
@@ -250,28 +249,37 @@ class BookingFormScreen extends ConsumerWidget {
               color: theme.colorScheme.primary.withValues(alpha: 0.12)),
         ),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(icon, color: theme.colorScheme.primary, size: 24),
             const SizedBox(width: 16),
-     Flexible(
-  fit: FlexFit.tight,
-  child: Text(
-    label,
-    style: theme.textTheme.bodyLarge,
-    overflow: TextOverflow.ellipsis,
-  ),
-),
-            const SizedBox(width: 12),
             Expanded(
-  child: Text(
-    value,
-    maxLines: 1,
+              child: Text(
+                label,
+                style: theme.textTheme.bodyLarge,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.end,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Flexible(
+              flex: 2,
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: Text(
+                    value,
+                    maxLines: 1,
+                    softWrap: false,
+                    textAlign: TextAlign.end,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontSize: 15,
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ),

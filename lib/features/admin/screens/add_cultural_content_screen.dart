@@ -40,12 +40,12 @@ class _AddCulturalContentScreenState
   bool get _isEditMode => widget.editItem != null;
 
   static const List<({String id, String label})> _categories = [
-    (id: 'food', label: 'Traditional Food'),
-    (id: 'craft', label: 'Handicraft'),
-    (id: 'dance', label: 'Dance'),
-    (id: 'architecture', label: 'Architecture'),
-    (id: 'music', label: 'Music'),
-    (id: 'clothing', label: 'Traditional Clothing'),
+    (id: 'food', label: 'طعام تقليدي'),
+    (id: 'craft', label: 'حرفة يدوية'),
+    (id: 'dance', label: 'رقص'),
+    (id: 'architecture', label: 'عمارة'),
+    (id: 'music', label: 'موسيقى'),
+    (id: 'clothing', label: 'ملابس تقليدية'),
   ];
 
   static const _legacyRegionMap = {
@@ -349,7 +349,7 @@ class _AddCulturalContentScreenState
               decoration: _inputDecoration(hint: l10n.adminSelectRegion),
               items: regionsData
                   .map((r) => DropdownMenuItem(
-                      value: r.regionId, child: Text(r.nameEn)))
+                      value: r.regionId, child: Text(r.nameAr)))
                   .toList(),
               onChanged: (v) => setState(() => _selectedRegionId = v),
               validator: (v) => v == null ? l10n.adminSelectRegion : null,

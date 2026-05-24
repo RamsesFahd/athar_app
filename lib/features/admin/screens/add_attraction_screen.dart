@@ -43,6 +43,21 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
     'Modern': '#2E5FA3',
   };
 
+  String _categoryLabel(String category) {
+    switch (category) {
+      case 'Heritage':
+        return 'تراث';
+      case 'Nature':
+        return 'طبيعة';
+      case 'Arts':
+        return 'فنون';
+      case 'Modern':
+        return 'حديث';
+      default:
+        return category;
+    }
+  }
+
   static const _regionToKey = {
     'central_region': 'central',
     'western_region': 'western',
@@ -408,7 +423,10 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                 value: _selectedCategory,
                 decoration: _inputDecoration(),
                 items: _categories
-                    .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                    .map((c) => DropdownMenuItem(
+                          value: c,
+                          child: Text(_categoryLabel(c)),
+                        ))
                     .toList(),
                 onChanged: (v) {
                   if (v == null) return;
@@ -429,7 +447,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                 decoration: _inputDecoration(hint: l10n.adminSelectRegion),
                 items: regionsData
                     .map((r) => DropdownMenuItem(
-                        value: r.regionId, child: Text(r.nameEn)))
+                        value: r.regionId, child: Text(r.nameAr)))
                     .toList(),
                 onChanged: (v) => setState(() {
                   _selectedRegionId = v;
@@ -449,7 +467,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                 items: _availableCities
                     .map((cityId) => DropdownMenuItem(
                           value: cityId,
-                          child: Text(cityMap[cityId]?['en'] ?? cityId),
+                          child: Text(cityMap[cityId]?['ar'] ?? cityId),
                         ))
                     .toList(),
                 onChanged: _selectedRegionId == null
