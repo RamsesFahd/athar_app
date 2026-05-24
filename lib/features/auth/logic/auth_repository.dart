@@ -224,6 +224,17 @@ Future<String?> guestLogin() async {
 
   Future<UserModel?> getUserData(String uId) async {
     try {
+      // Cache-first: returns instantly on repeat launches (Firestore offline persistence).
+      // Falls back to network on first launch or cache miss.
+      try {
+        final cached = await _users
+            .doc(uId)
+            .get(const GetOptions(source: Source.cache));
+        final user = _parseUserDoc(cached);
+        if (user != null) return user;
+      } catch (_) {
+        // Cache miss — fall through to network.
+      }
       final doc = await _users.doc(uId).get();
       return _parseUserDoc(doc);
     } catch (e) {
