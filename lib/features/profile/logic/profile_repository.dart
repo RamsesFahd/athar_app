@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 part 'profile_repository.g.dart';
 
 @riverpod
-ProfileRepository profileRepository(ProfileRepositoryRef ref) {
+ProfileRepository profileRepository(Ref ref) {
   return ProfileRepository(
     firestore: FirebaseFirestore.instance,
     storage: FirebaseStorage.instance,

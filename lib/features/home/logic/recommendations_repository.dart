@@ -23,8 +23,7 @@ final homeRecommendationsProvider =
 
     if (attractionsAsync.isLoading ||
         tripsAsync.isLoading ||
-        eventsAsync.isLoading ||
-        culturalAsync.isLoading) {
+        eventsAsync.isLoading) {
       return const AsyncValue.loading();
     }
 

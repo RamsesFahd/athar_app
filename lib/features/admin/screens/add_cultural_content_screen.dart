@@ -332,7 +332,7 @@ class _AddCulturalContentScreenState
 
             _SectionLabel(l10n.adminCategory),
             DropdownButtonFormField<String>(
-              value: _selectedCategory,
+              initialValue: _selectedCategory,
               decoration: _inputDecoration(),
               items: _categories
                   .map((c) =>
@@ -345,7 +345,7 @@ class _AddCulturalContentScreenState
 
             _SectionLabel(l10n.adminRegion),
             DropdownButtonFormField<String>(
-              value: _selectedRegionId,
+              initialValue: _selectedRegionId,
               decoration: _inputDecoration(hint: l10n.adminSelectRegion),
               items: regionsData
                   .map((r) => DropdownMenuItem(

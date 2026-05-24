@@ -69,7 +69,9 @@ class BookingModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'imageUrl': imageUrl,
       'tripDurationDays': tripDurationDays,
+      // ignore: deprecated_member_use_from_same_package
       'tutorPhone': tutorPhone,
+      // ignore: deprecated_member_use_from_same_package
       'tutorName': tutorName,
     };
   }
@@ -140,7 +142,9 @@ class BookingModel {
       createdAt: createdAt ?? this.createdAt,
       imageUrl: imageUrl ?? this.imageUrl,
       tripDurationDays: tripDurationDays ?? this.tripDurationDays,
+      // ignore: deprecated_member_use_from_same_package
       tutorPhone: tutorPhone ?? this.tutorPhone,
+      // ignore: deprecated_member_use_from_same_package
       tutorName: tutorName ?? this.tutorName,
     );
   }

@@ -509,17 +509,6 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
               fontWeight: FontWeight.w700,
               color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.78),
             )),
-        if (stat.subtitle != null) ...[
-          const SizedBox(height: 2),
-          Text(stat.subtitle!,
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontSize: 9,
-                color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.5),
-              )),
-        ],
       ],
     );
   }
@@ -846,13 +835,11 @@ class _BadgeUiModel {
 class _StatItem {
   final String value;
   final String label;
-  final String? subtitle;
   final IconData icon;
 
   const _StatItem({
     required this.value,
     required this.label,
     required this.icon,
-    this.subtitle,
   });
 }

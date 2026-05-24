@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:athar_app/core/models/chat/chat_session_model.dart';
 import 'package:athar_app/core/models/chat/region_model.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
@@ -9,7 +10,6 @@ import 'package:athar_app/features/cultural_archive/logic/cultural_repository.da
 import 'package:athar_app/features/auth/logic/auth_repository.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'dart:typed_data';
 part 'chat_notifier.g.dart';
 
 dynamic _convertResponse(dynamic data) {
@@ -270,7 +270,7 @@ Rules:
       );
       await repository.saveMessage(userId, sessionId, botMessage);
     } catch (e) {
-      print("Error in Initial Greeting: $e");
+      debugPrint("Error in Initial Greeting: $e");
     } finally {
       state = false;
     }

@@ -23,7 +23,9 @@ void main() {
           status: BookingStatus.pending,
           createdAt: baseCreatedAt,
           imageUrl: 'https://example.com/img.jpg',
+          // ignore: deprecated_member_use_from_same_package
           tutorPhone: '+966500000000',
+          // ignore: deprecated_member_use_from_same_package
           tutorName: 'Ali Ahmed',
         );
 
@@ -53,7 +55,9 @@ void main() {
       expect(restored.status, original.status);
       expect(restored.createdAt, original.createdAt);
       expect(restored.imageUrl, original.imageUrl);
+      // ignore: deprecated_member_use_from_same_package
       expect(restored.tutorPhone, original.tutorPhone);
+      // ignore: deprecated_member_use_from_same_package
       expect(restored.tutorName, original.tutorName);
     });
 
@@ -84,7 +88,9 @@ void main() {
       final booking = BookingModel.fromMap(map);
 
       // Assert
+      // ignore: deprecated_member_use_from_same_package
       expect(booking.tutorPhone, isNull);
+      // ignore: deprecated_member_use_from_same_package
       expect(booking.tutorName, isNull);
     });
 
@@ -113,7 +119,9 @@ void main() {
       expect(updated.totalPrice, original.totalPrice);
       expect(updated.createdAt, original.createdAt);
       expect(updated.imageUrl, original.imageUrl);
+      // ignore: deprecated_member_use_from_same_package
       expect(updated.tutorPhone, original.tutorPhone);
+      // ignore: deprecated_member_use_from_same_package
       expect(updated.tutorName, original.tutorName);
     });
   });

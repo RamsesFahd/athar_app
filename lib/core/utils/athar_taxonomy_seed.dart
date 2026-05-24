@@ -23,6 +23,7 @@
 // Total: 15 interests across 5 groups (3+3+4+3+2)
 // ============================================================================
 
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TaxonomySeed {
@@ -40,7 +41,7 @@ class TaxonomySeed {
     }
 
     await batch.commit();
-    print('✓ Seeded ${_interests.length} interests into /$collectionName');
+    debugPrint('✓ Seeded ${_interests.length} interests into /$collectionName');
   }
 
   // ==========================================================================

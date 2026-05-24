@@ -323,7 +323,6 @@ class _AddContributionScreenState
   }
 
   Widget _buildTitleField(AppLocalizations l10n) {
-    final isArabic = _isArabic;
     return TextFormField(
       controller: _titleController,
       textInputAction: TextInputAction.next,
@@ -484,7 +483,7 @@ class _AddContributionScreenState
   Widget _buildRegionDropdown(
     ThemeData theme, AppLocalizations l10n, bool isArabic) {
     return DropdownButtonFormField<String>(
-      value: _selectedRegionId,
+      initialValue: _selectedRegionId,
       decoration: InputDecoration(
         hintText: l10n.contributionSelectRegionHint,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
@@ -522,7 +521,8 @@ class _AddContributionScreenState
         : (regionCities[_selectedRegionId] ?? <String>[]);
 
     return DropdownButtonFormField<String>(
-      value: cityIds.contains(_selectedCityId) ? _selectedCityId : null,
+      key: ValueKey(_selectedRegionId),
+      initialValue: cityIds.contains(_selectedCityId) ? _selectedCityId : null,
       decoration: InputDecoration(
         hintText: _selectedRegionId == null
             ? l10n.contributionSelectRegionFirstHint
@@ -553,7 +553,6 @@ class _AddContributionScreenState
 
   Widget _buildMediaSection(ThemeData theme, AppLocalizations l10n) {
     final showMediaError = _showValidation && _mediaFile == null;
-    final isArabic = _isArabic;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

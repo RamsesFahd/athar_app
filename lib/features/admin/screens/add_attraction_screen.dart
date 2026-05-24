@@ -285,8 +285,9 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
         }
       }
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         _showSnackBar(l10n.commonErrorWithMessage(''), isError: true);
+      }
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -405,7 +406,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
               _SectionHeader(l10n.adminClassification),
               _Label(l10n.adminCategory),
               DropdownButtonFormField<String>(
-                value: _selectedCategory,
+                initialValue: _selectedCategory,
                 decoration: _inputDecoration(),
                 items: _categories
                     .map((c) => DropdownMenuItem(value: c, child: Text(c)))
@@ -425,7 +426,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
               _SectionHeader(l10n.adminLocation),
               _Label('${l10n.adminRegion} *'),
               DropdownButtonFormField<String>(
-                value: _selectedRegionId,
+                initialValue: _selectedRegionId,
                 decoration: _inputDecoration(hint: l10n.adminSelectRegion),
                 items: regionsData
                     .map((r) => DropdownMenuItem(
@@ -440,7 +441,8 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
               const SizedBox(height: 12),
               _Label('${l10n.adminCity} *'),
               DropdownButtonFormField<String>(
-                value: _selectedCityId,
+                key: ValueKey(_selectedRegionId),
+                initialValue: _selectedCityId,
                 decoration: _inputDecoration(
                   hint: _selectedRegionId == null
                       ? l10n.adminSelectRegionFirst
@@ -474,8 +476,9 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                           decimal: true, signed: true),
                       decoration: _inputDecoration(hint: l10n.adminLatitude),
                       validator: (v) {
-                        if (v == null || v.trim().isEmpty)
+                        if (v == null || v.trim().isEmpty) {
                           return l10n.requiredField;
+                        }
                         if (double.tryParse(v.trim()) == null) {
                           return l10n.adminValidNumber;
                         }
@@ -491,8 +494,9 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
                           decimal: true, signed: true),
                       decoration: _inputDecoration(hint: l10n.adminLongitude),
                       validator: (v) {
-                        if (v == null || v.trim().isEmpty)
+                        if (v == null || v.trim().isEmpty) {
                           return l10n.requiredField;
+                        }
                         if (double.tryParse(v.trim()) == null) {
                           return l10n.adminValidNumber;
                         }

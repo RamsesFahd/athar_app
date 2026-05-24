@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/chat/chat_message_model.dart';
 import 'package:athar_app/core/models/chat/chat_session_model.dart'; // Import the new model
@@ -6,7 +7,7 @@ import 'package:athar_app/core/models/chat/chat_session_model.dart'; // Import t
 part 'chat_repository.g.dart';
 
 @riverpod
-ChatRepository chatRepository(ChatRepositoryRef ref) => ChatRepository();
+ChatRepository chatRepository(Ref ref) => ChatRepository();
 
 class ChatRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

@@ -159,7 +159,7 @@ class TutorHeader extends ConsumerWidget {
           right: 0,
           child: GestureDetector(
             onTap: () {
-              print("📸 تم الضغط على زر الكاميرا!"); 
+              debugPrint("📸 تم الضغط على زر الكاميرا!");
               ref.read(authNotifierProvider.notifier).updateProfilePicture();
             },
             child: Container(

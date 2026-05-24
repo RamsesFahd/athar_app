@@ -520,7 +520,6 @@ enum _HeroKind {
 class _HeroSlideData {
   final _HeroKind kind;
   final String imageUrl;
-  final String? imageUrlEn;
   final HeroAiText? heroCopy;
   final String badgeAr;
   final String badgeEn;
@@ -536,7 +535,6 @@ class _HeroSlideData {
   const _HeroSlideData({
     required this.kind,
     required this.imageUrl,
-    this.imageUrlEn,
     this.heroCopy,
     required this.badgeAr,
     required this.badgeEn,
@@ -580,14 +578,8 @@ class _CinematicHeroSlide extends StatelessWidget {
         children: [
           RepaintBoundary(
             child: _HeroImage(
-              key: ValueKey(
-                !isAr && slide.imageUrlEn != null
-                    ? slide.imageUrlEn!
-                    : slide.imageUrl,
-              ),
-              imageUrl: !isAr && slide.imageUrlEn != null
-                  ? slide.imageUrlEn!
-                  : slide.imageUrl,
+              key: ValueKey(slide.imageUrl),
+              imageUrl: slide.imageUrl,
             ),
           ),
           _HeroGradient(
@@ -746,35 +738,6 @@ class _HeroGradient extends StatelessWidget {
                   Colors.black.withValues(alpha: 0.92),
                 ],
           stops: const [0.0, 0.50, 1.0],
-        ),
-      ),
-    );
-  }
-}
-
-class _PremiumBadge extends StatelessWidget {
-  final String text;
-
-  const _PremiumBadge({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.16),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.28)),
-      ),
-      child: Text(
-        text,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 11,
-          fontWeight: FontWeight.w900,
         ),
       ),
     );

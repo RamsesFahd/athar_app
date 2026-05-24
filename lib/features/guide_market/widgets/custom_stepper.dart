@@ -14,7 +14,7 @@ class CustomStepper extends StatelessWidget {
     // سحب الأخضر الغامق من الثيم (Primary)
     final Color activeColor = theme.colorScheme.primary; 
     // لون رمادي فاتح جداً للخطوات غير النشطة
-    final Color inactiveColor = theme.colorScheme.primary.withOpacity(0.1);
+    final Color inactiveColor = theme.colorScheme.primary.withValues(alpha: 0.1);
     final Color inactiveTextColor = theme.colorScheme.onSurfaceVariant;
 
     return Padding(

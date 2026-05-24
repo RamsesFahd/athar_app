@@ -32,10 +32,12 @@ class SmartTextContent extends ConsumerWidget {
     // Only names in this set will be rendered as tappable entities.
     final Set<String> validEntityNames = {};
     for (final item in culturalState.value?.allItems ?? []) {
-      if (item.titleAr.trim().isNotEmpty)
+      if (item.titleAr.trim().isNotEmpty) {
         validEntityNames.add(item.titleAr.trim());
-      if (item.titleEn.trim().isNotEmpty)
+      }
+      if (item.titleEn.trim().isNotEmpty) {
         validEntityNames.add(item.titleEn.trim());
+      }
     }
     for (final item in suggestedItems ?? []) {
       final ar = item['titleAr']?.toString().trim() ?? '';
@@ -115,10 +117,6 @@ class SmartTextContent extends ConsumerWidget {
       .replaceAll('ة', 'ه')
       .replaceAll('ى', 'ي')
       .replaceAll(RegExp(r'\s+'), ' ');
-
-  bool _containsArabic(String value) {
-    return RegExp(r'[\u0600-\u06FF]').hasMatch(value);
-  }
 
   // Parses **bold** text into either a clickable entity span (if the name is a
   // known platform item) or a non-interactive bold span (if not). Also handles

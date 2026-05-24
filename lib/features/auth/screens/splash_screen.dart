@@ -21,10 +21,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> _initApp() async {
-    // We wait only for auth to resolve, then route immediately. The previous
-    // 500ms minimum-display delay was purely cosmetic and added dead time to
-    // every launch — removed so the splash disappears the moment auth is ready.
-    final user = await ref.read(authNotifierProvider.future);
+    final results = await Future.wait([
+      ref.read(authNotifierProvider.future),
+      Future.delayed(const Duration(milliseconds: 1500)), 
+    ]);
+    final user = results[0];
 
     if (!mounted) return;
 

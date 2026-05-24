@@ -183,8 +183,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                                       email: email,
                                       password: password,
                                     );
-                                if (mounted)
+                                if (mounted) {
                                   setState(() => _isLoginLoading = false);
+                                }
                               },
                       ),
                       const SizedBox(height: 25),

@@ -25,8 +25,8 @@ final touristTotalLikesProvider =
       .snapshots()
       .map((snap) => snap.docs.fold<int>(
             0,
-            (sum, doc) =>
-                sum + ((doc.data()['likes'] as num?)?.toInt() ?? 0),
+            (acc, doc) =>
+                acc + ((doc.data()['likes'] as num?)?.toInt() ?? 0),
           ));
 });
 

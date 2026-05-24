@@ -244,6 +244,7 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
         _latController.text = match.group(1)!;
         _lngController.text = match.group(2)!;
       });
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('تم استخراج الإحداثيات بنجاح'),

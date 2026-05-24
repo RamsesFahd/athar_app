@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -185,10 +186,10 @@ Future<void> migrateRegionIds() async {
     'Tabuk': 'northern_region',
   };
 
-  var _items= FirebaseFirestore.instance.collection('cultural_items');
-  final snapshot = await _items.get();
-  var  _firestore = FirebaseFirestore.instance;
-  final batch = _firestore.batch();
+  var items = FirebaseFirestore.instance.collection('cultural_items');
+  final snapshot = await items.get();
+  var firestore = FirebaseFirestore.instance;
+  final batch = firestore.batch();
   int count = 0;
 
   for (final doc in snapshot.docs) {
@@ -206,17 +207,17 @@ Future<void> migrateRegionIds() async {
     final regionId = arToRegionId[regionAr] ?? enToRegionId[regionEn] ?? '';
 
     if (regionId.isEmpty) {
-      print('⚠️ No match found for doc: ${doc.id} | regionAr: $regionAr | regionEn: $regionEn');
+      debugPrint('⚠️ No match found for doc: ${doc.id} | regionAr: $regionAr | regionEn: $regionEn');
       continue;
     }
 
     batch.update(doc.reference, {'regionId': regionId});
     count++;
-    print('✅ Queued: ${doc.id} → $regionId');
+    debugPrint('✅ Queued: ${doc.id} → $regionId');
   }
 
   await batch.commit();
-  print('🎉 Migration done. Updated $count documents.');
+  debugPrint('🎉 Migration done. Updated $count documents.');
 }
 }
 

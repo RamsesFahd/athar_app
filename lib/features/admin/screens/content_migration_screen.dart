@@ -132,6 +132,43 @@ class _ContentMigrationScreenState
   }
 }
 
+  Future<void> _inspectDocumentShapes() async {
+    final l10n = AppLocalizations.of(context);
+    try {
+      final callable = FirebaseFunctions.instanceFor(region: 'us-central1')
+          .httpsCallable('inspectDocumentShapes');
+      final result = await callable.call();
+      final converted = _convertResponse(result.data);
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text(l10n.adminDocumentShapes),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: SingleChildScrollView(
+              child: SelectableText(
+                const JsonEncoder.withIndent('  ').convert(converted),
+                style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.commonOk),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.commonErrorWithMessage('')), backgroundColor: Colors.red),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -213,49 +250,10 @@ class _ContentMigrationScreenState
             const SizedBox(height: 24),
             const SizedBox(height: 16),
             OutlinedButton.icon(
-  onPressed: () async {
-    try {
-      final callable = FirebaseFunctions.instanceFor(region: 'us-central1')
-          .httpsCallable('inspectDocumentShapes');
-      final result = await callable.call();
-      
-      // ✅ التحويل الآمن
-      final converted = _convertResponse(result.data);
-      
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text(l10n.adminDocumentShapes),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: SingleChildScrollView(
-                child: SelectableText(
-                  const JsonEncoder.withIndent('  ').convert(converted),
-                  style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
-                ),
-              ),
+              onPressed: _inspectDocumentShapes,
+              icon: const Icon(Icons.bug_report_outlined),
+              label: Text(l10n.adminInspectDataShape),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(l10n.commonOk),
-              ),
-            ],
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.commonErrorWithMessage('')), backgroundColor: Colors.red),
-        );
-      }
-    }
-  },
-  icon: const Icon(Icons.bug_report_outlined),
-  label: Text(l10n.adminInspectDataShape),
-),
 
             // Results
             if (_results != null) _buildResults(theme),
@@ -345,8 +343,8 @@ class _ContentMigrationScreenState
   }
 }
 
-/// Recursively converts Firebase Functions response (Map<Object?, Object?>)
-/// to standard Dart types (Map<String, dynamic>)
+/// Recursively converts Firebase Functions response (`Map<Object?, Object?>`)
+/// to standard Dart types (`Map<String, dynamic>`)
 dynamic _convertResponse(dynamic data) {
   if (data is Map) {
     return Map<String, dynamic>.fromEntries(
