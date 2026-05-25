@@ -267,11 +267,12 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
           .where((a) => a.interestIds.any(interests.contains))
           .toList();
 
-      // Fixed pick order so the seed always resolves to the same 5 items.
-      final pickedCultural     = _pickN(filteredCultural, 1, rng);
-      final pickedTrips        = _pickN(filteredTrips, 2, rng);
-      final pickedEvents       = _pickN(filteredEvents, 1, rng);
-      final pickedAttractions  = _pickN(filteredAttractions, 1, rng);
+      // For each slot: prefer interest-matched content, fall back to the full
+      // collection so no slot is ever silently empty when data exists.
+      final pickedCultural    = _pickN(filteredCultural.isNotEmpty ? filteredCultural : culturalItems, 1, rng);
+      final pickedTrips       = _pickN(filteredTrips.isNotEmpty ? filteredTrips : trips, 2, rng);
+      final pickedEvents      = _pickN(filteredEvents.isNotEmpty ? filteredEvents : events, 1, rng);
+      final pickedAttractions = _pickN(filteredAttractions.isNotEmpty ? filteredAttractions : attractions, 1, rng);
 
       final slides = <_HeroSlideData>[];
 
@@ -288,6 +289,7 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
           subtitleEn: item.descriptionEn,
           ctaAr: item.isContribution ? 'شارك الأثر' : 'افتح الأرشيف',
           ctaEn: item.isContribution ? 'Share Athar' : 'Open Archive',
+          isPersonalized: true,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => CulturalItemDetails(item: item)),
@@ -308,6 +310,7 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
           subtitleEn: 'Rise above a landscape made for memory',
           ctaAr: 'احجز التجربة',
           ctaEn: 'Book Experience',
+          isPersonalized: true,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => TripDetailsScreen(trip: trip)),
@@ -329,6 +332,7 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
           countdownDate: event.eventDate,
           ctaAr: 'اكتشف المزيد',
           ctaEn: 'Discover More',
+          isPersonalized: true,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => EventDetailsScreen(event: event)),
@@ -349,6 +353,7 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
           subtitleEn: attraction.getDescription(false),
           ctaAr: 'استكشف المعلم',
           ctaEn: 'Explore Landmark',
+          isPersonalized: true,
           onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
@@ -358,6 +363,11 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
         ));
       }
 
+      // Shuffle with a fresh RNG seeded from the same hourly value so the
+      // order is deterministic within the hour but changes each hour. Using a
+      // separate Random here means the shuffle is not coupled to the pick RNG's
+      // consumed state, which varies based on filtered list sizes.
+      slides.shuffle(Random(_rotationSeed));
       return slides.take(5).toList();
     }
 
@@ -531,6 +541,7 @@ class _HeroSlideData {
   final String ctaAr;
   final String ctaEn;
   final VoidCallback? onTap;
+  final bool isPersonalized;
 
   const _HeroSlideData({
     required this.kind,
@@ -546,6 +557,7 @@ class _HeroSlideData {
     required this.ctaEn,
     this.countdownDate,
     this.onTap,
+    this.isPersonalized = false,
   });
 }
 
@@ -586,6 +598,12 @@ class _CinematicHeroSlide extends StatelessWidget {
             kind: slide.kind,
             isHighContrast: theme.isHighContrast,
           ),
+          if (slide.isPersonalized)
+            PositionedDirectional(
+              top: 20,
+              end: 20,
+              child: _PersonalizedBadge(isAr: isAr),
+            ),
           PositionedDirectional(
             start: 24,
             end: 24,
@@ -853,6 +871,42 @@ class _HeroCta extends StatelessWidget {
           fontWeight: FontWeight.w900,
           fontSize: 12,
         ),
+      ),
+    );
+  }
+}
+
+class _PersonalizedBadge extends StatelessWidget {
+  final bool isAr;
+
+  const _PersonalizedBadge({required this.isAr});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.30),
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.40),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 11),
+          const SizedBox(width: 4),
+          Text(
+            isAr ? 'مُختار لك' : 'For you',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
       ),
     );
   }
