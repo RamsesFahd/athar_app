@@ -20,6 +20,8 @@ class BookingSummaryScreen extends ConsumerStatefulWidget {
   final double totalPrice;
   final String imageUrl;
   final int? tripDurationDays;
+  final bool rewardApplied;
+  final double rewardDiscountAmount;
 
   const BookingSummaryScreen({
     super.key,
@@ -34,6 +36,8 @@ class BookingSummaryScreen extends ConsumerStatefulWidget {
     required this.totalPrice,
     required this.imageUrl,
     this.tripDurationDays,
+    this.rewardApplied = false,
+    this.rewardDiscountAmount = 0.0,
   });
 
   @override
@@ -223,9 +227,12 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
     } catch (e) {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);
-      final msg = e.toString().contains('tripDayAlreadyBookedError')
+      final errorText = e.toString();
+      final msg = errorText.contains('tripDayAlreadyBookedError')
           ? l10n.tripDayAlreadyBookedError
-          : l10n.commonErrorWithMessage('');
+          : errorText.contains('rewardUnavailable')
+              ? l10n.rewardUnavailable
+              : l10n.commonErrorWithMessage('');
       messenger.showSnackBar(
         SnackBar(
           content: Text(msg),
@@ -296,6 +303,33 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                   widget.childPrice == 0
                       ? Text(l10n.commonFree)
                       : CurrencyFormatter.format(widget.children * widget.childPrice),
+                  theme,
+                ),
+              ),
+            if (widget.rewardApplied && widget.rewardDiscountAmount > 0)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: _priceRow(
+                  l10n.rewardApplied,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '-',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      CurrencyFormatter.format(
+                        widget.rewardDiscountAmount,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   theme,
                 ),
               ),

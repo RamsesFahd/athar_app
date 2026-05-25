@@ -3206,6 +3206,42 @@ abstract class AppLocalizations {
   /// **'OK'**
   String get commonOk;
 
+  /// No description provided for @rewardUnlockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward unlocked'**
+  String get rewardUnlockedTitle;
+
+  /// No description provided for @rewardUnlockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Congratulations! You unlocked a new reward through your cultural contributions.'**
+  String get rewardUnlockedMessage;
+
+  /// No description provided for @freeTripRewardUnlockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'A free adult-seat reward has been added to your account and can be used during booking.'**
+  String get freeTripRewardUnlockedMessage;
+
+  /// No description provided for @useRewardOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Use free adult-seat reward'**
+  String get useRewardOption;
+
+  /// No description provided for @rewardApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward applied'**
+  String get rewardApplied;
+
+  /// No description provided for @rewardUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This reward has already been used or is no longer available.'**
+  String get rewardUnavailable;
+
   /// No description provided for @timeAmMarker.
   ///
   /// In en, this message translates to:

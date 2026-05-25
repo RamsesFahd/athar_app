@@ -283,6 +283,36 @@ class AdminRepository {
     final batch = _firestore.batch();
 
     final archiveRef = _culturalItems.doc();
+    final touristRef = _users.doc(touristId);
+    final rewardsRef = touristRef.collection('rewards');
+    final existingRewards = await rewardsRef.get();
+    final existingRewardIds = existingRewards.docs.map((doc) => doc.id).toSet();
+    final approvedContributions = await _contributions
+        .where('touristId', isEqualTo: touristId)
+        .where('status', isEqualTo: ContributionStatus.approved.name)
+        .get();
+    final contributionSnapshot = await _contributions.doc(contributionId).get();
+    final contributionData =
+        contributionSnapshot.data() as Map<String, dynamic>? ?? {};
+
+    final approvedData = approvedContributions.docs
+        .map((doc) => doc.data() as Map<String, dynamic>)
+        .toList();
+    final futureApprovedCount = approvedData.length + 1;
+    final futureTotalPoints = approvedData.fold<int>(
+          0,
+          (sum, data) => sum + ((data['points'] as num?)?.toInt() ?? 0),
+        ) +
+        points;
+    final futureTotalLikes = approvedData.fold<int>(
+          0,
+          (sum, data) => sum + ((data['likes'] as num?)?.toInt() ?? 0),
+        ) +
+        ((contributionData['likes'] as num?)?.toInt() ?? 0);
+    final futureUniqueRegions = {
+      ...approvedData.map((data) => data['regionId'] as String? ?? ''),
+      regionId,
+    }..remove('');
 
     final regionEn = regionLabel(regionId, isArabic: false);
     final regionAr = regionLabel(regionId, isArabic: true);
@@ -319,10 +349,70 @@ class AdminRepository {
       'archiveItemId': archiveRef.id,
     });
 
-    batch.update(_users.doc(touristId), {
+    batch.update(touristRef, {
       'points': FieldValue.increment(points),
       'contributionsCount': FieldValue.increment(1),
     });
+
+    void unlockReward({
+      required String achievementId,
+      required String type,
+      required String titleAr,
+      required String titleEn,
+      required bool isEarned,
+      int pointsRequired = 0,
+    }) {
+      if (!isEarned || existingRewardIds.contains(achievementId)) return;
+      batch.set(rewardsRef.doc(achievementId), {
+        'achievementId': achievementId,
+        'type': type,
+        'titleAr': titleAr,
+        'titleEn': titleEn,
+        'pointsRequired': pointsRequired,
+        'isUsed': false,
+        'createdAt': FieldValue.serverTimestamp(),
+        'usedAt': null,
+        'bookingId': null,
+        'celebratedAt': null,
+      });
+    }
+
+    unlockReward(
+      achievementId: 'first_contribution',
+      type: 'profile_badge',
+      titleAr: 'أول إثراء',
+      titleEn: 'First Enrichment',
+      isEarned: futureApprovedCount >= 1,
+    );
+    unlockReward(
+      achievementId: 'narrator',
+      type: 'profile_title',
+      titleAr: 'راوي ثقافي',
+      titleEn: 'Narrator',
+      isEarned: futureApprovedCount >= 10,
+    );
+    unlockReward(
+      achievementId: 'explorer',
+      type: 'profile_marker',
+      titleAr: 'مستكشف المناطق',
+      titleEn: 'Explorer',
+      isEarned: futureUniqueRegions.length >= 3,
+    );
+    unlockReward(
+      achievementId: 'loved',
+      type: 'profile_highlight',
+      titleAr: 'محبوب المجتمع',
+      titleEn: 'Community Loved',
+      isEarned: futureTotalLikes >= 50,
+    );
+    unlockReward(
+      achievementId: 'heritage_ambassador',
+      type: 'free_trip',
+      titleAr: 'سفير التراث',
+      titleEn: 'Heritage Ambassador',
+      pointsRequired: 1000,
+      isEarned: futureTotalPoints >= 1000,
+    );
 
     await batch.commit();
   }

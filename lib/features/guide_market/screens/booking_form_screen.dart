@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:athar_app/core/models/rewards/user_reward_model.dart';
+import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import '../widgets/custom_stepper.dart';
 import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
 import 'package:athar_app/features/guide_market/logic/booking_form_notifier.dart';
@@ -23,6 +26,19 @@ class BookingFormScreen extends ConsumerWidget {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final form = ref.watch(bookingFormProvider);
     final formNotifier = ref.read(bookingFormProvider.notifier);
+    final currentUser = ref.watch(authNotifierProvider).valueOrNull;
+    final rewardsAsync = currentUser is TouristModel
+        ? ref.watch(unusedRewardsProvider(currentUser.uId))
+        : const AsyncValue<List<UserRewardModel>>.data([]);
+    final rewards = rewardsAsync.valueOrNull ?? const <UserRewardModel>[];
+    UserRewardModel? freeTripReward;
+    for (final reward in rewards) {
+      if (reward.type == 'free_trip' && !reward.isUsed) {
+        freeTripReward = reward;
+        break;
+      }
+    }
+    final availableFreeTripReward = freeTripReward;
     // For private trips, eagerly load booked dates so the picker has them ready.
     final bookedDates = trip.isPrivate
         ? ref.watch(bookedDatesForTripProvider(trip.id)).valueOrNull
@@ -97,9 +113,30 @@ class BookingFormScreen extends ConsumerWidget {
                             ? l10n.select
                             : form.selectedDate.toString().split(' ')[0],
                         icon: Icons.event_available,
-                        onTap: () => _pickDate(context, formNotifier, trip, bookedDates),
+                        onTap: () =>
+                            _pickDate(context, formNotifier, trip, bookedDates),
                         theme: theme,
                       ),
+                      if (availableFreeTripReward != null) ...[
+                        const SizedBox(height: 12),
+                        _buildRewardOptionTile(
+                          reward: availableFreeTripReward,
+                          isSelected: form.selectedRewardId ==
+                              availableFreeTripReward.id,
+                          onChanged: (selected) {
+                            if (selected) {
+                              formNotifier.selectReward(
+                                rewardId: availableFreeTripReward.id,
+                                rewardType: availableFreeTripReward.type,
+                              );
+                            } else {
+                              formNotifier.clearReward();
+                            }
+                          },
+                          l10n: l10n,
+                          theme: theme,
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -295,6 +332,55 @@ class BookingFormScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildRewardOptionTile({
+    required UserRewardModel reward,
+    required bool isSelected,
+    required ValueChanged<bool> onChanged,
+    required AppLocalizations l10n,
+    required ThemeData theme,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: theme.colorScheme.primary.withValues(alpha: 0.12),
+        ),
+      ),
+      child: CheckboxListTile(
+        value: isSelected,
+        onChanged: (value) => onChanged(value ?? false),
+        controlAffinity: ListTileControlAffinity.leading,
+        activeColor: theme.colorScheme.primary,
+        title: Text(
+          l10n.useRewardOption,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          isSelected
+              ? l10n.rewardApplied
+              : l10n.freeTripRewardUnlockedMessage,
+          style: theme.textTheme.bodySmall,
+        ),
+      ),
+    );
+  }
+
+  double _rawTotal(BookingFormState form) {
+    return (trip.adultPrice * form.adults) +
+        (trip.childPrice * form.children);
+  }
+
+  double _totalWithReward(BookingFormState form) {
+    final total = _rawTotal(form);
+    if (form.selectedRewardType == 'free_trip') {
+      return (total - trip.adultPrice).clamp(0.0, total).toDouble();
+    }
+    return total;
+  }
+
 
   Future<void> _pickDate(
     BuildContext context,
@@ -350,6 +436,9 @@ class BookingFormScreen extends ConsumerWidget {
     }
 
     final tripTime = trip.timeRange ?? trip.startTime ?? '';
+    final rawTotal = _rawTotal(form);
+    final totalWithReward = _totalWithReward(form);
+    final rewardDiscountAmount = rawTotal - totalWithReward;
 
     ref.read(bookingNotifierProvider.notifier).updateDetails(
           date: form.selectedDate.toString().split(' ')[0],
@@ -358,8 +447,10 @@ class BookingFormScreen extends ConsumerWidget {
           children: form.children,
           adultPrice: trip.adultPrice,
           childPrice: trip.childPrice,
-          totalPrice:
-              (trip.adultPrice * form.adults) + (trip.childPrice * form.children),
+          totalPrice: totalWithReward,
+          rewardId: form.selectedRewardId,
+          rewardType: form.selectedRewardType,
+          rewardDiscountAmount: rewardDiscountAmount,
         );
 
     Navigator.push(
@@ -374,10 +465,11 @@ class BookingFormScreen extends ConsumerWidget {
           children: form.children,
           adultPrice: trip.adultPrice,
           childPrice: trip.childPrice,
-          totalPrice: (trip.adultPrice * form.adults) +
-              (trip.childPrice * form.children),
+          totalPrice: totalWithReward,
           imageUrl: trip.imageUrl,
           tripDurationDays: trip.tripDurationDays,
+          rewardApplied: form.selectedRewardId != null,
+          rewardDiscountAmount: rewardDiscountAmount,
         ),
       ),
     );

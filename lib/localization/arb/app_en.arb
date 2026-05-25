@@ -649,6 +649,12 @@
   "commonNoTitle": "No title",
   "commonNoDescription": "No description",
   "commonOk": "OK",
+  "rewardUnlockedTitle": "Reward unlocked",
+  "rewardUnlockedMessage": "Congratulations! You unlocked a new reward through your cultural contributions.",
+  "freeTripRewardUnlockedMessage": "A free adult-seat reward has been added to your account and can be used during booking.",
+  "useRewardOption": "Use free adult-seat reward",
+  "rewardApplied": "Reward applied",
+  "rewardUnavailable": "This reward has already been used or is no longer available.",
   "timeAmMarker": "AM",
   "timePmMarker": "PM",
 

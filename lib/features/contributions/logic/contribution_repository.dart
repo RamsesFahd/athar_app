@@ -4,6 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/contribution/contribution_model.dart';
+import 'package:athar_app/core/models/rewards/user_reward_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
 
@@ -28,6 +29,13 @@ final touristTotalLikesProvider =
             (acc, doc) =>
                 acc + ((doc.data()['likes'] as num?)?.toInt() ?? 0),
           ));
+});
+
+final uncelebratedRewardsProvider =
+    StreamProvider.autoDispose.family<List<UserRewardModel>, String>((ref, uid) {
+  return ref
+      .watch(contributionRepositoryProvider)
+      .watchUncelebratedRewards(uid);
 });
 
 /// Streams the tourist's Firestore document so points/count stay live
@@ -171,6 +179,27 @@ class ContributionRepository {
             .map((doc) => ContributionModel.fromMap(
                 doc.data() as Map<String, dynamic>, doc.id))
             .toList());
+  }
+
+  Stream<List<UserRewardModel>> watchUncelebratedRewards(String touristId) {
+    return _firestore
+        .collection('users')
+        .doc(touristId)
+        .collection('rewards')
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((doc) => UserRewardModel.fromMap(doc.data(), doc.id))
+            .where((reward) => reward.celebratedAt == null)
+            .toList());
+  }
+
+  Future<void> markRewardCelebrated(String touristId, String rewardId) async {
+    await _firestore
+        .collection('users')
+        .doc(touristId)
+        .collection('rewards')
+        .doc(rewardId)
+        .update({'celebratedAt': FieldValue.serverTimestamp()});
   }
 
   ContributionStats computeStats(List<ContributionModel> all) {

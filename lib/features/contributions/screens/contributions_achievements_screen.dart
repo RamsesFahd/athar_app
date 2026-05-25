@@ -1,5 +1,6 @@
 import 'package:athar_app/core/constants/region_city_constants.dart';
 import 'package:athar_app/core/models/contribution/contribution_model.dart';
+import 'package:athar_app/core/models/rewards/user_reward_model.dart';
 import 'package:athar_app/features/contributions/logic/contribution_repository.dart';
 import 'package:athar_app/features/contributions/screens/add_contribution_screen.dart';
 import 'package:athar_app/features/contributions/screens/contribution_rejection_detail_screen.dart';
@@ -21,8 +22,17 @@ final _touristContributionsProvider = StreamProvider.autoDispose
       .getTouristContributions(touristId);
 });
 
-class ContributionsAchievementsScreen extends ConsumerWidget {
+class ContributionsAchievementsScreen extends ConsumerStatefulWidget {
   const ContributionsAchievementsScreen({super.key});
+
+  @override
+  ConsumerState<ContributionsAchievementsScreen> createState() =>
+      _ContributionsAchievementsScreenState();
+}
+
+class _ContributionsAchievementsScreenState
+    extends ConsumerState<ContributionsAchievementsScreen> {
+  final Set<String> _celebratingRewardIds = {};
 
   static const double _pageHorizontalPadding = 16;
   static const int _nextLevelPoints = 500;
@@ -65,7 +75,7 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
   };
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final isArabic = Directionality.of(context) == TextDirection.rtl;
@@ -123,6 +133,17 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
         // points/contributionsCount update in real time after admin approval.
         final liveTouristAsync = ref.watch(touristStreamProvider(tourist.uId));
         final liveTourist = liveTouristAsync.valueOrNull ?? tourist;
+        final uncelebratedRewardsAsync =
+            ref.watch(uncelebratedRewardsProvider(tourist.uId));
+        uncelebratedRewardsAsync.whenData((rewards) {
+          if (rewards.isEmpty) return;
+          final reward = rewards.first;
+          if (_celebratingRewardIds.contains(reward.id)) return;
+          _celebratingRewardIds.add(reward.id);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _showRewardUnlockedDialog(context, tourist.uId, reward, l10n);
+          });
+        });
 
         // Watch the live contributions stream for this tourist
         final contributionsAsync =
@@ -241,6 +262,76 @@ class ContributionsAchievementsScreen extends ConsumerWidget {
         body: Center(child: Text(l10n.commonErrorWithMessage(''))),
       ),
     );
+  }
+
+  Future<void> _showRewardUnlockedDialog(
+    BuildContext context,
+    String touristId,
+    UserRewardModel reward,
+    AppLocalizations l10n,
+  ) async {
+    if (!mounted) return;
+    final isArabic = Directionality.of(context) == TextDirection.rtl;
+    final rewardTitle = isArabic ? reward.titleAr : reward.titleEn;
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: Text(l10n.rewardUnlockedTitle),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.card_giftcard_rounded,
+                size: 48,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(height: 12),
+              if (rewardTitle.isNotEmpty) ...[
+                Text(
+                  rewardTitle,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
+              Text(
+                l10n.rewardUnlockedMessage,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium,
+              ),
+              if (reward.type == 'free_trip') ...[
+                const SizedBox(height: 10),
+                Text(
+                  l10n.freeTripRewardUnlockedMessage,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.commonOk),
+            ),
+          ],
+        );
+      },
+    );
+    if (!mounted) return;
+    await ref
+        .read(contributionRepositoryProvider)
+        .markRewardCelebrated(touristId, reward.id);
   }
 
   void _showPhoneGuardDialog(BuildContext context, bool isArabic) {

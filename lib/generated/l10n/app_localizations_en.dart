@@ -1671,6 +1671,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonOk => 'OK';
 
   @override
+  String get rewardUnlockedTitle => 'Reward unlocked';
+
+  @override
+  String get rewardUnlockedMessage =>
+      'Congratulations! You unlocked a new reward through your cultural contributions.';
+
+  @override
+  String get freeTripRewardUnlockedMessage =>
+      'A free adult-seat reward has been added to your account and can be used during booking.';
+
+  @override
+  String get useRewardOption => 'Use free adult-seat reward';
+
+  @override
+  String get rewardApplied => 'Reward applied';
+
+  @override
+  String get rewardUnavailable =>
+      'This reward has already been used or is no longer available.';
+
+  @override
   String get timeAmMarker => 'AM';
 
   @override

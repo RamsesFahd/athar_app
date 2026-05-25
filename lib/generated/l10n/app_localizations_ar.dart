@@ -1654,6 +1654,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonOk => 'حسنًا';
 
   @override
+  String get rewardUnlockedTitle => 'تم فتح مكافأة';
+
+  @override
+  String get rewardUnlockedMessage =>
+      'مبروك! تم فتح مكافأة جديدة لك بفضل مساهماتك الثقافية.';
+
+  @override
+  String get freeTripRewardUnlockedMessage =>
+      'تمت إضافة مكافأة مقعد بالغ مجاني إلى حسابك، ويمكنك استخدامها عند الحجز.';
+
+  @override
+  String get useRewardOption => 'استخدام مكافأة مقعد بالغ مجاني';
+
+  @override
+  String get rewardApplied => 'تم تطبيق المكافأة';
+
+  @override
+  String get rewardUnavailable =>
+      'تم استخدام هذه المكافأة مسبقًا أو لم تعد متاحة.';
+
+  @override
   String get timeAmMarker => 'ص';
 
   @override

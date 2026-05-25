@@ -617,6 +617,12 @@
   "commonNoTitle": "بلا عنوان",
   "commonNoDescription": "بلا وصف",
   "commonOk": "حسنًا",
+  "rewardUnlockedTitle": "تم فتح مكافأة",
+  "rewardUnlockedMessage": "مبروك! تم فتح مكافأة جديدة لك بفضل مساهماتك الثقافية.",
+  "freeTripRewardUnlockedMessage": "تمت إضافة مكافأة مقعد بالغ مجاني إلى حسابك، ويمكنك استخدامها عند الحجز.",
+  "useRewardOption": "استخدام مكافأة مقعد بالغ مجاني",
+  "rewardApplied": "تم تطبيق المكافأة",
+  "rewardUnavailable": "تم استخدام هذه المكافأة مسبقًا أو لم تعد متاحة.",
   "timeAmMarker": "ص",
   "timePmMarker": "م",
 

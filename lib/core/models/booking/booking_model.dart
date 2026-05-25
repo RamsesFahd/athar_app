@@ -21,6 +21,9 @@ class BookingModel {
   final String imageUrl;
   /// How many consecutive days this booking spans. null/1 = single day.
   final int? tripDurationDays;
+  final String? rewardId;
+  final String? rewardType;
+  final double rewardDiscountAmount;
   @Deprecated('Read live from users collection — see booking_view_screen')
   final String? tutorPhone;
   @Deprecated('Read live from users collection — see booking_view_screen')
@@ -46,6 +49,9 @@ class BookingModel {
     required this.createdAt,
     required this.imageUrl,
     this.tripDurationDays,
+    this.rewardId,
+    this.rewardType,
+    this.rewardDiscountAmount = 0.0,
     this.tutorPhone,
     this.tutorName,
   });
@@ -69,6 +75,9 @@ class BookingModel {
       'createdAt': Timestamp.fromDate(createdAt),
       'imageUrl': imageUrl,
       'tripDurationDays': tripDurationDays,
+      'rewardId': rewardId,
+      'rewardType': rewardType,
+      'rewardDiscountAmount': rewardDiscountAmount,
       // ignore: deprecated_member_use_from_same_package
       'tutorPhone': tutorPhone,
       // ignore: deprecated_member_use_from_same_package
@@ -98,6 +107,10 @@ class BookingModel {
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       imageUrl: map['imageUrl'] ?? '',
       tripDurationDays: map['tripDurationDays'] as int?,
+      rewardId: map['rewardId'] as String?,
+      rewardType: map['rewardType'] as String?,
+      rewardDiscountAmount:
+          (map['rewardDiscountAmount'] as num?)?.toDouble() ?? 0.0,
       tutorPhone: map['tutorPhone'] as String?,
       tutorName: map['tutorName'] as String?,
     );
@@ -121,6 +134,9 @@ class BookingModel {
     DateTime? createdAt,
     String? imageUrl,
     int? tripDurationDays,
+    String? rewardId,
+    String? rewardType,
+    double? rewardDiscountAmount,
     String? tutorPhone,
     String? tutorName,
   }) {
@@ -142,6 +158,10 @@ class BookingModel {
       createdAt: createdAt ?? this.createdAt,
       imageUrl: imageUrl ?? this.imageUrl,
       tripDurationDays: tripDurationDays ?? this.tripDurationDays,
+      rewardId: rewardId ?? this.rewardId,
+      rewardType: rewardType ?? this.rewardType,
+      rewardDiscountAmount:
+          rewardDiscountAmount ?? this.rewardDiscountAmount,
       // ignore: deprecated_member_use_from_same_package
       tutorPhone: tutorPhone ?? this.tutorPhone,
       // ignore: deprecated_member_use_from_same_package

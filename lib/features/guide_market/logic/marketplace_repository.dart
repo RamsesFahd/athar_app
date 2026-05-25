@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
+import 'package:athar_app/core/models/rewards/user_reward_model.dart';
 import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 part 'marketplace_repository.g.dart';
@@ -81,7 +82,29 @@ class MarketplaceRepository {
       }
     }
 
-    await _bookings.doc(booking.bookingId).set(booking.toMap());
+    final bookingRef = _bookings.doc(booking.bookingId);
+    if (booking.rewardId != null) {
+      final rewardRef = _users
+          .doc(booking.touristId)
+          .collection('rewards')
+          .doc(booking.rewardId);
+      await _firestore.runTransaction((transaction) async {
+        final rewardSnapshot = await transaction.get(rewardRef);
+        final rewardData = rewardSnapshot.data() as Map<String, dynamic>?;
+        final isUsed = rewardData?['isUsed'] as bool? ?? true;
+        if (!rewardSnapshot.exists || isUsed) {
+          throw Exception('rewardUnavailable');
+        }
+        transaction.set(bookingRef, booking.toMap());
+        transaction.update(rewardRef, {
+          'isUsed': true,
+          'usedAt': FieldValue.serverTimestamp(),
+          'bookingId': booking.bookingId,
+        });
+      });
+    } else {
+      await bookingRef.set(booking.toMap());
+    }
     // Deterministic ID prevents duplicate if a Cloud Function also fires this.
     await NotificationsRepository().addNotification(
       userId: booking.tutorId,
@@ -114,6 +137,17 @@ class MarketplaceRepository {
       }
     }
     return dates;
+  }
+
+  Stream<List<UserRewardModel>> watchUnusedRewards(String userId) {
+    return _users
+        .doc(userId)
+        .collection('rewards')
+        .where('isUsed', isEqualTo: false)
+        .snapshots()
+        .map((snap) => snap.docs
+            .map((doc) => UserRewardModel.fromMap(doc.data(), doc.id))
+            .toList());
   }
 
   // 5. تقديم رحلة جديدة من قِبل المرشد (تُحفظ بحالة pending حتى يوافق الأدمن)
@@ -260,3 +294,10 @@ final bookedDatesForTripProvider =
     FutureProvider.autoDispose.family<Set<String>, String>((ref, tripId) {
   return ref.read(marketplaceRepositoryProvider).fetchBookedDates(tripId);
 });
+
+final unusedRewardsProvider =
+    StreamProvider.autoDispose.family<List<UserRewardModel>, String>(
+  (ref, userId) {
+    return ref.watch(marketplaceRepositoryProvider).watchUnusedRewards(userId);
+  },
+);

@@ -46,6 +46,9 @@ class BookingNotifier extends _$BookingNotifier {
     required double adultPrice,
     required double childPrice,
     required double totalPrice,
+    String? rewardId,
+    String? rewardType,
+    double rewardDiscountAmount = 0.0,
   }) {
     if (state == null) return;
     state = state!.copyWith(
@@ -56,6 +59,9 @@ class BookingNotifier extends _$BookingNotifier {
       adultPrice: adultPrice,
       childPrice: childPrice,
       totalPrice: totalPrice,
+      rewardId: rewardId,
+      rewardType: rewardType,
+      rewardDiscountAmount: rewardDiscountAmount,
     );
   }
 
