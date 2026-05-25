@@ -396,4 +396,3 @@ class CulturalArchive extends ConsumerWidget {
   }
 }
 
-//dart run build_runner build --delete-conflicting-outputs

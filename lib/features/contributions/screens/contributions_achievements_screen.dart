@@ -35,7 +35,24 @@ class _ContributionsAchievementsScreenState
   final Set<String> _celebratingRewardIds = {};
 
   static const double _pageHorizontalPadding = 16;
-  static const int _nextLevelPoints = 500;
+
+  // Thresholds: [0, 250, 500, 750, 1000] → maps to 5 levels
+  static const List<int> _levelThresholds = [0, 250, 500, 750, 1000];
+
+  static String _levelName(int pts, AppLocalizations l10n, bool isArabic) {
+    if (pts >= 1000) return isArabic ? 'سفير التراث' : 'Heritage Ambassador';
+    if (pts >= 750) return l10n.heritagePreserverLevel;
+    if (pts >= 500) return l10n.culturalContributorLevel;
+    if (pts >= 250) return l10n.contributionActiveContributor;
+    return l10n.communityMember;
+  }
+
+  static String _nextLevelName(int pts, AppLocalizations l10n, bool isArabic) {
+    if (pts >= 750) return isArabic ? 'سفير التراث' : 'Heritage Ambassador';
+    if (pts >= 500) return l10n.heritagePreserverLevel;
+    if (pts >= 250) return l10n.culturalContributorLevel;
+    return l10n.contributionActiveContributor;
+  }
 
   // Category display labels & icons
   static const Map<String, String> _categoryLabelsAr = {
@@ -206,7 +223,6 @@ class _ContributionsAchievementsScreenState
                               isArabic,
                               l10n: l10n,
                               currentPoints: stats.totalPoints,
-                              maxPoints: _nextLevelPoints,
                             ),
                             const SizedBox(height: 18),
                             _buildStatsRow(
@@ -458,11 +474,28 @@ class _ContributionsAchievementsScreenState
     bool isArabic, {
     required AppLocalizations l10n,
     required int currentPoints,
-    required int maxPoints,
   }) {
-    final safeCurrentPoints = currentPoints.clamp(0, maxPoints);
-    final progressValue = maxPoints == 0 ? 0.0 : safeCurrentPoints / maxPoints;
-    final remainingPoints = (maxPoints - safeCurrentPoints).clamp(0, maxPoints);
+    // Find current level index
+    int levelIndex = 0;
+    for (int i = _levelThresholds.length - 1; i >= 0; i--) {
+      if (currentPoints >= _levelThresholds[i]) {
+        levelIndex = i;
+        break;
+      }
+    }
+    final isMaxLevel = levelIndex == _levelThresholds.length - 1;
+    final currentThreshold = _levelThresholds[levelIndex];
+    final nextThreshold =
+        isMaxLevel ? _levelThresholds.last : _levelThresholds[levelIndex + 1];
+
+    final rangeSize = nextThreshold - currentThreshold;
+    final progressValue = isMaxLevel
+        ? 1.0
+        : (rangeSize == 0 ? 1.0 : (currentPoints - currentThreshold) / rangeSize);
+    final remainingPoints = isMaxLevel ? 0 : nextThreshold - currentPoints;
+
+    final currentLevelName = _levelName(currentPoints, l10n, isArabic);
+    final nextLevelName = _nextLevelName(currentPoints, l10n, isArabic);
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -483,21 +516,22 @@ class _ContributionsAchievementsScreenState
         children: [
           Text(
             l10n.contributionContributorLevel,
-            style: theme.textTheme.titleSmall
-                ?.copyWith(fontWeight: FontWeight.w800),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.55),
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 4),
           Text(
-            l10n.contributionActiveContributor,
-            style: theme.textTheme.bodyLarge
-                ?.copyWith(fontWeight: FontWeight.w700),
+            currentLevelName,
+            style: theme.textTheme.titleLarge
+                ?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 14),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '$safeCurrentPoints',
+                '$currentPoints',
                 style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w900, fontSize: 30, height: 1),
               ),
@@ -530,26 +564,30 @@ class _ContributionsAchievementsScreenState
           const SizedBox(height: 10),
           Row(
             children: [
-              Text('0',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: theme.textTheme.bodySmall?.color
-                          ?.withValues(alpha: 0.78))),
+              Text(
+                '$currentThreshold',
+                style: theme.textTheme.bodySmall?.copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: theme.textTheme.bodySmall?.color
+                        ?.withValues(alpha: 0.78)),
+              ),
               const Spacer(),
-              Text('$maxPoints',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: theme.textTheme.bodySmall?.color
-                          ?.withValues(alpha: 0.78))),
+              Text(
+                '$nextThreshold',
+                style: theme.textTheme.bodySmall?.copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: theme.textTheme.bodySmall?.color
+                        ?.withValues(alpha: 0.78)),
+              ),
             ],
           ),
           const SizedBox(height: 10),
           Text(
-            isArabic
-                ? 'متبقي $remainingPoints نقطة للوصول للمستوى القادم'
-                : '$remainingPoints points left to the next level',
+            isMaxLevel
+                ? (isArabic ? 'وصلت للمستوى الأعلى!' : 'Maximum level reached!')
+                : l10n.pointsToReachNextLevel(remainingPoints, nextLevelName),
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w600,
               color: theme.textTheme.bodySmall?.color?.withValues(alpha: 0.82),

@@ -190,7 +190,7 @@ class _IsFavoriteProviderElement extends AutoDisposeFutureProviderElement<bool>
   String get itemId => (origin as IsFavoriteProvider).itemId;
 }
 
-String _$favoritesNotifierHash() => r'5cb0159ca3d503d4583f1cc443220dc38f246c1d';
+String _$favoritesNotifierHash() => r'76f7d6b42832d7b12db23045ca5c74820cda59c7';
 
 /// Toggle a favorite item (add or remove). Guards against unauthenticated users.
 ///

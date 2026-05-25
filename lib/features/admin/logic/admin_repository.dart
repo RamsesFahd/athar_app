@@ -301,12 +301,12 @@ class AdminRepository {
     final futureApprovedCount = approvedData.length + 1;
     final futureTotalPoints = approvedData.fold<int>(
           0,
-          (sum, data) => sum + ((data['points'] as num?)?.toInt() ?? 0),
+          (acc, data) => acc + ((data['points'] as num?)?.toInt() ?? 0),
         ) +
         points;
     final futureTotalLikes = approvedData.fold<int>(
           0,
-          (sum, data) => sum + ((data['likes'] as num?)?.toInt() ?? 0),
+          (acc, data) => acc + ((data['likes'] as num?)?.toInt() ?? 0),
         ) +
         ((contributionData['likes'] as num?)?.toInt() ?? 0);
     final futureUniqueRegions = {

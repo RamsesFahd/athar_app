@@ -90,7 +90,7 @@ class MarketplaceRepository {
           .doc(booking.rewardId);
       await _firestore.runTransaction((transaction) async {
         final rewardSnapshot = await transaction.get(rewardRef);
-        final rewardData = rewardSnapshot.data() as Map<String, dynamic>?;
+        final rewardData = rewardSnapshot.data();
         final isUsed = rewardData?['isUsed'] as bool? ?? true;
         if (!rewardSnapshot.exists || isUsed) {
           throw Exception('rewardUnavailable');
@@ -196,7 +196,26 @@ class MarketplaceRepository {
     BookingStatus status,
     String touristId,
   ) async {
-    await _bookings.doc(bookingId).update({'status': status.name});
+    final batch = _firestore.batch();
+    batch.update(_bookings.doc(bookingId), {'status': status.name});
+
+    if (status == BookingStatus.cancelled || status == BookingStatus.rejected) {
+      // Refund the free-trip reward if one was applied to this booking.
+      final bookingSnap = await _bookings.doc(bookingId).get();
+      if (bookingSnap.exists) {
+        final rewardId =
+            (bookingSnap.data() as Map<String, dynamic>?)?['rewardId']
+                as String?;
+        if (rewardId != null && rewardId.isNotEmpty) {
+          batch.update(
+            _users.doc(touristId).collection('rewards').doc(rewardId),
+            {'isUsed': false, 'usedAt': null, 'bookingId': null},
+          );
+        }
+      }
+    }
+
+    await batch.commit();
 
     if (status == BookingStatus.cancelled || status == BookingStatus.rejected) {
       final notifType = status == BookingStatus.rejected
