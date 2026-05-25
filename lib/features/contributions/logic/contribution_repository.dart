@@ -4,7 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/contribution/contribution_model.dart';
-import 'package:athar_app/core/models/rewards/user_reward_model.dart';
+import 'package:athar_app/core/models/contribution/user_reward_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
 

@@ -1,6 +1,6 @@
 import 'package:athar_app/core/constants/region_city_constants.dart';
 import 'package:athar_app/core/models/contribution/contribution_model.dart';
-import 'package:athar_app/core/models/rewards/user_reward_model.dart';
+import 'package:athar_app/core/models/contribution/user_reward_model.dart';
 import 'package:athar_app/features/contributions/logic/contribution_repository.dart';
 import 'package:athar_app/features/contributions/screens/add_contribution_screen.dart';
 import 'package:athar_app/features/contributions/screens/contribution_rejection_detail_screen.dart';
