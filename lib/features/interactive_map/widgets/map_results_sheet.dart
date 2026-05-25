@@ -586,13 +586,10 @@ Color _hexToColor(String hex) {
 
 TextStyle? _mapEventArabicStyle(
   TextStyle? style,
-  EventModel? event,
+  EventModel? _,
   bool isAr,
 ) {
-  if (!isAr ||
-      event == null ||
-      (event.eventType != EventType.festival &&
-          event.eventType != EventType.exhibition)) {
+  if (!isAr) {
     return style;
   }
 

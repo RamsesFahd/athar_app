@@ -539,7 +539,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 
-  Color _statusColor(BookingStatus status, ThemeData theme) {
+  Color _statusColor(
+    BookingStatus status,
+    ThemeData theme,
+    bool isHighContrast,
+  ) {
+    if (isHighContrast &&
+        (status == BookingStatus.pending ||
+            status == BookingStatus.approved ||
+            status == BookingStatus.completed)) {
+      return theme.colorScheme.primary;
+    }
+
     switch (status) {
       case BookingStatus.approved:
         return Colors.green;
@@ -563,7 +574,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     bool isHighContrast,
   ) {
     final isTutor = user is TutorModel;
-    final statusColor = _statusColor(b.status, theme);
+    final statusColor = _statusColor(b.status, theme, isHighContrast);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
