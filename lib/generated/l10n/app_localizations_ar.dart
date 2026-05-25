@@ -3042,4 +3042,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminVerificationRevokedSuccess => 'تم إلغاء التوثيق بنجاح';
+
+  @override
+  String get heroForYou => 'مُختار لك';
 }

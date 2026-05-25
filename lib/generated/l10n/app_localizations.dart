@@ -5744,6 +5744,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Verification revoked successfully'**
   String get adminVerificationRevokedSuccess;
+
+  /// No description provided for @heroForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'For you'**
+  String get heroForYou;
 }
 
 class _AppLocalizationsDelegate

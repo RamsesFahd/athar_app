@@ -1186,5 +1186,6 @@
   },
   "adminRevokeVerification": "إلغاء التوثيق",
   "adminVerificationRevoked": "تم إلغاء التوثيق",
-  "adminVerificationRevokedSuccess": "تم إلغاء التوثيق بنجاح"
+  "adminVerificationRevokedSuccess": "تم إلغاء التوثيق بنجاح",
+  "heroForYou": "مُختار لك"
 }

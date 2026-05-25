@@ -1218,5 +1218,6 @@
   },
   "adminRevokeVerification": "Revoke Verification",
   "adminVerificationRevoked": "Verification revoked",
-  "adminVerificationRevokedSuccess": "Verification revoked successfully"
+  "adminVerificationRevokedSuccess": "Verification revoked successfully",
+  "heroForYou": "For you"
 }

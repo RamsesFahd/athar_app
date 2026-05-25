@@ -3065,4 +3065,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get adminVerificationRevokedSuccess =>
       'Verification revoked successfully';
+
+  @override
+  String get heroForYou => 'For you';
 }
