@@ -75,11 +75,16 @@ class NotificationsRepository {
         .collection('notifications')
         .where('isRead', isEqualTo: false)
         .get();
-    final batch = _firestore.batch();
-    for (final doc in snap.docs) {
-      batch.update(doc.reference, {'isRead': true});
+    // Firestore batches cap at 500 writes — chunk to stay within the limit.
+    const chunkSize = 500;
+    for (var i = 0; i < snap.docs.length; i += chunkSize) {
+      final chunk = snap.docs.skip(i).take(chunkSize);
+      final batch = _firestore.batch();
+      for (final doc in chunk) {
+        batch.update(doc.reference, {'isRead': true});
+      }
+      await batch.commit();
     }
-    await batch.commit();
   }
 
   Stream<List<AppNotificationModel>> getNotifications(String userId) {
@@ -88,6 +93,7 @@ class NotificationsRepository {
         .doc(userId)
         .collection('notifications')
         .orderBy('createdAt', descending: true)
+        .limit(50)
         .snapshots()
         .map((snap) => snap.docs
             .map((doc) => AppNotificationModel.fromMap(doc.data(), doc.id))
@@ -100,11 +106,15 @@ class NotificationsRepository {
         .doc(userId)
         .collection('notifications')
         .get();
-    final batch = _firestore.batch();
-    for (final doc in snap.docs) {
-      batch.delete(doc.reference);
+    const chunkSize = 500;
+    for (var i = 0; i < snap.docs.length; i += chunkSize) {
+      final chunk = snap.docs.skip(i).take(chunkSize);
+      final batch = _firestore.batch();
+      for (final doc in chunk) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
     }
-    await batch.commit();
   }
 
   Future<void> deleteNotification(String userId, String notificationId) async {
@@ -117,11 +127,15 @@ class NotificationsRepository {
   }
 
   Stream<int> getUnreadCount(String userId) {
+    // Bounded to 999 so the snapshot never transfers thousands of documents
+    // just to derive a badge count. The Firestore Flutter SDK has no native
+    // aggregate-count stream, so we cap the documents instead.
     return _firestore
         .collection('users')
         .doc(userId)
         .collection('notifications')
         .where('isRead', isEqualTo: false)
+        .limit(999)
         .snapshots()
         .map((snap) => snap.size);
   }

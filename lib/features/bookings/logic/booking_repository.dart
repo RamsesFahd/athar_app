@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/models/contribution/user_reward_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
-import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
+import 'package:athar_app/core/utils/date_utils.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 part 'booking_repository.g.dart';
@@ -21,8 +21,6 @@ class BookingRepository {
   CollectionReference get _trips => _firestore.collection('trips');
   CollectionReference get _users => _firestore.collection('users');
 
-  static String _fmtDate(DateTime d) =>
-      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
   Future<void> createBooking(BookingModel booking) async {
     // For private trips, ensure no day in the new booking's range overlaps
@@ -36,7 +34,7 @@ class BookingRepository {
         if (newStart != null) {
           final newDates = <String>{
             for (int i = 0; i < newDuration; i++)
-              _fmtDate(newStart.add(Duration(days: i))),
+              fmtDate(newStart.add(Duration(days: i))),
           };
           final existing = await _bookings
               .where('tripId', isEqualTo: booking.tripId)
@@ -48,7 +46,7 @@ class BookingRepository {
             final start = DateTime.tryParse(dateStr);
             if (start == null) continue;
             for (int i = 0; i < duration; i++) {
-              if (newDates.contains(_fmtDate(start.add(Duration(days: i))))) {
+              if (newDates.contains(fmtDate(start.add(Duration(days: i))))) {
                 throw Exception('tripDayAlreadyBookedError');
               }
             }
@@ -58,11 +56,25 @@ class BookingRepository {
     }
 
     final bookingRef = _bookings.doc(booking.bookingId);
+    // Notification ref shared by both paths below.
+    final notifRef = _firestore
+        .collection('users')
+        .doc(booking.tutorId)
+        .collection('notifications')
+        .doc('${booking.bookingId}_booking_new');
+    const notifPayload = {
+      'type': 'booking_new',
+      'title': {'ar': '', 'en': ''},
+      'body': {'ar': '', 'en': ''},
+      'isRead': false,
+    };
+
     if (booking.rewardId != null) {
       final rewardRef = _users
           .doc(booking.touristId)
           .collection('rewards')
           .doc(booking.rewardId);
+      // Booking + reward deduction + tutor notification in a single transaction.
       await _firestore.runTransaction((transaction) async {
         final rewardSnapshot = await transaction.get(rewardRef);
         final rewardData = rewardSnapshot.data();
@@ -76,21 +88,31 @@ class BookingRepository {
           'usedAt': FieldValue.serverTimestamp(),
           'bookingId': booking.bookingId,
         });
+        transaction.set(notifRef, {
+          ...notifPayload,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
       });
     } else {
-      await bookingRef.set(booking.toMap());
+      // Booking + tutor notification in an atomic batch.
+      final batch = _firestore.batch();
+      batch.set(bookingRef, booking.toMap());
+      batch.set(notifRef, {
+        ...notifPayload,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      await batch.commit();
     }
-    await NotificationsRepository().addNotification(
-      userId: booking.tutorId,
-      type: 'booking_new',
-      notificationId: '${booking.bookingId}_booking_new',
-    );
   }
 
   Stream<List<BookingModel>> fetchUserBookings(String userId, UserRole role) {
     final String field =
         (role == UserRole.tutor) ? 'tutorId' : 'touristId';
-    return _bookings.where(field, isEqualTo: userId).snapshots().map((snap) {
+    return _bookings
+        .where(field, isEqualTo: userId)
+        .limit(100)
+        .snapshots()
+        .map((snap) {
       final list = snap.docs
           .map((doc) =>
               BookingModel.fromMap(doc.data() as Map<String, dynamic>))
@@ -111,15 +133,24 @@ class BookingRepository {
   }
 
   Future<void> acceptBooking(String bookingId, String touristId) async {
-    await _bookings.doc(bookingId).update({
+    final notifRef = _firestore
+        .collection('users')
+        .doc(touristId)
+        .collection('notifications')
+        .doc('${bookingId}_booking_approved');
+    final batch = _firestore.batch();
+    batch.update(_bookings.doc(bookingId), {
       'status': BookingStatus.approved.name,
       'approvedAt': FieldValue.serverTimestamp(),
     });
-    await NotificationsRepository().addNotification(
-      userId: touristId,
-      type: 'booking_approved',
-      notificationId: '${bookingId}_booking_approved',
-    );
+    batch.set(notifRef, {
+      'type': 'booking_approved',
+      'title': {'ar': '', 'en': ''},
+      'body': {'ar': '', 'en': ''},
+      'isRead': false,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+    await batch.commit();
   }
 
   Future<void> updateBookingStatus(
@@ -145,18 +176,26 @@ class BookingRepository {
       }
     }
 
-    await batch.commit();
-
+    // Add the status-change notification to the same batch for atomicity.
     if (status == BookingStatus.cancelled || status == BookingStatus.rejected) {
       final notifType = status == BookingStatus.rejected
           ? 'booking_rejected'
           : 'booking_cancelled';
-      await NotificationsRepository().addNotification(
-        userId: touristId,
-        type: notifType,
-        notificationId: '${bookingId}_$notifType',
-      );
+      final notifRef = _firestore
+          .collection('users')
+          .doc(touristId)
+          .collection('notifications')
+          .doc('${bookingId}_$notifType');
+      batch.set(notifRef, {
+        'type': notifType,
+        'title': {'ar': '', 'en': ''},
+        'body': {'ar': '', 'en': ''},
+        'isRead': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
     }
+
+    await batch.commit();
   }
 
   Future<void> markBookingCompleted(String bookingId) async {

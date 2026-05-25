@@ -1,4 +1,4 @@
-import 'package:athar_app/features/home/models/hero_ai_text.dart';
+import 'package:athar_app/core/models/home/hero_ai_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AttractionModel {

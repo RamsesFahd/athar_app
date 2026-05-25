@@ -40,6 +40,33 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   void setLocale(Locale locale) => state = state.copyWith(locale: locale);
   void toggleContrast() => state = state.copyWith(highContrast: !state.highContrast);
   void toggleTts() => state = state.copyWith(isTtsEnabled: !state.isTtsEnabled);
+
+  // Seeds all settings from a user's stored AccessibilitySettings (called after
+  // login or Firestore stream update so the app reflects the saved preferences).
+  void loadFrom({
+    required bool highContrast,
+    required bool isTtsEnabled,
+    required String localeCode,
+    required String fontSizeString,
+  }) {
+    AppFontSize fontSize;
+    switch (fontSizeString) {
+      case 'small':
+        fontSize = AppFontSize.small;
+        break;
+      case 'large':
+        fontSize = AppFontSize.large;
+        break;
+      default:
+        fontSize = AppFontSize.medium;
+    }
+    state = AppSettings(
+      fontSize: fontSize,
+      locale: Locale(localeCode),
+      highContrast: highContrast,
+      isTtsEnabled: isTtsEnabled,
+    );
+  }
 }
 
 // 3.defining the provider that will be used to access the settings state and notifier throughout the app

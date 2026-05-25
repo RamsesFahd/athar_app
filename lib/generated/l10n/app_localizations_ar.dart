@@ -2369,6 +2369,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get rawiTyping => 'راوي يكتب الآن...';
 
   @override
+  String get rawiDidNotUnderstand => 'عذراً، لم أفهم ذلك.';
+
+  @override
+  String rawiEntityNotFound(String name) {
+    return 'تعذّر العثور على تفاصيل \"$name\".';
+  }
+
+  @override
   String get rawiAttachmentFile => 'ملف';
 
   @override

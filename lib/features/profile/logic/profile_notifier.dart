@@ -82,10 +82,16 @@ class ProfileNotifier extends _$ProfileNotifier {
     required String phoneNumber,
   }) async {
     if (_verificationId == null) return;
+    // Guard: if the session expired during OTP entry, surface an error instead of crashing.
+    final uid = ref.read(authNotifierProvider).value?.uId;
+    if (uid == null) {
+      state = AsyncError('Session expired. Please log in again.', StackTrace.current);
+      return;
+    }
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
       final error = await ref.read(profileRepositoryProvider).confirmPhoneOtp(
-        uId: ref.read(authNotifierProvider).value!.uId,
+        uId: uid,
         verificationId: _verificationId!,
         smsCode: smsCode,
         phoneNumber: phoneNumber,

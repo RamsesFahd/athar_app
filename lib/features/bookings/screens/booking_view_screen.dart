@@ -1,10 +1,11 @@
+import 'package:athar_app/core/utils/booking_status_helper.dart';
 import 'package:athar_app/core/utils/currency_formatter.dart';
+import 'package:athar_app/core/utils/date_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
-import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/core/utils/booking_schedule_helper.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/bookings/logic/booking_notifier.dart';
@@ -24,27 +25,6 @@ class BookingViewScreen extends ConsumerStatefulWidget {
 
 class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
   bool _isCompleting = false;
-
-  Color _statusColor(BookingStatus status, ThemeData theme) {
-    if (theme.isHighContrast &&
-        (status == BookingStatus.pending ||
-            status == BookingStatus.approved ||
-            status == BookingStatus.completed)) {
-      return theme.colorScheme.primary;
-    }
-    switch (status) {
-      case BookingStatus.approved:
-        return Colors.green;
-      case BookingStatus.rejected:
-        return Colors.red;
-      case BookingStatus.cancelled:
-        return Colors.grey;
-      case BookingStatus.completed:
-        return theme.colorScheme.primary;
-      case BookingStatus.pending:
-        return Colors.amber.shade700;
-    }
-  }
 
   String _statusMessage(
       BookingStatus status, bool isGuide, AppLocalizations l10n) {
@@ -228,7 +208,7 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
     final isGuide = !isTourist;
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
-    final statusColor = _statusColor(booking.status, theme);
+    final statusColor = bookingStatusColor(booking.status, theme);
 
     return Container(
       width: double.infinity,
@@ -280,87 +260,12 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
             ],
           ),
           const SizedBox(height: 14),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: statusColor.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Text(_statusMessage(booking.status, isGuide, l10n),
-                style: textTheme.bodySmall),
-          ),
+          _buildStatusBanner(booking.status, theme, l10n, isGuide, statusColor),
           const SizedBox(height: 18),
-          Text(l10n.bookingTripDetailsTitle,
-              style:
-                  textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800)),
-          const SizedBox(height: 12),
-          _modernInfoRow(theme, Icons.calendar_today, l10n.date,
-              _dateRangeLabel(booking)),
-          _modernInfoRow(theme, Icons.access_time, l10n.time,
-              _localizedTimeSlot(booking.timeSlot, isAr, l10n)),
-          _modernInfoRow(
-              theme,
-              Icons.people_outline,
-              l10n.people_count,
-              l10n.bookingPeopleSummary(
-                  booking.adultsCount, booking.childrenCount)),
-          const SizedBox(height: 18),
-          Text(l10n.bookingPriceSummaryTitle,
-              style:
-                  textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800)),
-          const SizedBox(height: 12),
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            decoration: BoxDecoration(
-              color: colorScheme.primary.withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                    child: Text(l10n.total_price,
-                        style: textTheme.bodyMedium
-                            ?.copyWith(fontWeight: FontWeight.w800))),
-                CurrencyFormatter.format(
-                  booking.totalPrice,
-                  style: textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w900, color: colorScheme.primary),
-                ),
-              ],
-            ),
-          ),
+          _buildDatePriceRow(booking, theme, l10n, isAr),
           if (booking.status == BookingStatus.approved ||
-              booking.status == BookingStatus.completed) ...[
-            const SizedBox(height: 18),
-            Text(
-              isGuide ? l10n.bookingTouristLabel : l10n.bookingGuideLabel,
-              style:
-                  textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
-            ),
-            const SizedBox(height: 12),
-            StreamBuilder<DocumentSnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(isGuide ? booking.touristId : booking.tutorId)
-                  .snapshots(),
-              builder: (context, snap) {
-                final data = snap.data?.data() as Map<String, dynamic>?;
-                final name = data?['fullName'] as String? ?? '';
-                final phone = data?['phoneNumber'] as String? ?? '';
-                final email = data?['email'] as String? ?? '';
-                return _contactRows(
-                  theme: theme,
-                  l10n: l10n,
-                  isGuide: isGuide,
-                  name: name.isNotEmpty ? name : null,
-                  phone: phone.isNotEmpty ? phone : null,
-                  email: email.isNotEmpty ? email : null,
-                );
-              },
-            ),
-          ],
+              booking.status == BookingStatus.completed)
+            _buildTravellerInfo(booking, theme, l10n, isGuide),
           if (booking.status == BookingStatus.rejected) ...[
             const SizedBox(height: 18),
             Container(
@@ -415,6 +320,117 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
           ],
         ],
       ),
+    );
+  }
+
+  Widget _buildStatusBanner(
+    BookingStatus status,
+    ThemeData theme,
+    AppLocalizations l10n,
+    bool isGuide,
+    Color statusColor,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: statusColor.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Text(_statusMessage(status, isGuide, l10n),
+          style: theme.textTheme.bodySmall),
+    );
+  }
+
+  Widget _buildDatePriceRow(
+    BookingModel booking,
+    ThemeData theme,
+    AppLocalizations l10n,
+    bool isAr,
+  ) {
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.bookingTripDetailsTitle,
+            style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800)),
+        const SizedBox(height: 12),
+        _modernInfoRow(theme, Icons.calendar_today, l10n.date,
+            _dateRangeLabel(booking)),
+        _modernInfoRow(theme, Icons.access_time, l10n.time,
+            _localizedTimeSlot(booking.timeSlot, isAr, l10n)),
+        _modernInfoRow(
+            theme,
+            Icons.people_outline,
+            l10n.people_count,
+            l10n.bookingPeopleSummary(
+                booking.adultsCount, booking.childrenCount)),
+        const SizedBox(height: 18),
+        Text(l10n.bookingPriceSummaryTitle,
+            style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800)),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            color: colorScheme.primary.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                  child: Text(l10n.total_price,
+                      style: textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.w800))),
+              CurrencyFormatter.format(
+                booking.totalPrice,
+                style: textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w900, color: colorScheme.primary),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTravellerInfo(
+    BookingModel booking,
+    ThemeData theme,
+    AppLocalizations l10n,
+    bool isGuide,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 18),
+        Text(
+          isGuide ? l10n.bookingTouristLabel : l10n.bookingGuideLabel,
+          style: theme.textTheme.bodyLarge
+              ?.copyWith(fontWeight: FontWeight.w800),
+        ),
+        const SizedBox(height: 12),
+        StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(isGuide ? booking.touristId : booking.tutorId)
+              .snapshots(),
+          builder: (context, snap) {
+            final data = snap.data?.data() as Map<String, dynamic>?;
+            final name = data?['fullName'] as String? ?? '';
+            final phone = data?['phoneNumber'] as String? ?? '';
+            final email = data?['email'] as String? ?? '';
+            return _contactRows(
+              theme: theme,
+              l10n: l10n,
+              isGuide: isGuide,
+              name: name.isNotEmpty ? name : null,
+              phone: phone.isNotEmpty ? phone : null,
+              email: email.isNotEmpty ? email : null,
+            );
+          },
+        ),
+      ],
     );
   }
 
@@ -486,9 +502,7 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
     final start = DateTime.tryParse(booking.date);
     if (start == null) return booking.date;
     final end = start.add(Duration(days: duration - 1));
-    String fmt(DateTime d) =>
-        '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-    return '${fmt(start)} – ${fmt(end)}';
+    return '${fmtDate(start)} – ${fmtDate(end)}';
   }
 
   String _localizedTimeSlot(

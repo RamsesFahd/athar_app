@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
+import 'package:athar_app/core/utils/date_utils.dart';
 
 part 'trips_repository.g.dart';
 
@@ -18,8 +19,6 @@ class TripsRepository {
   CollectionReference get _bookings => _firestore.collection('bookings');
   CollectionReference get _users => _firestore.collection('users');
 
-  static String _fmtDate(DateTime d) =>
-      '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
   Stream<List<TripModel>> fetchAllTrips() {
     return _trips
@@ -57,7 +56,7 @@ class TripsRepository {
       if (start == null) continue;
       for (int i = 0; i < duration; i++) {
         final day = start.add(Duration(days: i));
-        dates.add(_fmtDate(day));
+        dates.add(fmtDate(day));
       }
     }
     return dates;
@@ -68,11 +67,7 @@ class TripsRepository {
     if (!doc.exists) return null;
     final data = doc.data() as Map<String, dynamic>?;
     if (data == null) return null;
-    try {
-      return TutorModel.fromMap(data);
-    } catch (_) {
-      return null;
-    }
+    return TutorModel.fromMap(data);
   }
 
   Future<TripModel?> fetchTripById(String tripId) async {

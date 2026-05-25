@@ -4496,6 +4496,18 @@ abstract class AppLocalizations {
   /// **'Rawi is typing...'**
   String get rawiTyping;
 
+  /// No description provided for @rawiDidNotUnderstand.
+  ///
+  /// In en, this message translates to:
+  /// **'Sorry, I didn\'t understand that.'**
+  String get rawiDidNotUnderstand;
+
+  /// No description provided for @rawiEntityNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find details for \"{name}\".'**
+  String rawiEntityNotFound(String name);
+
   /// No description provided for @rawiAttachmentFile.
   ///
   /// In en, this message translates to:

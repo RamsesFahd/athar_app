@@ -19,7 +19,7 @@ import 'package:athar_app/features/events/logic/events_repository.dart';
 import 'package:athar_app/features/events/screens/event_details_screen.dart';
 import 'package:athar_app/features/guide_market/logic/trips_repository.dart';
 import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
-import 'package:athar_app/features/home/models/hero_ai_text.dart';
+import 'package:athar_app/core/models/home/hero_ai_text.dart';
 
 class HomeHeroSlider extends ConsumerStatefulWidget {
   const HomeHeroSlider({super.key});

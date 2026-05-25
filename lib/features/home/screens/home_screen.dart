@@ -20,7 +20,7 @@ import 'package:athar_app/features/guide_market/screens/trips_list_screen.dart';
 import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
 import 'package:athar_app/features/events/logic/events_repository.dart';
 import 'package:athar_app/features/home/logic/recommendations_repository.dart';
-import 'package:athar_app/features/home/models/recommended_item.dart';
+import 'package:athar_app/core/models/home/recommended_item.dart';
 
 // PERFORMANCE OPTIMIZATION: HomeScreen converted from ConsumerWidget to
 // StatelessWidget. Each carousel section is now its own ConsumerWidget so

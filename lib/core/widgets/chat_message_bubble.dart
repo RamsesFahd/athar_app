@@ -1,5 +1,5 @@
 import 'package:athar_app/core/theme/app_theme.dart';
-import 'package:athar_app/features/historical_chat/widgets/smart_text_content.dart';
+import 'package:athar_app/features/rawi/widgets/smart_text_content.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessageBubble extends StatelessWidget {

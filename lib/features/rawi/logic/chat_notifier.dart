@@ -269,8 +269,7 @@ Rules:
         timestamp: DateTime.now(),
       );
       await repository.saveMessage(userId, sessionId, botMessage);
-    } catch (e) {
-      debugPrint("Error in Initial Greeting: $e");
+    } catch (_) {
     } finally {
       state = false;
     }

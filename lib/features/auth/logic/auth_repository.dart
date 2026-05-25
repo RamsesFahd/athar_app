@@ -76,11 +76,18 @@ Future<String?> signUp({
         );
       }
 
-      // Write Firestore document BEFORE sending verification email so that
-      // a failed email send does not leave an Auth account with no Firestore doc.
-      await _users.doc(uId).set(newUser.toMap());
-      await sendEmailVerification();
-      return null;
+      // Write Firestore doc and send verification email atomically from the
+      // caller's perspective: if either step fails, roll back both so the user
+      // can re-register without orphaned Auth/Firestore records.
+      try {
+        await _users.doc(uId).set(newUser.toMap());
+        await sendEmailVerification();
+        return null;
+      } catch (e) {
+        await _users.doc(uId).delete().catchError((_) {});
+        await _auth.currentUser?.delete().catchError((_) {});
+        rethrow;
+      }
     } on FirebaseAuthException catch (e) {
       return _mapFirebaseError(e);
     } catch (e) {
@@ -313,8 +320,8 @@ Future<void> updateEmailVerificationInFirestore(String uId) async {
   try {
     await _users.doc(uId).update({'emailVerified': true});
   } catch (e) {
-    // if there's an error updating the Firestore document, we catch it and print it to the console for debugging purposes. This way we can identify if there are any issues with updating the user's email verification status in Firestore.
-    debugPrint("Firestore Update Error: $e");
+    // Non-critical: emailVerified flag update failed; auth state remains valid.
+    rethrow;
   }
 }
 }

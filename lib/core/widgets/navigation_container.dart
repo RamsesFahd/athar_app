@@ -13,7 +13,7 @@ import 'package:athar_app/features/events/screens/events_list_screen.dart';
 import 'package:athar_app/features/cultural_archive/screens/cultural_archive.dart';
 import 'package:athar_app/features/profile/screens/profile_screen.dart';
 import 'package:athar_app/features/home/screens/home_screen.dart';
-import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
+import 'package:athar_app/features/rawi/screens/rawi_landing_screen.dart';
 import 'package:athar_app/features/interactive_map/screens/map_screen.dart';
 import 'package:athar_app/features/trip_management/screens/trip_management_screen.dart';
 import 'package:athar_app/features/contributions/screens/contributions_achievements_screen.dart';

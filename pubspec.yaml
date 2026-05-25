@@ -112,7 +112,6 @@ flutter:
     - assets/images/
     - assets/icons/saudi_riyal.svg
     - assets/icons/google_logo.svg
-    - .env
 
   fonts:
     - family: ThmanyahSerifDisplay

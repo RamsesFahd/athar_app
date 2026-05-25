@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -122,6 +123,11 @@ class ContributionRepository {
     required File mediaFile,
     required String mediaType,
   }) async {
+    // Prevent IDOR: the tourist's UID must match the authenticated session.
+    final authenticatedUid = FirebaseAuth.instance.currentUser?.uid;
+    if (authenticatedUid == null || authenticatedUid != tourist.uId) {
+      throw Exception('Unauthorised: cannot submit on behalf of another user');
+    }
     final docRef = _contributions.doc();
     final id = docRef.id;
 

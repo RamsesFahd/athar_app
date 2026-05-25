@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -24,6 +25,20 @@ class AdminRepository {
   CollectionReference get _culturalItems =>
       _firestore.collection('cultural_items');
 
+  // ── Auth Guard ───────────────────────────────────────────────────────────────
+
+  /// Defensive client-side guard. Real enforcement lives in Firestore Security Rules.
+  /// Reads the Firebase Auth UID (authoritative) and rejects if role != admin.
+  Future<void> _assertCallerIsAdmin() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) throw Exception('Unauthorised: not authenticated');
+    final doc = await _users.doc(uid).get();
+    final role = (doc.data() as Map<String, dynamic>?)?['role'] as String?;
+    if (role != UserRole.admin.name) {
+      throw Exception('Unauthorised: caller is not an admin');
+    }
+  }
+
   // ── Tutor Verification ──────────────────────────────────────────────────────
 
   Stream<List<TutorModel>> getPendingTutors() {
@@ -42,6 +57,7 @@ class AdminRepository {
     required String adminId,
     required String adminName,
   }) async {
+    await _assertCallerIsAdmin();
     await _users.doc(uId).update({
       'verificationStatus': VerificationStatus.verified.name,
       'verifiedByAdminId': adminId,
@@ -57,6 +73,7 @@ class AdminRepository {
     required String adminName,
     required String reason,
   }) async {
+    await _assertCallerIsAdmin();
     await _users.doc(uId).update({
       'verificationStatus': VerificationStatus.rejected.name,
       'verifiedByAdminId': adminId,
@@ -104,6 +121,7 @@ class AdminRepository {
     required String adminId,
     required String adminName,
   }) async {
+    await _assertCallerIsAdmin();
     await _trips.doc(tripId).update({
       'status': 'approved',
       'reviewedByAdminId': adminId,
@@ -120,6 +138,7 @@ class AdminRepository {
     required String adminName,
     required String reason,
   }) async {
+    await _assertCallerIsAdmin();
     await _trips.doc(tripId).update({
       'status': 'rejected',
       'reviewedByAdminId': adminId,
@@ -172,6 +191,7 @@ class AdminRepository {
   };
 
   Future<void> addCulturalItem(Map<String, dynamic> data) async {
+    await _assertCallerIsAdmin();
     await _culturalItems.add({
       ...data,
       'createdAt': FieldValue.serverTimestamp(),
@@ -181,10 +201,12 @@ class AdminRepository {
 
   Future<void> updateCulturalItem(
       String itemId, Map<String, dynamic> data) async {
+    await _assertCallerIsAdmin();
     await _culturalItems.doc(itemId).update(data);
   }
 
   Future<void> deleteCulturalItem(String itemId, String imageUrl) async {
+    await _assertCallerIsAdmin();
     await _culturalItems.doc(itemId).delete();
     try {
       await FirebaseStorage.instance.refFromURL(imageUrl).delete();
@@ -207,6 +229,7 @@ class AdminRepository {
   CollectionReference get _attractions => _firestore.collection('attractions');
 
   Future<void> addAttraction(Map<String, dynamic> data) async {
+    await _assertCallerIsAdmin();
     await _attractions.add({
       ...data,
       'tags': [],
@@ -217,10 +240,12 @@ class AdminRepository {
 
   Future<void> updateAttraction(
       String attractionId, Map<String, dynamic> data) async {
+    await _assertCallerIsAdmin();
     await _attractions.doc(attractionId).update(data);
   }
 
   Future<void> deleteAttraction(String attractionId) async {
+    await _assertCallerIsAdmin();
     await _attractions.doc(attractionId).delete();
   }
 
@@ -243,6 +268,7 @@ class AdminRepository {
   CollectionReference get _events => _firestore.collection('events');
 
   Future<void> addEvent(Map<String, dynamic> data) async {
+    await _assertCallerIsAdmin();
     await _events.add({
       ...data,
       'createdAt': FieldValue.serverTimestamp(),
@@ -280,6 +306,7 @@ class AdminRepository {
     required String adminId,
     required String adminName,
   }) async {
+    await _assertCallerIsAdmin();
     final batch = _firestore.batch();
 
     final archiveRef = _culturalItems.doc();
@@ -424,6 +451,7 @@ class AdminRepository {
     required String adminName,
     required String reason,
   }) async {
+    await _assertCallerIsAdmin();
     await _contributions.doc(contributionId).update({
       'status': ContributionStatus.rejected.name,
       'rejectionReason': reason,

@@ -902,6 +902,13 @@
   "rawiPickRegionStart": "حياك الله في مجلس راوي.. اختر منطقة نبدأ منها:",
   "rawiAskHint": "اسأل راوي...",
   "rawiTyping": "راوي يكتب الآن...",
+  "rawiDidNotUnderstand": "عذراً، لم أفهم ذلك.",
+  "rawiEntityNotFound": "تعذّر العثور على تفاصيل \"{name}\".",
+  "@rawiEntityNotFound": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
   "rawiAttachmentFile": "ملف",
   "rawiAttachmentCamera": "كاميرا",
   "rawiAttachmentImage": "صورة",

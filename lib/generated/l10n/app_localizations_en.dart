@@ -2391,6 +2391,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rawiTyping => 'Rawi is typing...';
 
   @override
+  String get rawiDidNotUnderstand => 'Sorry, I didn\'t understand that.';
+
+  @override
+  String rawiEntityNotFound(String name) {
+    return 'We couldn\'t find details for \"$name\".';
+  }
+
+  @override
   String get rawiAttachmentFile => 'File';
 
   @override

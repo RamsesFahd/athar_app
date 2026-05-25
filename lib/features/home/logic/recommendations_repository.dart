@@ -3,7 +3,7 @@ import 'package:athar_app/core/models/attractions/attraction_model.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/core/models/events/event_model.dart';
-import 'package:athar_app/features/home/models/recommended_item.dart';
+import 'package:athar_app/core/models/home/recommended_item.dart';
 import 'package:athar_app/features/attractions/logic/attractions_repository.dart';
 import 'package:athar_app/features/guide_market/logic/trips_repository.dart';
 import 'package:athar_app/features/events/logic/events_repository.dart';

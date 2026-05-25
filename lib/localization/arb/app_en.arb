@@ -934,6 +934,13 @@
   "rawiPickRegionStart": "Welcome to Rawi's Council.. Pick a region to start:",
   "rawiAskHint": "Ask Rawi...",
   "rawiTyping": "Rawi is typing...",
+  "rawiDidNotUnderstand": "Sorry, I didn't understand that.",
+  "rawiEntityNotFound": "We couldn't find details for \"{name}\".",
+  "@rawiEntityNotFound": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
   "rawiAttachmentFile": "File",
   "rawiAttachmentCamera": "Camera",
   "rawiAttachmentImage": "Image",

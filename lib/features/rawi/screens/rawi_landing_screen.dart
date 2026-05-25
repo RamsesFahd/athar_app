@@ -1,9 +1,9 @@
 import 'package:athar_app/core/constants/region_data.dart';
 import 'package:athar_app/core/models/chat/chat_session_model.dart';
 import 'package:athar_app/features/auth/logic/auth_repository.dart';
-import 'package:athar_app/features/historical_chat/logic/chat_repository.dart';
-import 'package:athar_app/features/historical_chat/screens/chat_screen.dart';
-import 'package:athar_app/features/historical_chat/widgets/region_story.dart';
+import 'package:athar_app/features/rawi/logic/chat_repository.dart';
+import 'package:athar_app/features/rawi/screens/chat_screen.dart';
+import 'package:athar_app/features/rawi/widgets/region_story.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

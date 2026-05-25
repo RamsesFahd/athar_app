@@ -11,7 +11,7 @@ import 'package:athar_app/features/auth/screens/verify_email_screen.dart';
 import 'package:athar_app/features/auth/screens/privacy_policy_screen.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
-import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
+import 'package:athar_app/features/rawi/screens/rawi_landing_screen.dart';
 import 'package:athar_app/features/auth/screens/google_role_selection_screen.dart';
 import 'package:athar_app/features/onboarding/screens/user_preferences_screen.dart';
 import 'package:athar_app/features/profile/screens/contact_us_screen.dart';

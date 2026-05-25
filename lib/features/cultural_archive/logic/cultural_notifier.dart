@@ -31,29 +31,22 @@ class CulturalNotifier extends _$CulturalNotifier {
   }
 
   CulturalItemModel? findItemByTitle(String title) {
-  final current = state.value;
-  if (current == null) return null;
+    final current = state.value;
+    if (current == null) return null;
 
-  // تنظيف النص من المسافات الزائدة وتحويله لـ lowercase
-  final String searchKey = title.trim().toLowerCase();
-
-  try {
-    return current.allItems.firstWhere(
-      (item) {
-        final String titleAr = item.titleAr.trim().toLowerCase();
-        final String titleEn = item.titleEn.trim().toLowerCase();
-        
-        // مقارنة ذكية: هل أحدهما يحتوي على الآخر؟
-        return titleAr.contains(searchKey) || 
-               searchKey.contains(titleAr) || 
-               titleEn.contains(searchKey) || 
-               searchKey.contains(titleEn);
-      },
-    );
-  } catch (_) {
-    return null; 
+    final searchKey = title.trim().toLowerCase();
+    for (final item in current.allItems) {
+      final titleAr = item.titleAr.trim().toLowerCase();
+      final titleEn = item.titleEn.trim().toLowerCase();
+      if (titleAr.contains(searchKey) ||
+          searchKey.contains(titleAr) ||
+          titleEn.contains(searchKey) ||
+          searchKey.contains(titleEn)) {
+        return item;
+      }
+    }
+    return null;
   }
-}
 
   // Search
   void setSearchQuery(String query) {
