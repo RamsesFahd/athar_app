@@ -7,7 +7,7 @@ import 'package:athar_app/core/constants/region_city_constants.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
-import 'package:athar_app/services/gemini_service.dart';
+import 'package:athar_app/core/services/gemini_service.dart';
 import 'package:athar_app/features/contributions/logic/contribution_repository.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_repository.dart';

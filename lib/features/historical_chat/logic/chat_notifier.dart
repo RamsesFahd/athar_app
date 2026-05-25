@@ -4,7 +4,7 @@ import 'package:athar_app/core/models/chat/region_model.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../logic/chat_repository.dart';
-import '../../../../services/gemini_service.dart';
+import '../../../core/services/gemini_service.dart';
 import 'package:athar_app/core/models/chat/chat_message_model.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_repository.dart';
 import 'package:athar_app/features/auth/logic/auth_repository.dart';

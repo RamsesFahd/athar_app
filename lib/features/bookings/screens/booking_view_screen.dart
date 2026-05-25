@@ -7,13 +7,12 @@ import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/core/utils/booking_schedule_helper.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
+import 'package:athar_app/features/bookings/logic/booking_notifier.dart';
+import 'package:athar_app/features/bookings/logic/booking_repository.dart';
 import 'package:athar_app/features/bookings/widgets/rating_stars_widget.dart';
-import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
-import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 /// Read-only view of a completed/pending booking.
-/// Formerly booking_detail_screen.dart — renamed for clarity (Issue I).
 class BookingViewScreen extends ConsumerStatefulWidget {
   final BookingModel booking;
 
@@ -33,7 +32,6 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
             status == BookingStatus.completed)) {
       return theme.colorScheme.primary;
     }
-
     switch (status) {
       case BookingStatus.approved:
         return Colors.green;
@@ -80,9 +78,7 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.booking_details),
-      ),
+      appBar: AppBar(title: Text(l10n.booking_details)),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection('bookings')
@@ -113,11 +109,8 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                       height: 190,
                       color: colorScheme.surface,
                       alignment: Alignment.center,
-                      child: Icon(
-                        Icons.broken_image_outlined,
-                        size: 34,
-                        color: colorScheme.primary,
-                      ),
+                      child: Icon(Icons.broken_image_outlined,
+                          size: 34, color: colorScheme.primary),
                     ),
                   ),
                 ),
@@ -139,9 +132,7 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                               width: 18,
                               height: 18,
                               child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
+                                  strokeWidth: 2, color: Colors.white),
                             )
                           : const Icon(Icons.check_circle_outline),
                       label: Text(l10n.bookingCompleted),
@@ -179,25 +170,17 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                               ),
                               TextButton(
                                 onPressed: () => Navigator.pop(ctx, true),
-                                child: Text(
-                                  l10n.bookingCancelYes,
-                                  style: TextStyle(color: cancelColor),
-                                ),
+                                child: Text(l10n.bookingCancelYes,
+                                    style: TextStyle(color: cancelColor)),
                               ),
                             ],
                           ),
                         );
-
                         if (confirmed == true && context.mounted) {
-                          // Issue H fix: delegate to BookingNotifier instead of
-                          // calling the repository directly from the screen.
                           await ref
                               .read(bookingNotifierProvider.notifier)
                               .cancelBooking(liveBooking.bookingId);
-
-                          if (context.mounted) {
-                            Navigator.pop(context);
-                          }
+                          if (context.mounted) Navigator.pop(context);
                         }
                       },
                       icon: Icon(Icons.cancel_outlined, color: cancelColor),
@@ -211,8 +194,7 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: cancelColor),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                            borderRadius: BorderRadius.circular(12)),
                       ),
                     ),
                   ),
@@ -228,7 +210,7 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
     setState(() => _isCompleting = true);
     try {
       await ref
-          .read(marketplaceRepositoryProvider)
+          .read(bookingRepositoryProvider)
           .markBookingCompleted(booking.bookingId);
     } finally {
       if (mounted) setState(() => _isCompleting = false);
@@ -254,9 +236,8 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: colorScheme.primary.withValues(alpha: 0.08),
-        ),
+        border:
+            Border.all(color: colorScheme.primary.withValues(alpha: 0.08)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -278,26 +259,18 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                     Text(
                       booking.tripTitle,
                       style: textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        height: 1.2,
-                      ),
+                          fontWeight: FontWeight.w800, height: 1.2),
                     ),
                     if (booking.tripCity.isNotEmpty) ...[
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          Icon(
-                            Icons.location_on_outlined,
-                            size: 16,
-                            color: colorScheme.primary,
-                          ),
+                          Icon(Icons.location_on_outlined,
+                              size: 16, color: colorScheme.primary),
                           const SizedBox(width: 4),
                           Expanded(
-                            child: Text(
-                              booking.tripCity,
-                              style: textTheme.bodySmall,
-                            ),
-                          ),
+                              child: Text(booking.tripCity,
+                                  style: textTheme.bodySmall)),
                         ],
                       ),
                     ],
@@ -314,39 +287,32 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
               color: statusColor.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Text(
-              _statusMessage(booking.status, isGuide, l10n),
-              style: textTheme.bodySmall,
-            ),
+            child: Text(_statusMessage(booking.status, isGuide, l10n),
+                style: textTheme.bodySmall),
           ),
           const SizedBox(height: 18),
-          Text(
-            l10n.bookingTripDetailsTitle,
-            style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
-          ),
+          Text(l10n.bookingTripDetailsTitle,
+              style:
+                  textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800)),
           const SizedBox(height: 12),
-          _modernInfoRow(theme, Icons.calendar_today, l10n.date, _dateRangeLabel(booking)),
+          _modernInfoRow(theme, Icons.calendar_today, l10n.date,
+              _dateRangeLabel(booking)),
+          _modernInfoRow(theme, Icons.access_time, l10n.time,
+              _localizedTimeSlot(booking.timeSlot, isAr, l10n)),
           _modernInfoRow(
-            theme,
-            Icons.access_time,
-            l10n.time,
-            _localizedTimeSlot(booking.timeSlot, isAr, l10n),
-          ),
-          _modernInfoRow(
-            theme,
-            Icons.people_outline,
-            l10n.people_count,
-            l10n.bookingPeopleSummary(
-                booking.adultsCount, booking.childrenCount),
-          ),
+              theme,
+              Icons.people_outline,
+              l10n.people_count,
+              l10n.bookingPeopleSummary(
+                  booking.adultsCount, booking.childrenCount)),
           const SizedBox(height: 18),
-          Text(
-            l10n.bookingPriceSummaryTitle,
-            style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
-          ),
+          Text(l10n.bookingPriceSummaryTitle,
+              style:
+                  textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800)),
           const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             decoration: BoxDecoration(
               color: colorScheme.primary.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(14),
@@ -354,18 +320,13 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(
-                    l10n.total_price,
-                    style: textTheme.bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w800),
-                  ),
-                ),
+                    child: Text(l10n.total_price,
+                        style: textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.w800))),
                 CurrencyFormatter.format(
                   booking.totalPrice,
                   style: textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w900,
-                    color: colorScheme.primary,
-                  ),
+                      fontWeight: FontWeight.w900, color: colorScheme.primary),
                 ),
               ],
             ),
@@ -375,7 +336,8 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
             const SizedBox(height: 18),
             Text(
               isGuide ? l10n.bookingTouristLabel : l10n.bookingGuideLabel,
-              style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
+              style:
+                  textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 12),
             StreamBuilder<DocumentSnapshot>(
@@ -408,10 +370,8 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                 color: colorScheme.primary.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Text(
-                l10n.bookingRejectedExploreMore,
-                style: textTheme.bodySmall,
-              ),
+              child: Text(l10n.bookingRejectedExploreMore,
+                  style: textTheme.bodySmall),
             ),
           ],
           if (isGuide && booking.status == BookingStatus.pending) ...[
@@ -425,11 +385,10 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                          borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: () => ref
-                        .read(marketplaceRepositoryProvider)
+                        .read(bookingRepositoryProvider)
                         .acceptBooking(booking.bookingId, booking.touristId),
                     child: Text(l10n.accept_booking),
                   ),
@@ -441,20 +400,14 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       side: const BorderSide(color: Colors.red),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                          borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: () => ref
-                        .read(marketplaceRepositoryProvider)
-                        .updateBookingStatus(
-                          booking.bookingId,
-                          BookingStatus.rejected,
-                          booking.touristId,
-                        ),
-                    child: Text(
-                      l10n.reject_booking,
-                      style: const TextStyle(color: Colors.red),
-                    ),
+                        .read(bookingRepositoryProvider)
+                        .updateBookingStatus(booking.bookingId,
+                            BookingStatus.rejected, booking.touristId),
+                    child: Text(l10n.reject_booking,
+                        style: const TextStyle(color: Colors.red)),
                   ),
                 ),
               ],
@@ -477,34 +430,18 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
         isGuide ? l10n.bookingTouristLabel : l10n.bookingGuideLabel;
     return Column(
       children: [
-        _modernInfoRow(
-          theme,
-          Icons.person_outline,
-          personLabel,
-          name ?? l10n.bookingAvailableSoon,
-        ),
-        _modernInfoRow(
-          theme,
-          Icons.phone_outlined,
-          l10n.bookingPhoneLabel,
-          phone ?? l10n.bookingShownAfterConfirmation,
-        ),
-        _modernInfoRow(
-          theme,
-          Icons.email_outlined,
-          l10n.emailLabel,
-          email ?? l10n.bookingShownAfterConfirmation,
-        ),
+        _modernInfoRow(theme, Icons.person_outline, personLabel,
+            name ?? l10n.bookingAvailableSoon),
+        _modernInfoRow(theme, Icons.phone_outlined, l10n.bookingPhoneLabel,
+            phone ?? l10n.bookingShownAfterConfirmation),
+        _modernInfoRow(theme, Icons.email_outlined, l10n.emailLabel,
+            email ?? l10n.bookingShownAfterConfirmation),
       ],
     );
   }
 
   Widget _modernInfoRow(
-    ThemeData theme,
-    IconData icon,
-    String label,
-    String value,
-  ) {
+      ThemeData theme, IconData icon, String label, String value) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -528,17 +465,13 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: theme.textTheme.labelSmall
-                      ?.copyWith(fontWeight: FontWeight.w600),
-                ),
+                Text(label,
+                    style: theme.textTheme.labelSmall
+                        ?.copyWith(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(fontWeight: FontWeight.w600),
-                ),
+                Text(value,
+                    style: theme.textTheme.bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w600)),
               ],
             ),
           ),
@@ -558,7 +491,8 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
     return '${fmt(start)} – ${fmt(end)}';
   }
 
-  String _localizedTimeSlot(String timeSlot, bool isAr, AppLocalizations l10n) {
+  String _localizedTimeSlot(
+      String timeSlot, bool isAr, AppLocalizations l10n) {
     if (!isAr) return timeSlot;
     return timeSlot
         .replaceAll(RegExp(r'AM', caseSensitive: false), l10n.timeAmMarker)

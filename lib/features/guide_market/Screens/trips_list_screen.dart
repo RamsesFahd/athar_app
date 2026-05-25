@@ -1,5 +1,5 @@
 import 'package:athar_app/features/guide_market/logic/trips_filter_notifier.dart';
-import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
+import 'package:athar_app/features/guide_market/logic/trips_repository.dart';
 import 'package:athar_app/features/guide_market/widgets/trip_filter_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

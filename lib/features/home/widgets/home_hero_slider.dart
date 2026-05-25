@@ -17,7 +17,7 @@ import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
 import 'package:athar_app/features/events/logic/events_repository.dart';
 import 'package:athar_app/features/events/screens/event_details_screen.dart';
-import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
+import 'package:athar_app/features/guide_market/logic/trips_repository.dart';
 import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
 import 'package:athar_app/features/home/models/hero_ai_text.dart';
 

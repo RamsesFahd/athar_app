@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
-import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
+import 'package:athar_app/features/guide_market/logic/trips_repository.dart';
 import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 

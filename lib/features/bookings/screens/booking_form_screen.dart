@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/contribution/user_reward_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
-import 'package:athar_app/features/auth/logic/auth_notifier.dart';
-import '../widgets/custom_stepper.dart';
-import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
-import 'package:athar_app/features/guide_market/logic/booking_form_notifier.dart';
-import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
-import 'package:athar_app/features/guide_market/screens/booking_summary_screen.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
+import 'package:athar_app/features/auth/logic/auth_notifier.dart';
+import 'package:athar_app/features/bookings/logic/booking_repository.dart';
+import 'package:athar_app/features/bookings/logic/booking_notifier.dart';
+import 'package:athar_app/features/bookings/logic/booking_form_notifier.dart';
+import 'package:athar_app/features/bookings/screens/booking_summary_screen.dart';
+import 'package:athar_app/features/bookings/widgets/custom_stepper.dart';
+import 'package:athar_app/features/guide_market/logic/trips_repository.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 /// Multi-step booking form — step 1: select date, time, adults, and children.
-/// Formerly booking_details_screen.dart — renamed for clarity (Issue I).
-/// Form state is now held in [BookingFormNotifier] instead of setState (Issue K).
 class BookingFormScreen extends ConsumerWidget {
   final TripModel trip;
 
@@ -39,7 +38,6 @@ class BookingFormScreen extends ConsumerWidget {
       }
     }
     final availableFreeTripReward = freeTripReward;
-    // For private trips, eagerly load booked dates so the picker has them ready.
     final bookedDates = trip.isPrivate
         ? ref.watch(bookedDatesForTripProvider(trip.id)).valueOrNull
         : null;
@@ -359,9 +357,7 @@ class BookingFormScreen extends ConsumerWidget {
           ),
         ),
         subtitle: Text(
-          isSelected
-              ? l10n.rewardApplied
-              : l10n.freeTripRewardUnlockedMessage,
+          isSelected ? l10n.rewardApplied : l10n.freeTripRewardUnlockedMessage,
           style: theme.textTheme.bodySmall,
         ),
       ),
@@ -369,8 +365,7 @@ class BookingFormScreen extends ConsumerWidget {
   }
 
   double _rawTotal(BookingFormState form) {
-    return (trip.adultPrice * form.adults) +
-        (trip.childPrice * form.children);
+    return (trip.adultPrice * form.adults) + (trip.childPrice * form.children);
   }
 
   double _totalWithReward(BookingFormState form) {
@@ -380,7 +375,6 @@ class BookingFormScreen extends ConsumerWidget {
     }
     return total;
   }
-
 
   Future<void> _pickDate(
     BuildContext context,
@@ -398,7 +392,6 @@ class BookingFormScreen extends ConsumerWidget {
       initialDate: first,
       firstDate: first,
       lastDate: last,
-      // For private trips, grey out days that already have an active booking.
       selectableDayPredicate: (trip.isPrivate && bookedDates != null)
           ? (day) {
               final key =
@@ -421,14 +414,12 @@ class BookingFormScreen extends ConsumerWidget {
     WidgetRef ref,
     BookingFormState form,
     bool isAr,
-     AppLocalizations l10n,
+    AppLocalizations l10n,
   ) {
     if (!form.isComplete) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            l10n.bookingSelectDateError,
-          ),
+          content: Text(l10n.bookingSelectDateError),
           behavior: SnackBarBehavior.floating,
         ),
       );

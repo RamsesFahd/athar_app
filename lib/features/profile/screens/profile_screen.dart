@@ -5,8 +5,9 @@ import 'package:athar_app/features/profile/logic/profile_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:athar_app/core/utils/booking_status_helper.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
-import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
-import 'package:athar_app/features/guide_market/screens/booking_view_screen.dart';
+import 'package:athar_app/features/bookings/logic/booking_repository.dart';
+import 'package:athar_app/features/bookings/screens/booking_view_screen.dart';
+import 'package:athar_app/features/guide_market/logic/trips_repository.dart';
 import 'package:athar_app/features/profile/logic/profile_notifier.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:athar_app/features/profile/screens/credential_verification_screen.dart';
@@ -265,7 +266,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       case 1:
         return StreamBuilder<List<BookingModel>>(
           stream: ref
-              .read(marketplaceRepositoryProvider)
+              .read(bookingRepositoryProvider)
               .fetchUserBookings(user.uId, user.role),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -751,7 +752,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                     ),
                     onPressed: () =>
-                        ref.read(marketplaceRepositoryProvider).acceptBooking(
+                        ref.read(bookingRepositoryProvider).acceptBooking(
                               b.bookingId,
                               b.touristId,
                             ),
@@ -773,7 +774,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                     ),
                     onPressed: () => ref
-                        .read(marketplaceRepositoryProvider)
+                        .read(bookingRepositoryProvider)
                         .updateBookingStatus(
                             b.bookingId, BookingStatus.rejected, b.touristId),
                     child: Text(
@@ -1129,7 +1130,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       BuildContext context, UserModel user, AppLocalizations l10n) async {
     // Safety check: fetch active bookings before showing the dialog
     final bookings = await ref
-        .read(marketplaceRepositoryProvider)
+        .read(bookingRepositoryProvider)
         .fetchUserBookingsOnce(user.uId, user.role);
 
     final hasActive = bookings.any((b) =>
@@ -1491,7 +1492,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       );
     } else {
       final trip = await ref
-          .read(marketplaceRepositoryProvider)
+          .read(tripsRepositoryProvider)
           .fetchTripById(item.itemId);
       if (trip == null || !context.mounted) return;
       Navigator.push(

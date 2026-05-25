@@ -3,10 +3,10 @@ import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
-import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
+import 'package:athar_app/features/bookings/logic/booking_notifier.dart';
+import 'package:athar_app/features/bookings/widgets/custom_stepper.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
-import '../widgets/custom_stepper.dart';
 
 class BookingSummaryScreen extends ConsumerStatefulWidget {
   final String tripTitle;
@@ -41,7 +41,8 @@ class BookingSummaryScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<BookingSummaryScreen> createState() => _BookingSummaryScreenState();
+  ConsumerState<BookingSummaryScreen> createState() =>
+      _BookingSummaryScreenState();
 }
 
 class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
@@ -79,7 +80,8 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.1)),
+                  side: BorderSide(
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1)),
                 ),
                 color: theme.colorScheme.surface,
                 child: Padding(
@@ -92,7 +94,6 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // قسم صورة العنوان والرحلة
                               Row(
                                 children: [
                                   ClipRRect(
@@ -103,15 +104,18 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                                       height: 90,
                                       fit: BoxFit.cover,
                                       placeholder: (_, __) => ColoredBox(
-                                        color: theme.colorScheme.surfaceContainerHighest,
+                                        color: theme.colorScheme
+                                            .surfaceContainerHighest,
                                       ),
                                       errorWidget: (_, __, ___) => Container(
                                         width: 90,
                                         height: 90,
-                                        color: theme.colorScheme.surfaceContainerHighest,
+                                        color: theme.colorScheme
+                                            .surfaceContainerHighest,
                                         child: Icon(
                                           Icons.image_not_supported_outlined,
-                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                                          color: theme.colorScheme.onSurface
+                                              .withValues(alpha: 0.3),
                                           size: 28,
                                         ),
                                       ),
@@ -121,47 +125,51 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
                                   Expanded(
                                     child: Text(
                                       widget.tripTitle,
-                                      style: theme.textTheme.titleLarge?.copyWith(height: 1.2),
+                                      style: theme.textTheme.titleLarge
+                                          ?.copyWith(height: 1.2),
                                     ),
                                   ),
                                 ],
                               ),
                               const Divider(height: 40),
-
-                              _buildInfoRow(Icons.person_outline, l10n.guide, widget.guideName, theme),
-                              _buildInfoRow(Icons.calendar_today, l10n.date, _displayDate(), theme),
-                              _buildInfoRow(Icons.access_time, l10n.time, widget.time, theme),
+                              _buildInfoRow(Icons.person_outline, l10n.guide,
+                                  widget.guideName, theme),
+                              _buildInfoRow(Icons.calendar_today, l10n.date,
+                                  _displayDate(), theme),
+                              _buildInfoRow(Icons.access_time, l10n.time,
+                                  widget.time, theme),
                               _buildInfoRow(
                                 Icons.people_outline,
                                 l10n.people_count,
                                 l10n.bookingPeopleSummary(
-                                  widget.adults,
-                                  widget.children,
-                                ),
+                                    widget.adults, widget.children),
                                 theme,
                               ),
-
                               const SizedBox(height: 10),
                               _buildPriceBreakdown(l10n, theme),
                               const SizedBox(height: 16),
-
-                              // قسم التنويه — يتمرر مع باقي بيانات الحجز
                               Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: theme.colorScheme.primary.withValues(alpha: 0.05),
+                                  color: theme.colorScheme.primary
+                                      .withValues(alpha: 0.05),
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+                                  border: Border.all(
+                                      color: theme.colorScheme.primary
+                                          .withValues(alpha: 0.2)),
                                 ),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(Icons.info_outline, size: 24, color: theme.colorScheme.primary),
+                                    Icon(Icons.info_outline,
+                                        size: 24,
+                                        color: theme.colorScheme.primary),
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Text(
                                         l10n.payment_note,
-                                        style: theme.textTheme.bodyMedium?.copyWith(
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
                                           fontWeight: FontWeight.w500,
                                           color: theme.colorScheme.primary,
                                         ),
@@ -180,8 +188,6 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
               ),
             ),
             const SizedBox(height: 16),
-
-            // زر إتمام الحجز
             SizedBox(
               width: double.infinity,
               child: ConstrainedBox(
@@ -244,7 +250,8 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
     }
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value, ThemeData theme) {
+  Widget _buildInfoRow(
+      IconData icon, String label, String value, ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -252,19 +259,15 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
         children: [
           Icon(icon, size: 22, color: theme.colorScheme.primary),
           const SizedBox(width: 12),
-          
           Text(
-            "$label: ",
+            '$label: ',
             style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.bold,
             ),
           ),
-          Flexible( 
-            child: Text(
-              value,
-              style: theme.textTheme.bodyLarge,
-            ),
+          Flexible(
+            child: Text(value, style: theme.textTheme.bodyLarge),
           ),
         ],
       ),
@@ -272,106 +275,103 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
   }
 
   Widget _buildPriceBreakdown(AppLocalizations l10n, ThemeData theme) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children: [
-            
-            _priceRow(
-              l10n.bookingAdultPriceLine(
-                widget.adults,
-                CurrencyFormatter.formatNumber(widget.adultPrice),
-              ),
-              CurrencyFormatter.format(widget.adults * widget.adultPrice),
-              theme,
-            ),
-
-            if (widget.children > 0)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: _priceRow(
-                  widget.childPrice == 0
-                      ? l10n.bookingChildFreeLine(widget.children)
-                      : l10n.bookingChildPriceLine(
-                          widget.children,
-                          CurrencyFormatter.formatNumber(widget.childPrice),
-                        ),
-                  widget.childPrice == 0
-                      ? Text(l10n.commonFree)
-                      : CurrencyFormatter.format(widget.children * widget.childPrice),
-                  theme,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              _priceRow(
+                l10n.bookingAdultPriceLine(
+                  widget.adults,
+                  CurrencyFormatter.formatNumber(widget.adultPrice),
                 ),
+                CurrencyFormatter.format(widget.adults * widget.adultPrice),
+                theme,
               ),
-            if (widget.rewardApplied && widget.rewardDiscountAmount > 0)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: _priceRow(
-                  l10n.rewardApplied,
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '-',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      CurrencyFormatter.format(
-                        widget.rewardDiscountAmount,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+              if (widget.children > 0)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: _priceRow(
+                    widget.childPrice == 0
+                        ? l10n.bookingChildFreeLine(widget.children)
+                        : l10n.bookingChildPriceLine(
+                            widget.children,
+                            CurrencyFormatter.formatNumber(widget.childPrice),
+                          ),
+                    widget.childPrice == 0
+                        ? Text(l10n.commonFree)
+                        : CurrencyFormatter.format(
+                            widget.children * widget.childPrice),
+                    theme,
                   ),
-                  theme,
+                ),
+              if (widget.rewardApplied && widget.rewardDiscountAmount > 0)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: _priceRow(
+                    l10n.rewardApplied,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '-',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        CurrencyFormatter.format(
+                          widget.rewardDiscountAmount,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    theme,
+                  ),
+                ),
+            ],
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          child: Divider(thickness: 1),
+        ),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                l10n.total_price,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary,
                 ),
               ),
-          ],
-        ),
-      ),
-
-      const Padding(
-        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        child: Divider(thickness: 1), 
-      ),
-
-      
-      Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.primary.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              l10n.total_price,
-        style: theme.textTheme.bodyLarge?.copyWith( 
-          fontWeight: FontWeight.bold, 
-          color: theme.colorScheme.primary,
-        ),
-      ),
-            CurrencyFormatter.format(
-              widget.totalPrice,
-              style: theme.textTheme.titleLarge?.copyWith(
-                color: theme.colorScheme.primary,
+              CurrencyFormatter.format(
+                widget.totalPrice,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    ],
-  );
-}
-  Widget _priceRow(String label, Widget value, ThemeData theme, {bool isTotal = false}) {
+      ],
+    );
+  }
+
+  Widget _priceRow(String label, Widget value, ThemeData theme,
+      {bool isTotal = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -380,7 +380,8 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
           Text(
             label,
             style: isTotal
-                ? theme.textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold)
+                ? theme.textTheme.bodyLarge
+                    ?.copyWith(fontWeight: FontWeight.bold)
                 : theme.textTheme.bodyMedium,
           ),
           DefaultTextStyle.merge(

@@ -18,7 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:athar_app/services/tts_service.dart';
+import 'package:athar_app/core/services/tts_service.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 
 // ---------------------------------------------------------------------------

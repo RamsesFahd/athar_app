@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:athar_app/features/guide_market/logic/booking_form_notifier.dart';
+import 'package:athar_app/features/bookings/logic/booking_form_notifier.dart';
 
 void main() {
   group('BookingFormNotifier - Form State Logic', () {

@@ -1,6 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:uuid/uuid.dart'; 
-import 'marketplace_repository.dart';
+import 'package:uuid/uuid.dart';
+import 'package:athar_app/features/bookings/logic/booking_repository.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
@@ -12,10 +12,9 @@ class BookingNotifier extends _$BookingNotifier {
   @override
   BookingModel? build() {
     ref.keepAlive(); // prevent auto-disposal across multi-screen booking flow
-    return null; // initial state is null, meaning no booking in progress
+    return null;
   }
 
-  // Step 0: Start a new booking with basic trip info
   void startBooking(TripModel trip) {
     state = BookingModel(
       bookingId: const Uuid().v4(),
@@ -37,7 +36,6 @@ class BookingNotifier extends _$BookingNotifier {
     );
   }
 
-  // Step 1: Update booking details (date, time, counts, prices)
   void updateDetails({
     required String date,
     required String time,
@@ -65,43 +63,27 @@ class BookingNotifier extends _$BookingNotifier {
     );
   }
 
-  // Step 2: Select a tutor
   void selectTutor(String tutorId, String tutorName) {
     if (state == null) return;
     state = state!.copyWith(tutorId: tutorId);
   }
 
-  // Step 3: Confirm the booking and submit it to the backend
   Future<void> confirmBooking() async {
     if (state == null) return;
-
-    // Fetch the current tourist's uId from AuthNotifier
     final currentUser = await ref.read(authNotifierProvider.future);
     if (currentUser == null) throw 'User not logged in';
-
     final finalBooking = state!.copyWith(touristId: currentUser.uId);
-
-    // call the repository to create the booking
-    await ref.read(marketplaceRepositoryProvider).createBooking(finalBooking);
-
-    // reset the state after successful booking
+    await ref.read(bookingRepositoryProvider).createBooking(finalBooking);
     state = null;
   }
 
-  // Step 4 (optional): Cancel a pending booking (tourist action)
   Future<void> cancelBooking(String bookingId) async {
-  final currentUser = await ref.read(authNotifierProvider.future);
-
-  if (currentUser == null) {
-    throw 'User not logged in';
+    final currentUser = await ref.read(authNotifierProvider.future);
+    if (currentUser == null) throw 'User not logged in';
+    await ref.read(bookingRepositoryProvider).updateBookingStatus(
+          bookingId,
+          BookingStatus.cancelled,
+          currentUser.uId,
+        );
   }
-
-  await ref
-      .read(marketplaceRepositoryProvider)
-      .updateBookingStatus(
-        bookingId,
-        BookingStatus.cancelled,
-        currentUser.uId,
-      );
-}
 }

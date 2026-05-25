@@ -1,30 +1,28 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'marketplace_repository.dart';
+part of 'booking_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$marketplaceRepositoryHash() =>
-    r'138d6ceb8c5e84f62dfa411b8b3bf326aeca6590';
+String _$bookingRepositoryHash() => r'341659f190c532580ef7eea24fb7fbc186118057';
 
-/// See also [marketplaceRepository].
-@ProviderFor(marketplaceRepository)
-final marketplaceRepositoryProvider =
-    AutoDisposeProvider<MarketplaceRepository>.internal(
-  marketplaceRepository,
-  name: r'marketplaceRepositoryProvider',
+/// See also [bookingRepository].
+@ProviderFor(bookingRepository)
+final bookingRepositoryProvider =
+    AutoDisposeProvider<BookingRepository>.internal(
+  bookingRepository,
+  name: r'bookingRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$marketplaceRepositoryHash,
+      : _$bookingRepositoryHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef MarketplaceRepositoryRef
-    = AutoDisposeProviderRef<MarketplaceRepository>;
+typedef BookingRepositoryRef = AutoDisposeProviderRef<BookingRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

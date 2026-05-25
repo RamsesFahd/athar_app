@@ -10,22 +10,19 @@ class CustomStepper extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    
-    // سحب الأخضر الغامق من الثيم (Primary)
-    final Color activeColor = theme.colorScheme.primary; 
-    // لون رمادي فاتح جداً للخطوات غير النشطة
-    final Color inactiveColor = theme.colorScheme.primary.withValues(alpha: 0.1);
+
+    final Color activeColor = theme.colorScheme.primary;
+    final Color inactiveColor =
+        theme.colorScheme.primary.withValues(alpha: 0.1);
     final Color inactiveTextColor = theme.colorScheme.onSurfaceVariant;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
       child: Row(
         children: [
-          // الخطوة 1: التفاصيل
           _buildStep(l10n.details, currentStep >= 1, activeColor,
               inactiveColor, inactiveTextColor),
           const SizedBox(width: 12),
-          // الخطوة 2: التأكيد
           _buildStep(l10n.confirm, currentStep >= 2, activeColor,
               inactiveColor, inactiveTextColor),
         ],

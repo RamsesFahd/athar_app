@@ -4,12 +4,13 @@ import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/utils/booking_status_helper.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
-import 'package:athar_app/features/guide_market/Screens/add_trip_screen.dart';
-import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
-import 'package:athar_app/features/guide_market/screens/booking_view_screen.dart';
+import 'package:athar_app/features/bookings/logic/booking_repository.dart';
+import 'package:athar_app/features/bookings/screens/booking_view_screen.dart';
+import 'package:athar_app/features/trip_management/logic/trip_management_repository.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'add_trip_screen.dart';
 
 class TripManagementScreen extends ConsumerWidget {
   const TripManagementScreen({super.key});
@@ -143,7 +144,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
     if (confirmed != true || !context.mounted) return;
 
     try {
-      await ref.read(marketplaceRepositoryProvider).deleteTrip(trip.id);
+      await ref.read(tripManagementRepositoryProvider).deleteTrip(trip.id);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -206,7 +207,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
   Widget _buildTripsTab(AppLocalizations l10n) {
     return StreamBuilder<List<TripModel>>(
       stream:
-          ref.read(marketplaceRepositoryProvider).fetchTutorTrips(tutor.uId),
+          ref.read(tripManagementRepositoryProvider).fetchTutorTrips(tutor.uId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -274,7 +275,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
   Widget _buildBookingsTab(AppLocalizations l10n) {
     return StreamBuilder<List<BookingModel>>(
       stream: ref
-          .read(marketplaceRepositoryProvider)
+          .read(bookingRepositoryProvider)
           .fetchUserBookings(tutor.uId, tutor.role),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -486,7 +487,6 @@ class _TripCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Cover image
           if (trip.imageUrl.isNotEmpty)
             ClipRRect(
               borderRadius:
@@ -517,7 +517,6 @@ class _TripCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title + status badge
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -551,7 +550,6 @@ class _TripCard extends StatelessWidget {
 
                 const SizedBox(height: 8),
 
-                // City + price
                 Row(
                   children: [
                     if (city.isNotEmpty) ...[
@@ -570,7 +568,6 @@ class _TripCard extends StatelessWidget {
 
                 const SizedBox(height: 12),
 
-                // Action buttons
                 Row(
                   children: [
                     Expanded(

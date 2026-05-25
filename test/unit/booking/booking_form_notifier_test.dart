@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:athar_app/core/models/booking/trip_model.dart';
-import 'package:athar_app/features/guide_market/logic/booking_notifier.dart';
+import 'package:athar_app/features/bookings/logic/booking_notifier.dart';
 
 TripModel _makeTrip() {
   return TripModel(

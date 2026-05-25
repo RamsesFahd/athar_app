@@ -1,11 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Holds the transient form state for the booking-details step:
-/// adult/child counts and the chosen date/time slot. This lives in
-/// a Notifier so screens never use setState for business-relevant state.
-///
-/// autoDispose ensures the form resets automatically when the booking
-/// flow is exited (e.g. user presses back).
 class BookingFormState {
   final int adults;
   final int children;

@@ -8,7 +8,7 @@ import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
-import 'package:athar_app/services/tts_service.dart';
+import 'package:athar_app/core/services/tts_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AttractionDetailsScreen extends ConsumerWidget {

@@ -15,7 +15,7 @@ import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/features/attractions/logic/attractions_repository.dart';
 import 'package:athar_app/features/attractions/screens/attractions_list_screen.dart';
 import 'package:athar_app/features/attractions/screens/attraction_details_screen.dart';
-import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
+import 'package:athar_app/features/guide_market/logic/trips_repository.dart';
 import 'package:athar_app/features/guide_market/screens/trips_list_screen.dart';
 import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
 import 'package:athar_app/features/events/logic/events_repository.dart';

@@ -8,7 +8,7 @@ import 'package:athar_app/features/cultural_archive/logic/cultural_repository.da
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_card.dart';
 import 'package:athar_app/features/events/logic/events_repository.dart';
 import 'package:athar_app/features/events/widgets/event_card.dart';
-import 'package:athar_app/features/guide_market/logic/marketplace_repository.dart';
+import 'package:athar_app/features/guide_market/logic/trips_repository.dart';
 import 'package:athar_app/features/guide_market/widgets/trip_card.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +103,7 @@ class _ResolvedTripSuggestion extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return FutureBuilder<TripModel?>(
-      future: ref.read(marketplaceRepositoryProvider).fetchTripById(id),
+      future: ref.read(tripsRepositoryProvider).fetchTripById(id),
       builder: (context, snapshot) {
         final trip = snapshot.data;
         if (trip == null) {

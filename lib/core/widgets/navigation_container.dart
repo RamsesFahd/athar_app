@@ -15,7 +15,7 @@ import 'package:athar_app/features/profile/screens/profile_screen.dart';
 import 'package:athar_app/features/home/screens/home_screen.dart';
 import 'package:athar_app/features/historical_chat/screens/rawi_landing_screen.dart';
 import 'package:athar_app/features/interactive_map/screens/map_screen.dart';
-import 'package:athar_app/features/guide_market/screens/trip_management_screen.dart';
+import 'package:athar_app/features/trip_management/screens/trip_management_screen.dart';
 import 'package:athar_app/features/contributions/screens/contributions_achievements_screen.dart';
 
 class NavigationContainer extends ConsumerStatefulWidget {

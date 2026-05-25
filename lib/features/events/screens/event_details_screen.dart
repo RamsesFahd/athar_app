@@ -10,7 +10,7 @@ import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/events/widgets/event_card.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
-import 'package:athar_app/services/tts_service.dart';
+import 'package:athar_app/core/services/tts_service.dart';
 
 class EventDetailsScreen extends ConsumerWidget {
   final EventModel event;

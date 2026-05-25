@@ -9,7 +9,7 @@ import 'package:athar_app/core/models/favorites/favorite_item_model.dart';
 import 'package:athar_app/core/utils/share_utils.dart';
 import 'package:athar_app/features/profile/logic/favorites_notifier.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
-import 'package:athar_app/services/tts_service.dart';
+import 'package:athar_app/core/services/tts_service.dart';
 
 class CulturalItemDetails extends ConsumerStatefulWidget {
   final CulturalItemModel item;
