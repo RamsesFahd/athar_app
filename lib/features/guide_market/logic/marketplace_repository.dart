@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
-import 'package:athar_app/core/models/rewards/user_reward_model.dart';
+import 'package:athar_app/core/models/contribution/user_reward_model.dart';
 import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 part 'marketplace_repository.g.dart';
