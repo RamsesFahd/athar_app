@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/bookings/logic/rating_repository.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
@@ -67,6 +68,9 @@ class _RatingStarsWidgetState extends State<RatingStarsWidget> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final isHighContrast = theme.isHighContrast;
+    final colorScheme = theme.colorScheme;
+    final accent = colorScheme.primary;
 
     // Loading
     if (_existingStars == null) {
@@ -86,8 +90,16 @@ class _RatingStarsWidgetState extends State<RatingStarsWidget> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primary.withValues(alpha: 0.06),
+        color: isHighContrast
+            ? colorScheme.surface
+            : colorScheme.primary.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isHighContrast
+              ? colorScheme.onSurface
+              : colorScheme.primary.withValues(alpha: 0.12),
+          width: isHighContrast ? 2 : 1,
+        ),
       ),
       child: Column(
         children: [
@@ -106,8 +118,10 @@ class _RatingStarsWidgetState extends State<RatingStarsWidget> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Icon(
-                    star <= _selected ? Icons.star_rounded : Icons.star_outline_rounded,
-                    color: theme.colorScheme.primary,
+                    star <= _selected
+                        ? Icons.star_rounded
+                        : Icons.star_outline_rounded,
+                    color: accent,
                     size: 38,
                   ),
                 ),
@@ -138,23 +152,37 @@ class _RatingStarsWidgetState extends State<RatingStarsWidget> {
   }
 
   Widget _buildConfirmation(ThemeData theme, bool isAr, AppLocalizations l10n) {
+    final isHighContrast = theme.isHighContrast;
+    final colorScheme = theme.colorScheme;
+    final statusColor =
+        isHighContrast ? colorScheme.primary : Colors.green.shade600;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.green.withValues(alpha: 0.08),
+        color: isHighContrast
+            ? colorScheme.surface
+            : Colors.green.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.green.withValues(alpha: 0.25)),
+        border: Border.all(
+          color: isHighContrast
+              ? colorScheme.onSurface
+              : Colors.green.withValues(alpha: 0.25),
+          width: isHighContrast ? 2 : 1,
+        ),
       ),
       child: Row(
         children: [
-          Icon(Icons.check_circle_outline, color: Colors.green.shade600, size: 22),
+          Icon(Icons.check_circle_outline, color: statusColor, size: 22),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               isAr ? 'تم إرسال تقييمك، شكرًا!' : 'Rating submitted, thank you!',
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(fontWeight: FontWeight.w600, color: Colors.green.shade700),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: isHighContrast ? colorScheme.onSurface : statusColor,
+              ),
             ),
           ),
         ],

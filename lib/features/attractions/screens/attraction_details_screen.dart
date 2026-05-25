@@ -21,21 +21,30 @@ class AttractionDetailsScreen extends ConsumerWidget {
     return Color(int.parse('FF$n', radix: 16));
   }
 
-  TextStyle _nameStyle(ThemeData theme) {
+  TextStyle _withArabicFont(TextStyle style, bool isAr) {
+    return style.copyWith(
+      fontFamily: isAr ? 'ThmanyahSerifDisplay' : style.fontFamily,
+    );
+  }
+
+  TextStyle _nameStyle(ThemeData theme, bool isAr) {
     return (theme.textTheme.displaySmall ?? const TextStyle()).copyWith(
+      fontFamily: isAr ? 'ThmanyahSerifDisplay' : null,
       fontWeight: FontWeight.w800,
       height: 1.15,
     );
   }
 
-  TextStyle _sectionTitleStyle(ThemeData theme) {
+  TextStyle _sectionTitleStyle(ThemeData theme, bool isAr) {
     return (theme.textTheme.titleLarge ?? const TextStyle()).copyWith(
+      fontFamily: isAr ? 'ThmanyahSerifDisplay' : null,
       fontWeight: FontWeight.w800,
-      );
-    }
+    );
+  }
 
-  TextStyle _bodyStyle(ThemeData theme) {
+  TextStyle _bodyStyle(ThemeData theme, bool isAr) {
     return (theme.textTheme.bodyLarge ?? const TextStyle()).copyWith(
+      fontFamily: isAr ? 'ThmanyahSerifDisplay' : null,
       height: 1.8,
     );
   }
@@ -110,7 +119,7 @@ class AttractionDetailsScreen extends ConsumerWidget {
                       // ── Name ────────────────────────────────────────
                       Text(
                         attraction.getName(isAr),
-                        style: _nameStyle(theme),
+                        style: _nameStyle(theme, isAr),
                       ),
 
                       const SizedBox(height: 20),
@@ -157,19 +166,19 @@ class AttractionDetailsScreen extends ConsumerWidget {
                       // ── Description ──────────────────────────────────
                       Text(
                         l10n.attractionAbout,
-                        style: _sectionTitleStyle(theme),
+                        style: _sectionTitleStyle(theme, isAr),
                       ),
                       const SizedBox(height: 10),
                       Text(
                         attraction.getDescription(isAr),
-                        style: _bodyStyle(theme),
+                        style: _bodyStyle(theme, isAr),
                       ),
 
                       // ── Location ─────────────────────────────────────
                       const SizedBox(height: 24),
                       Text(
                         l10n.locationLabel,
-                        style: _sectionTitleStyle(theme),
+                        style: _sectionTitleStyle(theme, isAr),
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -180,7 +189,7 @@ class AttractionDetailsScreen extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               attraction.getCity(isAr),
-                              style: _bodyStyle(theme),
+                              style: _bodyStyle(theme, isAr),
                             ),
                           ),
                         ],
@@ -199,7 +208,11 @@ class AttractionDetailsScreen extends ConsumerWidget {
                               const SizedBox(width: 8),
                               Text(
                                 l10n.attractionTicketLink,
-                                style: theme.textTheme.bodyMedium?.copyWith(
+                                style: _withArabicFont(
+                                  theme.textTheme.bodyMedium ??
+                                      const TextStyle(),
+                                  isAr,
+                                ).copyWith(
                                   color: accent,
                                   fontWeight: FontWeight.w700,
                                   decoration: TextDecoration.underline,
@@ -289,6 +302,11 @@ class AttractionDetailsScreen extends ConsumerWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
+                      style: isAr
+                          ? const TextStyle(
+                              fontFamily: 'ThmanyahSerifDisplay',
+                            )
+                          : null,
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: accent,
@@ -369,6 +387,7 @@ class _InfoCard extends StatelessWidget {
               Text(
                 title,
                 style: theme.textTheme.labelSmall!.copyWith(
+                  fontFamily: isAr ? 'ThmanyahSerifDisplay' : null,
                   fontWeight: FontWeight.w700,
                   fontSize: 11,
                   color: theme.isHighContrast
@@ -381,6 +400,7 @@ class _InfoCard extends StatelessWidget {
           const SizedBox(height: 6),
           DefaultTextStyle(
             style: theme.textTheme.bodyMedium!.copyWith(
+              fontFamily: isAr ? 'ThmanyahSerifDisplay' : null,
               fontWeight: FontWeight.w700,
               fontSize: 14,
               color: color,

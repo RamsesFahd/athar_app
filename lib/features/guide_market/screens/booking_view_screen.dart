@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/core/utils/booking_schedule_helper.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
 import 'package:athar_app/features/bookings/widgets/rating_stars_widget.dart';
@@ -26,6 +27,13 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
   bool _isCompleting = false;
 
   Color _statusColor(BookingStatus status, ThemeData theme) {
+    if (theme.isHighContrast &&
+        (status == BookingStatus.pending ||
+            status == BookingStatus.approved ||
+            status == BookingStatus.completed)) {
+      return theme.colorScheme.primary;
+    }
+
     switch (status) {
       case BookingStatus.approved:
         return Colors.green;
@@ -85,9 +93,10 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
           final liveBooking =
               data != null ? BookingModel.fromMap(data) : widget.booking;
           final currentUser = ref.watch(authNotifierProvider).value;
-          final isTourist = currentUser is TouristModel;
+          final isTourist = currentUser?.role == UserRole.tourist;
           final canComplete = !isTourist &&
               canGuideMarkBookingCompleted(liveBooking, DateTime.now());
+          final cancelColor = theme.colorScheme.error;
 
           return ListView(
             padding: const EdgeInsets.all(16),
@@ -172,7 +181,7 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                                 onPressed: () => Navigator.pop(ctx, true),
                                 child: Text(
                                   l10n.bookingCancelYes,
-                                  style: const TextStyle(color: Colors.red),
+                                  style: TextStyle(color: cancelColor),
                                 ),
                               ),
                             ],
@@ -191,17 +200,16 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                           }
                         }
                       },
-                      icon:
-                          const Icon(Icons.cancel_outlined, color: Colors.red),
+                      icon: Icon(Icons.cancel_outlined, color: cancelColor),
                       label: Text(
                         l10n.bookingCancelButton,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.red),
+                        style: TextStyle(color: cancelColor),
                       ),
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.red),
+                        side: BorderSide(color: cancelColor),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
