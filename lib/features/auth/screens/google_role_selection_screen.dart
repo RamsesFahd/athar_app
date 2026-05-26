@@ -62,6 +62,7 @@ class _GoogleRoleSelectionScreenState
             title: l10n.welcomeToAthar,
             subtitle: isAr ? 'اختر نوع حسابك للمتابعة' : 'Choose your account type',
             imagePath: 'assets/images/signup_header.png',
+            centerText: true,
           ),
           Expanded(
             child: Container(

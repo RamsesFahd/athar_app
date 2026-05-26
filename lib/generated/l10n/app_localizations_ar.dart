@@ -249,6 +249,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contributions => 'إثراء المحتوى الثقافي';
 
   @override
+  String get contributionPageTitle => 'إثراء الأرشيف الثقافي';
+
+  @override
   String get contributionShortLabel => 'إثراء';
 
   @override

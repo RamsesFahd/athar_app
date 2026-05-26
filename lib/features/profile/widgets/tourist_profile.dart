@@ -131,7 +131,7 @@ Widget _buildAvatarWithEditIcon(ThemeData theme, AppLocalizations l10n, WidgetRe
             height: 20,
             color: theme.dividerColor.withValues(alpha: 0.2)),
         _statItem(theme, Icons.auto_awesome_mosaic_rounded,
-            "${user.contributionsCount}", l10n.contributions),
+            "${user.contributionsCount}", l10n.contributionPageTitle),
       ],
     );
   }

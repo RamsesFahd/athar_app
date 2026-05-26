@@ -339,7 +339,12 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   Widget _buildSectionLabel(String text, ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Text(text, style: theme.textTheme.titleMedium),
+      child: Text(
+        text,
+        style: theme.textTheme.titleLarge?.copyWith(
+          fontSize: theme.textTheme.bodyLarge?.fontSize,
+        ),
+      ),
     );
   }
 
@@ -348,6 +353,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       {bool isConfirm = false, List<String>? autofillHints}) {
     final theme = Theme.of(context);
     final bool hide = isConfirm ? _hideConfirmPassword : _hidePassword;
+    final inputBorderColor =
+        theme.colorScheme.outline.withValues(alpha: 0.5);
 
     return TextField(
       controller: controller,
@@ -367,13 +374,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: theme.colorScheme.outline.withValues(alpha: 0.35),
+            color: inputBorderColor,
+            width: 1.2,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: theme.colorScheme.outline.withValues(alpha: 0.35),
+            color: inputBorderColor,
+            width: 1.2,
           ),
         ),
         suffixIcon: isPassword
@@ -432,7 +441,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color:
-                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.35),
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
+              width: 1.2,
             ),
           ),
           child: Center(
@@ -490,6 +500,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
   Widget _tutorTypeOption(TutorType type, String label, ThemeData theme) {
     final isSelected = _selectedTutorType == type;
+    final textColor =
+        isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.primary;
     return Expanded(
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
@@ -504,7 +516,13 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.primary,
         ),
         onPressed: () => setState(() => _selectedTutorType = type),
-        child: Text(label, style: theme.textTheme.bodyMedium),
+        child: Text(
+          label,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: textColor,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
     );
   }
