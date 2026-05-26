@@ -84,8 +84,8 @@ class _EventsListScreenState extends ConsumerState<EventsListScreen> {
           final filtered = _allItems.where((item) {
             final matchRegion =
                 _selectedRegion == 'All' || item.regionId == _selectedRegion;
-            final matchType = _selectedType == 'All' ||
-                item.eventType.value == _selectedType;
+            final matchType =
+                _selectedType == 'All' || item.eventType.value == _selectedType;
             final q = _searchQuery.toLowerCase();
             final matchSearch = q.isEmpty ||
                 item.getTitle(isAr).toLowerCase().contains(q) ||
@@ -108,7 +108,8 @@ class _EventsListScreenState extends ConsumerState<EventsListScreen> {
                           onChanged: (v) => setState(() => _searchQuery = v),
                           textAlignVertical: TextAlignVertical.center,
                           decoration: InputDecoration(
-                            hintText: isAr ? 'ابحث عن فعالية...' : 'Search events...',
+                            hintText:
+                                isAr ? 'ابحث عن فعالية...' : 'Search events...',
                             hintStyle: theme.textTheme.bodyMedium?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -226,10 +227,10 @@ class _EventsListScreenState extends ConsumerState<EventsListScreen> {
                   child: Center(
                     child: Text(
                       _allItems.isEmpty
-                          ? (isAr ? 'لا توجد فعاليات بعد' : 'No events yet')
-                          : (isAr ? 'لا توجد نتائج' : 'No results found'),
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant),
+                          ? l10n.eventsNoEventsYet
+                          : l10n.eventsNoResultsFound,
+                      style: theme.textTheme.bodyLarge
+                          ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                     ),
                   ),
                 )
@@ -307,8 +308,7 @@ class _FilterRow extends StatelessWidget {
             onTap: () => onSelected(value),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: isSelected ? accent : theme.colorScheme.surface,
                 borderRadius: BorderRadius.circular(20),
@@ -320,8 +320,7 @@ class _FilterRow extends StatelessWidget {
                 ),
               ),
               child: Text(
-                labelFor?.call(value) ??
-                    (value == 'All' ? allLabel : value),
+                labelFor?.call(value) ?? (value == 'All' ? allLabel : value),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodySmall?.copyWith(

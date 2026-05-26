@@ -1187,5 +1187,9 @@
   "adminRevokeVerification": "إلغاء التوثيق",
   "adminVerificationRevoked": "تم إلغاء التوثيق",
   "adminVerificationRevokedSuccess": "تم إلغاء التوثيق بنجاح",
+  "eventsNoEventsYet": "لا توجد فعاليات بعد",
+  "eventsNoResultsFound": "لا توجد نتائج",
+  "bookingNoData": "لا توجد بيانات",
+  "tripApprovalsNoTrips": "لا توجد رحلات",
   "heroForYou": "مُختار لك"
 }

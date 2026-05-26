@@ -11,7 +11,7 @@ initializeApp();
 const db = getFirestore();
 
 const GEMINI_KEY = process.env.GEMINI_API_KEY || "";
-const CLASSIFY_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const CLASSIFY_MODEL = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 const EMBED_MODEL = "gemini-embedding-001";
  // الموديل الصحيح اللي بيفك أزمة الـ 404
 
@@ -440,6 +440,7 @@ export const embedMissingDocuments = onCall(
     secrets: ["GEMINI_API_KEY"],
   },
   async (request) => {
+  async (_request) => {
     if (!GEMINI_KEY) {
       throw new HttpsError("failed-precondition", "GEMINI_API_KEY is not set");
     }
@@ -528,7 +529,7 @@ export const embedMissingDocuments = onCall(
 const SIMILARITY_THRESHOLD = 0.6;
 const TOP_K = 5;
 const MAX_SUGGESTED_ITEMS = 3;
-const RAWI_CHAT_MODEL = "gemini-3.1-flash-lite-preview";
+const RAWI_CHAT_MODEL = "gemini-2.5-flash";
 const EMBEDDING_CACHE_TTL_MS = 5 * 60 * 1000;
 
 interface CachedEmbedding {
@@ -647,7 +648,7 @@ async function loadEmbeddingCache(): Promise<Map<string, CachedEmbedding>> {
   const cache = new Map<string, CachedEmbedding>();
 
   for (const col of collections) {
-    const snap = await db.collection(col).select("embedding", "name", "title", "titleAr", "titleEn", "descriptionAr", "descriptionEn", "shortDescriptionAr", "shortDescriptionEn", "description", "imageUrl", "mainImage", "mainImageUrl", "coverImage", "image", "region", "regionId", "location", "category", "eventType").get();
+    const snap = await db.collection(col).select("embedding", "interestIds", "name", "title", "titleAr", "titleEn", "descriptionAr", "descriptionEn", "shortDescriptionAr", "shortDescriptionEn", "description", "imageUrl", "mainImage", "mainImageUrl", "coverImage", "image", "region", "regionId", "location", "category", "eventType").get();
     for (const doc of snap.docs) {
       const data = doc.data();
       const meta = extractDocMeta(col, doc.id, data);
@@ -764,11 +765,17 @@ export const askRawi = onCall(
     const topDocs = scored.slice(0, TOP_K);
 
     // 4. Build retrieved context (top-K semantic matches)
-    const contextLines = topDocs.map((d) => {
-      const m = d.meta;
-      const title = isAr ? (m.titleAr || m.titleEn) : (m.titleEn || m.titleAr);
-      return `• [${m.type}] ${title} (id:${m.docId}) — ${m.description.slice(0, 200)}`;
-    }).join("\n");
+    // Skip entries with no resolvable title — they would appear as blank text in the model's response.
+    const contextLines = topDocs
+      .filter((d) => {
+        const title = isAr ? (d.meta.titleAr || d.meta.titleEn) : (d.meta.titleEn || d.meta.titleAr);
+        return title.trim().length > 0;
+      })
+      .map((d) => {
+        const m = d.meta;
+        const title = isAr ? (m.titleAr || m.titleEn) : (m.titleEn || m.titleAr);
+        return `• [${m.type}] ${title} (id:${m.docId}) — ${m.description.slice(0, 200)}`;
+      }).join("\n");
 
     // 4b. Build full archive inventory from the region-filtered cache.
     // Only the locale-appropriate name is shown to prevent the model from
@@ -781,6 +788,12 @@ export const askRawi = onCall(
     const archiveLines: string[] = [];
     for (const [type, entries] of archiveByType.entries()) {
       const names = entries
+        .filter((e) => {
+          // Drop items with no resolvable name — a blank entry causes the model
+          // to generate **[empty]** which renders as invisible blank text.
+          const name = isAr ? (e.titleAr || e.titleEn) : (e.titleEn || e.titleAr);
+          return name.trim().length > 0;
+        })
         .map((e) => {
           // Surface only the locale-matching name so the model wraps bold text
           // in the correct script and never mixes languages in entity names.
@@ -788,7 +801,7 @@ export const askRawi = onCall(
           return `${name} (id:${e.id})`;
         })
         .join(", ");
-      archiveLines.push(`[${type}]: ${names}`);
+      if (names.length > 0) archiveLines.push(`[${type}]: ${names}`);
     }
     const archiveSummary = archiveLines.join("\n");
 
@@ -830,12 +843,14 @@ ${langInstruction}
 
 --- STRICT GROUNDING (NO INVENTION) ---
 - The "Available Archive Items" below are the ONLY real items. They are your single source of truth.
-- NEVER invent, assume, or mention any place, food, craft, dress, or item that is NOT in the archive list — even if it is a famous landmark you know from training data.
+- YOUR TRAINING DATA KNOWLEDGE IS OVERRIDDEN: Everything you know from training about Saudi landmarks, foods, crafts, or cultural items is irrelevant. The archive list below is the ONLY reality.
+- NEVER mention any specific place, food, craft, dress, or item by name — in bold, in plain text, in passing, or as an example — unless that EXACT name appears in the archive list below.
+- This applies to world-famous landmarks too. If "قصر المصمك", "الجريش", "السليق", or ANY other name is not in the archive list, it does not exist. Do not say it. Do not hint at it.
 - NEVER add qualifiers, suffixes, version numbers, or parenthetical notes to item names (e.g. "Beta", "Classic", "Old", "- Version 2"). Use the exact name from the list, character for character.
-- INVENTED NAMES ARE PROHIBITED: If a name is not in the archive list, do not use it in any form. Treat it as non-existent for this conversation.
 - When you name a SPECIFIC item that EXISTS in the archive list, wrap ONLY that exact name in double asterisks: **Item Name**.
 - The name inside ** MUST match the current response language: English name for English responses, Arabic name for Arabic responses. NEVER put an Arabic name inside ** in an English response, and NEVER put an English name inside ** in an Arabic response.
 - NEVER wrap a word in asterisks unless the exact name (or a very close form) appears in the archive list. Descriptive, generic, or contextual words must stay in plain text.
+- If the archive list is empty or has no relevant match: speak warmly about the region's general character and heritage WITHOUT naming any specific item.
 - Do NOT use hashtags (#).
 - NEVER mention "database", "archive", "Athar", "the platform", "Vision 2030", or that you are an AI.
 - BANNED phrases: (للأسف، أعتذر، قاعدة بياناتي، لا تتوفر لدي معلومات).
@@ -964,10 +979,40 @@ Maximum ${MAX_SUGGESTED_ITEMS} item IDs. Never invent or guess an id.`;
       }
     }
 
+    // ✦ TRIPS BY INTEREST: fill any open suggestion slots with trips whose
+    // interestIds overlap the user's saved interests, scoped to the current
+    // region so cards from other regions never appear in the suggestions.
+    // Sorted by overlap count so the most relevant trip appears first.
+    if (interestSet.size > 0 && suggestedItems.length < MAX_SUGGESTED_ITEMS) {
+      const seenIds = new Set(suggestedItems.map((s) => s.id));
+      const interestTrips = [...filteredCache.values()]
+        .filter(
+          (m) =>
+            m.type === "trip" &&
+            !seenIds.has(m.docId) &&
+            m.interestIds.some((id) => interestSet.has(id))
+        )
+        .sort(
+          (a, b) =>
+            b.interestIds.filter((id) => interestSet.has(id)).length -
+            a.interestIds.filter((id) => interestSet.has(id)).length
+        );
+      for (const meta of interestTrips) {
+        if (suggestedItems.length >= MAX_SUGGESTED_ITEMS) break;
+        seenIds.add(meta.docId);
+        suggestedItems.push({
+          id: meta.docId,
+          type: meta.type,
+          titleAr: meta.titleAr,
+          titleEn: meta.titleEn,
+          imageUrl: meta.imageUrl,
+        });
+      }
+    }
+
     // ✦ FALLBACK: if the model returned no usable IDs (e.g. topDocs=0 and no
-    // <<<RECOMMENDED>>> block), fill from the best semantic matches we DO have,
-    // then from the region-filtered cache. All sources are CachedEmbedding, so
-    // imageUrl + titleEn are always populated correctly.
+    // <<<RECOMMENDED>>> block), fill remaining slots from the best semantic
+    // matches we DO have, then from the region-filtered cache.
     if (suggestedItems.length === 0) {
       const seen = new Set<string>();
       const pushMeta = (m: CachedEmbedding) => {

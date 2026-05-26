@@ -3067,5 +3067,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Verification revoked successfully';
 
   @override
+  String get eventsNoEventsYet => 'No events yet';
+
+  @override
+  String get eventsNoResultsFound => 'No results found';
+
+  @override
+  String get bookingNoData => 'No data';
+
+  @override
+  String get tripApprovalsNoTrips => 'No trips';
+
+  @override
   String get heroForYou => 'For you';
 }

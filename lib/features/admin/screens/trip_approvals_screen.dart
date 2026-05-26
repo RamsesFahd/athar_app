@@ -6,8 +6,10 @@ import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
 import 'package:athar_app/features/auth/logic/auth_notifier.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
-final _allTripsStreamProvider = StreamProvider.autoDispose<List<TripModel>>((ref) {
+final _allTripsStreamProvider =
+    StreamProvider.autoDispose<List<TripModel>>((ref) {
   return ref.watch(adminRepositoryProvider).getAllTrips();
 });
 
@@ -15,7 +17,8 @@ class TripApprovalsScreen extends ConsumerStatefulWidget {
   const TripApprovalsScreen({super.key});
 
   @override
-  ConsumerState<TripApprovalsScreen> createState() => _TripApprovalsScreenState();
+  ConsumerState<TripApprovalsScreen> createState() =>
+      _TripApprovalsScreenState();
 }
 
 class _TripApprovalsScreenState extends ConsumerState<TripApprovalsScreen> {
@@ -55,7 +58,7 @@ class _TripApprovalsScreenState extends ConsumerState<TripApprovalsScreen> {
                           color: AppColors.primary.withValues(alpha: 0.15)),
                       const SizedBox(height: 16),
                       Text(
-                        'لا توجد رحلات',
+                        AppLocalizations.of(context).tripApprovalsNoTrips,
                         style: theme.textTheme.bodyLarge
                             ?.copyWith(color: Colors.grey.shade500),
                       ),
@@ -68,7 +71,8 @@ class _TripApprovalsScreenState extends ConsumerState<TripApprovalsScreen> {
                 padding: const EdgeInsets.all(16),
                 itemCount: filtered.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 10),
-                itemBuilder: (context, index) => _TripCard(trip: filtered[index]),
+                itemBuilder: (context, index) =>
+                    _TripCard(trip: filtered[index]),
               );
             },
           ),
@@ -454,9 +458,8 @@ class _TripDetailAdminScreenState extends ConsumerState<TripDetailAdminScreen> {
                 ],
               ),
             ),
-      bottomNavigationBar: trip.status == 'pending'
-          ? _buildBottomBar(theme)
-          : null,
+      bottomNavigationBar:
+          trip.status == 'pending' ? _buildBottomBar(theme) : null,
     );
   }
 
@@ -543,7 +546,8 @@ class _TripDetailAdminScreenState extends ConsumerState<TripDetailAdminScreen> {
         ],
         if (trip.timeRange != null) ...[
           const SizedBox(height: 12),
-          _infoRow(theme, Icons.schedule_outlined, 'وقت الرحلة', trip.timeRange!),
+          _infoRow(
+              theme, Icons.schedule_outlined, 'وقت الرحلة', trip.timeRange!),
         ],
         if (trip.tripDurationDays != null && trip.tripDurationDays! > 1) ...[
           const SizedBox(height: 12),
@@ -577,17 +581,16 @@ class _TripDetailAdminScreenState extends ConsumerState<TripDetailAdminScreen> {
       children: [
         if (trip.shortDescriptionAr.isNotEmpty) ...[
           Text('مختصر',
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+              style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
           const SizedBox(height: 4),
-          Text(trip.shortDescriptionAr,
-              style: theme.textTheme.bodyMedium),
+          Text(trip.shortDescriptionAr, style: theme.textTheme.bodyMedium),
           const SizedBox(height: 16),
         ],
         if (trip.descriptionAr.isNotEmpty) ...[
           Text('تفصيلي',
-              style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+              style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
           const SizedBox(height: 4),
           Text(trip.descriptionAr, style: theme.textTheme.bodyMedium),
         ],
@@ -678,8 +681,8 @@ class _TripDetailAdminScreenState extends ConsumerState<TripDetailAdminScreen> {
             children: [
               Text(label,
                   style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface
-                          .withValues(alpha: 0.5))),
+                      color:
+                          theme.colorScheme.onSurface.withValues(alpha: 0.5))),
               const SizedBox(height: 2),
               Text(value,
                   style: theme.textTheme.bodyMedium
@@ -699,8 +702,7 @@ class _TripDetailAdminScreenState extends ConsumerState<TripDetailAdminScreen> {
     final borderColor = isRejected
         ? Colors.red.withValues(alpha: 0.25)
         : Colors.green.withValues(alpha: 0.25);
-    final labelColor =
-        isRejected ? Colors.red.shade700 : Colors.green.shade700;
+    final labelColor = isRejected ? Colors.red.shade700 : Colors.green.shade700;
 
     return Container(
       width: double.infinity,
@@ -723,8 +725,8 @@ class _TripDetailAdminScreenState extends ConsumerState<TripDetailAdminScreen> {
               const SizedBox(width: 6),
               Text(
                 isRejected ? 'تفاصيل الرفض' : 'تفاصيل القبول',
-                style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold, color: labelColor),
+                style: theme.textTheme.titleSmall
+                    ?.copyWith(fontWeight: FontWeight.bold, color: labelColor),
               ),
             ],
           ),

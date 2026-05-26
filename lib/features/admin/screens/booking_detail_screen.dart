@@ -5,6 +5,7 @@ import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
 import 'package:athar_app/core/utils/currency_formatter.dart';
 import 'package:athar_app/features/admin/logic/admin_repository.dart';
+import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class BookingDetailScreen extends ConsumerWidget {
   final BookingModel booking;
@@ -39,6 +40,7 @@ class BookingDetailScreen extends ConsumerWidget {
                 _buildTripCard(context, theme),
                 const SizedBox(height: 16),
                 _buildPersonCard(
+                  context,
                   theme,
                   title: 'السائح',
                   icon: Icons.person_outlined,
@@ -46,6 +48,7 @@ class BookingDetailScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 16),
                 _buildPersonCard(
+                  context,
                   theme,
                   title: 'المرشد',
                   icon: Icons.tour_outlined,
@@ -112,6 +115,7 @@ class BookingDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildPersonCard(
+    BuildContext context,
     ThemeData theme, {
     required String title,
     required IconData icon,
@@ -135,18 +139,18 @@ class BookingDetailScreen extends ConsumerWidget {
           ),
           const Divider(height: 24),
           if (user == null)
-            Text('لا توجد بيانات',
+            Text(AppLocalizations.of(context).bookingNoData,
                 style: theme.textTheme.bodySmall
                     ?.copyWith(color: Colors.grey.shade500))
           else ...[
             _infoRow(theme, Icons.badge_outlined, 'الاسم', user.fullName),
             const SizedBox(height: 10),
-            _infoRow(theme, Icons.email_outlined, 'البريد الإلكتروني',
-                user.email),
+            _infoRow(
+                theme, Icons.email_outlined, 'البريد الإلكتروني', user.email),
             if (user.phoneNumber != null && user.phoneNumber!.isNotEmpty) ...[
               const SizedBox(height: 10),
-              _infoRow(theme, Icons.phone_outlined, 'رقم الجوال',
-                  user.phoneNumber!),
+              _infoRow(
+                  theme, Icons.phone_outlined, 'رقم الجوال', user.phoneNumber!),
             ],
           ],
         ],

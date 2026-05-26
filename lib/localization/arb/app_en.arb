@@ -1219,5 +1219,9 @@
   "adminRevokeVerification": "Revoke Verification",
   "adminVerificationRevoked": "Verification revoked",
   "adminVerificationRevokedSuccess": "Verification revoked successfully",
+  "eventsNoEventsYet": "No events yet",
+  "eventsNoResultsFound": "No results found",
+  "bookingNoData": "No data",
+  "tripApprovalsNoTrips": "No trips",
   "heroForYou": "For you"
 }

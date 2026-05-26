@@ -3044,5 +3044,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminVerificationRevokedSuccess => 'تم إلغاء التوثيق بنجاح';
 
   @override
+  String get eventsNoEventsYet => 'لا توجد فعاليات بعد';
+
+  @override
+  String get eventsNoResultsFound => 'لا توجد نتائج';
+
+  @override
+  String get bookingNoData => 'لا توجد بيانات';
+
+  @override
+  String get tripApprovalsNoTrips => 'لا توجد رحلات';
+
+  @override
   String get heroForYou => 'مُختار لك';
 }

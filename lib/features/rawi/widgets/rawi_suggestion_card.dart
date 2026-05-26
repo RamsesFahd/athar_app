@@ -2,17 +2,14 @@ import 'package:athar_app/core/models/attractions/attraction_model.dart';
 import 'package:athar_app/core/models/booking/trip_model.dart';
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/core/models/events/event_model.dart';
-import 'package:athar_app/features/attractions/logic/attractions_repository.dart';
-import 'package:athar_app/features/attractions/widgets/attraction_card.dart';
-import 'package:athar_app/features/cultural_archive/logic/cultural_repository.dart';
-import 'package:athar_app/features/cultural_archive/widgets/cultural_item_card.dart';
-import 'package:athar_app/features/events/logic/events_repository.dart';
-import 'package:athar_app/features/events/widgets/event_card.dart';
-import 'package:athar_app/features/guide_market/logic/trips_repository.dart';
-import 'package:athar_app/features/guide_market/widgets/trip_card.dart';
+import 'package:athar_app/features/attractions/screens/attraction_details_screen.dart';
+import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
+import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:athar_app/core/theme/app_colors.dart';
 
 class RawiSuggestionsRow extends StatelessWidget {
   final List<Map<String, dynamic>> items;
@@ -27,27 +24,22 @@ class RawiSuggestionsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    final textScale = MediaQuery.textScalerOf(context).scale(1.0);
-    final rowExtra = ((textScale - 1.0).clamp(0.0, 1.0) * 54).toDouble();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsetsDirectional.only(
-              start: 12, end: 12, top: 6, bottom: 4),
+          padding: const EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 4),
           child: Text(
             l10n.rawiSuggestedItems,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: theme.colorScheme.primary,
+              color: AppColors.primary,
             ),
           ),
         ),
         SizedBox(
-          height: 230 + rowExtra,
+          height: 130,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -65,7 +57,7 @@ class RawiSuggestionsRow extends StatelessWidget {
   }
 }
 
-class RawiSuggestionCard extends ConsumerWidget {
+class RawiSuggestionCard extends StatelessWidget {
   final Map<String, dynamic> item;
   final bool isAr;
 
@@ -73,162 +65,195 @@ class RawiSuggestionCard extends ConsumerWidget {
 
   String get _id => item['id']?.toString() ?? '';
   String get _type => item['type']?.toString() ?? '';
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (_id.isEmpty || _type.isEmpty) {
-      return const SizedBox.shrink();
+  String get _imageUrl => item['imageUrl']?.toString() ?? '';
+  String get _title {
+    if (isAr) {
+      return item['titleAr']?.toString().isNotEmpty == true
+          ? item['titleAr'].toString()
+          : item['titleEn']?.toString() ?? '';
     }
+    return item['titleEn']?.toString().isNotEmpty == true
+        ? item['titleEn'].toString()
+        : item['titleAr']?.toString() ?? '';
+  }
 
+  IconData get _typeIcon {
     switch (_type) {
-      case 'trip':
-        return _ResolvedTripSuggestion(id: _id);
-      case 'event':
-        return _ResolvedEventSuggestion(id: _id);
       case 'attraction':
-        return _ResolvedAttractionSuggestion(id: _id);
+        return Icons.place_rounded;
+      case 'trip':
+        return Icons.explore_rounded;
+      case 'event':
+        return Icons.event_rounded;
       case 'cultural_item':
-        return _ResolvedCulturalSuggestion(id: _id, isAr: isAr);
+        return Icons.museum_rounded;
       default:
-        return const SizedBox.shrink();
+        return Icons.star_rounded;
     }
   }
-}
 
-class _ResolvedTripSuggestion extends ConsumerWidget {
-  final String id;
+  Future<void> _navigate(BuildContext context) async {
+    if (_id.isEmpty || _type.isEmpty) return;
+    final db = FirebaseFirestore.instance;
 
-  const _ResolvedTripSuggestion({required this.id});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return FutureBuilder<TripModel?>(
-      future: ref.read(tripsRepositoryProvider).fetchTripById(id),
-      builder: (context, snapshot) {
-        final trip = snapshot.data;
-        if (trip == null) {
-          return _SuggestionPlaceholder(isLoading: !snapshot.hasError);
-        }
-        return SizedBox(
-          width: 190,
-          child: TripCard(trip: trip),
-        );
-      },
-    );
+    try {
+      switch (_type) {
+        case 'attraction':
+          {
+            final doc = await db.collection('attractions').doc(_id).get();
+            if (!doc.exists || doc.data() == null) return;
+            final model = AttractionModel.fromMap(doc.data()!, doc.id);
+            if (!context.mounted) return;
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AttractionDetailsScreen(attraction: model),
+                ));
+            break;
+          }
+        case 'trip':
+          {
+            final doc = await db.collection('trips').doc(_id).get();
+            if (!doc.exists || doc.data() == null) return;
+            final model = TripModel.fromMap(doc.data()!, doc.id);
+            if (!context.mounted) return;
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => TripDetailsScreen(trip: model),
+                ));
+            break;
+          }
+        case 'cultural_item':
+          {
+            final doc = await db.collection('cultural_items').doc(_id).get();
+            if (!doc.exists || doc.data() == null) return;
+            final model = CulturalItemModel.fromMap(doc.data()!, doc.id);
+            if (!context.mounted) return;
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CulturalItemDetails(item: model),
+                ));
+            break;
+          }
+        case 'event':
+          {
+            final doc = await db.collection('events').doc(_id).get();
+            if (!doc.exists || doc.data() == null) return;
+            final model = EventModel.fromMap(doc.data()!, doc.id);
+            if (!context.mounted) return;
+            _showEventSheet(context, model);
+            break;
+          }
+      }
+    } catch (_) {}
   }
-}
 
-class _ResolvedEventSuggestion extends ConsumerWidget {
-  final String id;
-
-  const _ResolvedEventSuggestion({required this.id});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final eventsAsync = ref.watch(eventsStreamProvider);
-    return eventsAsync.when(
-      data: (events) {
-        final event = _firstWhereOrNull<EventModel>(events, (e) => e.id == id);
-        if (event == null) return const SizedBox.shrink();
-        return SizedBox(
-          width: 180,
-          child: EventCard(event: event),
-        );
-      },
-      loading: () => const _SuggestionPlaceholder(isLoading: true),
-      error: (_, __) => const SizedBox.shrink(),
-    );
-  }
-}
-
-class _ResolvedAttractionSuggestion extends ConsumerWidget {
-  final String id;
-
-  const _ResolvedAttractionSuggestion({required this.id});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final attractionsAsync = ref.watch(attractionsStreamProvider);
-    return attractionsAsync.when(
-      data: (attractions) {
-        final attraction =
-            _firstWhereOrNull<AttractionModel>(attractions, (a) => a.id == id);
-        if (attraction == null) return const SizedBox.shrink();
-        return SizedBox(
-          width: 180,
-          child: AttractionCard(attraction: attraction),
-        );
-      },
-      loading: () => const _SuggestionPlaceholder(isLoading: true),
-      error: (_, __) => const SizedBox.shrink(),
-    );
-  }
-}
-
-class _ResolvedCulturalSuggestion extends ConsumerWidget {
-  final String id;
-  final bool isAr;
-
-  const _ResolvedCulturalSuggestion({required this.id, required this.isAr});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return FutureBuilder<CulturalItemModel?>(
-      future: ref.read(culturalRepositoryProvider).fetchItemDetails(id),
-      builder: (context, snapshot) {
-        final item = snapshot.data;
-        if (item == null) {
-          return _SuggestionPlaceholder(isLoading: !snapshot.hasError);
-        }
-        return CulturalItemCard(
-          id: item.id,
-          item: item,
-          imageUrl: item.imageUrl,
-          categoryId: item.categoryId,
-          region: isAr ? item.regionAr : item.regionEn,
-          title: isAr ? item.titleAr : item.titleEn,
-          description: isAr ? item.descriptionAr : item.descriptionEn,
-        );
-      },
-    );
-  }
-}
-
-class _SuggestionPlaceholder extends StatelessWidget {
-  final bool isLoading;
-
-  const _SuggestionPlaceholder({required this.isLoading});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return SizedBox(
-      width: 180,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Center(
-          child: isLoading
-              ? const SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : Icon(
-                  Icons.image_not_supported_outlined,
-                  color: colorScheme.onSurfaceVariant,
-                ),
+  void _showEventSheet(BuildContext context, EventModel event) {
+    final isAr = this.isAr;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              isAr
+                  ? (event.titleAr.isNotEmpty ? event.titleAr : event.titleEn)
+                  : (event.titleEn.isNotEmpty ? event.titleEn : event.titleAr),
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              isAr
+                  ? (event.descriptionAr.isNotEmpty
+                      ? event.descriptionAr
+                      : event.descriptionEn)
+                  : (event.descriptionEn.isNotEmpty
+                      ? event.descriptionEn
+                      : event.descriptionAr),
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
+            ),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
     );
   }
-}
 
-T? _firstWhereOrNull<T>(Iterable<T> items, bool Function(T item) test) {
-  for (final item in items) {
-    if (test(item)) return item;
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _navigate(context),
+      child: Container(
+        width: 140,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.07),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.hardEdge,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _imageUrl.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: _imageUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      errorWidget: (_, __, ___) => _placeholder(),
+                    )
+                  : _placeholder(),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              child: Row(
+                children: [
+                  Icon(_typeIcon, size: 12, color: AppColors.primary),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      _title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
-  return null;
+
+  Widget _placeholder() {
+    return Container(
+      color: AppColors.primary.withValues(alpha: 0.08),
+      child: Center(
+        child: Icon(_typeIcon,
+            color: AppColors.primary.withValues(alpha: 0.4), size: 32),
+      ),
+    );
+  }
 }

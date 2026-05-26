@@ -5745,6 +5745,30 @@ abstract class AppLocalizations {
   /// **'Verification revoked successfully'**
   String get adminVerificationRevokedSuccess;
 
+  /// No description provided for @eventsNoEventsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No events yet'**
+  String get eventsNoEventsYet;
+
+  /// No description provided for @eventsNoResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get eventsNoResultsFound;
+
+  /// No description provided for @bookingNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data'**
+  String get bookingNoData;
+
+  /// No description provided for @tripApprovalsNoTrips.
+  ///
+  /// In en, this message translates to:
+  /// **'No trips'**
+  String get tripApprovalsNoTrips;
+
   /// No description provided for @heroForYou.
   ///
   /// In en, this message translates to:
