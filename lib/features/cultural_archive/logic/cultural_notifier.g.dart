@@ -6,7 +6,7 @@ part of 'cultural_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$culturalNotifierHash() => r'5abd6415f0049b026c143610aed4262a48168def';
+String _$culturalNotifierHash() => r'0055274a81775e38e168cb3d822670810c458b0e';
 
 /// See also [CulturalNotifier].
 @ProviderFor(CulturalNotifier)

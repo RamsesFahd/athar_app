@@ -23,3 +23,9 @@ final upcomingEventsStreamProvider = StreamProvider<List<EventModel>>((ref) {
           .map((d) => EventModel.fromMap(d.data(), d.id))
           .toList());
 });
+
+Future<void> deleteEvent(String eventId) =>
+    FirebaseFirestore.instance.collection('events').doc(eventId).delete();
+
+Future<void> updateEventFields(String eventId, Map<String, dynamic> fields) =>
+    FirebaseFirestore.instance.collection('events').doc(eventId).update(fields);

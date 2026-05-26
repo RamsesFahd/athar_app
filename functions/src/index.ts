@@ -1928,3 +1928,65 @@ export const backfillHeroCopy = onSchedule(
     logger.info(`[backfillHeroCopy] Done — succeeded: ${succeeded}, failed: ${failed}.`);
   }
 );
+
+// ── Scheduled 4: Delete expired events ────────────────────────────────────────
+//
+// Runs daily at midnight (Asia/Riyadh). Queries the events collection for all
+// documents where endDate is strictly before now and batch-deletes them.
+// Events with no endDate set are not affected — set endDate when creating an
+// event if you want automatic cleanup.
+
+export const deleteExpiredEvents = onSchedule(
+  {
+    schedule: "0 0 * * *",
+    timeZone: "Asia/Riyadh",
+    timeoutSeconds: 120,
+    memory: "256MiB",
+  },
+  async () => {
+    const now = new Date();
+
+    let expiredSnap;
+    try {
+      expiredSnap = await db
+        .collection("events")
+        .where("endDate", "<", now)
+        .get();
+    } catch (err) {
+      logger.error("[deleteExpiredEvents] Failed to query expired events:", err);
+      return;
+    }
+
+    if (expiredSnap.empty) {
+      logger.info("[deleteExpiredEvents] No expired events found.");
+      return;
+    }
+
+    logger.info(
+      `[deleteExpiredEvents] Found ${expiredSnap.size} expired event(s) — deleting.`
+    );
+
+    // Firestore WriteBatch is capped at 500 operations.
+    const BATCH_LIMIT = 500;
+    let deleted = 0;
+
+    try {
+      for (let i = 0; i < expiredSnap.docs.length; i += BATCH_LIMIT) {
+        const batch = db.batch();
+        expiredSnap.docs.slice(i, i + BATCH_LIMIT).forEach((doc) =>
+          batch.delete(doc.ref)
+        );
+        await batch.commit();
+        deleted += Math.min(BATCH_LIMIT, expiredSnap.docs.length - i);
+      }
+    } catch (err) {
+      logger.error(
+        `[deleteExpiredEvents] Batch delete failed after removing ${deleted} doc(s):`,
+        err
+      );
+      return;
+    }
+
+    logger.info(`[deleteExpiredEvents] Done — deleted ${deleted} event(s).`);
+  }
+);
