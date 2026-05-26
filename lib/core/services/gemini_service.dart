@@ -12,9 +12,15 @@ class GeminiService {
 
   // Caches one GenerativeModel per distinct system instruction so the object
   // (and its underlying HTTP client) is not recreated on every message send.
+  // Capped at _maxCacheSize to prevent unbounded growth when itemsTitles change.
+  static const int _maxCacheSize = 20;
   final Map<String, GenerativeModel> _modelCache = {};
 
   GenerativeModel _modelFor(String systemInstruction) {
+    if (!_modelCache.containsKey(systemInstruction) &&
+        _modelCache.length >= _maxCacheSize) {
+      _modelCache.remove(_modelCache.keys.first);
+    }
     return _modelCache.putIfAbsent(
       systemInstruction,
       () => GenerativeModel(

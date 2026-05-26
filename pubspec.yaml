@@ -109,6 +109,7 @@ flutter:
   uses-material-design: true
   generate: true
   assets:
+    - .env
     - assets/images/
     - assets/icons/saudi_riyal.svg
     - assets/icons/google_logo.svg

@@ -86,14 +86,10 @@ function extractContentText(
       };
     }
     case "trips": {
-      const title = data.title;
-      const desc = data.description;
-      const titleStr = typeof title === "object" ? `${title.ar || ""} | ${title.en || ""}` : String(title || "");
-      const descStr = typeof desc === "object" ? `${desc.ar || ""} | ${desc.en || ""}` : String(desc || "");
       return {
-        title: titleStr.trim(),
-        description: descStr.trim(),
-        extra: "",
+        title: `${data.titleAr || ""} | ${data.titleEn || ""}`.trim(),
+        description: `${data.descriptionAr || data.shortDescriptionAr || ""} | ${data.descriptionEn || data.shortDescriptionEn || ""}`.trim(),
+        extra: `Type: ${data.tripType || ""}`,
       };
     }
     default:
@@ -359,7 +355,7 @@ export const reclassifyUpdatedTrip = onDocumentUpdated({ document: "trips/{docId
   const before = event.data?.before.data();
   const after = event.data?.after.data();
   if (!before || !after) return;
-  if (textFieldsChanged(before, after, ["title", "description"])) {
+  if (textFieldsChanged(before, after, ["titleAr", "titleEn", "descriptionAr", "descriptionEn", "shortDescriptionAr", "shortDescriptionEn", "tripType"])) {
     await classifyDocument("trips", event.params.docId, after);
     try {
       await writeHeroCopy("trips", event.params.docId, after);
@@ -544,6 +540,7 @@ interface CachedEmbedding {
   region: string;
   type: "attraction" | "trip" | "event" | "cultural_item";
   docId: string;
+  interestIds: string[];
 }
 
 let embeddingCache: Map<string, CachedEmbedding> | null = null;
@@ -636,6 +633,7 @@ function extractDocMeta(
     region,
     type,
     docId,
+    interestIds: Array.isArray(data.interestIds) ? data.interestIds : [],
   };
 }
 
@@ -717,13 +715,15 @@ export const askRawi = onCall(
   async (request) => {
     if (!GEMINI_KEY) throw new HttpsError("failed-precondition", "GEMINI_API_KEY is not set");
 
-    const { conversationId, userMessage, recentMessages, locale, regionId } = request.data as {
+    const { conversationId, userMessage, recentMessages, locale, regionId, userInterests } = request.data as {
       conversationId: string;
       userMessage: string;
       recentMessages: Array<{ role: "user" | "assistant"; content: string }>;
       locale: "ar" | "en";
       regionId?: string;
+      userInterests?: string[];
     };
+    const interestSet = new Set<string>(Array.isArray(userInterests) ? userInterests : []);
 
     if (!userMessage?.trim()) throw new HttpsError("invalid-argument", "userMessage is required");
 
@@ -746,10 +746,16 @@ export const askRawi = onCall(
 
     logger.info(`[askRawi] wantedRegion="${wantedRegion}" totalCache=${cache.size} filtered=${filteredCache.size}`);
 
-    // 3. Cosine similarity → top-K (region-filtered)
+    // 3. Cosine similarity → top-K (region-filtered).
+    // Items whose interestIds overlap with the user's saved interests get a 20%
+    // score boost so they rank higher when relevance is otherwise comparable.
+    const INTEREST_BOOST = 1.2;
     const scored: Array<{ key: string; score: number; meta: CachedEmbedding }> = [];
     for (const [key, meta] of filteredCache.entries()) {
-      const score = cosineSimilarity(queryEmbedding, meta.embedding);
+      let score = cosineSimilarity(queryEmbedding, meta.embedding);
+      if (interestSet.size > 0 && meta.interestIds.some((id) => interestSet.has(id))) {
+        score *= INTEREST_BOOST;
+      }
       if (score >= SIMILARITY_THRESHOLD) {
         scored.push({ key, score, meta });
       }

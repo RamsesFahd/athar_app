@@ -8,6 +8,8 @@ import '../../../core/services/gemini_service.dart';
 import 'package:athar_app/core/models/chat/chat_message_model.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_repository.dart';
 import 'package:athar_app/features/auth/logic/auth_repository.dart';
+import 'package:athar_app/features/auth/logic/auth_notifier.dart';
+import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/providers/settings_provider.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 part 'chat_notifier.g.dart';
@@ -228,14 +230,14 @@ Rules:
     required RegionModel region,
     required String sessionId,
   }) async {
+    final authRepo = ref.read(authRepositoryProvider);
+    final userId = authRepo.currentUser?.uid ?? 'guest_user';
+    final repository = ref.read(chatRepositoryProvider);
+    final gemini = ref.read(geminiServiceProvider);
+    final settings = ref.read(settingsProvider);
+    final langCode = settings.locale.languageCode;
     state = true;
     try {
-      final authRepo = ref.read(authRepositoryProvider);
-      final userId = authRepo.currentUser?.uid ?? 'guest_user';
-      final repository = ref.read(chatRepositoryProvider);
-      final gemini = ref.read(geminiServiceProvider);
-      final settings = ref.read(settingsProvider); //  read settings
-      final langCode = settings.locale.languageCode; //  get language
 
       final newSession = ChatSessionModel(
         sessionId: sessionId,
@@ -269,7 +271,23 @@ Rules:
         timestamp: DateTime.now(),
       );
       await repository.saveMessage(userId, sessionId, botMessage);
-    } catch (_) {
+    } catch (e, stackTrace) {
+      debugPrint('[ChatNotifier] sendInitialGreeting error: $e\n$stackTrace');
+      final errorText = langCode == 'ar'
+          ? 'تعذّر على راوي البدء. يرجى المحاولة مرة أخرى.'
+          : "Rawi couldn't start. Please try again.";
+      try {
+        await repository.saveMessage(
+          userId,
+          sessionId,
+          ChatMessageModel(
+            text: errorText,
+            senderId: 'bot',
+            isUser: false,
+            timestamp: DateTime.now(),
+          ),
+        );
+      } catch (_) {}
     } finally {
       state = false;
     }
@@ -287,6 +305,10 @@ Rules:
 
       final authRepo = ref.read(authRepositoryProvider);
       final userId = authRepo.currentUser?.uid ?? 'guest_user';
+      final tourist = ref.read(authNotifierProvider).valueOrNull;
+      final userInterests = tourist is TouristModel
+          ? tourist.culturalInterests
+          : const <String>[];
       final settings = ref.read(settingsProvider);
       final langCode = settings.locale.languageCode;
       final effectiveLangCode = _containsArabic(cleanText) ? 'ar' : langCode;
@@ -338,21 +360,6 @@ Rules:
           await repository.getRecentMessages(userId, sessionId, limit: 10);
       
       final isAr = effectiveLangCode == 'ar';
-      final userLabel = isAr ? "المستخدم" : "User";
-      final botLabel = isAr ? "راوي" : "Rawi";
-      final historyHeader = isAr ? "سياق المحادثة السابق:" : "Previous Conversation History:";
-      
-      final historyContext = recentMessages.reversed
-        .map((m) => '${m.isUser ? userLabel : botLabel}: ${m.text}')
-        .join('\n');
-
-
-      final fullPrompt = '''
-      $historyHeader
-      $historyContext
-
-      $userLabel: $cleanText
-      ''';
 
       // 3. بناء التعليمات البرمجية (System Instruction)
       String systemInstruction = '';
@@ -403,7 +410,15 @@ STRICT RULE: Your response MUST be in the same language as "Current User Message
       List<Map<String, dynamic>>? suggestedItems;
 
       if (imageBytes != null) {
-        // Image messages fall back to direct Gemini (askRawi is text-only)
+        // Image messages fall back to direct Gemini (askRawi is text-only).
+        // History is embedded in the prompt text for the vision model.
+        final userLabel = isAr ? "المستخدم" : "User";
+        final botLabel  = isAr ? "راوي"     : "Rawi";
+        final header    = isAr ? "سياق المحادثة السابق:" : "Previous Conversation History:";
+        final history   = recentMessages.reversed
+            .map((m) => '${m.isUser ? userLabel : botLabel}: ${m.text}')
+            .join('\n');
+        final fullPrompt = '$header\n$history\n\n$userLabel: $cleanText';
         botReply = await gemini.getResponse(
           prompt: fullPrompt,
           systemInstruction: systemInstruction,
@@ -419,6 +434,7 @@ STRICT RULE: Your response MUST be in the same language as "Current User Message
               .toList(),
           'locale': effectiveLangCode,
           'regionId': region?.regionId ?? '',
+          'userInterests': userInterests,
         });
         final converted = _convertResponse(rawResult.data) as Map<String, dynamic>;
         botReply = (converted['reply'] as String?)?.trim() ?? '';
@@ -452,7 +468,8 @@ STRICT RULE: Your response MUST be in the same language as "Current User Message
         gemini: gemini,
         region: region,
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('[ChatNotifier] sendUserMessage error: $e\n$stackTrace');
       state = false;
       final isAr = _containsArabic(text);
       final errorText = isAr

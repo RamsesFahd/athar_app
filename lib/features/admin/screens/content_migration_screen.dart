@@ -25,7 +25,9 @@ class _ContentMigrationScreenState
     extends ConsumerState<ContentMigrationScreen> {
   bool _isMigrating = false;
   bool _isEmbedding = false;
+  bool _isMigratingTrips = false;
   Map<String, int>? _results;
+  int? _tripsMigratedCount;
   String? _error;
 
   Future<void> _runMigration() async {
@@ -70,6 +72,51 @@ class _ContentMigrationScreenState
       }
     } finally {
       if (mounted) setState(() => _isMigrating = false);
+    }
+  }
+
+  Future<void> _runTripsMigration() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('ترحيل الرحلات'),
+        content: const Text(
+          'سيتم معالجة جميع الرحلات التي تفتقر إلى interestIds وembedding.\n\n'
+          'العملية قد تستغرق عدة دقائق بسبب 15 ثانية بين كل وثيقة.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('إلغاء'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.orange.shade700),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('تشغيل'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    setState(() {
+      _isMigratingTrips = true;
+      _tripsMigratedCount = null;
+      _error = null;
+    });
+
+    try {
+      final results = await ref
+          .read(adminRepositoryProvider)
+          .migrateAllContent(collection: 'trips');
+      if (mounted) {
+        setState(() => _tripsMigratedCount = results['trips'] ?? 0);
+      }
+    } catch (e) {
+      if (mounted) setState(() => _error = 'فشل ترحيل الرحلات: $e');
+    } finally {
+      if (mounted) setState(() => _isMigratingTrips = false);
     }
   }
 
@@ -225,6 +272,38 @@ class _ContentMigrationScreenState
                     fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ),
+            const SizedBox(height: 16),
+            // TEMPORARY — remove once all trips have interestIds + embedding
+            ElevatedButton.icon(
+              onPressed: _isMigratingTrips ? null : _runTripsMigration,
+              icon: _isMigratingTrips
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.directions_walk),
+              label: Text(
+                _isMigratingTrips ? 'جاري الترحيل…' : 'ترحيل الرحلات (مؤقت)',
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange.shade700,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              ),
+            ),
+            if (_tripsMigratedCount != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.check_circle, color: Colors.green, size: 18),
+                    const SizedBox(width: 6),
+                    Text('تم ترحيل $_tripsMigratedCount رحلة بنجاح'),
+                  ],
+                ),
+              ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _isEmbedding ? null : _runEmbedMissing,
