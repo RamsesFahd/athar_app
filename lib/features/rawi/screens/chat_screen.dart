@@ -4,11 +4,13 @@ import 'package:athar_app/core/models/chat/chat_message_model.dart';
 import 'package:athar_app/core/models/chat/chat_session_model.dart';
 import 'package:athar_app/core/models/chat/region_model.dart';
 import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
+import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/core/widgets/chat_message_bubble.dart';
 import 'package:athar_app/features/attractions/screens/attraction_details_screen.dart';
 import 'package:athar_app/features/auth/logic/auth_repository.dart';
 import 'package:athar_app/features/cultural_archive/logic/cultural_notifier.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
+import 'package:athar_app/features/events/screens/event_details_screen.dart';
 import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
 import 'package:athar_app/features/rawi/logic/chat_notifier.dart';
 import 'package:athar_app/features/rawi/logic/chat_repository.dart';
@@ -243,7 +245,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               sessionId: _sessionId,
             );
       },
-      onEntityTap: (entityName) {
+      onEntityTap: (entityName) async {
         final allItems =
             ref.read(culturalNotifierProvider).value?.allItems ?? [];
         final archiveItem = _findCulturalItem(allItems, entityName);
@@ -264,11 +266,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           }
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(AppLocalizations.of(context).rawiEntityNotFound(entityName)),
-          backgroundColor: const Color(0xFF1B5E20),
-          duration: const Duration(seconds: 2),
-        ));
+        final found = await _navigateToEventByName(entityName);
+        if (!found && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppLocalizations.of(context).rawiEntityNotFound(entityName)),
+            backgroundColor: const Color(0xFF1B5E20),
+            duration: const Duration(seconds: 2),
+          ));
+        }
       },
     );
   }
@@ -382,11 +387,41 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   builder: (_) => CulturalItemDetails(
                       item: CulturalItemModel.fromMap(doc.data()!, doc.id))));
           break;
+        case 'event':
+          final doc = await db.collection('events').doc(id).get();
+          if (!doc.exists || doc.data() == null || !mounted) return;
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => EventDetailsScreen(
+                      event: EventModel.fromMap(doc.data()!, doc.id))));
+          break;
       }
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(AppLocalizations.of(context).commonErrorWithMessage(''))));
+    }
+  }
+
+  Future<bool> _navigateToEventByName(String name) async {
+    final db = FirebaseFirestore.instance;
+    try {
+      final results = await Future.wait([
+        db.collection('events').where('titleAr', isEqualTo: name).limit(1).get(),
+        db.collection('events').where('titleEn', isEqualTo: name).limit(1).get(),
+      ]);
+      final docs = [...results[0].docs, ...results[1].docs];
+      if (docs.isEmpty || !mounted) return false;
+      final doc = docs.first;
+      final event = EventModel.fromMap(doc.data(), doc.id);
+      if (!mounted) return false;
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => EventDetailsScreen(event: event)));
+      return true;
+    } catch (_) {
+      return false;
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:athar_app/core/models/cultural/cultural_item_model.dart';
 import 'package:athar_app/core/models/events/event_model.dart';
 import 'package:athar_app/features/attractions/screens/attraction_details_screen.dart';
 import 'package:athar_app/features/cultural_archive/widgets/cultural_item_details.dart';
+import 'package:athar_app/features/events/screens/event_details_screen.dart';
 import 'package:athar_app/features/guide_market/screens/trip_details_screen.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -143,50 +144,15 @@ class RawiSuggestionCard extends StatelessWidget {
             if (!doc.exists || doc.data() == null) return;
             final model = EventModel.fromMap(doc.data()!, doc.id);
             if (!context.mounted) return;
-            _showEventSheet(context, model);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => EventDetailsScreen(event: model),
+                ));
             break;
           }
       }
     } catch (_) {}
-  }
-
-  void _showEventSheet(BuildContext context, EventModel event) {
-    final isAr = this.isAr;
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              isAr
-                  ? (event.titleAr.isNotEmpty ? event.titleAr : event.titleEn)
-                  : (event.titleEn.isNotEmpty ? event.titleEn : event.titleAr),
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              isAr
-                  ? (event.descriptionAr.isNotEmpty
-                      ? event.descriptionAr
-                      : event.descriptionEn)
-                  : (event.descriptionEn.isNotEmpty
-                      ? event.descriptionEn
-                      : event.descriptionAr),
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
-            ),
-            const SizedBox(height: 16),
-          ],
-        ),
-      ),
-    );
   }
 
   @override

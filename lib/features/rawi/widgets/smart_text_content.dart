@@ -96,19 +96,6 @@ class SmartTextContent extends ConsumerWidget {
     );
   }
 
-  // Checks whether an entity name matches a known platform item using
-  // Arabic-normalized fuzzy matching.
-  bool _isKnownEntity(String name, Set<String> validNames) {
-    if (validNames.isEmpty) return false;
-    final normalized = _normalize(name);
-    return validNames.any((v) {
-      final nv = _normalize(v);
-      return nv == normalized ||
-          nv.contains(normalized) ||
-          normalized.contains(nv);
-    });
-  }
-
   String _normalize(String text) => text
       .trim()
       .toLowerCase()
@@ -145,18 +132,16 @@ class SmartTextContent extends ConsumerWidget {
       final entityText = (match.group(1) ?? match.group(2) ?? '').trim();
 
       if (isBold && entityText.isNotEmpty) {
-        final isKnown = _isKnownEntity(entityText, validEntityNames);
+        final tappable = !isMe && onEntityTap != null;
         spans.add(TextSpan(
           text: entityText,
           style: _messageTextStyle(theme, entityText).copyWith(
             fontWeight: FontWeight.w700,
-            color: isKnown
-                ? (isMe ? colorScheme.onPrimary : colorScheme.primary)
-                : null,
+            color: tappable ? colorScheme.primary : null,
           ),
-          recognizer: isKnown
+          recognizer: tappable
               ? (TapGestureRecognizer()
-                ..onTap = () => onEntityTap?.call(entityText))
+                ..onTap = () => onEntityTap!.call(entityText))
               : null,
         ));
       } else {

@@ -245,7 +245,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get points => 'Points';
 
   @override
-  String get contributions => 'Cultural Content Enrichment';
+  String get contributions => 'Cultural Enrichment';
 
   @override
   String get contributionShortLabel => 'Enrichment';
