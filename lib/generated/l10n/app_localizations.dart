@@ -557,7 +557,7 @@ abstract class AppLocalizations {
   /// No description provided for @contributionPageTitle.
   ///
   /// In en, this message translates to:
-  /// **'Archive Enrichment'**
+  /// **'Cultural Enrichment'**
   String get contributionPageTitle;
 
   /// No description provided for @contributionShortLabel.
