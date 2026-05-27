@@ -92,9 +92,14 @@ class _AdminNavigationContainerState
               onTap: (i) => setState(() => _currentIndex = i),
               type: BottomNavigationBarType.fixed,
               selectedItemColor: theme.colorScheme.primary,
-              unselectedItemColor: theme.colorScheme.onSurfaceVariant,
+              unselectedItemColor:
+                  theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.72),
+              selectedIconTheme: const IconThemeData(size: 24),
+              unselectedIconTheme: const IconThemeData(size: 24),
               selectedLabelStyle:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+                  const TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
+              unselectedLabelStyle:
+                  const TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
               items: _tabs
                   .map((t) => BottomNavigationBarItem(
                         icon: Icon(t.icon),

@@ -91,6 +91,14 @@ class _ContributionsAchievementsScreenState
     'traditional_clothing': Color(0xFFE91E63),
   };
 
+  TextStyle? _themedTextStyle(ThemeData theme, TextStyle? style) {
+    final baseStyle = theme.textTheme.bodyLarge;
+    return style?.copyWith(
+      fontFamily: baseStyle?.fontFamily,
+      fontFamilyFallback: baseStyle?.fontFamilyFallback,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -296,7 +304,10 @@ class _ContributionsAchievementsScreenState
         return AlertDialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Text(l10n.rewardUnlockedTitle),
+          title: Text(
+            l10n.rewardUnlockedTitle,
+            style: _themedTextStyle(theme, theme.textTheme.titleLarge),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -310,7 +321,10 @@ class _ContributionsAchievementsScreenState
                 Text(
                   rewardTitle,
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  style: _themedTextStyle(
+                    theme,
+                    theme.textTheme.titleMedium,
+                  )?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.primary,
                   ),
@@ -354,16 +368,25 @@ class _ContributionsAchievementsScreenState
     final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.contributionPhoneVerificationRequiredTitle),
-        content: Text(l10n.contributionPhoneVerificationRequiredBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(l10n.commonOk),
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        return AlertDialog(
+          title: Text(
+            l10n.contributionPhoneVerificationRequiredTitle,
+            style: _themedTextStyle(theme, theme.textTheme.titleLarge),
           ),
-        ],
-      ),
+          content: Text(
+            l10n.contributionPhoneVerificationRequiredBody,
+            style: _themedTextStyle(theme, theme.textTheme.bodyMedium),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.commonOk),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -610,7 +633,7 @@ class _ContributionsAchievementsScreenState
     final stats = [
       _StatItem(
           value: '$contributionsCount',
-          label: l10n.contributions,
+          label: l10n.contributionShortLabel,
           icon: Icons.edit_note_rounded),
       _StatItem(
           value: '$totalFavorites',
@@ -665,7 +688,7 @@ class _ContributionsAchievementsScreenState
         Text(stat.value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.titleMedium
+            style: _themedTextStyle(theme, theme.textTheme.titleMedium)
                 ?.copyWith(fontWeight: FontWeight.w900)),
         const SizedBox(height: 2),
         Text(stat.label,
@@ -682,8 +705,8 @@ class _ContributionsAchievementsScreenState
 
   Widget _buildSectionTitle(ThemeData theme, String title) {
     return Text(title,
-        style:
-            theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800));
+        style: _themedTextStyle(theme, theme.textTheme.titleMedium)
+            ?.copyWith(fontWeight: FontWeight.w800));
   }
 
   Widget _buildBadgesEmptyMessage(ThemeData theme, AppLocalizations l10n) {
@@ -889,8 +912,10 @@ class _ContributionsAchievementsScreenState
                                   : l10n.commonNoTitle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.titleSmall
-                                  ?.copyWith(fontWeight: FontWeight.w800),
+                              style: _themedTextStyle(
+                                theme,
+                                theme.textTheme.titleSmall,
+                              )?.copyWith(fontWeight: FontWeight.w800),
                             ),
                           ),
                           const SizedBox(width: 8),

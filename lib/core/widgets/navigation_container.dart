@@ -89,7 +89,7 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
       case 2:
         return l10n.assistantLabel;
       case 3:
-        return isTutor ? l10n.calendarLabel : l10n.contributions;
+        return isTutor ? l10n.calendarLabel : l10n.contributionPageTitle;
       case 4:
         return l10n.profileLabel;
       default:

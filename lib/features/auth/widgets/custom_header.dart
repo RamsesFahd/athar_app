@@ -5,11 +5,13 @@ class CustomHeader extends StatelessWidget {
   final String title;
   final String subtitle;
   final String imagePath;
+  final bool centerText;
   const CustomHeader(
       {super.key,
       required this.title,
       required this.subtitle,
-      required this.imagePath});
+      required this.imagePath,
+      this.centerText = false});
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +49,14 @@ class CustomHeader extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               // التعديل الجوهري: CrossAxisAlignment.start تعني اليمين في العربي تلقائيًا
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: centerText
+                  ? CrossAxisAlignment.center
+                  : CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
                   // TextAlign.start تتبع اتجاه لغة التطبيق الحالية
-                  textAlign: TextAlign.start,
+                  textAlign: centerText ? TextAlign.center : TextAlign.start,
                   style: theme.textTheme.displayLarge?.copyWith(
                     color: Colors.white,
                     fontSize: 32,
@@ -61,7 +65,7 @@ class CustomHeader extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  textAlign: TextAlign.start,
+                  textAlign: centerText ? TextAlign.center : TextAlign.start,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.white.withValues(alpha: 0.9),
                     fontSize: 16,

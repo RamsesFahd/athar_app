@@ -211,6 +211,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       TextEditingController controller, String hint, bool isPassword,
       {List<String>? autofillHints}) {
     final theme = Theme.of(context);
+    final inputBorderColor =
+        theme.colorScheme.outline.withValues(alpha: 0.5);
     return TextField(
       controller: controller,
       obscureText: isPassword ? _hidePassword : false,
@@ -226,12 +228,14 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: theme.colorScheme.outline.withValues(alpha: 0.35),
+              color: inputBorderColor,
+              width: 1.2,
             )),
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: theme.colorScheme.outline.withValues(alpha: 0.35),
+              color: inputBorderColor,
+              width: 1.2,
             )),
         suffixIcon: isPassword
             ? IconButton(
@@ -310,7 +314,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color:
-                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.35),
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
+              width: 1.2,
             ),
           ),
           child: Center(
