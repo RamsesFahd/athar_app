@@ -430,7 +430,11 @@ export const migrateAllContent = onCall({ enforceAppCheck: false, timeoutSeconds
 });
 
 // =====================================================
-// EMBED MISSING DOCUMENTS (متوافقة مع مكتبتك الحالية)
+// EMBED + CLASSIFY MISSING DOCUMENTS
+// Backfills BOTH `embedding` AND `interestIds` for any document missing them,
+// by delegating to classifyDocument() — the same path used for new documents.
+// This is what revives trips in Rawi's text, semantic matching, AND the
+// interest-based trip suggestion path (which depends on interestIds).
 // =====================================================
 export const embedMissingDocuments = onCall(
   {
@@ -439,7 +443,6 @@ export const embedMissingDocuments = onCall(
     memory: "512MiB",
     secrets: ["GEMINI_API_KEY"],
   },
-  async (request) => {
   async (_request) => {
     if (!GEMINI_KEY) {
       throw new HttpsError("failed-precondition", "GEMINI_API_KEY is not set");
@@ -447,63 +450,37 @@ export const embedMissingDocuments = onCall(
 
     const collections = ["attractions", "trips", "events", "cultural_items"];
     const stats: Record<string, { processed: number; failed: number; skipped: number }> = {};
-    
-    // استخدام طريقة الاستدعاء القديمة لإنهاء الأيرور
-    const genAI = new GoogleGenerativeAI(GEMINI_KEY);
-    const embeddingModel = genAI.getGenerativeModel({ model: EMBED_MODEL });
 
     for (const collectionName of collections) {
       stats[collectionName] = { processed: 0, failed: 0, skipped: 0 };
       const snapshot = await db.collection(collectionName).get();
-      
+
       logger.info(`[embedMissing] Scanning ${collectionName}: ${snapshot.size} docs`);
 
       for (const doc of snapshot.docs) {
         const data = doc.data();
-        
-        if (data.embedding && Array.isArray(data.embedding) && data.embedding.length > 0) {
+
+        // Skip docs already processed by the CURRENT pipeline. `classifiedAt`
+        // is written by classifyDocument() on every run (even when no interest
+        // matched), so it marks the doc as fully processed. Docs left by the OLD
+        // backfill have `embedding` + `embeddedAt` but NO `classifiedAt`, so
+        // they get reprocessed here to gain interestIds.
+        if (data.classifiedAt) {
           stats[collectionName].skipped++;
           continue;
         }
 
         try {
-          const content = extractContentText(collectionName, data);
-          const textParts: string[] = [];
-          
-          if (content.title) textParts.push(content.title);
-          if (content.description) textParts.push(content.description);
-          
-          if (textParts.length === 0) {
-            const backupText = data.nameAr || data.titleAr || data.name || data.title || data.text || "";
-            if (backupText) textParts.push(String(backupText));
-          }
+          // classifyDocument writes BOTH embedding AND interestIds in a single
+          // update — so the interest-based suggestion path works for trips too.
+          await classifyDocument(collectionName, doc.id, data);
+          stats[collectionName].processed++;
+          logger.info(`[embedMissing] ✓ Fixed ${collectionName}/${doc.id}`);
 
-          const text = textParts.join(" | ").trim();
-
-          if (!text || text.length < 2) {
-            logger.warn(`[embedMissing] Skipping ${collectionName}/${doc.id} - Real Empty Text`);
-            stats[collectionName].failed++;
-            continue;
-          }
-
-          // استخدام دالة الاستدعاء المعتمدة في مكتبتك
-          const result = await embeddingModel.embedContent(text);
-
-          if (result?.embedding?.values) {
-            await doc.ref.update({
-              embedding: result.embedding.values,
-              embeddedAt: FieldValue.serverTimestamp(),
-            });
-            stats[collectionName].processed++;
-            logger.info(`[embedMissing] ✓ Fixed ${collectionName}/${doc.id}`);
-            
-            // ديليه 8 ثوانٍ لحماية الحساب المجاني
-            await new Promise((resolve) => setTimeout(resolve, 8000));
-          } else {
-            stats[collectionName].failed++;
-          }
+          // 8s delay protects the free-tier rate limit.
+          await new Promise((resolve) => setTimeout(resolve, 8000));
         } catch (err: any) {
-          logger.error(`[embedMissing] ✗ ${collectionName}/${doc.id}:`, err.message || err);
+          logger.error(`[embedMissing] ✗ ${collectionName}/${doc.id}:`, err?.message || err);
           stats[collectionName].failed++;
 
           if (String(err).includes("429") || String(err).includes("quota")) {
@@ -701,6 +678,32 @@ function normalizeRegion(raw: string | undefined | null): string {
     "asir": "southern_region",
     "المنطقة_الجنوبية": "southern_region",
     "الجنوبية": "southern_region",
+
+    // ✦ City → region (mirrors region_city_constants.dart in the app).
+    // Lets trips/events stored by city still match the conversation region.
+    "riyadh": "central_region", "الرياض": "central_region",
+    "qassim": "central_region", "القصيم": "central_region",
+    "hail": "central_region", "حائل": "central_region",
+
+    "jeddah": "western_region", "جدة": "western_region",
+    "makkah": "western_region", "مكة": "western_region",
+    "madinah": "western_region", "المدينة": "western_region",
+    "taif": "western_region", "الطائف": "western_region",
+
+    "tabuk": "northern_region", "تبوك": "northern_region",
+    "arar": "northern_region", "عرعر": "northern_region",
+    "sakaka": "northern_region", "سكاكا": "northern_region",
+
+    "dammam": "eastern_region", "الدمام": "eastern_region",
+    "khobar": "eastern_region", "الخبر": "eastern_region",
+    "al_ahsa": "eastern_region", "الأحساء": "eastern_region",
+    "jubail": "eastern_region", "الجبيل": "eastern_region",
+
+    "abha": "southern_region", "أبها": "southern_region",
+    "khamis_mushait": "southern_region", "خميس_مشيط": "southern_region",
+    "jazan": "southern_region", "جازان": "southern_region",
+    "najran": "southern_region", "نجران": "southern_region",
+    "al_baha": "southern_region", "الباحة": "southern_region",
   };
   return aliases[s] ?? s;
 }
@@ -815,7 +818,6 @@ export const askRawi = onCall(
       if (meta.titleAr?.trim()) allowedNames.add(meta.titleAr.trim());
       if (meta.titleEn?.trim()) allowedNames.add(meta.titleEn.trim());
     }
-    const validIdSet = new Set([...filteredCache.values()].map((m) => m.docId));
 
     // 5. System prompt
     const langInstruction = isAr
@@ -925,20 +927,9 @@ Maximum ${MAX_SUGGESTED_ITEMS} item IDs. Never invent or guess an id.`;
         : "I'm Rawi, your guide to Saudi heritage. Is there something about this region you'd like to explore?";
     }
 
-    // 8. Parse recommended IDs from JSON block
-    let itemIds: string[] = [];
-    const blockMatch = rawText.match(/<<<RECOMMENDED>>>([\s\S]*?)<<<END>>>/);
-    let visibleText = rawText;
-
-    if (blockMatch) {
-      try {
-        const parsed = JSON.parse(blockMatch[1].trim());
-        if (Array.isArray(parsed.itemIds)) {
-          itemIds = parsed.itemIds.slice(0, MAX_SUGGESTED_ITEMS).map(String);
-        }
-      } catch (_) {}
-      visibleText = rawText.replace(/<<<RECOMMENDED>>>[\s\S]*?<<<END>>>/, "").trim();
-    }
+    // 8. Strip the (now-unused) recommendation block if the model still emits
+    //    it, then clean ** from any name not in the archive.
+    let visibleText = rawText.replace(/<<<RECOMMENDED>>>[\s\S]*?<<<END>>>/, "").trim();
 
     // ✦ FIX: strip ** from any name not in the archive (prevents invented items being highlighted)
     visibleText = visibleText.replace(/\*\*(.+?)\*\*/g, (full, inner) => {
@@ -946,7 +937,17 @@ Maximum ${MAX_SUGGESTED_ITEMS} item IDs. Never invent or guess an id.`;
       return allowedNames.has(name) ? full : name;
     });
 
-    // 9. Look up metadata for suggested items
+    // 9. Build a name → meta lookup (both languages) so a bolded name in the
+    //    reply can be resolved to its real document.
+    const metaByName = new Map<string, CachedEmbedding>();
+    for (const m of filteredCache.values()) {
+      if (m.titleAr?.trim()) metaByName.set(m.titleAr.trim(), m);
+      if (m.titleEn?.trim()) metaByName.set(m.titleEn.trim(), m);
+    }
+
+    // 10. SOURCE OF TRUTH = the reply itself. Suggestion cards mirror exactly
+    //     the entities Rawi named (wrapped in **) — nothing invented, no blind
+    //     fill. Order follows appearance order in the text for visual coherence.
     const suggestedItems: Array<{
       id: string;
       type: string;
@@ -954,90 +955,33 @@ Maximum ${MAX_SUGGESTED_ITEMS} item IDs. Never invent or guess an id.`;
       titleEn: string;
       imageUrl: string | null;
     }> = [];
+    const seenIds = new Set<string>();
 
-    // Build a fast docId → meta lookup once (avoids the O(n) find() per id).
-    const metaByDocId = new Map<string, CachedEmbedding>();
-    for (const m of filteredCache.values()) {
-      metaByDocId.set(m.docId, m);
+    const boldMatches = visibleText.matchAll(/\*\*(.+?)\*\*/g);
+    for (const match of boldMatches) {
+      if (suggestedItems.length >= MAX_SUGGESTED_ITEMS) break;
+      const name = String(match[1]).trim();
+      const meta = metaByName.get(name);
+      if (!meta || seenIds.has(meta.docId)) continue;
+      seenIds.add(meta.docId);
+      suggestedItems.push({
+        id: meta.docId,
+        type: meta.type,
+        titleAr: meta.titleAr,
+        titleEn: meta.titleEn,
+        imageUrl: meta.imageUrl,
+      });
     }
 
-    for (const id of itemIds) {
-      // ✦ FIX: reject any id not belonging to this region
-      if (!validIdSet.has(id)) {
-        logger.warn(`[askRawi] dropped invented/out-of-region itemId="${id}"`);
-        continue;
-      }
-      const meta = metaByDocId.get(id);
-      if (meta) {
-        suggestedItems.push({
-          id: meta.docId,
-          type: meta.type,
-          titleAr: meta.titleAr,
-          titleEn: meta.titleEn,
-          imageUrl: meta.imageUrl,
-        });
-      }
-    }
-
-    // ✦ TRIPS BY INTEREST: fill any open suggestion slots with trips whose
-    // interestIds overlap the user's saved interests, scoped to the current
-    // region so cards from other regions never appear in the suggestions.
-    // Sorted by overlap count so the most relevant trip appears first.
-    if (interestSet.size > 0 && suggestedItems.length < MAX_SUGGESTED_ITEMS) {
-      const seenIds = new Set(suggestedItems.map((s) => s.id));
-      const interestTrips = [...filteredCache.values()]
-        .filter(
-          (m) =>
-            m.type === "trip" &&
-            !seenIds.has(m.docId) &&
-            m.interestIds.some((id) => interestSet.has(id))
-        )
-        .sort(
-          (a, b) =>
-            b.interestIds.filter((id) => interestSet.has(id)).length -
-            a.interestIds.filter((id) => interestSet.has(id)).length
-        );
-      for (const meta of interestTrips) {
-        if (suggestedItems.length >= MAX_SUGGESTED_ITEMS) break;
-        seenIds.add(meta.docId);
-        suggestedItems.push({
-          id: meta.docId,
-          type: meta.type,
-          titleAr: meta.titleAr,
-          titleEn: meta.titleEn,
-          imageUrl: meta.imageUrl,
-        });
-      }
-    }
-
-    // ✦ FALLBACK: if the model returned no usable IDs (e.g. topDocs=0 and no
-    // <<<RECOMMENDED>>> block), fill remaining slots from the best semantic
-    // matches we DO have, then from the region-filtered cache.
-    if (suggestedItems.length === 0) {
-      const seen = new Set<string>();
-      const pushMeta = (m: CachedEmbedding) => {
-        if (seen.has(m.docId)) return;
-        seen.add(m.docId);
-        suggestedItems.push({
-          id: m.docId,
-          type: m.type,
-          titleAr: m.titleAr,
-          titleEn: m.titleEn,
-          imageUrl: m.imageUrl,
-        });
-      };
-
-      // 1) any scored matches, even below threshold (already sorted desc)
-      for (const s of scored) {
-        if (suggestedItems.length >= MAX_SUGGESTED_ITEMS) break;
-        pushMeta(s.meta);
-      }
-      // 2) top of the region-filtered cache as a last resort
-      for (const m of filteredCache.values()) {
-        if (suggestedItems.length >= MAX_SUGGESTED_ITEMS) break;
-        pushMeta(m);
-      }
-    }
+    // NOTE: Suggestion cards mirror ONLY the entities Rawi actually named in
+    // the reply (wrapped in **). There is no automatic interest-based trip
+    // fill and no blind fallback. Trips appear exactly like landmarks and
+    // archive items — only when Rawi mentions them in the text. Because trips
+    // now carry embeddings, Rawi naturally surfaces a relevant trip in its
+    // reply when the tourist expresses intent (e.g. asks about a trip, tour,
+    // or experience), and that named trip then becomes a card. If Rawi names
+    // nothing (greetings, general topics, out-of-scope redirects), no cards
+    // show — the correct, consistent behaviour.
 
     // TEMP DIAGNOSTIC: confirm exactly what reaches each card
     for (const s of suggestedItems) {
