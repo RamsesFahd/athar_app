@@ -708,6 +708,100 @@ function normalizeRegion(raw: string | undefined | null): string {
   return aliases[s] ?? s;
 }
 
+/**
+ * Detects a Saudi region in free-form text (the tourist's chat message) so
+ * the general chat ("Rawi General Council") can still be region-locked when
+ * the tourist names a region or a city. Returns "" when nothing is detected.
+ *
+ * Word-boundary safe: matches whole words only, so "ar" inside "art" won't
+ * trigger Arar. Arabic is matched with simple substring (no word boundaries
+ * in Arabic regex) since the city/region names are distinctive enough.
+ */
+function detectRegionInText(text: string): string {
+  if (!text) return "";
+  const lower = text.toLowerCase();
+
+  // Ordered by priority: longer/more specific names first to avoid partial
+  // matches (e.g. check "khamis mushait" before "khamis").
+  const patterns: Array<[RegExp | string, string]> = [
+    // Region names — English
+    [/\bcentral\s*region\b/i, "central_region"],
+    [/\bwestern\s*region\b/i, "western_region"],
+    [/\bnorthern\s*region\b/i, "northern_region"],
+    [/\beastern\s*region\b/i, "eastern_region"],
+    [/\bsouthern\s*region\b/i, "southern_region"],
+    [/\bnajd\b/i, "central_region"],
+    [/\bhejaz\b/i, "western_region"],
+    [/\basir\b/i, "southern_region"],
+
+    // Region names — Arabic
+    ["الوسطى", "central_region"],
+    ["الغربية", "western_region"],
+    ["الشمالية", "northern_region"],
+    ["الشرقية", "eastern_region"],
+    ["الجنوبية", "southern_region"],
+    ["نجد", "central_region"],
+    ["الحجاز", "western_region"],
+    ["عسير", "southern_region"],
+
+    // Cities — English (longer compounds first)
+    [/\bkhamis\s*mushait\b/i, "southern_region"],
+    [/\bal[\s-]*ahsa\b/i, "eastern_region"],
+    [/\bal[\s-]*baha\b/i, "southern_region"],
+    [/\briyadh\b/i, "central_region"],
+    [/\bqassim\b/i, "central_region"],
+    [/\bhail\b/i, "central_region"],
+    [/\bjeddah\b/i, "western_region"],
+    [/\bmakkah\b/i, "western_region"],
+    [/\bmecca\b/i, "western_region"],
+    [/\bmadinah\b/i, "western_region"],
+    [/\bmedina\b/i, "western_region"],
+    [/\btaif\b/i, "western_region"],
+    [/\btabuk\b/i, "northern_region"],
+    [/\barar\b/i, "northern_region"],
+    [/\bsakaka\b/i, "northern_region"],
+    [/\bdammam\b/i, "eastern_region"],
+    [/\bkhobar\b/i, "eastern_region"],
+    [/\bjubail\b/i, "eastern_region"],
+    [/\babha\b/i, "southern_region"],
+    [/\bjazan\b/i, "southern_region"],
+    [/\bnajran\b/i, "southern_region"],
+
+    // Cities — Arabic
+    ["خميس مشيط", "southern_region"],
+    ["الرياض", "central_region"],
+    ["القصيم", "central_region"],
+    ["حائل", "central_region"],
+    ["جدة", "western_region"],
+    ["مكة", "western_region"],
+    ["المدينة", "western_region"],
+    ["الطائف", "western_region"],
+    ["تبوك", "northern_region"],
+    ["عرعر", "northern_region"],
+    ["سكاكا", "northern_region"],
+    ["الدمام", "eastern_region"],
+    ["الخبر", "eastern_region"],
+    ["الأحساء", "eastern_region"],
+    ["الاحساء", "eastern_region"],
+    ["الجبيل", "eastern_region"],
+    ["أبها", "southern_region"],
+    ["ابها", "southern_region"],
+    ["جازان", "southern_region"],
+    ["نجران", "southern_region"],
+    ["الباحة", "southern_region"],
+    ["الباحه", "southern_region"],
+  ];
+
+  for (const [pattern, region] of patterns) {
+    if (typeof pattern === "string") {
+      if (text.includes(pattern)) return region;
+    } else {
+      if (pattern.test(lower)) return region;
+    }
+  }
+  return "";
+}
+
 export const askRawi = onCall(
   {
     enforceAppCheck: false,
@@ -735,7 +829,16 @@ export const askRawi = onCall(
     const isAr = locale === "ar";
 
     // ✦ FIX: normalize the incoming regionId the same way stored values are normalized
-    const wantedRegion = normalizeRegion(regionId);
+    let wantedRegion = normalizeRegion(regionId);
+
+    // ✦ REGION DETECTION FROM MESSAGE: when the chat is general (no regionId
+    // passed from Flutter, e.g. "Rawi General Council"), try to infer the
+    // region from the user's message itself. So when the tourist writes
+    // "Najd" or "central region" or even a city like "Riyadh"/"Jeddah",
+    // suggestions stay locked to that region instead of leaking across all.
+    if (!wantedRegion && userMessage) {
+      wantedRegion = detectRegionInText(userMessage);
+    }
 
     // 1. Embed the user query
     const queryEmbedding = await generateEmbedding(userMessage);
