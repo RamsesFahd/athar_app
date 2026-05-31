@@ -1,16 +1,17 @@
 import 'package:athar_app/core/widgets/accessibility_controls.dart';
+import 'package:athar_app/core/widgets/storage_asset_image.dart';
 import 'package:flutter/material.dart';
 
 class CustomHeader extends StatelessWidget {
   final String title;
   final String subtitle;
-  final String imagePath;
+  final String storagePath;
   final bool centerText;
   const CustomHeader(
       {super.key,
       required this.title,
       required this.subtitle,
-      required this.imagePath,
+      required this.storagePath,
       this.centerText = false});
 
   @override
@@ -24,8 +25,8 @@ class CustomHeader extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           // 1. صورة الخلفية الخاصة بمشروع أثر
-          Image.asset(
-            imagePath,
+          StorageAssetImage(
+            storagePath: storagePath,
             fit: BoxFit.cover,
           ),
 

@@ -5,6 +5,7 @@ import 'package:athar_app/features/rawi/logic/chat_repository.dart';
 import 'package:athar_app/features/rawi/screens/chat_screen.dart';
 import 'package:athar_app/features/rawi/widgets/region_story.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
+import 'package:athar_app/core/widgets/storage_asset_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -274,7 +275,14 @@ class _RawiLandingScreenState extends ConsumerState<RawiLandingScreen> {
                       ),
                       child: CircleAvatar(
                         radius: avatarRadius,
-                        backgroundImage: AssetImage(region.logoImage),
+                        child: ClipOval(
+                          child: StorageAssetImage(
+                            storagePath: region.logoStoragePath,
+                            width: avatarRadius * 2,
+                            height: avatarRadius * 2,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(height: itemSpacing),

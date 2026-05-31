@@ -101,8 +101,7 @@ void main() {
         nameEn: 'Central',
         descriptionAr: 'Description Ar',
         descriptionEn: 'Description En',
-        logoImage: 'logo.png',
-        storyImage: 'story.png',
+        logoStoragePath: 'logo.png',
         systemPrompt: 'prompt',
       );
 

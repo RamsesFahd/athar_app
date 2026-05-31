@@ -10,8 +10,7 @@ final List<RegionModel> regionsData = [
         'نجد العذية.. قلب المملكة النابض، وموطن الملوك ومنبع الكرم. من طين الدرعية وقوة المصمك، نحكي لك حكايات المجد اللي ما تغيب. خلك مع راوي، وتعال نعيش عبق الماضي في قلب الحاضر',
     descriptionEn:
         'Najd the Great.. the heart of the Kingdom and the home of glory. From the mud of Diriyah to the grandeur of Masmak, we tell you stories of pride that never fade.',
-    logoImage: 'assets/images/central_region_logo.png',
-    storyImage: 'assets/images/central_region_story.png',
+    logoStoragePath: 'static/rawi/regions/central/logo.png',
     systemPrompt: '''
     You are "Rawi" (راوي), a passionate Cultural Expert and Storyteller for the Central Region (Najd).
 
@@ -54,8 +53,7 @@ final List<RegionModel> regionsData = [
         'بوابة الحرمين الشريفين ومهد الحضارات الأصيلة. من تاريخ جدة البلد العريق، إلى شموخ جبال الطائف، ومن طهر المشاعر إلى روحانية طيبة الطيبة؛ نروي لك حكاية منطقةٍ جمعت بين عبق الماضي وجمال الحاضر.',
     descriptionEn:
         'The gateway to the Two Holy Mosques and the cradle of authentic civilizations. From the ancient history of Jeddah Al-Balad to the majestic mountains of Taif, we tell the story of a region that blends the fragrance of the past with the beauty of the present.',
-    logoImage: 'assets/images/western_region_logo.png',
-    storyImage: 'assets/images/western_region_story.png',
+    logoStoragePath: 'static/rawi/regions/western/logo.png',
     systemPrompt: '''
     You are "Rawi" (راوي), the noble and charismatic storyteller for the Western Region (Al-Hejaz).
 
@@ -96,8 +94,7 @@ final List<RegionModel> regionsData = [
         'شمال الكرم والشهامة.. موطن حاتم الطائي وتاريخ الحضارات العريقة. من قلب الجوف وحرفة الملح، لشموخ جبال تبوك وعراقة العلا، نحكي لك قصص الأصالة والبرد اللي يدفيه ترحيب أهل الشمال.',
     descriptionEn:
         'The North of generosity and chivalry.. home of Hatim Al-Tai and ancient civilizations. From the heart of Al-Jouf and its salt crafts to the majesty of Tabuk and Al-Ula, we tell stories of authenticity warmed by the legendary Northern welcome.',
-    logoImage: 'assets/images/northern_region_logo.png',
-    storyImage: 'assets/images/northern_region_story.png',
+    logoStoragePath: 'static/rawi/regions/northern/logo.png',
     systemPrompt: '''
     You are "Rawi" (راوي), an Expert Cultural Guide and Storyteller for the Northern Region.
 
@@ -134,8 +131,7 @@ final List<RegionModel> regionsData = [
         'واحة النخيل ومنارة الخليج.. حيث تلتقي زرقة البحر بذهب الرمال. من عراقة الأحساء وطيب أهلها إلى نهضة الخبر والدمام، نحكي لك حكايات اللؤلؤ والخير الوفير في منطقةٍ روت الأرض بجمالها وأصالتها.',
     descriptionEn:
         'The oasis of palms and the beacon of the Gulf.. where the blue sea meets golden sands. From the heritage of Al-Ahsa and its kind people to the modern rise of Khobar and Dammam, we tell stories of pearls and abundance in a region that has nurtured the land with beauty and authenticity.',
-    logoImage: 'assets/images/eastern_region_logo.png',
-    storyImage: 'assets/images/eastern_region_story.png',
+    logoStoragePath: 'static/rawi/regions/eastern/logo.png',
     systemPrompt: '''
     You are "Rawi" (راوي), an Expert Cultural Guide and Storyteller for the Eastern Region (Al-Sharqiya).
 
@@ -172,8 +168,7 @@ final List<RegionModel> regionsData = [
         'بلاد الغيم والقمم.. حيث تسكن السحب فوق جبال عسير وتتراقص الألوان في فن القط. من طيب جازان وعراقة نجران إلى سحر الباحة، نروي لك حكاية الجنوب الشامخ اللي يجمع بين قوة الحجر ولين المطر.',
     descriptionEn:
         'The land of clouds and peaks.. where clouds rest atop Asir mountains and colors dance in Al-Qatt art. From the scents of Jazan and the heritage of Najran to the magic of Al Baha, we tell the story of the majestic South, blending the strength of stone with the softness of rain.',
-    logoImage: 'assets/images/southern_region_logo.png',
-    storyImage: 'assets/images/southern_region_story.png',
+    logoStoragePath: 'static/rawi/regions/southern/logo.png',
     systemPrompt: '''
     You are "Rawi" (راوي), the charismatic storyteller for the Southern Region (Al-Mantiqa Al-Janubiya).
 

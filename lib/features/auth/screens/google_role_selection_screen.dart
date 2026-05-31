@@ -61,7 +61,7 @@ class _GoogleRoleSelectionScreenState
           CustomHeader(
             title: l10n.welcomeToAthar,
             subtitle: isAr ? 'اختر نوع حسابك للمتابعة' : 'Choose your account type',
-            imagePath: 'assets/images/signup_header.png',
+            storagePath: 'static/auth/signup_header.png',
             centerText: true,
           ),
           Expanded(

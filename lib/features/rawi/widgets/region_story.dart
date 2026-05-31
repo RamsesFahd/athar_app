@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:athar_app/core/widgets/storage_asset_image.dart';
 import 'package:athar_app/features/rawi/screens/chat_screen.dart';
 import 'package:athar_app/core/constants/region_data.dart'; //
 import 'package:athar_app/generated/l10n/app_localizations.dart';
@@ -91,27 +92,27 @@ class _RegionStoryScreenState extends State<RegionStoryScreen>
                 final isAr =
                     Localizations.localeOf(context).languageCode == 'ar';
 
-                final imagePath = switch (region.regionId) {
+                final storagePath = switch (region.regionId) {
                   'central_region' => isAr
-                      ? 'assets/images/central_ar.png'
-                      : 'assets/images/central_en.png',
+                      ? 'static/rawi/regions/central/story_ar.png'
+                      : 'static/rawi/regions/central/story_en.png',
                   'western_region' => isAr
-                      ? 'assets/images/western_ar.png'
-                      : 'assets/images/western_en.png',
+                      ? 'static/rawi/regions/western/story_ar.png'
+                      : 'static/rawi/regions/western/story_en.png',
                   'northern_region' => isAr
-                      ? 'assets/images/northern_ar.png'
-                      : 'assets/images/northern_en.png',
+                      ? 'static/rawi/regions/northern/story_ar.png'
+                      : 'static/rawi/regions/northern/story_en.png',
                   'eastern_region' => isAr
-                      ? 'assets/images/eastern_ar.png'
-                      : 'assets/images/eastern_en.png',
+                      ? 'static/rawi/regions/eastern/story_ar.png'
+                      : 'static/rawi/regions/eastern/story_en.png',
                   'southern_region' => isAr
-                      ? 'assets/images/southern_ar.png'
-                      : 'assets/images/southern_en.png',
-                  _ => region.storyImage,
+                      ? 'static/rawi/regions/southern/story_ar.png'
+                      : 'static/rawi/regions/southern/story_en.png',
+                  _ => throw StateError('Unsupported region: ${region.regionId}'),
                 };
 
-                return Image.asset(
-                  imagePath,
+                return StorageAssetImage(
+                  storagePath: storagePath,
                   fit: BoxFit.cover,
                 );
               },

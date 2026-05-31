@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
+import 'package:athar_app/core/widgets/storage_asset_image.dart';
 
 class AboutAtharScreen extends StatelessWidget {
   const AboutAtharScreen({super.key});
@@ -161,8 +162,8 @@ class AboutAtharScreen extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Image.asset(
-            'assets/images/about_athar.jpeg',
+          const StorageAssetImage(
+            storagePath: 'static/profile/about_athar.jpeg',
             fit: BoxFit.cover,
           ),
           Container(

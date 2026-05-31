@@ -128,7 +128,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           CustomHeader(
             title: l10n.signInWelcome,
             subtitle: l10n.signInSubtitle,
-            imagePath: 'assets/images/signin_header.png',
+            storagePath: 'static/auth/signin_header.png',
           ),
           Expanded(
             child: Container(
