@@ -503,7 +503,30 @@ export const embedMissingDocuments = onCall(
 // ASK RAWI — RAG-powered cultural AI assistant
 // =====================================================
 
+const AR_STOPWORDS = new Set([
+  "عن","من","إلى","الى","في","على","هل","ما","هذا","هذه","ذلك","تلك",
+  "حابه","حابة","أريد","اريد","ابي","أبي","ودي","اعرف","أعرف",
+  "وش","ايش","كم","كيف","متى","وين","أين","اين","كل","بعض","تحديدا","تحديداً",
+  "هي","هو","أنا","انا","نحن","أنت","انت","أكثر","اكثر","يا","أيها","ايها",
+]);
+
+const EN_STOPWORDS = new Set([
+  "about","from","to","in","on","the","a","an","of","for","and","or",
+  "what","where","when","how","is","are","i","you","we","want","know",
+  "tell","me","more","all","some","specifically","exactly",
+]);
+
+function extractKeywords(text: string, isArLang: boolean): string[] {
+  const stop = isArLang ? AR_STOPWORDS : EN_STOPWORDS;
+  return text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .split(/\s+/)
+    .filter((w) => w.length >= 3 && !stop.has(w));
+}
+
 const SIMILARITY_THRESHOLD = 0.6;
+const HIGH_CONFIDENCE_THRESHOLD = 0.7;
 const TOP_K = 5;
 const MAX_SUGGESTED_ITEMS = 3;
 const RAWI_CHAT_MODEL = "gemini-2.5-flash";
@@ -840,6 +863,16 @@ export const askRawi = onCall(
       wantedRegion = detectRegionInText(userMessage);
     }
 
+    // كشف نيّة طلب رحلة — في رسالة المستخدم الحالية فقط، لا في السياق التاريخي
+    const tripIntentAr = /(اقترح|رحلة|رحلات|سفرة|زيارة|سياحة|نشاط سياحي|(?:أبغى|ابغى|أبي|ودي|بدي|أبا) ?أ?(?:روح|زور|سافر|طلع)|وين أ?روح|كيف أ?روح|نروح|نزور)/i;
+    const tripIntentEn = /\b(suggest|recommend|propose|plan).{0,20}(trip|tour|itinerary|visit)|\b(trip|tour|itinerary)\b|\bi (want|wanna|would like|'d like) to (visit|go|explore|tour)|where (can|should|do) i (go|visit)/i;
+
+    const userWantsTrip = isAr
+      ? tripIntentAr.test(userMessage)
+      : tripIntentEn.test(userMessage);
+
+    logger.info(`[askRawi] userWantsTrip=${userWantsTrip} msg="${userMessage.slice(0, 80)}"`);
+
     // 1. Embed the user query
     const queryEmbedding = await generateEmbedding(userMessage);
 
@@ -847,28 +880,91 @@ export const askRawi = onCall(
     const cache = await loadEmbeddingCache();
 
     // ✦ FIX: compare two normalized values so format differences don't break filtering
-    const filteredCache = wantedRegion
+    const regionFiltered = wantedRegion
       ? new Map([...cache.entries()].filter(([, meta]) => meta.region === wantedRegion))
       : cache;
 
-    logger.info(`[askRawi] wantedRegion="${wantedRegion}" totalCache=${cache.size} filtered=${filteredCache.size}`);
+    // إسقاط الرحلات من أرشيف العرض عند غياب نيّة الذهاب — تختفي من السياق والأرشيف معاً
+    const filteredCache = userWantsTrip
+      ? regionFiltered
+      : new Map([...regionFiltered.entries()].filter(([, meta]) => meta.type !== "trip"));
 
-    // 3. Cosine similarity → top-K (region-filtered).
-    // Items whose interestIds overlap with the user's saved interests get a 20%
-    // score boost so they rank higher when relevance is otherwise comparable.
+    // نطاق البحث الهجين — كلّ المناطق، بلا رحلات إن لم يطلب (للاسترجاع عبر الحدود الثقافية)
+    const searchSpace = userWantsTrip
+      ? cache
+      : new Map([...cache.entries()].filter(([, meta]) => meta.type !== "trip"));
+
+    logger.info(`[askRawi] wantedRegion="${wantedRegion}" totalCache=${cache.size} filtered=${filteredCache.size} searchSpace=${searchSpace.size}`);
+
+    // 3. Hybrid retrieval: semantic + lexical + rare-word + region boost
     const INTEREST_BOOST = 1.2;
+    const REGION_BOOST = 1.08;
+    const LEXICAL_HIT_BONUS = 0.1;
+    const MAX_LEXICAL_BONUS = 0.3;
+    const RARE_WORD_BONUS = 0.18;
+    const RARE_THRESHOLD = 0.10;
+
+    const queryKeywords = extractKeywords(userMessage, isAr);
+
+    // احسب docFreq مرّة واحدة — O(n) لا O(n²)
+    const docFreq = new Map<string, number>();
+    for (const kw of queryKeywords) {
+      let count = 0;
+      for (const m of searchSpace.values()) {
+        const h = `${m.titleAr ?? ""} ${m.titleEn ?? ""} ${m.description ?? ""}`.toLowerCase();
+        if (h.includes(kw)) count++;
+      }
+      docFreq.set(kw, count);
+    }
+
+    const rareKeywords = new Set<string>();
+    for (const [kw, freq] of docFreq.entries()) {
+      if (freq / searchSpace.size < RARE_THRESHOLD) rareKeywords.add(kw);
+    }
+
+    logger.info(`[retrieval] kw=[${queryKeywords.join(",")}] rare=[${[...rareKeywords].join(",")}]`);
+
     const scored: Array<{ key: string; score: number; meta: CachedEmbedding }> = [];
-    for (const [key, meta] of filteredCache.entries()) {
+    for (const [key, meta] of searchSpace.entries()) {
       let score = cosineSimilarity(queryEmbedding, meta.embedding);
+
       if (interestSet.size > 0 && meta.interestIds.some((id) => interestSet.has(id))) {
         score *= INTEREST_BOOST;
       }
+      if (wantedRegion && meta.region === wantedRegion) {
+        score *= REGION_BOOST;
+      }
+
+      if (queryKeywords.length > 0) {
+        const haystack = `${meta.titleAr ?? ""} ${meta.titleEn ?? ""} ${meta.description ?? ""}`.toLowerCase();
+        let hits = 0;
+        let rareHits = 0;
+        for (const kw of queryKeywords) {
+          if (haystack.includes(kw)) {
+            hits++;
+            if (rareKeywords.has(kw)) rareHits++;
+          }
+        }
+        score += Math.min(hits * LEXICAL_HIT_BONUS, MAX_LEXICAL_BONUS);
+        score += rareHits * RARE_WORD_BONUS;
+      }
+
       if (score >= SIMILARITY_THRESHOLD) {
         scored.push({ key, score, meta });
       }
     }
     scored.sort((a, b) => b.score - a.score);
     const topDocs = scored.slice(0, TOP_K);
+
+    logger.info(`[retrieval] top3=${
+      scored.slice(0, 3).map((s) => `${s.meta.titleAr}(${s.meta.region}):${s.score.toFixed(3)}`).join(" | ")
+    }`);
+
+    const hasHighConfidenceMatch = topDocs.some(
+      (d) => d.score >= HIGH_CONFIDENCE_THRESHOLD
+    );
+
+    logger.info(`[askRawi] highConfidence=${hasHighConfidenceMatch} topScore=${topDocs[0]?.score?.toFixed(3) ?? "none"}`);
 
     // 4. Build retrieved context (top-K semantic matches)
     // Skip entries with no resolvable title — they would appear as blank text in the model's response.
@@ -921,13 +1017,31 @@ export const askRawi = onCall(
       if (meta.titleAr?.trim()) allowedNames.add(meta.titleAr.trim());
       if (meta.titleEn?.trim()) allowedNames.add(meta.titleEn.trim());
     }
+    // عناصر مسترجَعة من خارج المنطقة عبر البحث الهجين
+    for (const d of topDocs) {
+      if (d.meta.titleAr?.trim()) allowedNames.add(d.meta.titleAr.trim());
+      if (d.meta.titleEn?.trim()) allowedNames.add(d.meta.titleEn.trim());
+    }
 
-    // 5. System prompt
+    const hasArchive = filteredCache.size > 0;
+
+    // 5. Build conditional archive block
+    const archiveBlock = (hasHighConfidenceMatch && hasArchive)
+      ? `--- Available Archive Items (this region only) ---\n${archiveSummary}`
+      : (isAr
+          ? `--- ملاحظة دقيقة ---
+سؤال المستخدم محدّد ولا يوجد عنصر مطابق له في الأرشيف. أجِب بدفء وبمعرفة ثقافية عامة عن هذا الموضوع تحديداً، دون ذكر أي اسم بين نجمتين، ودون اختلاق عناصر، ودون اقتراح عناصر بديلة لا علاقة لها بالسؤال.`
+          : `--- IMPORTANT NOTE ---
+The user's question is specific and the archive has no precise match. Answer warmly with general cultural knowledge on THIS specific topic, WITHOUT naming any item in asterisks, WITHOUT inventing, and WITHOUT redirecting to unrelated archive items.`);
+
+    const closestMatchesBlock = hasHighConfidenceMatch
+      ? `--- Closest Matches to the User's Question ---\n${contextLines || (isAr ? "لا تطابق دقيق — استخدم قائمة الأرشيف أعلاه." : "No close match — use the archive list above.")}`
+      : "";
+
+    // 6. System prompt
     const langInstruction = isAr
       ? "LANGUAGE LAW: Every single word in your response MUST be in Arabic (العربية). Zero tolerance for English words, phrases, or item names. This applies to bolded entity names too — always bold the Arabic name."
       : "LANGUAGE LAW: Every single word in your response MUST be in English. Zero tolerance for Arabic characters or words — this includes bolded entity names. You MUST bold the English name from the archive list, never the Arabic name. If an archive item has no English name, describe it generically in English without printing any Arabic characters.";
-
-    const hasArchive = filteredCache.size > 0;
 
     const systemPrompt = `You are "Rawi" (راوي), a passionate and knowledgeable Cultural Expert and Storyteller for Saudi heritage.
 
@@ -961,17 +1075,25 @@ ${langInstruction}
 - BANNED phrases: (للأسف، أعتذر، قاعدة بياناتي، لا تتوفر لدي معلومات).
 - REGION LOCK: You may ONLY reference items from the archive list below. If the user asks about heritage from a DIFFERENT region, acknowledge their curiosity politely then redirect: "My expertise is this region — let me tell you about..."
 
---- Available Archive Items (this region only) ---
-${hasArchive ? archiveSummary : (isAr
-    ? "لا توجد عناصر مسجّلة لهذه المنطقة حالياً."
-    : "No items registered for this region yet.")}
+--- TRIP MENTION RULE (STRICT) ---
+- NEVER mention, recommend, or hint at items of type [trip] unless the user's CURRENT message explicitly asks for a trip suggestion or expresses a clear intent to visit/go somewhere.
+- Questions about food, clothing, landmarks, or history are intellectual curiosity — NOT trip requests.
+- Trip intent examples: "suggest a trip", "I want to visit X", "where should I go", "اقترح رحلة", "أبغى أروح".
 
---- Closest Matches to the User's Question ---
-${contextLines || (isAr ? "لا تطابق دقيق — استخدم قائمة الأرشيف أعلاه." : "No close match — use the archive list above.")}
+--- CROSS-REGION CULTURAL OVERLAP ---
+- The "Closest Matches" may occasionally include items from a NEIGHBORING region when the user asks about something that spans regional borders (tribes, dishes, customs).
+- If such an item directly and specifically answers the user's question, you MAY reference it by its exact name in **bold**.
+- When you do, briefly acknowledge its primary cultural home (e.g. "This tradition is more closely tied to the tribes of southern Hejaz…").
+- This is an EXCEPTION. For general questions about the region, stay within the local archive.
 
-${!hasArchive ? (isAr
-    ? "بما أنه لا توجد عناصر لهذه المنطقة، تحدّث بدفء عن طابع المنطقة العام دون ذكر أي اسم محدد بين النجمتين، ودون اختلاق عناصر."
-    : "Since there are no items for this region, speak warmly about the region's general character WITHOUT naming specific items in asterisks and WITHOUT inventing anything.") : ""}
+--- MULTI-ITEM ANSWERS ---
+- When the user's question names a SPECIFIC entity (tribe, family, sub-region) and the "Closest Matches" contain MORE THAN ONE item that directly references that entity, you MUST mention them ALL in your answer.
+- Each mentioned archive item must be wrapped in **bold** exactly once.
+- Do not pick one and ignore the rest — the user explicitly asked about that entity, and they deserve every relevant item.
+
+${archiveBlock}
+
+${closestMatchesBlock}
 
 --- OUTPUT TAIL (REQUIRED) ---
 At the END of EVERY response, append EXACTLY one of these JSON blocks.
@@ -1046,6 +1168,11 @@ Maximum ${MAX_SUGGESTED_ITEMS} item IDs. Never invent or guess an id.`;
     for (const m of filteredCache.values()) {
       if (m.titleAr?.trim()) metaByName.set(m.titleAr.trim(), m);
       if (m.titleEn?.trim()) metaByName.set(m.titleEn.trim(), m);
+    }
+    // عناصر مسترجَعة عبر البحث الهجين من مناطق مجاورة
+    for (const d of topDocs) {
+      if (d.meta.titleAr?.trim()) metaByName.set(d.meta.titleAr.trim(), d.meta);
+      if (d.meta.titleEn?.trim()) metaByName.set(d.meta.titleEn.trim(), d.meta);
     }
 
     // 10. SOURCE OF TRUTH = the reply itself. Suggestion cards mirror exactly
