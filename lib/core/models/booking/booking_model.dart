@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum BookingStatus { pending, approved, rejected, cancelled, completed }
+enum BookingStatus { pending, approved, rejected, cancelled, completed, expired }
 
 class BookingModel {
   final String bookingId;

@@ -323,6 +323,8 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
           return theme.colorScheme.primary;
         case BookingStatus.pending:
           return Colors.amber.shade700;
+        case BookingStatus.expired:
+          return Colors.grey.shade500;
       }
     }
 

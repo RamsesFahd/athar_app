@@ -2036,6 +2036,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'This trip has been completed successfully.';
 
   @override
+  String get bookingExpired => 'This booking has expired.';
+
+  @override
   String get bookingCancelTitle => 'Cancel Booking?';
 
   @override

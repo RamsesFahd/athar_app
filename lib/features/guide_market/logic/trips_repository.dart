@@ -62,6 +62,23 @@ class TripsRepository {
     return dates;
   }
 
+  /// Returns the set of future dates (yyyy-MM-dd) where the individual guide
+  /// already has an active booking on any trip OTHER than [currentTripId].
+  /// Used to gray-out those days in the booking date picker.
+  Future<Set<String>> fetchBookedDatesForGuide(
+      String tutorId, String currentTripId) async {
+    final todayStr = fmtDate(DateTime.now());
+    final snap = await FirebaseFirestore.instance
+        .collection('guide_slots')
+        .where('tutorId', isEqualTo: tutorId)
+        .where('date', isGreaterThanOrEqualTo: todayStr)
+        .get();
+    return snap.docs
+        .where((d) => (d.data()['tripId'] as String?) != currentTripId)
+        .map((d) => d.data()['date'] as String)
+        .toSet();
+  }
+
   Future<TutorModel?> fetchTutorById(String tutorId) async {
     final doc = await _users.doc(tutorId).get();
     if (!doc.exists) return null;
@@ -86,3 +103,13 @@ final bookedDatesForTripProvider =
     FutureProvider.autoDispose.family<Set<String>, String>((ref, tripId) {
   return ref.read(tripsRepositoryProvider).fetchBookedDates(tripId);
 });
+
+/// Dates the individual guide is already committed to (on other trips).
+/// Key: ({tutorId, currentTripId}) — currentTripId is excluded so that
+/// multiple tourists can still book the same shared trip on that day.
+final bookedDatesForGuideProvider = FutureProvider.autoDispose
+    .family<Set<String>, ({String tutorId, String currentTripId})>(
+  (ref, args) => ref
+      .read(tripsRepositoryProvider)
+      .fetchBookedDatesForGuide(args.tutorId, args.currentTripId),
+);

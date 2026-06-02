@@ -41,6 +41,14 @@ class BookingFormScreen extends ConsumerWidget {
     final bookedDates = trip.isPrivate
         ? ref.watch(bookedDatesForTripProvider(trip.id)).valueOrNull
         : null;
+    final guideBookedDates = (trip.tutorType == 'individual' &&
+            trip.tutorId != null &&
+            trip.tutorId!.isNotEmpty)
+        ? ref
+            .watch(bookedDatesForGuideProvider(
+                (tutorId: trip.tutorId!, currentTripId: trip.id)))
+            .valueOrNull
+        : null;
 
     return Scaffold(
       appBar: AppBar(
@@ -111,8 +119,8 @@ class BookingFormScreen extends ConsumerWidget {
                             ? l10n.select
                             : form.selectedDate.toString().split(' ')[0],
                         icon: Icons.event_available,
-                        onTap: () =>
-                            _pickDate(context, formNotifier, trip, bookedDates),
+                        onTap: () => _pickDate(
+                            context, formNotifier, trip, bookedDates, guideBookedDates),
                         theme: theme,
                       ),
                       if (availableFreeTripReward != null) ...[
@@ -381,26 +389,34 @@ class BookingFormScreen extends ConsumerWidget {
     BookingFormNotifier formNotifier,
     TripModel trip,
     Set<String>? bookedDates,
+    Set<String>? guideBookedDates,
   ) async {
     final now = DateTime.now();
-    final first = trip.startDate != null && trip.startDate!.isAfter(now)
+    // Earliest selectable day is tomorrow — guide must have 24h to respond.
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    final first = (trip.startDate != null && trip.startDate!.isAfter(tomorrow))
         ? trip.startDate!
-        : now;
+        : tomorrow;
     final last = trip.endDate ?? DateTime(now.year + 3);
+
+    bool isDayBlocked(DateTime day) {
+      final key = '${day.year.toString().padLeft(4, '0')}-'
+          '${day.month.toString().padLeft(2, '0')}-'
+          '${day.day.toString().padLeft(2, '0')}';
+      if (bookedDates?.contains(key) ?? false) return true;
+      if (guideBookedDates?.contains(key) ?? false) return true;
+      return false;
+    }
+
+    final hasAnyBlockedDates = bookedDates != null || guideBookedDates != null;
+
     final date = await showDatePicker(
       context: context,
       initialDate: first,
       firstDate: first,
       lastDate: last,
-      selectableDayPredicate: (trip.isPrivate && bookedDates != null)
-          ? (day) {
-              final key =
-                  '${day.year.toString().padLeft(4, '0')}-'
-                  '${day.month.toString().padLeft(2, '0')}-'
-                  '${day.day.toString().padLeft(2, '0')}';
-              return !bookedDates.contains(key);
-            }
-          : null,
+      selectableDayPredicate:
+          hasAnyBlockedDates ? (day) => !isDayBlocked(day) : null,
       builder: (context, child) => Theme(
         data: Theme.of(context),
         child: child!,

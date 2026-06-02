@@ -790,6 +790,7 @@
   "bookingViewCancelledGuide": "The tourist cancelled this request before your approval.",
   "bookingViewCancelledTourist": "This booking has been cancelled.",
   "bookingViewCompleted": "This trip has been completed successfully.",
+  "bookingExpired": "This booking has expired.",
   "bookingCancelTitle": "Cancel Booking?",
   "cancelBookingConfirmation": "Are you sure you want to cancel this booking?",
   "bookingCancelNo": "No",

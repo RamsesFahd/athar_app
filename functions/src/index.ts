@@ -10,6 +10,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 initializeApp();
 const db = getFirestore();
 
+/** Returns today's date string "YYYY-MM-DD" in Asia/Riyadh (UTC+3). */
+function todayInRiyadh(): string {
+  return new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
+
 const GEMINI_KEY = process.env.GEMINI_API_KEY || "";
 const CLASSIFY_MODEL = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
 const EMBED_MODEL = "gemini-embedding-001";
@@ -1913,6 +1918,49 @@ export const markBookingCompleted = onCall(
         completedBy: authUid,
       });
     });
+
+    // Slot cleanup: remove guide_slots for this booking's dates if no other
+    // active bookings (pending/approved) remain for the same trip+date.
+    const completedData = (await bookingRef.get()).data();
+    if (completedData && completedData.tutorType === "individual") {
+      const tutorId  = completedData.tutorId  as string | undefined;
+      const tripId   = completedData.tripId   as string | undefined;
+      const dateStr  = completedData.date     as string | undefined;
+      const dur      = (completedData.tripDurationDays as number | undefined) ?? 1;
+
+      if (tutorId && tripId && dateStr) {
+        const remaining = await db.collection("bookings")
+          .where("tutorId", "==", tutorId)
+          .where("tripId",  "==", tripId)
+          .where("status",  "in", ["pending", "approved"])
+          .get();
+
+        // Build set of dates still covered by active bookings
+        const stillActive = new Set<string>();
+        remaining.docs.forEach((doc) => {
+          const d  = doc.data();
+          const ds = d.date as string | undefined;
+          const dd = (d.tripDurationDays as number | undefined) ?? 1;
+          if (!ds) return;
+          for (let i = 0; i < dd; i++) {
+            const day = new Date(ds + "T00:00:00Z");
+            day.setUTCDate(day.getUTCDate() + i);
+            stillActive.add(day.toISOString().slice(0, 10));
+          }
+        });
+
+        const slotBatch = db.batch();
+        for (let i = 0; i < dur; i++) {
+          const day = new Date(dateStr + "T00:00:00Z");
+          day.setUTCDate(day.getUTCDate() + i);
+          const slotDate = day.toISOString().slice(0, 10);
+          if (!stillActive.has(slotDate)) {
+            slotBatch.delete(db.collection("guide_slots").doc(`${tutorId}_${slotDate}`));
+          }
+        }
+        await slotBatch.commit();
+      }
+    }
   }
 );
 
@@ -1970,15 +2018,17 @@ export const onBonusPointsAwarded = onDocumentUpdated(
   }
 );
 
-// ── Scheduled 1: Auto-approve bookings pending for > 24 hours ─────────────
+// ── Scheduled 1: Auto-approve bookings pending for > 48 hours ─────────────
 //
-// Runs every hour. Any booking still in 'pending' with createdAt older than
-// 24 hours is auto-approved so tourists are never left waiting indefinitely.
+// Runs every hour. Any booking still 'pending' after 48 h is auto-approved,
+// provided the trip date hasn't already passed.
 
 export const autoApproveBookings = onSchedule(
   { schedule: "every 60 minutes", timeZone: "Asia/Riyadh" },
   async () => {
-    const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000);
+    const todayStr = todayInRiyadh();
+
     const snap = await db
       .collection("bookings")
       .where("status", "==", "pending")
@@ -1994,8 +2044,13 @@ export const autoApproveBookings = onSchedule(
     const notifications: Array<() => Promise<void>> = [];
 
     for (const doc of snap.docs) {
+      const data = doc.data();
+      // Skip if the trip date has already passed or is today
+      const bookingDate = data.date as string | undefined;
+      if (!bookingDate || bookingDate <= todayStr) continue;
+
       batch.update(doc.ref, { status: "approved", autoApproved: true });
-      const touristId: string = doc.data().touristId ?? "";
+      const touristId: string = data.touristId ?? "";
       if (touristId) {
         notifications.push(() => notify(touristId, "booking_auto_approved"));
       }
@@ -2003,7 +2058,7 @@ export const autoApproveBookings = onSchedule(
 
     await batch.commit();
     await Promise.all(notifications.map((fn) => fn()));
-    logger.info(`[autoApprove] Auto-approved ${snap.size} booking(s).`);
+    logger.info(`[autoApprove] Processed ${snap.size} booking(s).`);
   }
 );
 
@@ -2207,5 +2262,140 @@ export const deleteExpiredEvents = onSchedule(
     }
 
     logger.info(`[deleteExpiredEvents] Done — deleted ${deleted} event(s).`);
+  }
+);
+
+// ── Scheduled 3: Cleanup expired bookings + remind tourists ───────────────
+//
+// Runs every hour.
+// 1. Auto-rejects pending bookings whose trip date has passed → status: expired.
+//    Also removes the guide_slot doc(s) for those dates.
+// 2. Sends a one-time pending reminder to tourists whose trip is tomorrow.
+
+export const cleanupExpiredBookings = onSchedule(
+  { schedule: "every 60 minutes", timeZone: "Asia/Riyadh", memory: "256MiB" },
+  async () => {
+    const todayStr    = todayInRiyadh();
+    // tomorrow in Riyadh = UTC+3, add 27h (24h + 3h offset) then slice
+    const tomorrowStr = new Date(Date.now() + 27 * 60 * 60 * 1000)
+      .toISOString().slice(0, 10);
+
+    // ── 1. Expire bookings whose trip date has passed ───────────────────────
+    const expiredSnap = await db
+      .collection("bookings")
+      .where("status", "==", "pending")
+      .where("date", "<", todayStr)
+      .get();
+
+    if (!expiredSnap.empty) {
+      // Collect all write ops: expire booking + delete slot for each date
+      const ops: { ref: FirebaseFirestore.DocumentReference; op: "update" | "delete"; data?: object }[] = [];
+
+      for (const doc of expiredSnap.docs) {
+        const data = doc.data();
+        ops.push({ ref: doc.ref, op: "update", data: { status: "expired", expiredAt: FieldValue.serverTimestamp() } });
+
+        if ((data.tutorType as string | undefined) === "individual") {
+          const dur = (data.tripDurationDays as number | undefined) ?? 1;
+          const dateStr = data.date as string | undefined;
+          if (dateStr) {
+            for (let i = 0; i < dur; i++) {
+              const d = new Date(dateStr + "T00:00:00Z");
+              d.setUTCDate(d.getUTCDate() + i);
+              const slotDate = d.toISOString().slice(0, 10);
+              ops.push({
+                ref: db.collection("guide_slots").doc(`${data.tutorId}_${slotDate}`),
+                op: "delete",
+              });
+            }
+          }
+        }
+      }
+
+      // Write in chunks of 400 (Firestore batch limit is 500)
+      const CHUNK = 400;
+      for (let i = 0; i < ops.length; i += CHUNK) {
+        const batch = db.batch();
+        ops.slice(i, i + CHUNK).forEach(({ ref, op, data }) => {
+          op === "delete" ? batch.delete(ref) : batch.update(ref, data!);
+        });
+        await batch.commit();
+      }
+      logger.info(`[cleanupExpired] Expired ${expiredSnap.size} booking(s).`);
+    }
+
+    // ── 2. Remind tourists with a pending booking due tomorrow ──────────────
+    const tomorrowPendingSnap = await db
+      .collection("bookings")
+      .where("status", "==", "pending")
+      .where("date", "==", tomorrowStr)
+      .get();
+
+    if (!tomorrowPendingSnap.empty) {
+      await Promise.all(tomorrowPendingSnap.docs.map(async (doc) => {
+        const { touristId, bookingId } = doc.data() as { touristId: string; bookingId: string };
+        if (!touristId || !bookingId) return;
+        const notifRef = db
+          .collection("users").doc(touristId)
+          .collection("notifications").doc(`${bookingId}_pending_reminder`);
+        const existing = await notifRef.get();
+        if (!existing.exists) {
+          await notifRef.set({
+            type: "booking_pending_reminder",
+            title: { ar: "", en: "" },
+            body: { ar: "", en: "" },
+            isRead: false,
+            createdAt: FieldValue.serverTimestamp(),
+          });
+        }
+      }));
+      logger.info(`[cleanupExpired] Sent reminders for ${tomorrowPendingSnap.size} booking(s).`);
+    }
+  }
+);
+
+// ── One-time migration: create guide_slots for existing active bookings ────
+//
+// Call once after deploying. Creates slot docs for all pending/approved
+// bookings by individual guides that don't have slots yet.
+
+export const migrateGuideSlots = onCall(
+  { enforceAppCheck: false, timeoutSeconds: 300, memory: "256MiB" },
+  async () => {
+    const snap = await db
+      .collection("bookings")
+      .where("status", "in", ["pending", "approved"])
+      .get();
+
+    const CHUNK = 400;
+    const ops: { id: string; data: object }[] = [];
+
+    for (const doc of snap.docs) {
+      const data = doc.data();
+      if ((data.tutorType as string | undefined) !== "individual") continue;
+      const dateStr = data.date as string | undefined;
+      if (!dateStr || !data.tutorId || !data.tripId) continue;
+      const dur = (data.tripDurationDays as number | undefined) ?? 1;
+      for (let i = 0; i < dur; i++) {
+        const d = new Date(dateStr + "T00:00:00Z");
+        d.setUTCDate(d.getUTCDate() + i);
+        const slotDate = d.toISOString().slice(0, 10);
+        ops.push({
+          id: `${data.tutorId}_${slotDate}`,
+          data: { tutorId: data.tutorId, date: slotDate, tripId: data.tripId },
+        });
+      }
+    }
+
+    for (let i = 0; i < ops.length; i += CHUNK) {
+      const batch = db.batch();
+      ops.slice(i, i + CHUNK).forEach(({ id, data }) => {
+        batch.set(db.collection("guide_slots").doc(id), data, { merge: true });
+      });
+      await batch.commit();
+    }
+
+    logger.info(`[migrateGuideSlots] Created/updated ${ops.length} slot(s).`);
+    return { migrated: ops.length };
   }
 );

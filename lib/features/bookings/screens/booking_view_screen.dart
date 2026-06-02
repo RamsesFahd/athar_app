@@ -47,6 +47,8 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
             : l10n.bookingViewCancelledTourist;
       case BookingStatus.completed:
         return l10n.bookingViewCompleted;
+      case BookingStatus.expired:
+        return l10n.bookingExpired;
     }
   }
 

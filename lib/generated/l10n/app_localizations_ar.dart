@@ -2013,6 +2013,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get bookingViewCompleted => 'تمت هذه الرحلة بنجاح.';
 
   @override
+  String get bookingExpired => 'انتهت صلاحية هذا الحجز.';
+
+  @override
   String get bookingCancelTitle => 'إلغاء الحجز؟';
 
   @override

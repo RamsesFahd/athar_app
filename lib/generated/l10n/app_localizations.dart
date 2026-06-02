@@ -3854,6 +3854,12 @@ abstract class AppLocalizations {
   /// **'This trip has been completed successfully.'**
   String get bookingViewCompleted;
 
+  /// No description provided for @bookingExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'This booking has expired.'**
+  String get bookingExpired;
+
   /// No description provided for @bookingCancelTitle.
   ///
   /// In en, this message translates to:

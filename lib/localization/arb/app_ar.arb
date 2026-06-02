@@ -758,6 +758,7 @@
   "bookingViewCancelledGuide": "ألغى السائح هذا الطلب قبل موافقتك.",
   "bookingViewCancelledTourist": "تم إلغاء هذا الحجز.",
   "bookingViewCompleted": "تمت هذه الرحلة بنجاح.",
+  "bookingExpired": "انتهت صلاحية هذا الحجز.",
   "bookingCancelTitle": "إلغاء الحجز؟",
   "cancelBookingConfirmation": "هل أنت متأكد أنك تريد إلغاء هذا الحجز؟",
   "bookingCancelNo": "لا",

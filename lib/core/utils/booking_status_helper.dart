@@ -23,6 +23,8 @@ Color bookingStatusColor(BookingStatus status, ThemeData theme) {
       return theme.colorScheme.primary;
     case BookingStatus.pending:
       return Colors.amber.shade700;
+    case BookingStatus.expired:
+      return Colors.grey.shade500;
   }
 }
 
@@ -44,5 +46,7 @@ String bookingStatusLabel({
       return isGuide ? l10n.bookingCancelledByTourist : l10n.bookingCancelledByMe;
     case BookingStatus.completed:
       return l10n.bookingCompleted;
+    case BookingStatus.expired:
+      return l10n.bookingExpired;
   }
 }
