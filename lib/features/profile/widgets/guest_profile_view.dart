@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/features/profile/widgets/settings_tile.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
+import 'package:athar_app/core/widgets/storage_asset_image.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class GuestProfileView extends StatelessWidget {
@@ -43,8 +44,8 @@ class GuestProfileView extends StatelessWidget {
   Widget _buildHeroSection(ThemeData theme, AppLocalizations l10n) {
     return Column(
       children: [
-        Image.asset(
-          'assets/images/athar_logo_illustration.png',
+        const StorageAssetImage(
+          storagePath: 'static/profile/athar_logo_illustration.png',
           height: 180,
           fit: BoxFit.contain,
         ),
