@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
-import 'package:athar_app/core/widgets/storage_asset_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../cultural_archive/widgets/cultural_item_card.dart';
 import '../logic/cultural_notifier.dart';
@@ -207,8 +206,8 @@ class CulturalArchive extends ConsumerWidget {
       child: Stack(
         children: [
           const Positioned.fill(
-            child: StorageAssetImage(
-              storagePath: 'static/cultural_archive/header.jpg',
+            child: Image(
+              image: AssetImage('assets/images/archive/archive_header.jpg'),
               fit: BoxFit.cover,
             ),
           ),
