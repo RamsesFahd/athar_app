@@ -14,11 +14,10 @@ class AttractionModel {
   final Map<String, String> description;
   final String category;
   final String categoryColorCode;
-  // NEW: replaces `tags`. Holds IDs from /taxonomy collection (e.g., 'heritage_sites').
+  // IDs from /taxonomy documents linking this attraction to interest categories.
   final List<String> interestIds;
   final HeroAiText? heroCopy;
-  // NEW: 768-dim semantic vector from Gemini text-embedding-004.
-  // Used for Rawi's semantic search and future "similar items" features.
+  // 768-dimension semantic vector used for Rawi's natural-language search.
   final List<double> embedding;
   final String mainImage;
   final List<String> gallery;
