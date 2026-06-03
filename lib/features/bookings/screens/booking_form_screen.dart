@@ -89,7 +89,7 @@ class BookingFormScreen extends ConsumerWidget {
                         onAdd: formNotifier.incrementAdults,
                         onRemove: formNotifier.decrementAdults,
                         canIncrement: trip.availableSeats == null ||
-                            form.adults < trip.availableSeats!,
+                            _adultEquivalent(form) + 1 <= trip.availableSeats!,
                         theme: theme,
                       ),
                       if (trip.allowsKids) ...[
@@ -103,6 +103,10 @@ class BookingFormScreen extends ConsumerWidget {
                           count: form.children,
                           onAdd: formNotifier.incrementChildren,
                           onRemove: formNotifier.decrementChildren,
+                          canIncrement: trip.availableSeats == null ||
+                              (form.adults + ((form.children + 2) ~/ 2)) <=
+                                  trip.availableSeats!,
+                          minCount: 0,
                           theme: theme,
                         ),
                       ],
@@ -200,6 +204,7 @@ class BookingFormScreen extends ConsumerWidget {
     required VoidCallback onRemove,
     required ThemeData theme,
     bool canIncrement = true,
+    int minCount = 1,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,7 +224,7 @@ class BookingFormScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(width: 12),
-        _counterButton(Icons.remove, onRemove, theme, isEnabled: count > 1),
+        _counterButton(Icons.remove, onRemove, theme, isEnabled: count > minCount),
         SizedBox(
           width: 60,
           child: Center(
@@ -371,6 +376,10 @@ class BookingFormScreen extends ConsumerWidget {
       ),
     );
   }
+
+  // Returns the adult-equivalent seat count: 2 children = 1 adult slot.
+  int _adultEquivalent(BookingFormState form) =>
+      form.adults + ((form.children + 1) ~/ 2);
 
   double _rawTotal(BookingFormState form) {
     return (trip.adultPrice * form.adults) + (trip.childPrice * form.children);

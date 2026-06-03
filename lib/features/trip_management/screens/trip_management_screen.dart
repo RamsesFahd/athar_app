@@ -157,7 +157,7 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(l10n.commonErrorWithMessage('')),
+              content: Text(l10n.commonErrorWithMessage(e.toString())),
               backgroundColor: Colors.red),
         );
       }
@@ -282,7 +282,9 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return Center(child: Text(l10n.commonErrorWithMessage('')));
+          return Center(
+              child: Text(l10n.commonErrorWithMessage(
+                  snapshot.error.toString())));
         }
         final bookings = snapshot.data ?? [];
         if (bookings.isEmpty) {
@@ -294,8 +296,17 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
             ),
           );
         }
+        const statusPriority = {
+          BookingStatus.pending: 0,
+          BookingStatus.approved: 1,
+          BookingStatus.completed: 2,
+          BookingStatus.cancelled: 3,
+          BookingStatus.rejected: 4,
+          BookingStatus.expired: 5,
+        };
         final sorted = List<BookingModel>.from(bookings)
-          ..sort((a, b) => a.status == BookingStatus.pending ? -1 : 1);
+          ..sort((a, b) => (statusPriority[a.status] ?? 9)
+              .compareTo(statusPriority[b.status] ?? 9));
 
         return ListView.builder(
           padding: const EdgeInsets.symmetric(vertical: 12),
