@@ -101,8 +101,10 @@ class AuthNotifier extends _$AuthNotifier {
       if (error != null) throw error;
 
       final user = await _checkAuthStatus();
-      if (user != null && user.role != UserRole.guest) {
-        _startUserStream(user.uId);
+      if (user != null) {
+        // Register the device token after the new profile is available.
+        await NotificationService.instance.registerToken(user.uId);
+        if (user.role != UserRole.guest) _startUserStream(user.uId);
       }
       return user;
     });
@@ -153,8 +155,10 @@ class AuthNotifier extends _$AuthNotifier {
           await repo.createGoogleUser(role: role, tutorType: tutorType);
       if (error != null) throw error;
       final user = await _checkAuthStatus();
-      if (user != null && user.role != UserRole.guest) {
-        _startUserStream(user.uId);
+      if (user != null) {
+        // Register the device token after the new profile is available.
+        await NotificationService.instance.registerToken(user.uId);
+        if (user.role != UserRole.guest) _startUserStream(user.uId);
       }
       return user;
     });
