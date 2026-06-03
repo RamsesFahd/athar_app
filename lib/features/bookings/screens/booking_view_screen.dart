@@ -294,9 +294,21 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
-                    onPressed: () => ref
-                        .read(bookingRepositoryProvider)
-                        .acceptBooking(booking.bookingId, booking.touristId),
+                    onPressed: () async {
+                      Object? err;
+                      try {
+                        await ref
+                            .read(bookingRepositoryProvider)
+                            .acceptBooking(booking.bookingId, booking.touristId);
+                      } catch (e) {
+                        err = e;
+                      }
+                      if (err != null && mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                l10n.commonErrorWithMessage(err.toString()))));
+                      }
+                    },
                     child: Text(l10n.accept_booking),
                   ),
                 ),
@@ -309,10 +321,22 @@ class _BookingViewScreenState extends ConsumerState<BookingViewScreen> {
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
-                    onPressed: () => ref
-                        .read(bookingRepositoryProvider)
-                        .updateBookingStatus(booking.bookingId,
-                            BookingStatus.rejected, booking.touristId),
+                    onPressed: () async {
+                      Object? err;
+                      try {
+                        await ref
+                            .read(bookingRepositoryProvider)
+                            .updateBookingStatus(booking.bookingId,
+                                BookingStatus.rejected, booking.touristId);
+                      } catch (e) {
+                        err = e;
+                      }
+                      if (err != null && mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(
+                                l10n.commonErrorWithMessage(err.toString()))));
+                      }
+                    },
                     child: Text(l10n.reject_booking,
                         style: const TextStyle(color: Colors.red)),
                   ),

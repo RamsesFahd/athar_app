@@ -542,6 +542,7 @@ class TripDetailsScreen extends ConsumerWidget {
                       (data?['languages'] as List<dynamic>?)?.cast<String>() ??
                           trip.guideLanguages ??
                           [];
+                  final photoUrl = data?['profileImage'] as String?;
 
                   return Column(
                     mainAxisSize: MainAxisSize.min,
@@ -561,6 +562,36 @@ class TripDetailsScreen extends ConsumerWidget {
                         padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
                         child: Column(
                           children: [
+                            CircleAvatar(
+                              radius: 44,
+                              backgroundColor: theme.colorScheme.primary
+                                  .withValues(alpha: 0.10),
+                              child: ClipOval(
+                                child: photoUrl != null && photoUrl.isNotEmpty
+                                    ? CachedNetworkImage(
+                                        imageUrl: photoUrl,
+                                        width: 88,
+                                        height: 88,
+                                        fit: BoxFit.cover,
+                                        placeholder: (_, __) => Icon(
+                                          Icons.person,
+                                          size: 44,
+                                          color: theme.colorScheme.primary,
+                                        ),
+                                        errorWidget: (_, __, ___) => Icon(
+                                          Icons.person,
+                                          size: 44,
+                                          color: theme.colorScheme.primary,
+                                        ),
+                                      )
+                                    : Icon(
+                                        Icons.person,
+                                        size: 44,
+                                        color: theme.colorScheme.primary,
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
                             Text(
                               liveName,
                               style: (isAr

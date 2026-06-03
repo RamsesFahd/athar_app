@@ -67,7 +67,7 @@ class BookingRepository {
       // 5b. Private-trip day conflict: any existing slot blocks a new booking
       if (tripType == 'private') {
         for (final date in newDates) {
-          if (cachedSlots[date]!.exists) {
+          if (cachedSlots.containsKey(date) && cachedSlots[date]!.exists) {
             throw Exception('tripDayAlreadyBookedError');
           }
         }
@@ -76,7 +76,8 @@ class BookingRepository {
       // 5c. Individual-guide cross-trip conflict
       if (tutorType == 'individual') {
         for (final date in newDates) {
-          final snap = cachedSlots[date]!;
+          final snap = cachedSlots[date];
+          if (snap == null) continue;
           final slotTripId =
               (snap.data() as Map<String, dynamic>?)?['tripId'] as String?;
           if (snap.exists && slotTripId != booking.tripId) {
@@ -110,7 +111,7 @@ class BookingRepository {
       // 5f. Write slot docs using cached reads — no tx.get after writes
       if (tutorType == 'individual') {
         for (final date in newDates) {
-          if (!cachedSlots[date]!.exists) {
+          if (cachedSlots[date] != null && !cachedSlots[date]!.exists) {
             tx.set(_slots.doc('${booking.tutorId}_$date'), {
               'tutorId': booking.tutorId,
               'date': date,

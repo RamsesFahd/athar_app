@@ -25,6 +25,7 @@ class TripsRepository {
         .where('status', isEqualTo: 'approved')
         .snapshots()
         .map((snapshot) => snapshot.docs
+            .where((doc) => doc.data() != null)
             .map((doc) =>
                 TripModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
             .toList());

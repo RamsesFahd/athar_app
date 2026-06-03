@@ -16,9 +16,8 @@ function todayInRiyadh(): string {
 }
 
 const GEMINI_KEY = process.env.GEMINI_API_KEY || "";
-const CLASSIFY_MODEL = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite";
+const CLASSIFY_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
 const EMBED_MODEL = "gemini-embedding-001";
- // الموديل الصحيح اللي بيفك أزمة الـ 404
 
 interface TaxonomyEntry {
   id: string;
@@ -1332,7 +1331,22 @@ const NOTIFICATION_COPY: Record<string, NotificationPayload> = {
   booking_auto_approved: {
     type: "booking_auto_approved",
     title: { ar: "تم تأكيد حجزك تلقائيًا", en: "Booking Auto-Confirmed" },
-    body:  { ar: "لم يرد المرشد خلال 24 ساعة، تم تأكيد حجزك تلقائيًا.", en: "The guide did not respond within 24 hours, your booking has been auto-confirmed." },
+    body:  { ar: "لم يرد المرشد خلال 48 ساعة، تم تأكيد حجزك تلقائيًا.", en: "The guide did not respond within 48 hours, your booking has been auto-confirmed." },
+  },
+  booking_guide_auto_approved: {
+    type: "booking_guide_auto_approved",
+    title: { ar: "تم تأكيد الحجز تلقائيًا", en: "Booking Auto-Confirmed" },
+    body:  { ar: "لم ترد على الحجز خلال 48 ساعة، تم تأكيده تلقائيًا.", en: "You did not respond within 48 hours, the booking was auto-confirmed." },
+  },
+  booking_expired: {
+    type: "booking_expired",
+    title: { ar: "انتهت صلاحية الحجز", en: "Booking Expired" },
+    body:  { ar: "انتهت صلاحية حجزك لأن الرحلة مرت دون تأكيد.", en: "Your booking expired because the trip passed without confirmation." },
+  },
+  booking_pending_reminder: {
+    type: "booking_pending_reminder",
+    title: { ar: "لديك حجز بانتظار ردك", en: "Booking Awaiting Your Response" },
+    body:  { ar: "لديك حجز لم تؤكده بعد. سيتم تأكيده تلقائيًا خلال 24 ساعة إن لم ترد.", en: "You have a pending booking. It will be auto-confirmed in 24 hours if you don't respond." },
   },
   booking_completed: {
     type: "booking_completed",
@@ -1790,8 +1804,9 @@ function scheduledBookingStart(date: string, timeSlot: string): Date | null {
 function scheduledBookingEnd(date: string, timeSlot: string): Date | null {
   const bookingDate = parseBookingDate(date);
   const timeParts = extractTimeParts(timeSlot);
-  if (!bookingDate || timeParts.length === 0) return null;
-  const [hours, minutes] = timeParts.length > 1 ? timeParts[timeParts.length - 1] : timeParts[0];
+  // Require at least 2 time parts (start AND end) — a single time cannot determine end time.
+  if (!bookingDate || timeParts.length < 2) return null;
+  const [hours, minutes] = timeParts[timeParts.length - 1];
   return new Date(
     bookingDate.getFullYear(),
     bookingDate.getMonth(),
@@ -2096,7 +2111,7 @@ export const onBonusPointsAwarded = onDocumentUpdated(
 // provided the trip date hasn't already passed.
 
 export const autoApproveBookings = onSchedule(
-  { schedule: "every 60 minutes", timeZone: "Asia/Riyadh" },
+  { schedule: "every 60 minutes", timeZone: "Asia/Riyadh", timeoutSeconds: 120, memory: "256MiB" },
   async () => {
     const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000);
     const todayStr = todayInRiyadh();
@@ -2108,21 +2123,35 @@ export const autoApproveBookings = onSchedule(
       .get();
 
     if (snap.empty) {
-      logger.info("[autoApprove] No pending bookings to auto-approve.");
+      logger.info("[autoApprove] No pending bookings to process.");
       return;
     }
 
     const batch = db.batch();
     const notifications: Array<() => Promise<void>> = [];
+    let approved = 0;
+    let expired = 0;
 
     for (const doc of snap.docs) {
       const data = doc.data();
-      // Skip if the trip date has already passed or is today
       const bookingDate = data.date as string | undefined;
-      if (!bookingDate || bookingDate <= todayStr) continue;
+      const touristId: string = data.touristId ?? "";
+      const tutorId: string = data.tutorId ?? "";
+
+      if (!bookingDate || bookingDate <= todayStr) {
+        // Trip date already passed — expire the booking instead of leaving it stuck as pending
+        batch.update(doc.ref, { status: "expired" });
+        expired++;
+        if (touristId) {
+          notifications.push(() =>
+            notify(touristId, "booking_expired", undefined, `${doc.id}_expired`)
+          );
+        }
+        continue;
+      }
 
       batch.update(doc.ref, { status: "approved", autoApproved: true });
-      const touristId: string = data.touristId ?? "";
+      approved++;
       if (touristId) {
         notifications.push(() =>
           notify(
@@ -2133,11 +2162,63 @@ export const autoApproveBookings = onSchedule(
           )
         );
       }
+
+      if (tutorId) {
+        notifications.push(() =>
+          notify(
+            tutorId,
+            "booking_guide_auto_approved",
+            undefined,
+            `${doc.id}_booking_guide_auto_approved`
+          )
+        );
+      }
     }
 
-    await batch.commit();
-    await Promise.all(notifications.map((fn) => fn()));
-    logger.info(`[autoApprove] Processed ${snap.size} booking(s).`);
+    try {
+      await batch.commit();
+      await Promise.all(notifications.map((fn) => fn()));
+      logger.info(`[autoApprove] approved=${approved}, expired=${expired}, total_queried=${snap.size}`);
+    } catch (err) {
+      logger.error("[autoApprove] batch commit failed:", err);
+    }
+  }
+);
+
+// ── Scheduled 2b: Remind guides who have not responded after 24–36 hours ──────
+//
+// Runs every hour. Finds pending bookings that are between 24h and 36h old
+// (halfway to the 48h auto-approve window) and sends one reminder per guide.
+// De-duplicates so a guide with multiple pending bookings only gets one push.
+
+export const remindGuidesPendingBookings = onSchedule(
+  { schedule: "every 60 minutes", timeZone: "Asia/Riyadh", timeoutSeconds: 60, memory: "256MiB" },
+  async () => {
+    const lowerCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const upperCutoff = new Date(Date.now() - 36 * 60 * 60 * 1000);
+    const todayStr = todayInRiyadh();
+
+    const snap = await db
+      .collection("bookings")
+      .where("status", "==", "pending")
+      .where("createdAt", "<=", lowerCutoff)
+      .where("createdAt", ">=", upperCutoff)
+      .get();
+
+    if (snap.empty) return;
+
+    const notified = new Set<string>();
+    for (const doc of snap.docs) {
+      const data = doc.data();
+      const bookingDate = data.date as string | undefined;
+      if (!bookingDate || bookingDate <= todayStr) continue;
+      const tutorId: string = data.tutorId ?? "";
+      if (tutorId && !notified.has(tutorId)) {
+        notified.add(tutorId);
+        await notify(tutorId, "booking_pending_reminder");
+      }
+    }
+    logger.info(`[guideReminder] Notified ${notified.size} guide(s).`);
   }
 );
 
