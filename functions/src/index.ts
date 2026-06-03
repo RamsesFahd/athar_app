@@ -1650,6 +1650,15 @@ export const onBookingCreated = onDocumentCreated(
     const bookingRef = db.collection("bookings").doc(event.params.bookingId);
     const tripRef = db.collection("trips").doc(tripId);
 
+    // Idempotency guard: if this function already ran (retry scenario), the
+    // booking status will no longer be "pending". Skip to avoid double-decrement.
+    const currentSnap = await bookingRef.get();
+    const currentStatus = (currentSnap.data() as any)?.status as string | undefined;
+    if (currentStatus && currentStatus !== "pending") {
+      logger.info(`[capacity] Skipping already-processed booking ${event.params.bookingId} (status=${currentStatus})`);
+      return;
+    }
+
     // adultsCount + ceil(childrenCount / 2) = adult-equivalent slot consumption
     const adultsCount: number = data.adultsCount ?? 1;
     const childrenCount: number = data.childrenCount ?? 0;
