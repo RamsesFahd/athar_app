@@ -45,17 +45,6 @@ class BookingRepository {
 
     // ── 4. Refs ───────────────────────────────────────────────────────────────
     final bookingRef = _bookings.doc(booking.bookingId);
-    final notifRef = _firestore
-        .collection('users')
-        .doc(booking.tutorId)
-        .collection('notifications')
-        .doc('${booking.bookingId}_booking_new');
-    const notifPayload = {
-      'type': 'booking_new',
-      'title': {'ar': '', 'en': ''},
-      'body': {'ar': '', 'en': ''},
-      'isRead': false,
-    };
     DocumentReference? rewardRef;
     if (booking.rewardId != null) {
       rewardRef = _users
@@ -117,10 +106,6 @@ class BookingRepository {
         ...booking.toMap(),
         'tutorType': tutorType,
       });
-      tx.set(notifRef, {
-        ...notifPayload,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
 
       // 5f. Write slot docs using cached reads — no tx.get after writes
       if (tutorType == 'individual') {
@@ -172,16 +157,15 @@ class BookingRepository {
   }
 
   Stream<List<BookingModel>> fetchUserBookings(String userId, UserRole role) {
-    final String field =
-        (role == UserRole.tutor) ? 'tutorId' : 'touristId';
+    final String field = (role == UserRole.tutor) ? 'tutorId' : 'touristId';
     return _bookings
         .where(field, isEqualTo: userId)
         .limit(100)
         .snapshots()
         .map((snap) {
       final list = snap.docs
-          .map((doc) =>
-              BookingModel.fromMap(doc.data() as Map<String, dynamic>))
+          .map(
+              (doc) => BookingModel.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
       list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       return list;
@@ -193,28 +177,15 @@ class BookingRepository {
     final String field = (role == UserRole.tutor) ? 'tutorId' : 'touristId';
     final snapshot = await _bookings.where(field, isEqualTo: userId).get();
     return snapshot.docs
-        .map((doc) =>
-            BookingModel.fromMap(doc.data() as Map<String, dynamic>))
+        .map((doc) => BookingModel.fromMap(doc.data() as Map<String, dynamic>))
         .toList();
   }
 
   Future<void> acceptBooking(String bookingId, String touristId) async {
-    final notifRef = _firestore
-        .collection('users')
-        .doc(touristId)
-        .collection('notifications')
-        .doc('${bookingId}_booking_approved');
     final batch = _firestore.batch();
     batch.update(_bookings.doc(bookingId), {
       'status': BookingStatus.approved.name,
       'approvedAt': FieldValue.serverTimestamp(),
-    });
-    batch.set(notifRef, {
-      'type': 'booking_approved',
-      'title': {'ar': '', 'en': ''},
-      'body': {'ar': '', 'en': ''},
-      'isRead': false,
-      'createdAt': FieldValue.serverTimestamp(),
     });
     await batch.commit();
   }
@@ -240,29 +211,13 @@ class BookingRepository {
           {'isUsed': false, 'usedAt': null, 'bookingId': null},
         );
       }
-
-      // Notify tourist
-      final notifType = status == BookingStatus.rejected
-          ? 'booking_rejected'
-          : 'booking_cancelled';
-      final notifRef = _firestore
-          .collection('users')
-          .doc(touristId)
-          .collection('notifications')
-          .doc('${bookingId}_$notifType');
-      batch.set(notifRef, {
-        'type': notifType,
-        'title': {'ar': '', 'en': ''},
-        'body': {'ar': '', 'en': ''},
-        'isRead': false,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
     }
 
     await batch.commit();
 
     // Slot cleanup runs after batch so the new status is visible to the query
-    if ((status == BookingStatus.cancelled || status == BookingStatus.rejected) &&
+    if ((status == BookingStatus.cancelled ||
+            status == BookingStatus.rejected) &&
         bookingSnap.exists &&
         (bookingData?['tutorType'] as String?) == 'individual') {
       final tutorId = bookingData?['tutorId'] as String? ?? '';

@@ -1368,7 +1368,7 @@ const NOTIFICATION_COPY: Record<string, NotificationPayload> = {
 
 /**
  * Writes one Firestore in-app notification document under
- * users/{userId}/notifications/{auto-id}.
+ * users/{userId}/notifications/{notificationId or auto-id}.
  */
 async function createInAppNotification(
   userId: string,
@@ -1505,7 +1505,7 @@ async function notify(
 /**
  * Notifies every admin user. Used when a tourist/guide submits content.
  */
-async function notifyAllAdmins(type: string): Promise<void> {
+async function notifyAllAdmins(type: string, eventId: string): Promise<void> {
   const notif = NOTIFICATION_COPY[type];
   if (!notif) return;
 
@@ -1515,7 +1515,9 @@ async function notifyAllAdmins(type: string): Promise<void> {
     .get();
 
   await Promise.all(
-    adminSnap.docs.map((doc) => notify(doc.id, type))
+    adminSnap.docs.map((doc) =>
+      notify(doc.id, type, undefined, `${eventId}_${type}_${doc.id}`)
+    )
   );
 }
 
@@ -1528,7 +1530,10 @@ export const onContributionSubmitted = onDocumentCreated(
     const data = event.data.data();
     if (data.status !== "pending") return; // only fire for new submissions
     logger.info(`[notif] New contribution ${event.params.contributionId}`);
-    await notifyAllAdmins("contribution_submitted");
+    await notifyAllAdmins(
+      "contribution_submitted",
+      event.params.contributionId
+    );
   }
 );
 
@@ -1546,13 +1551,23 @@ export const onContributionReviewed = onDocumentUpdated(
     if (!touristId) return;
 
     if (after.status === "approved") {
-      await notify(touristId, "contribution_approved");
+      await notify(
+        touristId,
+        "contribution_approved",
+        undefined,
+        `${event.params.contributionId}_contribution_approved`
+      );
     } else if (after.status === "rejected") {
       const reason: string = after.rejectionReason ?? "";
       const bodyOverride: BilingualText | undefined = reason
         ? { ar: reason, en: reason }
         : undefined;
-      await notify(touristId, "contribution_rejected", bodyOverride);
+      await notify(
+        touristId,
+        "contribution_rejected",
+        bodyOverride,
+        `${event.params.contributionId}_contribution_rejected`
+      );
     }
   }
 );
@@ -1566,7 +1581,7 @@ export const onTripSubmitted = onDocumentCreated(
     const data = event.data.data();
     if (data.status !== "pending") return;
     logger.info(`[notif] New trip submitted ${event.params.tripId}`);
-    await notifyAllAdmins("trip_submitted");
+    await notifyAllAdmins("trip_submitted", event.params.tripId);
   }
 );
 
@@ -1584,9 +1599,19 @@ export const onTripReviewed = onDocumentUpdated(
     if (!tutorId) return;
 
     if (after.status === "approved") {
-      await notify(tutorId, "trip_approved");
+      await notify(
+        tutorId,
+        "trip_approved",
+        undefined,
+        `${event.params.tripId}_trip_approved`
+      );
     } else if (after.status === "rejected") {
-      await notify(tutorId, "trip_rejected");
+      await notify(
+        tutorId,
+        "trip_rejected",
+        undefined,
+        `${event.params.tripId}_trip_rejected`
+      );
     }
   }
 );
@@ -1644,12 +1669,24 @@ export const onBookingCreated = onDocumentCreated(
 
     if (capacityExceeded) {
       logger.info(`[capacity] Booking ${event.params.bookingId} rejected — trip fully booked`);
-      if (touristId) await notify(touristId, "booking_rejected");
+      if (touristId) {
+        await notify(
+          touristId,
+          "booking_rejected",
+          undefined,
+          `${event.params.bookingId}_booking_rejected`
+        );
+      }
       return;
     }
 
     logger.info(`[notif] New booking ${event.params.bookingId} → guide ${tutorId}`);
-    await notify(tutorId, "booking_new");
+    await notify(
+      tutorId,
+      "booking_new",
+      undefined,
+      `${event.params.bookingId}_booking_new`
+    );
   }
 );
 
@@ -1694,13 +1731,33 @@ export const onBookingStatusChanged = onDocumentUpdated(
     if (!touristId) return;
 
     if (after.status === "approved") {
-      await notify(touristId, "booking_approved");
+      await notify(
+        touristId,
+        "booking_approved",
+        undefined,
+        `${event.params.bookingId}_booking_approved`
+      );
     } else if (after.status === "cancelled") {
-      await notify(touristId, "booking_cancelled");
+      await notify(
+        touristId,
+        "booking_cancelled",
+        undefined,
+        `${event.params.bookingId}_booking_cancelled`
+      );
     } else if (after.status === "rejected" && after.rejectionReason !== "capacity_exceeded") {
-      await notify(touristId, "booking_cancelled");
+      await notify(
+        touristId,
+        "booking_rejected",
+        undefined,
+        `${event.params.bookingId}_booking_rejected`
+      );
     } else if (after.status === "completed") {
-      await notify(touristId, "booking_completed");
+      await notify(
+        touristId,
+        "booking_completed",
+        undefined,
+        `${event.params.bookingId}_booking_completed`
+      );
     }
   }
 );
@@ -1980,14 +2037,24 @@ export const onGuideVerified = onDocumentUpdated(
 
     if (after.verificationStatus === "verified") {
       logger.info(`[notif] Guide verified: ${event.params.userId}`);
-      await notify(event.params.userId, "guide_verified");
+      await notify(
+        event.params.userId,
+        "guide_verified",
+        undefined,
+        `${event.params.userId}_guide_verified`
+      );
     } else if (after.verificationStatus === "rejected") {
       logger.info(`[notif] Guide rejected: ${event.params.userId}`);
       const reason = after.rejectionReason as string | undefined;
       const bodyOverride = reason
         ? { ar: `تم رفض طلب توثيقك. السبب: ${reason}`, en: `Your verification was rejected. Reason: ${reason}` }
         : undefined;
-      await notify(event.params.userId, "guide_rejected", bodyOverride);
+      await notify(
+        event.params.userId,
+        "guide_rejected",
+        bodyOverride,
+        `${event.params.userId}_guide_rejected`
+      );
     }
   }
 );
@@ -2014,7 +2081,12 @@ export const onBonusPointsAwarded = onDocumentUpdated(
     ) return;
 
     logger.info(`[notif] Bonus points awarded to tourist: ${event.params.userId}`);
-    await notify(event.params.userId, "points_awarded");
+    await notify(
+      event.params.userId,
+      "points_awarded",
+      undefined,
+      `${event.params.userId}_points_awarded`
+    );
   }
 );
 
@@ -2052,7 +2124,14 @@ export const autoApproveBookings = onSchedule(
       batch.update(doc.ref, { status: "approved", autoApproved: true });
       const touristId: string = data.touristId ?? "";
       if (touristId) {
-        notifications.push(() => notify(touristId, "booking_auto_approved"));
+        notifications.push(() =>
+          notify(
+            touristId,
+            "booking_auto_approved",
+            undefined,
+            `${doc.id}_booking_auto_approved`
+          )
+        );
       }
     }
 
