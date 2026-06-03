@@ -70,7 +70,6 @@ class TripsFilterNotifier extends AutoDisposeNotifier<TripsFilter> {
   List<TripModel> filterAndSort(List<TripModel> trips, bool isAr) {
     var result = trips;
 
-    // 1. Text search
     if (state.searchQuery.isNotEmpty) {
       final q = state.searchQuery.toLowerCase();
       result = result
@@ -80,7 +79,6 @@ class TripsFilterNotifier extends AutoDisposeNotifier<TripsFilter> {
           .toList();
     }
 
-    // 2. City filter (reserved for when TripModel exposes a city field)
     if (state.selectedCities.isNotEmpty) {
       result = result
           .where((t) => state.selectedCities
@@ -88,14 +86,12 @@ class TripsFilterNotifier extends AutoDisposeNotifier<TripsFilter> {
           .toList();
     }
 
-    // 3. Price range filter
     result = result.where((t) {
       final price =
           int.tryParse(t.price.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
       return price >= state.priceRange.start && price <= state.priceRange.end;
     }).toList();
 
-    // 4. Sort
     if (state.ascending != null) {
       result = List.from(result);
       result.sort((a, b) {

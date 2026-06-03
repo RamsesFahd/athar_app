@@ -44,8 +44,6 @@ class TripManagementScreen extends ConsumerWidget {
   }
 }
 
-// ── Tutor hub ─────────────────────────────────────────────────────────────────
-
 class _TutorTripHub extends ConsumerStatefulWidget {
   const _TutorTripHub({
     required this.tutor,
@@ -453,8 +451,6 @@ class _TutorTripHubState extends ConsumerState<_TutorTripHub>
   }
 }
 
-// ── Trip card ─────────────────────────────────────────────────────────────────
-
 class _TripCard extends StatelessWidget {
   const _TripCard({
     required this.trip,
@@ -628,8 +624,6 @@ class _TripCard extends StatelessWidget {
     );
   }
 }
-
-// ── Tourist placeholder ───────────────────────────────────────────────────────
 
 class _TouristPlaceholder extends StatelessWidget {
   const _TouristPlaceholder({required this.theme, required this.isAr});

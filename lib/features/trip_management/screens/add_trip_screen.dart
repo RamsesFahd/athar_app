@@ -28,7 +28,6 @@ class AddTripScreen extends ConsumerStatefulWidget {
 class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // ── Text controllers ───────────────────────────────────────────────────────
   final _titleAr = TextEditingController();
   final _titleEn = TextEditingController();
   final _shortDescAr = TextEditingController();
@@ -40,7 +39,6 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
   final _maxCapacity = TextEditingController();
   final _tripDurationDays = TextEditingController();
 
-  // ── Selection state ────────────────────────────────────────────────────────
   Map<String, String>? _selectedCity;
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;

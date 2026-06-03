@@ -63,7 +63,6 @@ class TripCard extends ConsumerWidget {
 
     return Stack(
       children: [
-        // 1. Image
         Positioned.fill(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24),
@@ -87,7 +86,6 @@ class TripCard extends ConsumerWidget {
           ),
         ),
 
-        // 2. Gradient
         Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
@@ -104,7 +102,6 @@ class TripCard extends ConsumerWidget {
           ),
         ),
 
-        // 3. Fully booked dim overlay
         if (isFullyBooked)
           Positioned.fill(
             child: Container(
@@ -115,7 +112,6 @@ class TripCard extends ConsumerWidget {
             ),
           ),
 
-        // 4. Fully booked badge (top-end)
         if (isFullyBooked)
           PositionedDirectional(
             top: 10,
@@ -123,13 +119,12 @@ class TripCard extends ConsumerWidget {
             child: _buildFullyBookedBadge(l10n, theme, isAr),
           ),
 
-        // 5. Content
         Positioned(
           left: 12,
           right: 12,
           bottom: 12,
           child: SizedBox(
-            height: 120 + contentExtra, // عطينا مساحة إضافية مريحة للكارد عشان الزر ما ينقص
+            height: 120 + contentExtra, // extra height prevents button clipping at large text scales
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -168,7 +163,7 @@ class TripCard extends ConsumerWidget {
                 ),
                 const Spacer(),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // يوزع السعر والزر على الأطراف بالملي
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Directionality(
                       textDirection: TextDirection.ltr,
@@ -196,7 +191,7 @@ class TripCard extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    Flexible( // يخلي الزر ياخذ مساحته الطبيعية بدون ما ينعفط أو يختفي
+                    Flexible( // prevents button overflow on constrained card widths
                       child: Align(
                         alignment: isAr ? Alignment.centerLeft : Alignment.centerRight,
                         child: GestureDetector(
@@ -230,7 +225,7 @@ class TripCard extends ConsumerWidget {
                               isFullyBooked
                                   ? l10n.tripFullyBooked
                                   : l10n.tripCardDetails,
-                              maxLines: 1, // حماية عشان ما ينزل سطر ثاني وينقَص
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
                               style: textTheme.labelSmall?.copyWith(
@@ -263,14 +258,13 @@ class TripCard extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
     final cardExtra = ((textScale - 1.0).clamp(0.0, 1.0) * 42).toDouble();
-    // 1. 👈 زدنا الارتفاع هنا إلى 170 عشان ندفن الأوفر فلو الخايس ونعطي الزر والنصوص مساحتها الكاملة
+    // 170 gives text and button enough room at maximum text scale
     final cardHeight = 170 + cardExtra;
 
     return SizedBox(
       height: cardHeight,
       child: Row(
         children: [
-          // Image
           Stack(
             children: [
               ClipRRect(
@@ -278,8 +272,7 @@ class TripCard extends ConsumerWidget {
                 child: CachedNetworkImage(
                   imageUrl: trip.imageUrl,
                   width: 130,
-                  // 2. 👈 خليناها تاخذ نفس ارتفاع الكارد بالكامل عشان ما تسبب تعارض وأوفر فلو عمودي
-                  height: cardHeight, 
+                  height: cardHeight, // must match card height to prevent vertical overflow
                   fit: BoxFit.cover,
                   memCacheWidth: 400,
                   fadeInDuration: const Duration(milliseconds: 200),
@@ -319,7 +312,6 @@ class TripCard extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Location + type badge row
                   Row(
                     children: [
                       Icon(
@@ -359,9 +351,8 @@ class TripCard extends ConsumerWidget {
 
                   const Spacer(),
 
-                  // 👈 التعديل حق السعر والزر بداخل صفك الأصلي
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Directionality(
                         textDirection: TextDirection.ltr,
@@ -370,7 +361,7 @@ class TripCard extends ConsumerWidget {
                           children: [
                             SvgPicture.asset(
                               'assets/icons/saudi_riyal.svg',
-                              width: 15, 
+                              width: 15,
                               height: 15,
                               colorFilter: ColorFilter.mode(
                                 colorScheme.primary,
@@ -388,7 +379,7 @@ class TripCard extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      Flexible( // يحمي الزر حق تفاصيل الرحلة ويخليه يطلع طبيعي وينزل للمكان الصح
+                      Flexible( // prevents button overflow on narrower list cards
                         child: Align(
                           alignment: isAr
                               ? Alignment.centerLeft
@@ -407,6 +398,7 @@ class TripCard extends ConsumerWidget {
       ),
     );
   }
+
   Widget _buildFullyBookedBadge(
     AppLocalizations l10n,
     ThemeData theme,

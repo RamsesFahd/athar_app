@@ -52,7 +52,6 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
     double min = double.tryParse(_minPriceCtrl.text) ?? 0;
     double max = double.tryParse(_maxPriceCtrl.text) ?? 5000;
 
-    // حماية من الأخطاء (لو كتب الحد الأدنى أعلى من الأقصى)
     if (min > max) min = max;
     if (min < 0) min = 0;
     if (max > 5000) max = 5000;
@@ -67,7 +66,6 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
-    // a unified shape for both ChoiceChip and FilterChip with dynamic border color based on selection
     RoundedRectangleBorder chipShape(bool isSelected) {
       return RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
@@ -93,7 +91,6 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // drag handle
           Center(
             child: Container(
               width: 40,
@@ -109,7 +106,6 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
           Text(l10n.filterAndSortTitle, style: theme.textTheme.titleLarge),
           const SizedBox(height: 24),
 
-          // 1. Sorting options
           Text(l10n.sortBy,
               style: theme.textTheme.titleMedium
                   ?.copyWith(fontWeight: FontWeight.bold)),
@@ -152,7 +148,6 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
           ),
           const Divider(height: 32),
 
-          // 2. Price range filter (تم تصحيح الأقواس هنا)
           Text(l10n.priceRange,
               style: theme.textTheme.titleMedium
                   ?.copyWith(fontWeight: FontWeight.bold)),
@@ -174,7 +169,7 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   "-",
                   style: TextStyle(
@@ -201,7 +196,6 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
           ),
           const SizedBox(height: 8),
 
-          // شريط السحب المتزامن مع الحقول
           RangeSlider(
             values: _priceRange,
             min: 0,
@@ -219,7 +213,6 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
           ),
           const Divider(height: 32),
 
-          // 3. Destination filter (Cities)
           Text(l10n.destination,
               style: theme.textTheme.titleMedium
                   ?.copyWith(fontWeight: FontWeight.bold)),
@@ -256,7 +249,6 @@ class _TripFilterBottomSheetState extends State<TripFilterBottomSheet> {
           ),
           const SizedBox(height: 32),
 
-          // 4. Apply filters button
           SizedBox(
             width: double.infinity,
             child: ConstrainedBox(

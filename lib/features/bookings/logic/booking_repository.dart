@@ -24,7 +24,7 @@ class BookingRepository {
   CollectionReference get _slots => _firestore.collection('guide_slots');
 
   Future<void> createBooking(BookingModel booking) async {
-    // ── 1. 24-hour advance check ──────────────────────────────────────────────
+    // 1. Enforce 24-hour advance booking requirement
     final tripDate = DateTime.tryParse(booking.date);
     final scheduledStart = bookingScheduledStart(booking);
     final cutoff = DateTime.now().add(const Duration(hours: 24));
@@ -32,19 +32,18 @@ class BookingRepository {
       throw Exception('bookingTooCloseError');
     }
 
-    // ── 2. Fetch trip metadata ────────────────────────────────────────────────
+    // 2. Fetch trip type and tutor type needed for slot conflict checks
     final tripDoc = await _trips.doc(booking.tripId).get();
     final tripData = tripDoc.data() as Map<String, dynamic>?;
     final tripType = tripData?['tripType'] as String? ?? 'shared';
     final tutorType = tripData?['tutorType'] as String? ?? 'individual';
 
-    // ── 3. Build the set of dates this booking spans ──────────────────────────
+    // 3. Expand booking into all dates it spans (multi-day trips)
     final newDates = <String>{
       for (int i = 0; i < (booking.tripDurationDays ?? 1); i++)
         fmtDate(tripDate.add(Duration(days: i))),
     };
 
-    // ── 4. Refs ───────────────────────────────────────────────────────────────
     final bookingRef = _bookings.doc(booking.bookingId);
     DocumentReference? rewardRef;
     if (booking.rewardId != null) {
@@ -54,7 +53,7 @@ class BookingRepository {
           .doc(booking.rewardId);
     }
 
-    // ── 5. Atomic transaction: ALL reads first, then ALL writes ──────────────
+    // Firestore requires all reads to precede any writes within a transaction
     await _firestore.runTransaction((tx) async {
       // 5a. Read all slot docs upfront (Firestore forbids reads after writes)
       final Map<String, DocumentSnapshot> cachedSlots = {};
@@ -125,7 +124,6 @@ class BookingRepository {
     });
   }
 
-  // ── Slot cleanup ──────────────────────────────────────────────────────────
   // Deletes the slot for each date in [dates] only if no remaining
   // pending/approved bookings for the same (tutorId, tripId) still cover it.
   // One query is enough — we expand each booking's date range in Dart.
