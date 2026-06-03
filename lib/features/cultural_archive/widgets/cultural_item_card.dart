@@ -158,9 +158,9 @@ class CulturalItemCard extends StatelessWidget {
                 Text(
                   title,
                   style: theme.textTheme.titleLarge?.copyWith(fontSize: 16),
-                  maxLines: largeText ? 2 : 1, // يمنع النص من القفز لسطر جديد وتخريب الارتفاع
+                  maxLines: largeText ? 2 : 1,
                   overflow:
-                      TextOverflow.ellipsis, // يضيف نقاط (...) لو النص طويل
+                      TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(

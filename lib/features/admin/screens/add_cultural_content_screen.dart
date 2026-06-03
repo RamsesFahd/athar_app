@@ -233,7 +233,6 @@ class _AddCulturalContentScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image picker
             _SectionLabel(l10n.adminImage),
             GestureDetector(
               onTap: _pickImage,

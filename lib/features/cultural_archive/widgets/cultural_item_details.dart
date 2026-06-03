@@ -31,7 +31,6 @@ class _CulturalItemDetailsState extends ConsumerState<CulturalItemDetails> {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     final currentItem = widget.item;
-    //acc
     final settings = ref.watch(settingsProvider);
     final ttsService = ref.read(ttsServiceProvider);
 
