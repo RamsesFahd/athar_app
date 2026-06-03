@@ -90,6 +90,8 @@ class _ChatInputBarState extends ConsumerState<ChatInputBar>
 
     await _speech.listen(
       localeId: isAr ? 'ar-SA' : 'en-US',
+      listenFor: const Duration(seconds: 30),
+      pauseFor: const Duration(seconds: 4),
       onResult: (result) {
         if (result.recognizedWords.isNotEmpty) {
           _controller.text = result.recognizedWords;
