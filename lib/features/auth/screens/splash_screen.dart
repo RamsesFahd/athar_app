@@ -4,7 +4,6 @@ import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../logic/auth_notifier.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
-import 'package:athar_app/core/widgets/storage_asset_image.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -21,12 +20,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> _initApp() async {
-    // Kick off image precaching in parallel — intentionally not awaited so the
-    // void return doesn't interfere with Future.wait's type inference below.
-    StorageAssetImage.precacheAll(context, [
-      'static/auth/signin_header.png',
-      'static/auth/signup_header.png',
-    ]);
+    // Kick off local auth header image precaching without delaying startup.
+    for (final assetPath in const [
+      'assets/images/auth/login_header.png',
+      'assets/images/auth/signup_header.png',
+    ]) {
+      precacheImage(AssetImage(assetPath), context);
+    }
 
     final results = await Future.wait([
       ref.read(authNotifierProvider.future),

@@ -111,6 +111,8 @@ flutter:
   assets:
     - .env
     - assets/images/
+    - assets/images/auth/
+    - assets/images/archive/
     - assets/icons/saudi_riyal.svg
     - assets/icons/google_logo.svg
 

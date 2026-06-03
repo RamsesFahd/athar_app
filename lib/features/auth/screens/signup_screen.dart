@@ -100,7 +100,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
           CustomHeader(
             title: l10n.signUpTitle,
             subtitle: l10n.signUpSubtitle,
-            storagePath: 'static/auth/signup_header.png',
+            assetPath: 'assets/images/auth/signup_header.png',
           ),
           Expanded(
             child: Container(
