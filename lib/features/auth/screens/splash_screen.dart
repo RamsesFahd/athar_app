@@ -4,6 +4,7 @@ import 'package:athar_app/generated/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../logic/auth_notifier.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/core/widgets/storage_asset_image.dart';
 
 // We used a ConsumerStatefulWidget to manage the timer and navigation logic while still being able to access the authentication state if needed in the future.
 class SplashScreen extends ConsumerStatefulWidget {
@@ -21,9 +22,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   Future<void> _initApp() async {
+    // Kick off image precaching in parallel — intentionally not awaited so the
+    // void return doesn't interfere with Future.wait's type inference below.
+    StorageAssetImage.precacheAll(context, [
+      'static/auth/signin_header.png',
+      'static/auth/signup_header.png',
+    ]);
+
     final results = await Future.wait([
       ref.read(authNotifierProvider.future),
-      Future.delayed(const Duration(milliseconds: 1500)), 
+      Future.delayed(const Duration(milliseconds: 1500)),
     ]);
     final user = results[0];
 

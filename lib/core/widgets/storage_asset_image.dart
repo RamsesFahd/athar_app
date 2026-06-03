@@ -18,34 +18,51 @@ class StorageAssetImage extends StatefulWidget {
     this.alignment = Alignment.center,
   });
 
+  static final Map<String, Future<String>> _urlCache = {};
+
+  static Future<String> _resolveUrl(String path) {
+    return _urlCache.putIfAbsent(
+      path,
+      () => FirebaseStorage.instance.ref(path).getDownloadURL(),
+    );
+  }
+
+  /// Pre-fetches Firebase Storage download URLs and warms Flutter's image cache
+  /// for [paths]. Call during startup so these images render instantly on first
+  /// display instead of showing a placeholder while the URL resolves.
+  static Future<void> precacheAll(
+      BuildContext context, List<String> paths) async {
+    await Future.wait(
+      paths.map((path) async {
+        try {
+          final url = await _resolveUrl(path);
+          if (context.mounted) {
+            await precacheImage(CachedNetworkImageProvider(url), context);
+          }
+        } catch (_) {}
+      }),
+    );
+  }
+
   @override
   State<StorageAssetImage> createState() => _StorageAssetImageState();
 }
 
 class _StorageAssetImageState extends State<StorageAssetImage> {
-  static final Map<String, Future<String>> _urlCache = {};
-
   late Future<String> _urlFuture;
 
   @override
   void initState() {
     super.initState();
-    _urlFuture = _resolveUrl(widget.storagePath);
+    _urlFuture = StorageAssetImage._resolveUrl(widget.storagePath);
   }
 
   @override
   void didUpdateWidget(covariant StorageAssetImage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.storagePath != widget.storagePath) {
-      _urlFuture = _resolveUrl(widget.storagePath);
+      _urlFuture = StorageAssetImage._resolveUrl(widget.storagePath);
     }
-  }
-
-  Future<String> _resolveUrl(String path) {
-    return _urlCache.putIfAbsent(
-      path,
-      () => FirebaseStorage.instance.ref(path).getDownloadURL(),
-    );
   }
 
   Widget _buildPlaceholder() {
