@@ -7,7 +7,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/contribution/contribution_model.dart';
 import 'package:athar_app/core/models/contribution/user_reward_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
-import 'package:athar_app/features/notifications/logic/notifications_repository.dart';
 
 part 'contribution_repository.g.dart';
 
@@ -27,13 +26,12 @@ final touristTotalLikesProvider =
       .snapshots()
       .map((snap) => snap.docs.fold<int>(
             0,
-            (acc, doc) =>
-                acc + ((doc.data()['likes'] as num?)?.toInt() ?? 0),
+            (acc, doc) => acc + ((doc.data()['likes'] as num?)?.toInt() ?? 0),
           ));
 });
 
-final uncelebratedRewardsProvider =
-    StreamProvider.autoDispose.family<List<UserRewardModel>, String>((ref, uid) {
+final uncelebratedRewardsProvider = StreamProvider.autoDispose
+    .family<List<UserRewardModel>, String>((ref, uid) {
   return ref
       .watch(contributionRepositoryProvider)
       .watchUncelebratedRewards(uid);
@@ -161,19 +159,6 @@ class ContributionRepository {
       'adminName': null,
       'reviewedAt': null,
     });
-
-    // Notify all admins that a new contribution needs review.
-    final adminSnap = await _firestore
-        .collection('users')
-        .where('role', isEqualTo: UserRole.admin.name)
-        .get();
-    final notifRepo = NotificationsRepository();
-    for (final doc in adminSnap.docs) {
-      await notifRepo.addNotification(
-        userId: doc.id,
-        type: 'contribution_submitted',
-      );
-    }
   }
 
   Stream<List<ContributionModel>> getTouristContributions(String touristId) {

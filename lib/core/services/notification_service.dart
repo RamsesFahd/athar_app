@@ -22,18 +22,26 @@ class NotificationService {
   final _fcm = FirebaseMessaging.instance;
   final _localNotifications = FlutterLocalNotificationsPlugin();
   StreamSubscription<String>? _tokenRefreshSub;
+  bool _initialized = false;
 
   static const _channelId = 'athar_high_importance';
   static const _channelName = 'Athar Notifications';
 
   /// Called once from main() after Firebase.initializeApp().
   Future<void> init() async {
-    // Register the background handler before any other FCM setup.
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    if (_initialized) return;
+    _initialized = true;
+    try {
+      // Register the background handler before any other FCM setup.
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-    await _setupLocalNotifications();
-    await _requestPermissions();
-    await _configureFcm();
+      await _setupLocalNotifications();
+      await _requestPermissions();
+      await _configureFcm();
+    } catch (_) {
+      _initialized = false;
+      rethrow;
+    }
   }
 
   // ── Local notifications ────────────────────────────────────────────────────
