@@ -179,10 +179,10 @@ class _ProfileSettingsTabState extends ConsumerState<ProfileSettingsTab> {
                       onTap: () async {
                         final messenger = ScaffoldMessenger.of(context);
                         final errorColor = Theme.of(context).colorScheme.error;
-                        final success = await ref
+                        final error = await ref
                             .read(authNotifierProvider.notifier)
                             .resetPassword(email: user.email);
-                        if (success) {
+                        if (error == null) {
                           messenger.showSnackBar(
                               SnackBar(content: Text(l10n.profilePasswordResetLinkSent)));
                         } else {
@@ -299,8 +299,6 @@ class _ProfileSettingsTabState extends ConsumerState<ProfileSettingsTab> {
     );
   }
 
-  // ── Accessibility group ──────────────────────────────────────────────────
-
   Widget _buildAccessibilityGroup(ThemeData theme, AppLocalizations l10n) {
     final settings = ref.watch(settingsProvider);
     return _buildSettingsGroup(
@@ -338,8 +336,6 @@ class _ProfileSettingsTabState extends ConsumerState<ProfileSettingsTab> {
     );
   }
 
-  // ── Settings group container ─────────────────────────────────────────────
-
   Widget _buildSettingsGroup({
     required String title,
     required List<Widget> tiles,
@@ -373,8 +369,6 @@ class _ProfileSettingsTabState extends ConsumerState<ProfileSettingsTab> {
       ),
     );
   }
-
-  // ── Account section (logout / delete) ────────────────────────────────────
 
   Widget _buildAccountSection(ThemeData theme, AppLocalizations l10n, UserModel user) {
     final isHighContrast = ref.watch(settingsProvider).highContrast;
@@ -507,8 +501,6 @@ class _ProfileSettingsTabState extends ConsumerState<ProfileSettingsTab> {
     await ref.read(authNotifierProvider.notifier).deleteAccount();
   }
 
-  // ── Phone OTP sheet ──────────────────────────────────────────────────────
-
   void _showPhoneInputDialog(BuildContext context, AppLocalizations l10n, String? currentPhone) {
     showDialog(
       context: context,
@@ -516,8 +508,6 @@ class _ProfileSettingsTabState extends ConsumerState<ProfileSettingsTab> {
       builder: (_) => PhoneOtpDialog(currentPhone: currentPhone),
     );
   }
-
-  // ── Edit profile sheet ───────────────────────────────────────────────────
 
   static const _allLanguages = [
     'Arabic', 'English', 'French', 'German', 'Spanish', 'Italian',
@@ -756,8 +746,6 @@ class _ProfileSettingsTabState extends ConsumerState<ProfileSettingsTab> {
     };
     return labels[lang]?.call(l10n) ?? lang;
   }
-
-  // ── Language picker sheet ────────────────────────────────────────────────
 
   void _showLanguageBottomSheet(BuildContext context, AppLocalizations l10n) {
     showModalBottomSheet(

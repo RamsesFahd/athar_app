@@ -19,6 +19,7 @@ class _GoogleRoleSelectionScreenState
     extends ConsumerState<GoogleRoleSelectionScreen> {
   UserRole _selectedRole = UserRole.tourist;
   TutorType? _selectedTutorType;
+  bool _privacyPolicyAccepted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -94,11 +95,41 @@ class _GoogleRoleSelectionScreenState
                         ],
                       ),
                     ],
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 24),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Checkbox(
+                          value: _privacyPolicyAccepted,
+                          activeColor: theme.colorScheme.primary,
+                          onChanged: (v) =>
+                              setState(() => _privacyPolicyAccepted = v ?? false),
+                        ),
+                        Text(
+                          l10n.privacyPolicyAgreePrefix,
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                        GestureDetector(
+                          onTap: () => Navigator.pushNamed(
+                              context, AppRoutes.privacyPolicy),
+                          child: Text(
+                            l10n.privacyPolicyLinkText,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
                     AtharButton(
                       label: l10n.continueButton,
                       isLoading: authState.isLoading,
-                      onPressed: authState.isLoading ? null : () => _handleConfirm(l10n, isAr),
+                      onPressed: authState.isLoading || !_privacyPolicyAccepted
+                          ? null
+                          : () => _handleConfirm(l10n, isAr),
                     ),
                   ],
                 ),

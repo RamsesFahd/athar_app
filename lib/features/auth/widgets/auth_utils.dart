@@ -10,11 +10,11 @@ class AuthUtils {
       case 'errorUserNotFound': return l10n.errorUserNotFound;
       case 'errorWrongPassword': return l10n.errorWrongPassword;
       case 'errorWeakPassword': return l10n.errorWeakPassword;
+      case 'errorEmailNotVerified': return l10n.errorEmailNotVerified;
       default: return l10n.errorUnexpected;
     }
   }
 
-  // Common divider for auth screens
   static Widget buildDivider(AppLocalizations l10n) {
     return Builder(
       builder: (context) {

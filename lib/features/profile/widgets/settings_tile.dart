@@ -19,15 +19,13 @@ class SettingsTile extends StatelessWidget {
     this.onTap,
     this.enabled = true,
     this.titleColor,
-    this.showDivider =
-        false, // تم تغيير القيمة الافتراضية إلى false لإزالة الخطوط
+    this.showDivider = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // استخدام ألوان الثيم الممررة في AppTheme
     final Color contentColor = enabled
         ? (titleColor ??
             theme.textTheme.bodyLarge?.color ??
@@ -38,7 +36,7 @@ class SettingsTile extends StatelessWidget {
       children: [
         InkWell(
           onTap: enabled ? onTap : null,
-          borderRadius: BorderRadius.circular(12), // لإعطاء تأثير ضغط متناسق
+          borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsetsDirectional.symmetric(horizontal: 16, vertical: 16),
             child: Row(
@@ -48,8 +46,7 @@ class SettingsTile extends StatelessWidget {
                     leadingIcon,
                     size: 22,
                     color: enabled
-                        ? theme
-                            .colorScheme.primary // استخدام اللون الرئيسي للثيم
+                        ? theme.colorScheme.primary
                         : theme.disabledColor,
                   ),
                   const SizedBox(width: 16),

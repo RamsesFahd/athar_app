@@ -177,10 +177,11 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
       children: [
         Text(
           l10n.phoneSmsSubtitle,
-          style: theme.textTheme.bodySmall
-              ?.copyWith(color: isHighContrast
-    ? theme.colorScheme.onSurface
-    : theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: isHighContrast
+                ? theme.colorScheme.onSurface
+                : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
         ),
         const SizedBox(height: 16),
         TextField(
@@ -230,10 +231,11 @@ class _PhoneOtpDialogState extends ConsumerState<PhoneOtpDialog> {
         Text(
           l10n.otpSentTo(_phoneNumber),
           textAlign: TextAlign.center,
-          style: theme.textTheme.bodySmall
-              ?.copyWith(color: isHighContrast
-    ? theme.colorScheme.onSurface
-    : theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: isHighContrast
+                ? theme.colorScheme.onSurface
+                : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
         ),
         const SizedBox(height: 20),
         _buildOtpBoxes(theme, isLoading),

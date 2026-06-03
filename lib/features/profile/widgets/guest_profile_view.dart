@@ -1,4 +1,3 @@
-// guest_profile_view.dart
 import 'package:flutter/material.dart';
 import 'package:athar_app/features/profile/widgets/settings_tile.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
@@ -20,19 +19,12 @@ class GuestProfileView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
           child: Column(
             children: [
-              // 1. قسم الترحيب واللوجو
               _buildHeroSection(theme, l10n),
               const SizedBox(height: 32),
-
-              // 2. زر الانضمام
               _buildJoinButton(context, theme, l10n),
               const SizedBox(height: 40),
-
-              // 3. بطاقة تشويق المساهمة (Gamification)
               _buildContributionTeaser(theme, l10n),
               const SizedBox(height: 40),
-
-              // 4. قسم المساعدة والدعم
               _buildSupportGroup(context, theme, l10n),
             ],
           ),
@@ -51,13 +43,13 @@ class GuestProfileView extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-         l10n.welcomeToAthar,
-  textAlign: TextAlign.center,
-  style: theme.textTheme.displayLarge?.copyWith(
-    color: theme.colorScheme.primary,
-    fontWeight: FontWeight.bold,
-  ),
-),
+          l10n.welcomeToAthar,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.displayLarge?.copyWith(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 12),
         Text(
           l10n.startYourJourney,
@@ -76,7 +68,7 @@ class GuestProfileView extends StatelessWidget {
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: () => Navigator.pushNamed(context, AppRoutes.signUp), //
+        onPressed: () => Navigator.pushNamed(context, AppRoutes.signUp),
         style: ElevatedButton.styleFrom(
           backgroundColor: theme.colorScheme.primary,
           foregroundColor: theme.colorScheme.onPrimary,
@@ -147,15 +139,14 @@ class GuestProfileView extends StatelessWidget {
           child: Column(
             children: [
               SettingsTile(
-                //
                 title: l10n.settingsContactUs,
                 leadingIcon: Icons.support_agent_rounded,
-                 onTap: () => Navigator.pushNamed(context, AppRoutes.contactUs),
+                onTap: () => Navigator.pushNamed(context, AppRoutes.contactUs),
               ),
               SettingsTile(
                 title: l10n.settingsAboutAthar,
                 leadingIcon: Icons.info_outline_rounded,
-                 onTap: () => Navigator.pushNamed(context, AppRoutes.aboutAthar),
+                onTap: () => Navigator.pushNamed(context, AppRoutes.aboutAthar),
               ),
               SettingsTile(
                 title: l10n.settingsPrivacyPolicy,

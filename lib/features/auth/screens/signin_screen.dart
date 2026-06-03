@@ -70,7 +70,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
-    // listening to auth state changes to show error messages or navigate to home screen on successful login
     ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
       next.whenOrNull(
         error: (error, stack) {
@@ -94,7 +93,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               Navigator.pushReplacementNamed(context, AppRoutes.admin);
               return;
             }
-            // redirecting to email verification screen if the user's email is not verified
             if (!user.emailVerified && user.role != UserRole.guest) {
               Navigator.pushReplacementNamed(
                 context,
@@ -119,7 +117,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
       );
     });
 
-    // checking the auth state to show loading indicator on the sign in button when the sign in process is ongoing
     final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(

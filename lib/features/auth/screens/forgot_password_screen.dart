@@ -110,16 +110,16 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             }
             final errorColor = Theme.of(context).colorScheme.error;
             setState(() => _isLoading = true);
-            final success = await ref
+            final error = await ref
                 .read(authNotifierProvider.notifier)
                 .resetPassword(email: email);
             if (!mounted) return;
             setState(() => _isLoading = false);
-            if (success) {
+            if (error == null) {
               setState(() => _isSubmitted = true);
             } else {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(AuthUtils.translateError('errorUnexpected', l10n)),
+                content: Text(AuthUtils.translateError(error, l10n)),
                 backgroundColor: errorColor,
               ));
             }

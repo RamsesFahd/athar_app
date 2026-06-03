@@ -6,12 +6,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 
-// This line link this file to the generated file Riverpod will create
-part 'auth_repository.g.dart'; 
+part 'auth_repository.g.dart';
 
-// This is the provider that will give us an instance of AuthRepository (authRepositoryProvider) is the name of the provider we will use in our app to access the AuthRepository
-// We use @riverpod to generate the provider code for us
-// AuthRepositoryRef ref is a reference that allows us to read other providers if needed
 @riverpod
 AuthRepository authRepository(Ref ref) {
   return AuthRepository(
@@ -20,27 +16,23 @@ AuthRepository authRepository(Ref ref) {
   );
 }
 
-// This is the actual repository class that contains all the logic for authentication
 class AuthRepository {
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
 
-  AuthRepository({FirebaseAuth? auth, FirebaseFirestore? firestore,})
+  AuthRepository({FirebaseAuth? auth, FirebaseFirestore? firestore})
       : _auth = auth ?? FirebaseAuth.instance,
         _firestore = firestore ?? FirebaseFirestore.instance;
 
-  // This getter gives us easy access to the 'users' collection in Firestore
-  CollectionReference  get _users => _firestore.collection('users');
+  CollectionReference get _users => _firestore.collection('users');
 
-  // This getter allows us to easily check if there's a currently authenticated user
   User? get currentUser => _auth.currentUser;
 
-  // sign up method that takes email, password, and full name to create a new user account
-Future<String?> signUp({
+  Future<String?> signUp({
     required String email,
     required String password,
     required String fullName,
-    required UserRole role, // so the user can choose if they are a tutor or a tourist during sign up, and we can create the appropriate user document in Firestore based on their role
+    required UserRole role,
     TutorType? tutorType,
   }) async {
     try {
@@ -48,11 +40,10 @@ Future<String?> signUp({
         email: email,
         password: password,
       );
-      
+
       final String uId = cred.user!.uid;
 
       UserModel newUser;
-      // in case the user is a tutor, we create a TutorModel with the provided information, and if they are a tourist, we create a TouristModel. Both models extend UserModel, so we can store them in the same 'users' collection in Firestore.
       final consentTimestamp = DateTime.now();
       if (role == UserRole.tutor) {
         newUser = TutorModel(
@@ -95,7 +86,6 @@ Future<String?> signUp({
     }
   }
 
-  // sign in method that takes email and password to authenticate the user
   Future<String?> signIn({
     required String email,
     required String password,
@@ -113,12 +103,10 @@ Future<String?> signUp({
     }
   }
 
-  // logout method to sign out the user
   Future<void> logOut() async {
     await _auth.signOut();
   }
 
-  // reset password method that takes an email and sends a password reset email to the user
   Future<String?> resetPassword(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
@@ -189,8 +177,8 @@ Future<String?> signUp({
     }
   }
 
-// guest login method that allows users to sign in anonymously without creating an account. This is useful for users who want to try the app without committing to creating an account, and we can still track them in our database as guest users.
-Future<String?> guestLogin() async {
+  // Allows unauthenticated users to explore the app without committing to an account.
+  Future<String?> guestLogin() async {
     try {
       // Reuse an existing anonymous session to avoid orphaned Auth accounts
       // accumulating on repeated taps of "Continue as Guest".
@@ -200,12 +188,11 @@ Future<String?> guestLogin() async {
       UserCredential cred = await _auth.signInAnonymously();
       final String uId = cred.user!.uid;
 
-
       final guestUser = TouristModel(
         uId: uId,
         fullName: "Guest User",
         email: "",
-        role: UserRole.guest, 
+        role: UserRole.guest,
         accessibilitySettings: AccessibilitySettings(),
         createdAt: DateTime.now(),
       );
@@ -219,8 +206,6 @@ Future<String?> guestLogin() async {
     }
   }
 
-
-  // Shared parsing logic used by both getUserData and getUserStream.
   // Injects emailVerified from Firebase Auth (not stored in Firestore) before parsing.
   UserModel? _parseUserDoc(DocumentSnapshot doc) {
     if (!doc.exists) return null;
@@ -258,10 +243,13 @@ Future<String?> guestLogin() async {
       }
     });
   }
+
   Future<String?> deleteAccount(String uId) async {
     try {
-      await _firestore.collection('users').doc(uId).delete();
+      // Delete the Auth account first so a requires-recent-login error
+      // leaves the Firestore profile untouched and the account stays consistent.
       await _auth.currentUser?.delete();
+      await _firestore.collection('users').doc(uId).delete();
       return null;
     } on FirebaseAuthException catch (e) {
       return _mapFirebaseError(e);
@@ -270,7 +258,6 @@ Future<String?> guestLogin() async {
     }
   }
 
-// This private method maps FirebaseAuthException codes to user-friendly error messages that can be displayed in the UI. It helps to provide better feedback to the user when authentication errors occur.
   String _mapFirebaseError(FirebaseAuthException e) => mapFirebaseError(e);
 
   @visibleForTesting
@@ -291,38 +278,33 @@ Future<String?> guestLogin() async {
     }
   }
 
-  // send email verification method that sends a verification email to the currently authenticated user
   Future<String?> sendEmailVerification() async {
     try {
       final user = _auth.currentUser;
       if (user != null && !user.emailVerified) {
         await user.sendEmailVerification();
       }
-      return null; // return null to indicate that the email was sent successfully
+      return null;
     } catch (e) {
-      return e.toString(); // return the error message if sending the email failed
+      return e.toString();
     }
   }
 
-  // check email verification status method that checks if the currently authenticated user's email is verified
   Future<bool> isEmailVerified() async {
     final user = _auth.currentUser;
     if (user != null) {
-      // reload the user to get the latest email verification status from Firebase Authentication, then return whether the email is verified or not
-      await user.reload(); 
+      await user.reload();
       return _auth.currentUser!.emailVerified;
     }
     return false;
   }
 
-  // تحديث حالة التحقق في مستند Firestore
-Future<void> updateEmailVerificationInFirestore(String uId) async {
-  try {
-    await _users.doc(uId).update({'emailVerified': true});
-  } catch (e) {
-    // Non-critical: emailVerified flag update failed; auth state remains valid.
-    rethrow;
+  Future<void> updateEmailVerificationInFirestore(String uId) async {
+    try {
+      await _users.doc(uId).update({'emailVerified': true});
+    } catch (e) {
+      // Non-critical: emailVerified flag update failed; auth state remains valid.
+      rethrow;
+    }
   }
 }
-}
-

@@ -30,18 +30,11 @@ class ProfileRepository {
         _storage = storage ?? FirebaseStorage.instance,
         _auth = auth ?? FirebaseAuth.instance;
 
-
-    // Method to upload profile image and update Firestore with the new URL
   Future<String> uploadProfileImage(String uId, File imageFile) async {
-    // Create a reference to the location in Firebase Storage
-    Reference ref = _storage.ref().child('profile_pics').child('$uId.jpg');
-    // Upload the file to Firebase Storage
-    UploadTask uploadTask = ref.putFile(imageFile);
-    TaskSnapshot snapshot = await uploadTask;
+    final ref = _storage.ref().child('profile_pics').child('$uId.jpg');
+    final snapshot = await ref.putFile(imageFile);
+    final downloadUrl = await snapshot.ref.getDownloadURL();
 
-    // Get the download URL of the uploaded image
-    String downloadUrl = await snapshot.ref.getDownloadURL();
-    
     await _firestore.collection('users').doc(uId).update({
       'profileImage': downloadUrl,
     });
@@ -49,7 +42,6 @@ class ProfileRepository {
     return downloadUrl;
   }
 
-  // Method to update user data in Firestore
   Future<String?> updateUserData(String uId, Map<String, dynamic> data) async {
     try {
       await _firestore.collection('users').doc(uId).update(data);
@@ -115,7 +107,6 @@ class ProfileRepository {
     return _applyPhoneCredential(uId: uId, credential: credential, phoneNumber: phoneNumber);
   }
 
-  // Used for Android auto-verification where the credential is already complete.
   Future<String?> applyAutoVerifiedCredential({
     required String uId,
     required PhoneAuthCredential credential,
@@ -155,4 +146,3 @@ class ProfileRepository {
     }
   }
 }
-

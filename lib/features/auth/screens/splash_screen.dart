@@ -6,7 +6,6 @@ import '../logic/auth_notifier.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
 import 'package:athar_app/core/widgets/storage_asset_image.dart';
 
-// We used a ConsumerStatefulWidget to manage the timer and navigation logic while still being able to access the authentication state if needed in the future.
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
@@ -112,12 +111,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 const SizedBox(height: 25),
                 Text(
                   l10n.splashTitle,
-                  //
                   style: theme.textTheme.displayLarge?.copyWith(
                     color: Colors.white,
                     letterSpacing: 1.5,
                   ),
                 ),
+
                 const SizedBox(height: 10),
                 Text(
                   l10n.splashSubtitle,

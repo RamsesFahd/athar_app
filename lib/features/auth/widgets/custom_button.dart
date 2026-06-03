@@ -7,14 +7,14 @@ class AtharButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
   final ButtonVariant variant;
-  final bool isLoading; // added for loading state
+  final bool isLoading;
 
   const AtharButton({
     super.key,
     required this.label,
     this.onPressed,
     this.variant = ButtonVariant.primary,
-    this.isLoading = false, // default to false
+    this.isLoading = false,
   });
 
   @override
@@ -43,13 +43,11 @@ class AtharButton extends StatelessWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
 
-          // handle disabled state based on isLoading
           disabledBackgroundColor:
               isPrimary ? colorScheme.onSurfaceVariant : colorScheme.surface,
           disabledForegroundColor:
               isPrimary ? colorScheme.surface : colorScheme.onSurfaceVariant,
         ),
-        // disable the button when loading to prevent multiple taps (New)
         onPressed: isLoading ? null : onPressed,
         child: isLoading
             ? SizedBox(
