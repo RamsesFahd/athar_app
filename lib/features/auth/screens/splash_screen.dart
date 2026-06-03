@@ -13,10 +13,15 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen> {
+  bool _initialized = false;
+
   @override
-  void initState() {
-    super.initState();
-    _initApp();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      _initApp();
+    }
   }
 
   Future<void> _initApp() async {

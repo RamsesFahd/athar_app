@@ -273,14 +273,16 @@ class _InterestTile extends StatelessWidget {
       child: Column(
         children: [
           Expanded(
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
                   color: isSelected
                       ? theme.colorScheme.primary
                       : theme.colorScheme.outlineVariant,
-                  width: isSelected ? 2 : 1,
+                  width: isSelected ? 3 : 1.5,
                 ),
               ),
               clipBehavior: Clip.antiAlias,
@@ -291,23 +293,51 @@ class _InterestTile extends StatelessWidget {
                     storagePath: interest.imageUrl,
                     borderRadius: BorderRadius.zero,
                   ),
-                  if (isSelected)
-                    Container(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    color: isSelected
+                        ? theme.colorScheme.primary.withValues(alpha: 0.35)
+                        : Colors.transparent,
+                  ),
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      child: isSelected
+                          ? Icon(
+                              Icons.check_circle,
+                              key: const ValueKey('checked'),
+                              color: Colors.white,
+                              size: 24,
+                              shadows: const [
+                                Shadow(color: Colors.black54, blurRadius: 6),
+                              ],
+                            )
+                          : const SizedBox.shrink(
+                              key: ValueKey('unchecked'),
+                            ),
                     ),
+                  ),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 6),
-          Text(
-            interest.label(locale),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w700,
+          AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 200),
+            style: (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(
+              fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.textTheme.bodyMedium?.color,
             ),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+            child: Text(
+              interest.label(locale),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),

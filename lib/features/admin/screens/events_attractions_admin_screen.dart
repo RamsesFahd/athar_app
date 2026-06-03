@@ -9,6 +9,9 @@ import 'package:athar_app/features/admin/screens/attractions_admin_screen.dart';
 import 'package:athar_app/features/events/logic/events_repository.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
+/// 0 = Events (فعاليات), 1 = Attractions (معالم)
+final eventsAttractionsTabIndexProvider = StateProvider<int>((ref) => 0);
+
 class EventsAttractionsAdminScreen extends ConsumerWidget {
   const EventsAttractionsAdminScreen({super.key});
 
@@ -27,6 +30,9 @@ class EventsAttractionsAdminScreen extends ConsumerWidget {
               unselectedLabelColor: Colors.grey,
               indicatorColor: AppColors.primary,
               dividerColor: Colors.transparent,
+              onTap: (i) =>
+                  ref.read(eventsAttractionsTabIndexProvider.notifier).state =
+                      i,
               tabs: [
                 Tab(text: l10n.homeEventsSectionTitle),
                 Tab(text: l10n.attractionsTitle),

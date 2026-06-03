@@ -64,7 +64,11 @@ class _AdminNavigationContainerState
             appBar: AppBar(
               automaticallyImplyLeading: false,
               title: Text(
-                _tabs[_currentIndex].label,
+                _currentIndex == 3
+                    ? (ref.watch(eventsAttractionsTabIndexProvider) == 0
+                        ? 'الفعاليات'
+                        : 'المعالم')
+                    : _tabs[_currentIndex].label,
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               backgroundColor: theme.colorScheme.primary,
