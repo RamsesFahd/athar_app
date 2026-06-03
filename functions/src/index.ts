@@ -1409,7 +1409,8 @@ async function createInAppNotification(
 // Notification types that map to each user preference key.
 const BOOKING_NOTIF_TYPES = new Set([
   "booking_new", "booking_approved", "booking_cancelled", "booking_rejected",
-  "booking_auto_approved", "booking_completed", "booking_auto_completed", "booking_reminder",
+  "booking_auto_approved", "booking_guide_auto_approved", "booking_expired",
+  "booking_completed", "booking_auto_completed", "booking_reminder", "booking_pending_reminder",
 ]);
 const EVENT_REMINDER_TYPES = new Set([
   "contribution_approved", "contribution_rejected", "contribution_submitted",
