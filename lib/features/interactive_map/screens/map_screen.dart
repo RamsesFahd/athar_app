@@ -26,7 +26,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
   final ValueNotifier<double> _sheetExtent = ValueNotifier(0.30);
   LatLngBounds? _visibleBounds;
 
-  // Landmark and event icons (static colors)
   BitmapDescriptor _landmarkIcon =
       BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
   BitmapDescriptor _landmarkIconSelected =
@@ -52,7 +51,6 @@ class _MapScreenState extends ConsumerState<MapScreen> {
     zoom: 5.5,
   );
 
-  // App theme colors
   static const _sage = Color(0xFF344235);
   static const _sand = Color(0xFFCC9A53);
 

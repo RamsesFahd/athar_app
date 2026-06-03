@@ -864,7 +864,6 @@ class _EventImageCarouselState extends State<_EventImageCarousel> {
   }
 }
 
-// Used in the results list cards only
 class _EventInfoRow extends StatelessWidget {
   final EventModel event;
   final bool isAr;
