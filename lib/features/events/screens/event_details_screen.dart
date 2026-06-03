@@ -94,24 +94,20 @@ class EventDetailsScreen extends ConsumerWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // ── Scrollable content ───────────────────────────────────────
           SingleChildScrollView(
             padding: const EdgeInsets.only(bottom: 100),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Hero image carousel ───────────────────────────────
                 _HeroCarousel(
                   images: [event.imageUrl, ...gallery],
                 ),
 
-                // ── Content ───────────────────────────────────────────
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ── Type badge ──────────────────────────────────
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 5),
@@ -139,7 +135,6 @@ class EventDetailsScreen extends ConsumerWidget {
 
                       const SizedBox(height: 12),
 
-                      // ── Title ───────────────────────────────────────
                       Text(
                         titleText,
                         style: _nameStyle(theme),
@@ -147,7 +142,6 @@ class EventDetailsScreen extends ConsumerWidget {
 
                       const SizedBox(height: 20),
 
-                      // ── Info cards (date | time) ─────────────────────
                       IntrinsicHeight(
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -177,7 +171,6 @@ class EventDetailsScreen extends ConsumerWidget {
 
                       const SizedBox(height: 24),
 
-                      // ── Description ──────────────────────────────────
                       Text(
                         l10n.mapAboutEvent,
                         style: _sectionTitleStyle(theme),
@@ -188,7 +181,6 @@ class EventDetailsScreen extends ConsumerWidget {
                         style: _bodyStyle(theme),
                       ),
 
-                      // ── Location ─────────────────────────────────────
                       const SizedBox(height: 24),
                       Text(
                         l10n.locationLabel,
@@ -209,7 +201,6 @@ class EventDetailsScreen extends ConsumerWidget {
                         ],
                       ),
 
-                      // ── Ticket link ───────────────────────────────────
                       if (event.ticketUrl != null &&
                           event.ticketUrl!.isNotEmpty) ...[
                         const SizedBox(height: 24),
@@ -244,7 +235,6 @@ class EventDetailsScreen extends ConsumerWidget {
             ),
           ),
 
-          // ── Top navigation overlay ───────────────────────────────────
           Positioned(
             top: 0,
             left: 0,
@@ -282,7 +272,6 @@ class EventDetailsScreen extends ConsumerWidget {
             ),
           ),
 
-          // ── Bottom action bar ────────────────────────────────────────
           Positioned(
             bottom: 0,
             left: 0,
@@ -332,8 +321,6 @@ class EventDetailsScreen extends ConsumerWidget {
     );
   }
 }
-
-// ── Sub-widgets ──────────────────────────────────────────────────────────────
 
 class _CircleNavButton extends StatelessWidget {
   final IconData icon;

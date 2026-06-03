@@ -294,8 +294,6 @@ class _EventAdminTile extends StatelessWidget {
   }
 }
 
-// ── Edit bottom sheet ──────────────────────────────────────────────────────────
-
 class _EditEventSheet extends StatefulWidget {
   final EventModel event;
   const _EditEventSheet({required this.event});

@@ -15,7 +15,6 @@ class EventCard extends StatelessWidget {
     this.isGridView = true,
   });
 
-  // Matches the event badge color used in MapResultsSheet (colorScheme.secondary)
   static const Color eventColor = Color(0xFFCC9A53);
 
   static Color typeColor(EventType _) => eventColor;

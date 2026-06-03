@@ -13,10 +13,14 @@ final eventsStreamProvider = StreamProvider<List<EventModel>>((ref) {
 });
 
 final upcomingEventsStreamProvider = StreamProvider<List<EventModel>>((ref) {
+  final now = DateTime.now();
+  final todayStart = DateTime(now.year, now.month, now.day);
+
   return FirebaseFirestore.instance
       .collection('events')
       .where('eventDate',
-          isGreaterThanOrEqualTo: Timestamp.fromDate(DateTime.now()))
+          // Compare from the start of today so same-day events stay visible.
+          isGreaterThanOrEqualTo: Timestamp.fromDate(todayStart))
       .orderBy('eventDate')
       .snapshots()
       .map((s) => s.docs

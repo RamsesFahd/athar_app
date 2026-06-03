@@ -93,8 +93,6 @@ class _AddContributionScreenState
 
   bool get _isArabic => Directionality.of(context) == TextDirection.rtl;
 
-  // ── Media picking ────────────────────────────────────────────────────────────
-
   Future<void> _pickImage() async {
     final xFile =
         await ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 85);
@@ -113,8 +111,6 @@ class _AddContributionScreenState
       _mediaType = 'video';
     });
   }
-
-  // ── Submit ──────────────────────────────────���────────────────────────────────
 
   Future<void> _submit(TouristModel tourist) async {
     setState(() => _showValidation = true);
@@ -163,8 +159,6 @@ class _AddContributionScreenState
     }
   }
 
-  // ── Build ────────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -186,7 +180,7 @@ class _AddContributionScreenState
           );
         }
 
-        // Phone guard — tourist must have verified phone
+        // Contributions require a verified phone number.
         if (!user.phoneVerified) {
           return Scaffold(
             appBar: AppBar(

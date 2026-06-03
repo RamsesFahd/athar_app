@@ -15,9 +15,7 @@ class CulturalNotifier extends _$CulturalNotifier {
     return _loadItems();
   }
 
-  /// Load items from Firestore
   Future<CulturalState> _loadItems() async {
-    // reactive reference to the repository to ensure state synchronization.
     final repo = ref.watch(culturalRepositoryProvider);
     final items = await repo.fetchItems();
 
@@ -48,7 +46,6 @@ class CulturalNotifier extends _$CulturalNotifier {
     return null;
   }
 
-  // Search
   void setSearchQuery(String query) {
     final current = state.value;
     if (current == null) return;
@@ -67,7 +64,6 @@ class CulturalNotifier extends _$CulturalNotifier {
     );
   }
 
-  // Category filter
   void setCategory(String categoryId) {
     final current = state.value;
     if (current == null) return;
@@ -86,12 +82,12 @@ class CulturalNotifier extends _$CulturalNotifier {
     );
   }
 
-  // Filtering logic
   List<CulturalItemModel> _applyFilters(
     List<CulturalItemModel> items,
     String search,
     String category,
   ) {
+    // Apply search and category filters locally.
     return items.where((item) {
       final matchesSearch = search.isEmpty ||
           item.titleEn.toLowerCase().contains(search.toLowerCase()) ||
@@ -113,9 +109,7 @@ class CulturalNotifier extends _$CulturalNotifier {
   }
 }
 
-// Providers
   final categoriesProvider = FutureProvider((ref) async {
-  // Using watch to maintain synchronization with the repository's internal state.
   final repo = ref.watch(culturalRepositoryProvider);
   return repo.fetchCategories();
 });
@@ -133,9 +127,6 @@ final showFiltersProvider =
 
 final activeCategoryProvider =
     StateProvider<String>((ref) => 'all');
-
-
-//كود الحالة ممكن اخليه في ملف خارجي
 
 class CulturalState {
   final List<CulturalItemModel> allItems;

@@ -45,7 +45,6 @@ class CulturalArchive extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                // Search
                 Expanded(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(minHeight: 44),
@@ -94,7 +93,6 @@ class CulturalArchive extends ConsumerWidget {
 
                 const SizedBox(width: 8),
 
-                // Filter
                 GestureDetector(
                   onTap: () => ref.read(showFiltersProvider.notifier).state =
                       !showFilters,
@@ -149,7 +147,6 @@ class CulturalArchive extends ConsumerWidget {
 
                 const SizedBox(width: 8),
 
-                // display
                 ConstrainedBox(
                   constraints: const BoxConstraints(minHeight: 44),
                   child: OutlinedButton(
@@ -215,7 +212,6 @@ class CulturalArchive extends ConsumerWidget {
               fit: BoxFit.cover,
             ),
           ),
-          // Gradient overlay + title text — fills the full header height
           Positioned.fill(
             child: Container(
               padding: const EdgeInsets.all(20),
@@ -259,7 +255,6 @@ class CulturalArchive extends ConsumerWidget {
               ),
             ),
           ),
-          // Floating back button
           if (onBack != null)
             SafeArea(
               child: Align(
