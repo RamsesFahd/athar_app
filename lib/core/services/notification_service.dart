@@ -44,8 +44,6 @@ class NotificationService {
     }
   }
 
-  // ── Local notifications ────────────────────────────────────────────────────
-
   Future<void> _setupLocalNotifications() async {
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosInit = DarwinInitializationSettings(
@@ -58,7 +56,6 @@ class NotificationService {
       onDidReceiveNotificationResponse: _onLocalNotificationTap,
     );
 
-    // Create the Android notification channel.
     await _localNotifications
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
@@ -74,11 +71,8 @@ class NotificationService {
   }
 
   void _onLocalNotificationTap(NotificationResponse response) {
-    // payload is the notification type; route accordingly.
     _routeFromType(response.payload);
   }
-
-  // ── Permissions ────────────────────────────────────────────────────────────
 
   Future<void> _requestPermissions() => requestPermissions();
 
@@ -120,8 +114,6 @@ class NotificationService {
   Future<void> unsubscribeFromTopic(String topic) =>
       _fcm.unsubscribeFromTopic(topic);
 
-  // ── FCM configuration ──────────────────────────────────────────────────────
-
   Future<void> _configureFcm() async {
     // Foreground: show as local notification (FCM suppresses UI by default).
     FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
@@ -160,8 +152,6 @@ class NotificationService {
     );
   }
 
-  // ── Routing ────────────────────────────────────────────────────────────────
-
   /// Override this with a real navigator key once the app has a route system.
   static GlobalKey<NavigatorState>? navigatorKey;
 
@@ -170,8 +160,7 @@ class NotificationService {
     final context = navigatorKey!.currentContext;
     if (context == null) return;
 
-    // All notification types currently route to the notifications screen.
-    // Extend this switch when deep-linking to specific content screens.
+    // Known notification taps open the notifications screen.
     switch (type) {
       case 'contribution_submitted':
       case 'contribution_approved':
@@ -182,16 +171,21 @@ class NotificationService {
       case 'booking_new':
       case 'booking_approved':
       case 'booking_cancelled':
+      case 'booking_rejected':
+      case 'booking_auto_approved':
+      case 'booking_guide_auto_approved':
+      case 'booking_expired':
+      case 'booking_completed':
       case 'booking_reminder':
+      case 'booking_pending_reminder':
       case 'booking_auto_completed':
       case 'guide_verified':
+      case 'guide_rejected':
       case 'points_awarded':
         Navigator.of(context).pushNamed('/notifications');
         break;
     }
   }
-
-  // ── Token lifecycle ────────────────────────────────────────────────────────
 
   /// Call after a successful login to register this device's FCM token.
   Future<void> registerToken(String userId) async {

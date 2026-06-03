@@ -2210,11 +2210,7 @@ export const autoApproveBookings = onSchedule(
   }
 );
 
-// ── Scheduled 2b: Remind guides who have not responded after 24–36 hours ──────
-//
-// Runs every hour. Finds pending bookings that are between 24h and 36h old
-// (halfway to the 48h auto-approve window) and sends one reminder per guide.
-// De-duplicates so a guide with multiple pending bookings only gets one push.
+// Remind guides once while a booking is close to auto-approval.
 
 export const remindGuidesPendingBookings = onSchedule(
   { schedule: "every 60 minutes", timeZone: "Asia/Riyadh", timeoutSeconds: 60, memory: "256MiB" },
@@ -2233,17 +2229,28 @@ export const remindGuidesPendingBookings = onSchedule(
     if (snap.empty) return;
 
     const notified = new Set<string>();
+    let sent = 0;
     for (const doc of snap.docs) {
       const data = doc.data();
+      const bookingId: string = data.bookingId ?? doc.id;
       const bookingDate = data.date as string | undefined;
       if (!bookingDate || bookingDate <= todayStr) continue;
       const tutorId: string = data.tutorId ?? "";
       if (tutorId && !notified.has(tutorId)) {
         notified.add(tutorId);
-        await notify(tutorId, "booking_pending_reminder");
+        const notificationId = `${bookingId}_booking_pending_reminder_${tutorId}`;
+        const notifRef = db
+          .collection("users").doc(tutorId)
+          .collection("notifications").doc(notificationId);
+        const existing = await notifRef.get();
+        if (!existing.exists) {
+          // Use a stable ID so the same reminder is not created twice.
+          await notify(tutorId, "booking_pending_reminder", undefined, notificationId);
+          sent++;
+        }
       }
     }
-    logger.info(`[guideReminder] Notified ${notified.size} guide(s).`);
+    logger.info(`[guideReminder] Sent ${sent} guide reminder(s).`);
   }
 );
 
@@ -2509,7 +2516,7 @@ export const cleanupExpiredBookings = onSchedule(
       logger.info(`[cleanupExpired] Expired ${expiredSnap.size} booking(s).`);
     }
 
-    // ── 2. Remind tourists with a pending booking due tomorrow ──────────────
+    // Remind tourists with a pending booking due tomorrow.
     const tomorrowPendingSnap = await db
       .collection("bookings")
       .where("status", "==", "pending")
@@ -2518,20 +2525,18 @@ export const cleanupExpiredBookings = onSchedule(
 
     if (!tomorrowPendingSnap.empty) {
       await Promise.all(tomorrowPendingSnap.docs.map(async (doc) => {
-        const { touristId, bookingId } = doc.data() as { touristId: string; bookingId: string };
+        const data = doc.data() as { touristId?: string; bookingId?: string };
+        const touristId = data.touristId ?? "";
+        const bookingId = data.bookingId ?? doc.id;
         if (!touristId || !bookingId) return;
+        const notificationId = `${bookingId}_pending_reminder`;
         const notifRef = db
           .collection("users").doc(touristId)
-          .collection("notifications").doc(`${bookingId}_pending_reminder`);
+          .collection("notifications").doc(notificationId);
         const existing = await notifRef.get();
         if (!existing.exists) {
-          await notifRef.set({
-            type: "booking_pending_reminder",
-            title: { ar: "", en: "" },
-            body: { ar: "", en: "" },
-            isRead: false,
-            createdAt: FieldValue.serverTimestamp(),
-          });
+          // Use notify() so reminders create both in-app and push notifications.
+          await notify(touristId, "booking_pending_reminder", undefined, notificationId);
         }
       }));
       logger.info(`[cleanupExpired] Sent reminders for ${tomorrowPendingSnap.size} booking(s).`);
