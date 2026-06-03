@@ -235,8 +235,6 @@ class _StatusBadge extends StatelessWidget {
   }
 }
 
-// ── Trip Detail Screen ────────────────────────────────────────────────────────
-
 class TripDetailAdminScreen extends ConsumerStatefulWidget {
   final TripModel trip;
   const TripDetailAdminScreen({super.key, required this.trip});

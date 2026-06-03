@@ -44,8 +44,6 @@ class UsersManagementScreen extends ConsumerWidget {
   }
 }
 
-// ── Users Tab ────────────────────────────────────────────────────────────────
-
 class _UsersTab extends ConsumerStatefulWidget {
   const _UsersTab();
 
@@ -130,8 +128,6 @@ class _UsersTabState extends ConsumerState<_UsersTab> {
     );
   }
 }
-
-// ── Guides Tab ───────────────────────────────────────────────────────────────
 
 class _GuidesTab extends ConsumerStatefulWidget {
   const _GuidesTab();
@@ -236,8 +232,6 @@ class _GuidesTabState extends ConsumerState<_GuidesTab> {
     );
   }
 }
-
-// ── Shared tile widgets ───────────────────────────────────────────────────────
 
 class _UserTile extends StatelessWidget {
   final UserModel user;

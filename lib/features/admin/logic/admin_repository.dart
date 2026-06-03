@@ -25,8 +25,6 @@ class AdminRepository {
   CollectionReference get _culturalItems =>
       _firestore.collection('cultural_items');
 
-  // ── Auth Guard ───────────────────────────────────────────────────────────────
-
   /// Defensive client-side guard. Real enforcement lives in Firestore Security Rules.
   /// Reads the Firebase Auth UID (authoritative) and rejects if role != admin.
   Future<void> _assertCallerIsAdmin() async {
@@ -38,8 +36,6 @@ class AdminRepository {
       throw Exception('Unauthorised: caller is not an admin');
     }
   }
-
-  // ── Tutor Verification ──────────────────────────────────────────────────────
 
   Stream<List<TutorModel>> getPendingTutors() {
     return _users
@@ -92,8 +88,6 @@ class AdminRepository {
                 TutorModel.fromMap(doc.data() as Map<String, dynamic>))
             .toList());
   }
-
-  // ── Trip Approvals ──────────────────────────────────────────────────────────
 
   Stream<List<TripModel>> getPendingTrips() {
     return _trips
@@ -154,8 +148,6 @@ class AdminRepository {
     return UserModel.fromMap(doc.data() as Map<String, dynamic>);
   }
 
-  // ── Users Management ────────────────────────────────────────────────────────
-
   Stream<List<UserModel>> getAllUsers() {
     return _users
         .orderBy('createdAt', descending: true)
@@ -166,8 +158,6 @@ class AdminRepository {
             .toList());
   }
 
-  // ── All Bookings ─────────────────────────────────────────────────────────────
-
   Stream<List<BookingModel>> getAllBookings() {
     return _bookings
         .orderBy('createdAt', descending: true)
@@ -177,8 +167,6 @@ class AdminRepository {
                 BookingModel.fromMap(doc.data() as Map<String, dynamic>))
             .toList());
   }
-
-  // ── Cultural Content ─────────────────────────────────────────────────────────
 
   // Contribution category IDs → cultural archive category IDs
   static const Map<String, String> _categoryMap = {
@@ -224,8 +212,6 @@ class AdminRepository {
             .toList());
   }
 
-  // ── Attractions ──────────────────────────────────────────────────────────────
-
   CollectionReference get _attractions => _firestore.collection('attractions');
 
   Future<void> addAttraction(Map<String, dynamic> data) async {
@@ -263,8 +249,6 @@ class AdminRepository {
     return raw.map((key, value) => MapEntry(key, (value as num).toInt()));
   }
 
-  // ── Events ───────────────────────────────────────────────────────────────────
-
   CollectionReference get _events => _firestore.collection('events');
 
   Future<void> addEvent(Map<String, dynamic> data) async {
@@ -275,8 +259,6 @@ class AdminRepository {
       'createdBy': 'Admin',
     });
   }
-
-  // ── Contributions Review ─────────────────────────────────────────────────────
 
   CollectionReference get _contributions =>
       _firestore.collection('contributions');
