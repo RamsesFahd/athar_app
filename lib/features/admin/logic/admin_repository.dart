@@ -345,6 +345,7 @@ class AdminRepository {
     final regionAr = regionLabel(regionId, isArabic: true);
     final categoryId = _categoryMap[category] ?? category;
 
+    // Approved contributions become cultural archive items.
     batch.set(archiveRef, {
       'titleAr': titleAr,
       'titleEn': titleEn,
@@ -376,6 +377,7 @@ class AdminRepository {
       'archiveItemId': archiveRef.id,
     });
 
+    // Award points only when the approval is committed.
     batch.update(touristRef, {
       'points': FieldValue.increment(points),
       'contributionsCount': FieldValue.increment(1),

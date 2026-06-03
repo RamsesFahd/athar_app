@@ -14,7 +14,6 @@ import 'package:athar_app/features/contributions/widgets/badge_card.dart';
 import 'package:athar_app/features/profile/widgets/tourist_profile.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
-// Stream provider family — keyed by touristId
 final _touristContributionsProvider = StreamProvider.autoDispose
     .family<List<ContributionModel>, String>((ref, touristId) {
   return ref
@@ -54,7 +53,6 @@ class _ContributionsAchievementsScreenState
     return l10n.contributionActiveContributor;
   }
 
-  // Category display labels & icons
   static const Map<String, String> _categoryLabelsAr = {
     'traditional_food': 'أكل شعبي',
     'handicraft': 'حرف يدوية',
@@ -170,7 +168,6 @@ class _ContributionsAchievementsScreenState
           });
         });
 
-        // Watch the live contributions stream for this tourist
         final contributionsAsync =
             ref.watch(_touristContributionsProvider(tourist.uId));
 
@@ -390,7 +387,6 @@ class _ContributionsAchievementsScreenState
     );
   }
 
-  // Converts AchievementData → _BadgeUiModel for the UI
   List<_BadgeUiModel> _buildBadges(
     List<AchievementData> achievements,
     bool isArabic,
@@ -498,7 +494,6 @@ class _ContributionsAchievementsScreenState
     required AppLocalizations l10n,
     required int currentPoints,
   }) {
-    // Find current level index
     int levelIndex = 0;
     for (int i = _levelThresholds.length - 1; i >= 0; i--) {
       if (currentPoints >= _levelThresholds[i]) {
@@ -824,7 +819,7 @@ class _ContributionsAchievementsScreenState
     bool isArabic,
   ) {
     final l10n = AppLocalizations.of(context);
-    // Map approved → published label
+    // Users see approved contributions as published.
     final (statusBg, statusColor, statusLabel) = switch (item.status) {
       ContributionStatus.approved => (
           theme.colorScheme.primary.withValues(alpha: 0.10),

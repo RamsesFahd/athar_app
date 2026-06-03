@@ -38,15 +38,12 @@ class ContributionRejectionDetailScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
         children: [
-          // Media preview
           _buildMediaPreview(theme, c),
           const SizedBox(height: 16),
 
-          // Rejection reason — prominent
           _buildRejectionCard(theme, l10n, isAr, c.rejectionReason),
           const SizedBox(height: 16),
 
-          // Submitted content
           _buildInfoCard(
             theme,
             title: l10n.contributionSubmittedContentTitle,
@@ -70,7 +67,6 @@ class ContributionRejectionDetailScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          // Submission details
           _buildInfoCard(
             theme,
             title: l10n.contributionSubmissionInfoTitle,
@@ -99,7 +95,6 @@ class ContributionRejectionDetailScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // CTA
           SizedBox(
             width: double.infinity,
             height: 52,

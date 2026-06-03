@@ -131,6 +131,7 @@ class ContributionRepository {
 
     final ext = mediaFile.path.split('.').last;
     final storageRef = _storage.ref('contributions/${tourist.uId}/$id.$ext');
+    // Upload first so the contribution stores the final media URL.
     final uploadTask = await storageRef.putFile(mediaFile);
     final mediaUrl = await uploadTask.ref.getDownloadURL();
 
@@ -149,6 +150,7 @@ class ContributionRepository {
       'cityId': cityId,
       'mediaUrl': mediaUrl,
       'mediaType': mediaType,
+      // New submissions stay pending until an admin reviews them.
       'status': ContributionStatus.pending.name,
       'points': 0,
       'likes': 0,
