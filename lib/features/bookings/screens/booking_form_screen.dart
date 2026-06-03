@@ -50,6 +50,18 @@ class BookingFormScreen extends ConsumerWidget {
             .valueOrNull
         : null;
 
+    // Per-date capacity: watch available seats for the currently selected date.
+    // null = no capacity limit on this trip (or no bookings on that date yet).
+    final selectedDateStr = form.selectedDate == null
+        ? ''
+        : form.selectedDate.toString().split(' ')[0];
+    final seatsAvailable = trip.maxCapacity != null
+        ? ref
+            .watch(availableSeatsForDateProvider('${trip.id}|$selectedDateStr'))
+            .valueOrNull ??
+            trip.maxCapacity
+        : null;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -88,8 +100,8 @@ class BookingFormScreen extends ConsumerWidget {
                         count: form.adults,
                         onAdd: formNotifier.incrementAdults,
                         onRemove: formNotifier.decrementAdults,
-                        canIncrement: trip.availableSeats == null ||
-                            _adultEquivalent(form) + 1 <= trip.availableSeats!,
+                        canIncrement: seatsAvailable == null ||
+                            _adultEquivalent(form) + 1 <= seatsAvailable,
                         theme: theme,
                       ),
                       if (trip.allowsKids) ...[
@@ -103,9 +115,9 @@ class BookingFormScreen extends ConsumerWidget {
                           count: form.children,
                           onAdd: formNotifier.incrementChildren,
                           onRemove: formNotifier.decrementChildren,
-                          canIncrement: trip.availableSeats == null ||
+                          canIncrement: seatsAvailable == null ||
                               (form.adults + ((form.children + 2) ~/ 2)) <=
-                                  trip.availableSeats!,
+                                  seatsAvailable,
                           minCount: 0,
                           theme: theme,
                         ),

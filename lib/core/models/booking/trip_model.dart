@@ -61,11 +61,6 @@ class TripModel {
   final DateTime? startDate;
   final DateTime? endDate;
 
-  /// Remaining bookable slots. Decremented by Cloud Function on each confirmed
-  /// booking; restored on cancellation or rejection. Defaults to maxCapacity
-  /// when the trip is first created.
-  final int? availableSeats;
-
   TripModel({
     required this.id,
     required this.titleAr,
@@ -106,8 +101,7 @@ class TripModel {
     this.tripDurationDays,
     this.startDate,
     this.endDate,
-    int? availableSeats,
-  }) : availableSeats = availableSeats ?? maxCapacity;
+  });
 
   // ── Schedule helpers ──────────────────────────────────────────────────────
 
@@ -125,9 +119,9 @@ class TripModel {
 
   bool get isPrivate => tripType == 'private';
 
-  /// For shared trips: driven by availableSeats. For private trips use
-  /// [isPrivateFullyBooked] instead (requires the async booked-dates set).
-  bool get isFullyBooked => availableSeats != null && availableSeats! <= 0;
+  /// Always false for shared trips — capacity is now tracked per-date in the
+  /// `trip_capacity` collection. Use [isPrivateFullyBooked] for private trips.
+  bool get isFullyBooked => false;
 
   /// Returns true when every calendar day in [startDate]→[endDate] has an
   /// active (pending/approved) booking. Only meaningful for private trips.
@@ -217,7 +211,6 @@ class TripModel {
       tripDurationDays: map['tripDurationDays'] as int?,
       startDate: (map['startDate'] as Timestamp?)?.toDate(),
       endDate: (map['endDate'] as Timestamp?)?.toDate(),
-      availableSeats: map['availableSeats'] as int?,
       heroCopy: map['heroCopy'] is Map
           ? HeroAiText.fromMap(Map<String, dynamic>.from(map['heroCopy'] as Map))
           : null,
@@ -258,7 +251,6 @@ class TripModel {
       'tripDurationDays': tripDurationDays,
       'startDate': startDate != null ? Timestamp.fromDate(startDate!) : null,
       'endDate': endDate != null ? Timestamp.fromDate(endDate!) : null,
-      'availableSeats': availableSeats,
       'reviewedByAdminId': reviewedByAdminId,
       'reviewedByAdminName': reviewedByAdminName,
       'reviewedAt': reviewedAt != null ? Timestamp.fromDate(reviewedAt!) : null,

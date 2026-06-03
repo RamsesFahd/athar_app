@@ -261,11 +261,43 @@ class BookingRepository {
             .map((doc) => UserRewardModel.fromMap(doc.data(), doc.id))
             .toList());
   }
+
+  /// Returns remaining available seats for [tripId] on [date] (YYYY-MM-DD).
+  /// Emits null when the trip has no capacity limit or no booking has happened
+  /// yet for that date (meaning full maxCapacity is still available).
+  Stream<int?> watchAvailableSeatsForDate(String tripId, String date) {
+    if (date.isEmpty) return Stream.value(null);
+    return _firestore
+        .collection('trip_capacity')
+        .doc('${tripId}_$date')
+        .snapshots()
+        .map((snap) {
+          if (!snap.exists) return null;
+          final data = snap.data();
+          if (data == null) return null;
+          return data['availableSeats'] as int?;
+        });
+  }
 }
 
 final unusedRewardsProvider =
     StreamProvider.autoDispose.family<List<UserRewardModel>, String>(
   (ref, userId) {
     return ref.watch(bookingRepositoryProvider).watchUnusedRewards(userId);
+  },
+);
+
+/// Key format: "${tripId}|${date}". Emits available seats for that date,
+/// or null when the trip has no capacity limit or no booking exists yet.
+final availableSeatsForDateProvider =
+    StreamProvider.autoDispose.family<int?, String>(
+  (ref, tripDateKey) {
+    final sep = tripDateKey.indexOf('|');
+    if (sep < 0) return Stream.value(null);
+    final tripId = tripDateKey.substring(0, sep);
+    final date = tripDateKey.substring(sep + 1);
+    return ref
+        .watch(bookingRepositoryProvider)
+        .watchAvailableSeatsForDate(tripId, date);
   },
 );

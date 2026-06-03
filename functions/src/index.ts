@@ -1664,6 +1664,18 @@ export const onBookingCreated = onDocumentCreated(
     const childrenCount: number = data.childrenCount ?? 0;
     const slotsNeeded = adultsCount + Math.ceil(childrenCount / 2);
 
+    // Build the list of dates this booking spans (multi-day support)
+    const startDateStr: string = data.date ?? "";
+    const durationDays: number = data.tripDurationDays ?? 1;
+    const bookedDates: string[] = [];
+    if (startDateStr) {
+      for (let i = 0; i < durationDays; i++) {
+        const d = new Date(startDateStr + "T00:00:00Z");
+        d.setUTCDate(d.getUTCDate() + i);
+        bookedDates.push(d.toISOString().slice(0, 10));
+      }
+    }
+
     let capacityExceeded = false;
 
     try {
@@ -1671,19 +1683,45 @@ export const onBookingCreated = onDocumentCreated(
         const tripSnap = await tx.get(tripRef);
         if (!tripSnap.exists) return;
 
-        const tripData = tripSnap.data()!;
-        const availableSeats: number | null = tripData.availableSeats ?? null;
+        const maxCapacity: number | null =
+          (tripSnap.data()!.maxCapacity as number | undefined) ?? null;
 
-        // Only enforce capacity when the trip has a seat limit configured.
-        if (availableSeats !== null && availableSeats < slotsNeeded) {
-          capacityExceeded = true;
-          tx.update(bookingRef, {
-            status: "rejected",
-            rejectionReason: "capacity_exceeded",
-          });
-        } else if (availableSeats !== null) {
-          tx.update(tripRef, {
-            availableSeats: FieldValue.increment(-slotsNeeded),
+        // No capacity limit or no date info — allow booking
+        if (maxCapacity === null || bookedDates.length === 0) return;
+
+        // Read all per-date capacity docs upfront (all reads must precede writes)
+        const capacityRefs = bookedDates.map((date) =>
+          db.collection("trip_capacity").doc(`${tripId}_${date}`)
+        );
+        const capacitySnaps = await Promise.all(
+          capacityRefs.map((ref) => tx.get(ref))
+        );
+
+        // Resolve current available seats (lazy-init to maxCapacity if doc missing)
+        const currentAvailables = capacitySnaps.map((snap) =>
+          snap.exists
+            ? ((snap.data() as any).availableSeats as number ?? maxCapacity)
+            : maxCapacity
+        );
+
+        // Reject if any date in the span lacks enough seats
+        for (const avail of currentAvailables) {
+          if (avail < slotsNeeded) {
+            capacityExceeded = true;
+            tx.update(bookingRef, {
+              status: "rejected",
+              rejectionReason: "capacity_exceeded",
+            });
+            return;
+          }
+        }
+
+        // Decrement each date's capacity
+        for (let i = 0; i < bookedDates.length; i++) {
+          tx.set(capacityRefs[i], {
+            tripId,
+            date: bookedDates[i],
+            availableSeats: currentAvailables[i] - slotsNeeded,
           });
         }
       });
@@ -1741,17 +1779,42 @@ export const onBookingStatusChanged = onDocumentUpdated(
       const adultsCount: number = after.adultsCount ?? 1;
       const childrenCount: number = after.childrenCount ?? 0;
       const slotsToRestore = adultsCount + Math.ceil(childrenCount / 2);
-      try {
-        const tripSnap = await db.collection("trips").doc(tripId).get();
-        const tripData = tripSnap.data();
-        if (tripData?.availableSeats != null) {
-          await db.collection("trips").doc(tripId).update({
-            availableSeats: FieldValue.increment(slotsToRestore),
-          });
-          logger.info(`[seats] Restored ${slotsToRestore} seat(s) to trip ${tripId}`);
+      const bookingDate: string = after.date ?? "";
+      const bookingDuration: number = after.tripDurationDays ?? 1;
+
+      if (bookingDate) {
+        try {
+          const tripSnap = await db.collection("trips").doc(tripId).get();
+          const maxCapacity: number | null =
+            (tripSnap.data()?.maxCapacity as number | undefined) ?? null;
+
+          if (maxCapacity !== null) {
+            const batch = db.batch();
+            for (let i = 0; i < bookingDuration; i++) {
+              const d = new Date(bookingDate + "T00:00:00Z");
+              d.setUTCDate(d.getUTCDate() + i);
+              const dateStr = d.toISOString().slice(0, 10);
+              const capacityRef = db
+                .collection("trip_capacity")
+                .doc(`${tripId}_${dateStr}`);
+              const capacitySnap = await capacityRef.get();
+              if (capacitySnap.exists) {
+                const current =
+                  (capacitySnap.data() as any).availableSeats as number ?? 0;
+                batch.update(capacityRef, {
+                  availableSeats: Math.min(current + slotsToRestore, maxCapacity),
+                });
+              }
+            }
+            await batch.commit();
+            logger.info(
+              `[seats] Restored ${slotsToRestore} seat(s) to trip ${tripId} ` +
+              `across ${bookingDuration} date(s) from ${bookingDate}`
+            );
+          }
+        } catch (err) {
+          logger.error(`[seats] Failed to restore seats for trip ${tripId}`, err);
         }
-      } catch (err) {
-        logger.error(`[seats] Failed to restore seats for trip ${tripId}`, err);
       }
     }
 

@@ -283,12 +283,6 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
           : 0.0;
 
       final newCapacity = int.tryParse(_maxCapacity.text.trim());
-      // In edit mode: preserve the live availableSeats from Firestore so that
-      // saving changes doesn't undo capacity already consumed by bookings.
-      // Only reset availableSeats to newCapacity when creating a brand-new trip.
-      final availableSeats = _isEditing
-          ? widget.initialTrip!.availableSeats
-          : newCapacity;
 
       final trip = TripModel(
         id: tripId,
@@ -304,7 +298,6 @@ class _AddTripScreenState extends ConsumerState<AddTripScreen> {
         childPrice: childPrice,
         allowsKids: _allowsKids,
         maxCapacity: newCapacity,
-        availableSeats: availableSeats,
         tripDurationDays: _isMultiDayTrip
             ? int.tryParse(_tripDurationDays.text.trim())
             : null,
