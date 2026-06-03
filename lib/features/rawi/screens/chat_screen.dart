@@ -152,8 +152,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  // ── AppBar ────────────────────────────────────────────────────────────────
-
   PreferredSizeWidget _buildAppBar(
       String userId, bool isAr, AppLocalizations l10n) {
     final textScale = MediaQuery.textScalerOf(context).scale(1.0);
@@ -223,8 +221,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     return fallbackTitle;
   }
 
-  // ── Message rendering ─────────────────────────────────────────────────────
-
   Widget _buildMessageBubble({
     required String message,
     required bool isMe,
@@ -277,8 +273,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       },
     );
   }
-
-  // ── Utility helpers ───────────────────────────────────────────────────────
 
   ({String mainText, List<String> quickReplies}) _splitMessageContent(
       String message) {

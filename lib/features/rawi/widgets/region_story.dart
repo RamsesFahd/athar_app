@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:athar_app/core/widgets/storage_asset_image.dart';
 import 'package:athar_app/features/rawi/screens/chat_screen.dart';
-import 'package:athar_app/core/constants/region_data.dart'; //
+import 'package:athar_app/core/constants/region_data.dart';
 import 'package:athar_app/generated/l10n/app_localizations.dart';
 
 class RegionStoryScreen extends StatefulWidget {
@@ -26,7 +26,6 @@ class _RegionStoryScreenState extends State<RegionStoryScreen>
     _currentIndex = widget.initialIndex;
     _pageController = PageController(initialPage: widget.initialIndex);
 
-    // إعداد التايمر لمدة 10 ثوانٍ
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 10),
@@ -77,7 +76,6 @@ class _RegionStoryScreenState extends State<RegionStoryScreen>
         onLongPressEnd: (_) => _animController.forward(),
         child: Stack(
           children: [
-            // عرض صور المناطق
             PageView.builder(
               controller: _pageController,
               itemCount: regionsData.length,
@@ -118,7 +116,6 @@ class _RegionStoryScreenState extends State<RegionStoryScreen>
               },
             ),
 
-            // (1) شريط تقدم واحد كامل العرض لكل ستوري
             Positioned(
               top: 60,
               left: 20,
@@ -126,18 +123,16 @@ class _RegionStoryScreenState extends State<RegionStoryScreen>
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: LinearProgressIndicator(
-                  // يأخذ القيمة الحالية للأنيميشن مباشرة (من 0 إلى 1)
                   value: _animController.value,
                   backgroundColor:
                       theme.colorScheme.onPrimary.withValues(alpha: 0.2),
                   valueColor: AlwaysStoppedAnimation<Color>(
                       theme.colorScheme.onPrimary),
-                  minHeight: 3, // سمك الشريط
+                  minHeight: 3,
                 ),
               ),
             ),
 
-            // زر الانتقال للشات
             Align(
               alignment: Alignment.bottomCenter,
               child: SafeArea(
