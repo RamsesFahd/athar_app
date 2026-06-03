@@ -17,7 +17,6 @@ class TripsListScreen extends ConsumerStatefulWidget {
 }
 
 class _TripsListScreenState extends ConsumerState<TripsListScreen> {
-  // isGridView is pure UI preference – not business logic, so setState is correct here.
   bool _isGridView = true;
 
   @override
@@ -26,11 +25,7 @@ class _TripsListScreenState extends ConsumerState<TripsListScreen> {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final largeText = MediaQuery.textScalerOf(context).scale(1.0) > 1.2;
 
-    // Issue V fix: watch the StreamProvider instead of calling ref.read()
-    // inside a StreamBuilder. The stream is now re-created reactively.
     final tripsAsync = ref.watch(allTripsStreamProvider);
-
-    // Issue K fix: filter state lives in the notifier, not in screen state.
     final filter = ref.watch(tripsFilterProvider);
     final filterNotifier = ref.read(tripsFilterProvider.notifier);
 
@@ -47,7 +42,6 @@ class _TripsListScreenState extends ConsumerState<TripsListScreen> {
         error: (error, _) =>
             Center(child: Text(l10n.commonErrorWithMessage(''))),
         data: (allTrips) {
-          // PERFORMANCE OPTIMIZATION: filterAndSort result used directly.
           final displayedTrips =
               filterNotifier.filterAndSort(allTrips, isAr);
 
@@ -59,8 +53,6 @@ class _TripsListScreenState extends ConsumerState<TripsListScreen> {
                 isFilterActive: filter.hasActiveFilters,
                 onChanged: filterNotifier.setSearchQuery,
                 onFilterTap: () async {
-                  // PERFORMANCE OPTIMIZATION: uniqueCities computed lazily here,
-                  // only when the filter sheet is about to open — not on every build.
                   final uniqueCities = allTrips
                       .map((trip) => trip.getCity(isAr))
                       .where((city) => city.trim().isNotEmpty)

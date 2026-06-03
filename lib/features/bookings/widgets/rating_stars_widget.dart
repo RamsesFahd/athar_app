@@ -72,7 +72,6 @@ class _RatingStarsWidgetState extends State<RatingStarsWidget> {
     final colorScheme = theme.colorScheme;
     final accent = colorScheme.primary;
 
-    // Loading
     if (_existingStars == null) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 12),
@@ -85,7 +84,6 @@ class _RatingStarsWidgetState extends State<RatingStarsWidget> {
       return _buildConfirmation(theme, isAr, l10n);
     }
 
-    // Interactive form
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),

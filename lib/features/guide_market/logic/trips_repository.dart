@@ -19,7 +19,6 @@ class TripsRepository {
   CollectionReference get _bookings => _firestore.collection('bookings');
   CollectionReference get _users => _firestore.collection('users');
 
-
   Stream<List<TripModel>> fetchAllTrips() {
     return _trips
         .where('status', isEqualTo: 'approved')

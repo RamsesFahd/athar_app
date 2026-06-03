@@ -46,7 +46,6 @@ class TripDetailsScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Hero image ────────────────────────────────────────
                 CachedNetworkImage(
                   imageUrl: trip.imageUrl,
                   width: double.infinity,
@@ -72,12 +71,10 @@ class TripDetailsScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ── Title ──────────────────────────────────────
                       Text(trip.getTitle(isAr),
                           style: theme.textTheme.displayLarge),
                       const SizedBox(height: 8),
 
-                      // ── Trip type + accessibility badges on one row ─
                       Wrap(
                         spacing: 8,
                         runSpacing: 8,
@@ -88,11 +85,9 @@ class TripDetailsScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 12),
 
-                      // ── Price display ──────────────────────────────
                       _buildPriceRow(theme, isAr, l10n),
                       const SizedBox(height: 16),
 
-                      // ── Description ────────────────────────────────
                       if (descriptionText.isNotEmpty) ...[
                         const SizedBox(height: 20),
                         MarkdownBody(
@@ -111,7 +106,6 @@ class TripDetailsScreen extends ConsumerWidget {
 
                       const SizedBox(height: 20),
 
-                      // ── Guide info — live from user doc ────────────
                       StreamBuilder<DocumentSnapshot>(
                         stream: trip.tutorId != null
                             ? FirebaseFirestore.instance
@@ -159,7 +153,6 @@ class TripDetailsScreen extends ConsumerWidget {
             ),
           ),
 
-          // ── Top navigation buttons ────────────────────────────────
           Positioned(
             top: 40,
             left: 16,
@@ -233,7 +226,6 @@ class TripDetailsScreen extends ConsumerWidget {
             ),
           ),
 
-          // ── Book Now / Fully Booked button ────────────────────────
           Positioned(
             bottom: 0,
             left: 0,
