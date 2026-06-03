@@ -22,9 +22,8 @@ import 'package:athar_app/features/events/logic/events_repository.dart';
 import 'package:athar_app/features/home/logic/recommendations_repository.dart';
 import 'package:athar_app/core/models/home/recommended_item.dart';
 
-// PERFORMANCE OPTIMIZATION: HomeScreen converted from ConsumerWidget to
-// StatelessWidget. Each carousel section is now its own ConsumerWidget so
-// provider changes only rebuild the affected section, not the entire screen.
+// Each carousel section is its own ConsumerWidget so provider changes only
+// rebuild the affected section, not the entire screen.
 class HomeScreen extends ConsumerWidget {
   final VoidCallback? onSeeAllArchive;
   final VoidCallback? onSeeAllEvents;
@@ -74,27 +73,28 @@ class HomeScreen extends ConsumerWidget {
   }
 
   static String _translateAttractionCategory(String value, bool isAr) {
-  if (!isAr) return value;
+    if (!isAr) return value;
 
-  switch (value.toLowerCase()) {
-    case 'heritage':
-      return 'تراث';
-    case 'nature':
-      return 'طبيعة';
-    case 'arts':
-      return 'فنون';
-    case 'modern':
-      return 'عصري';
-    default:
-      return value;
+    switch (value.toLowerCase()) {
+      case 'heritage':
+        return 'تراث';
+      case 'nature':
+        return 'طبيعة';
+      case 'arts':
+        return 'فنون';
+      case 'modern':
+        return 'عصري';
+      default:
+        return value;
+    }
   }
-}
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final user = ref.watch(authNotifierProvider).valueOrNull;
     final isGuest = user == null || user.role == UserRole.guest;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
@@ -106,11 +106,10 @@ class HomeScreen extends ConsumerWidget {
             children: [
               const RepaintBoundary(child: HomeHeroSlider()),
               const SizedBox(height: _sectionGap),
-
               if (!isGuest) ...[
-              _YouMayLikeSection(onEventTap: onEventTap),
-              const SizedBox(height: _sectionGap),
-               ],
+                _YouMayLikeSection(onEventTap: onEventTap),
+                const SizedBox(height: _sectionGap),
+              ],
               _HeritageSection(onSeeAll: onSeeAllArchive),
               const SizedBox(height: _sectionGap),
               const _AttractionsSection(),
@@ -128,9 +127,6 @@ class HomeScreen extends ConsumerWidget {
 }
 
 // ── You May Like ──────────────────────────────────────────────────────────────
-// PERFORMANCE OPTIMIZATION: Watches attractionsStreamProvider and a .select()
-// on authNotifierProvider that only fires when interests change, not on any
-// other user field update (e.g. profile picture).
 
 class _YouMayLikeSection extends ConsumerWidget {
   final void Function(EventModel event)? onEventTap;
@@ -143,12 +139,16 @@ class _YouMayLikeSection extends ConsumerWidget {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final listHeight = HomeScreen._homeCardListHeightFor(context);
 
+    // .select() ensures this only rebuilds when the user's interests change,
+    // not on any other profile field update (e.g. profile picture).
     final user = ref.watch(authNotifierProvider.select((a) => a.valueOrNull));
     if (user is TutorModel) return const SizedBox.shrink();
 
-    final interests = user is TouristModel ? user.culturalInterests : const <String>[];
+    final interests =
+        user is TouristModel ? user.culturalInterests : const <String>[];
 
-    final recommendationsAsync = ref.watch(homeRecommendationsProvider(interests));
+    final recommendationsAsync =
+        ref.watch(homeRecommendationsProvider(interests));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,7 +163,8 @@ class _YouMayLikeSection extends ConsumerWidget {
               height: listHeight,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: HomeScreen._pageH),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: HomeScreen._pageH),
                 clipBehavior: Clip.none,
                 itemCount: items.length,
                 itemBuilder: (context, index) {
@@ -196,11 +197,13 @@ class _YouMayLikeSection extends ConsumerWidget {
         return ExploreHeritageHomeCard(
           title: title,
           image: image,
-          categoryLabel: HomeScreen._translateAttractionCategory(a.category, isAr),
+          categoryLabel:
+              HomeScreen._translateAttractionCategory(a.category, isAr),
           locationLabel: a.getCity(isAr),
           onTap: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => AttractionDetailsScreen(attraction: a)),
+            MaterialPageRoute(
+                builder: (_) => AttractionDetailsScreen(attraction: a)),
           ),
         );
       case RecommendedItemType.trip:
@@ -208,7 +211,11 @@ class _YouMayLikeSection extends ConsumerWidget {
         return ExploreHeritageHomeCard(
           title: title,
           image: image,
-          categoryLabel: t.price.replaceAll('ر.س', '').replaceAll('SAR', '').replaceAll('﷼', '').trim(),
+          categoryLabel: t.price
+              .replaceAll('ر.س', '')
+              .replaceAll('SAR', '')
+              .replaceAll('﷼', '')
+              .trim(),
           locationLabel: t.getCity(isAr),
           showRiyalIcon: true,
           onTap: () => Navigator.push(
@@ -230,7 +237,8 @@ class _YouMayLikeSection extends ConsumerWidget {
         return ExploreHeritageHomeCard(
           title: title,
           image: image,
-          categoryLabel: HomeScreen._translateCategory(c.categoryId, AppLocalizations.of(context)),
+          categoryLabel: HomeScreen._translateCategory(
+              c.categoryId, AppLocalizations.of(context)),
           locationLabel: isAr ? c.regionAr : c.regionEn,
           onTap: () => Navigator.push(
             context,
@@ -242,7 +250,6 @@ class _YouMayLikeSection extends ConsumerWidget {
 }
 
 // ── Explore Saudi Heritage ────────────────────────────────────────────────────
-// PERFORMANCE OPTIMIZATION: Only rebuilds when culturalNotifierProvider changes.
 
 class _HeritageSection extends ConsumerWidget {
   final VoidCallback? onSeeAll;
@@ -288,10 +295,9 @@ class _HeritageSection extends ConsumerWidget {
                     child: ExploreHeritageHomeCard(
                       title: isAr ? item.titleAr : item.titleEn,
                       image: item.imageUrl,
-                      categoryLabel: HomeScreen._translateCategory(
-                          item.categoryId, l10n),
-                      locationLabel:
-                          isAr ? item.regionAr : item.regionEn,
+                      categoryLabel:
+                          HomeScreen._translateCategory(item.categoryId, l10n),
+                      locationLabel: isAr ? item.regionAr : item.regionEn,
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -319,8 +325,6 @@ class _HeritageSection extends ConsumerWidget {
 }
 
 // ── Attractions ───────────────────────────────────────────────────────────────
-// PERFORMANCE OPTIMIZATION: Only rebuilds when attractionsStreamProvider changes.
-// Shares the cached stream value with _YouMayLikeSection — no duplicate Firestore read.
 
 class _AttractionsSection extends ConsumerWidget {
   const _AttractionsSection();
@@ -364,8 +368,8 @@ class _AttractionsSection extends ConsumerWidget {
                     child: ExploreHeritageHomeCard(
                       title: a.getName(isAr),
                       image: a.mainImage,
-                      categoryLabel:
-                     HomeScreen._translateAttractionCategory(a.category, isAr),
+                      categoryLabel: HomeScreen._translateAttractionCategory(
+                          a.category, isAr),
                       locationLabel: a.getCity(isAr),
                       onTap: () => Navigator.push(
                         context,
@@ -392,7 +396,6 @@ class _AttractionsSection extends ConsumerWidget {
 }
 
 // ── Trips ─────────────────────────────────────────────────────────────────────
-// PERFORMANCE OPTIMIZATION: Only rebuilds when allTripsStreamProvider changes.
 
 class _TripsSection extends ConsumerWidget {
   const _TripsSection();
@@ -462,7 +465,6 @@ class _TripsSection extends ConsumerWidget {
 }
 
 // ── Events ────────────────────────────────────────────────────────────────────
-// PERFORMANCE OPTIMIZATION: Only rebuilds when upcomingEventsStreamProvider changes.
 
 class _EventsSection extends ConsumerWidget {
   final void Function(EventModel event)? onEventTap;
@@ -556,8 +558,7 @@ class _SectionHeader extends StatelessWidget {
               ),
             ),
           ),
-          if (onTap != null)
-            const SizedBox(width: 10),
+          if (onTap != null) const SizedBox(width: 10),
           if (onTap != null)
             InkWell(
               onTap: onTap,
@@ -579,10 +580,10 @@ class _SectionHeader extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.end,
                         style: theme.textTheme.bodyMedium?.copyWith(
-  color: theme.colorScheme.primary,
-  fontWeight: FontWeight.w700,
-  fontSize: 13,
-),
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 6),

@@ -270,9 +270,9 @@ class _HomeHeroSliderState extends ConsumerState<HomeHeroSlider> {
 
       // For each slot: prefer interest-matched content, fall back to the full
       // collection so no slot is ever silently empty when data exists.
-      final pickedCultural    = _pickN(filteredCultural.isNotEmpty ? filteredCultural : culturalItems, 1, rng);
-      final pickedTrips       = _pickN(filteredTrips.isNotEmpty ? filteredTrips : trips, 2, rng);
-      final pickedEvents      = _pickN(filteredEvents.isNotEmpty ? filteredEvents : events, 1, rng);
+      final pickedCultural = _pickN(filteredCultural.isNotEmpty ? filteredCultural : culturalItems, 1, rng);
+      final pickedTrips = _pickN(filteredTrips.isNotEmpty ? filteredTrips : trips, 2, rng);
+      final pickedEvents = _pickN(filteredEvents.isNotEmpty ? filteredEvents : events, 1, rng);
       final pickedAttractions = _pickN(filteredAttractions.isNotEmpty ? filteredAttractions : attractions, 1, rng);
 
       final slides = <_HeroSlideData>[];
@@ -561,7 +561,6 @@ class _HeroSlideData {
     this.isPersonalized = false,
   });
 }
-
 
 class _CinematicHeroSlide extends StatelessWidget {
   final _HeroSlideData slide;

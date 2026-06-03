@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:athar_app/core/theme/app_theme.dart';
@@ -47,31 +46,26 @@ class RecommendedItemCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-
           border: Border.all(
-           color: isHighContrast
-           ? theme.colorScheme.onSurface
-           : theme.dividerColor.withValues(alpha: 0.55),
-           width: isHighContrast ? 2 : 1,
+            color: isHighContrast
+                ? theme.colorScheme.onSurface
+                : theme.dividerColor.withValues(alpha: 0.55),
+            width: isHighContrast ? 2 : 1,
           ),
-
-
-         boxShadow: isHighContrast
-         ? []
-         : [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.06),
-          blurRadius: 12,
-          offset: const Offset(0, 6),
-        ),
-      ],
+          boxShadow: isHighContrast
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            // Image + Badge
             Stack(
               children: [
                 CachedNetworkImage(
@@ -81,15 +75,11 @@ class RecommendedItemCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   placeholder: (_, __) => Container(
                     height: 140,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .surfaceContainerHighest,
+                    color: theme.colorScheme.surfaceContainerHighest,
                   ),
                   errorWidget: (_, __, ___) => Container(
                     height: 140,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .surfaceContainerHighest,
+                    color: theme.colorScheme.surfaceContainerHighest,
                     child: const Icon(Icons.image_not_supported_outlined,
                         size: 36),
                   ),
@@ -122,8 +112,6 @@ class RecommendedItemCard extends StatelessWidget {
                 ),
               ],
             ),
-
-            // Title + Location
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
