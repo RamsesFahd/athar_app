@@ -1733,12 +1733,34 @@ export const onBookingStatusChanged = onDocumentUpdated(
       const childrenCount: number = after.childrenCount ?? 0;
       const slotsToRestore = adultsCount + Math.ceil(childrenCount / 2);
       try {
-        await db.collection("trips").doc(tripId).update({
-          availableSeats: FieldValue.increment(slotsToRestore),
-        });
-        logger.info(`[seats] Restored ${slotsToRestore} seat(s) to trip ${tripId}`);
+        const tripSnap = await db.collection("trips").doc(tripId).get();
+        const tripData = tripSnap.data();
+        if (tripData?.availableSeats != null) {
+          await db.collection("trips").doc(tripId).update({
+            availableSeats: FieldValue.increment(slotsToRestore),
+          });
+          logger.info(`[seats] Restored ${slotsToRestore} seat(s) to trip ${tripId}`);
+        }
       } catch (err) {
         logger.error(`[seats] Failed to restore seats for trip ${tripId}`, err);
+      }
+    }
+
+    // ── Reward restoration ─────────────────────────────────────────────────
+    const rewardId = after.rewardId as string | undefined;
+    if (
+      rewardId &&
+      touristId &&
+      (after.status === "rejected" || after.status === "cancelled")
+    ) {
+      try {
+        await db
+          .collection("users").doc(touristId)
+          .collection("rewards").doc(rewardId)
+          .update({ isUsed: false, usedAt: null, bookingId: null });
+        logger.info(`[reward] Restored reward ${rewardId} for tourist ${touristId}`);
+      } catch (err) {
+        logger.error(`[reward] Failed to restore reward ${rewardId}`, err);
       }
     }
 
@@ -1802,16 +1824,17 @@ function scheduledBookingStart(date: string, timeSlot: string): Date | null {
   );
 }
 
-function scheduledBookingEnd(date: string, timeSlot: string): Date | null {
+function scheduledBookingEnd(date: string, timeSlot: string, durationDays?: number): Date | null {
   const bookingDate = parseBookingDate(date);
   const timeParts = extractTimeParts(timeSlot);
-  // Require at least 2 time parts (start AND end) — a single time cannot determine end time.
-  if (!bookingDate || timeParts.length < 2) return null;
+  if (!bookingDate || timeParts.length === 0) return null;
   const [hours, minutes] = timeParts[timeParts.length - 1];
+  const lastDay = new Date(bookingDate);
+  lastDay.setDate(lastDay.getDate() + ((durationDays ?? 1) - 1));
   return new Date(
-    bookingDate.getFullYear(),
-    bookingDate.getMonth(),
-    bookingDate.getDate(),
+    lastDay.getFullYear(),
+    lastDay.getMonth(),
+    lastDay.getDate(),
     hours,
     minutes,
   );
@@ -1897,6 +1920,7 @@ export const autoCompleteBookings = onSchedule(
       const scheduledEnd = scheduledBookingEnd(
         String(data.date ?? ""),
         String(data.timeSlot ?? ""),
+        data.tripDurationDays as number | undefined,
       );
 
       if (!scheduledEnd) continue;
@@ -1976,7 +2000,7 @@ export const markBookingCompleted = onCall(
         throw new HttpsError("failed-precondition", "Only approved bookings can be completed.");
       }
 
-      const scheduledEnd = scheduledBookingEnd(String(bookingData.date ?? ""), String(bookingData.timeSlot ?? ""));
+      const scheduledEnd = scheduledBookingEnd(String(bookingData.date ?? ""), String(bookingData.timeSlot ?? ""), bookingData.tripDurationDays as number | undefined);
       if (!scheduledEnd) {
         throw new HttpsError("failed-precondition", "Booking schedule is invalid.");
       }
@@ -1995,7 +2019,7 @@ export const markBookingCompleted = onCall(
     // Slot cleanup: remove guide_slots for this booking's dates if no other
     // active bookings (pending/approved) remain for the same trip+date.
     const completedData = (await bookingRef.get()).data();
-    if (completedData && completedData.tutorType === "individual") {
+    if (completedData && (completedData.tutorType === "individual" || completedData.tripType === "private")) {
       const tutorId  = completedData.tutorId  as string | undefined;
       const tripId   = completedData.tripId   as string | undefined;
       const dateStr  = completedData.date     as string | undefined;

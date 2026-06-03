@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:athar_app/core/models/booking/booking_model.dart';
 import 'package:athar_app/core/models/contribution/user_reward_model.dart';
 import 'package:athar_app/core/models/user/user_model.dart';
+import 'package:athar_app/core/utils/booking_schedule_helper.dart';
 import 'package:athar_app/core/utils/date_utils.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
@@ -25,9 +26,9 @@ class BookingRepository {
   Future<void> createBooking(BookingModel booking) async {
     // ── 1. 24-hour advance check ──────────────────────────────────────────────
     final tripDate = DateTime.tryParse(booking.date);
-    final today = DateTime.now();
-    final todayOnly = DateTime(today.year, today.month, today.day);
-    if (tripDate == null || !tripDate.isAfter(todayOnly)) {
+    final scheduledStart = bookingScheduledStart(booking);
+    final cutoff = DateTime.now().add(const Duration(hours: 24));
+    if (tripDate == null || scheduledStart == null || !scheduledStart.isAfter(cutoff)) {
       throw Exception('bookingTooCloseError');
     }
 
@@ -102,14 +103,15 @@ class BookingRepository {
         });
       }
 
-      // 5e. Write booking — include tutorType for later cleanup use
+      // 5e. Write booking — include tutorType and tripType for later cleanup use
       tx.set(bookingRef, {
         ...booking.toMap(),
         'tutorType': tutorType,
+        'tripType': tripType,
       });
 
       // 5f. Write slot docs using cached reads — no tx.get after writes
-      if (tutorType == 'individual') {
+      if (tutorType == 'individual' || tripType == 'private') {
         for (final date in newDates) {
           if (cachedSlots[date] != null && !cachedSlots[date]!.exists) {
             tx.set(_slots.doc('${booking.tutorId}_$date'), {
@@ -220,7 +222,8 @@ class BookingRepository {
     if ((status == BookingStatus.cancelled ||
             status == BookingStatus.rejected) &&
         bookingSnap.exists &&
-        (bookingData?['tutorType'] as String?) == 'individual') {
+        ((bookingData?['tutorType'] as String?) == 'individual' ||
+            (bookingData?['tripType'] as String?) == 'private')) {
       final tutorId = bookingData?['tutorId'] as String? ?? '';
       final tripId = bookingData?['tripId'] as String? ?? '';
       final date = bookingData?['date'] as String? ?? '';
