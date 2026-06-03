@@ -1,22 +1,3 @@
-// ============================================================================
-// Athar — User Preferences Screen (Refactored)
-// ----------------------------------------------------------------------------
-// Location: lib/features/onboarding/view/user_preferences_screen.dart
-//
-// What changed from the previous version:
-//   ❌ Removed: hardcoded `const _interests = [...]` list
-//   ❌ Removed: storing Arabic labels as IDs (broke i18n + recommendations)
-//   ❌ Removed: direct Image.network calls (no caching, no fallback)
-//
-//   ✅ Added: reads interests from Firestore via taxonomyProvider
-//   ✅ Added: uses InterestImage widget (Firebase Storage + cache)
-//   ✅ Added: stores English IDs (e.g., 'heritage_sites') in Firestore
-//   ✅ Added: bilingual labels (Arabic by default, English when locale is en)
-//   ✅ Added: uses PreferencesNotifier for state management
-//   ✅ Added: graceful loading and error states
-//   ✅ Added: isEditMode param for editing interests from profile screen
-// ============================================================================
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/navigation/app_routes.dart';
@@ -91,21 +72,20 @@ class _UserPreferencesScreenState
       body: SafeArea(
         child: Stack(
           children: [
-           Column(
-  children: [
-    if (widget.isEditMode)
-      Padding(
-        padding: const EdgeInsets.only(left: 12, top: 12),
-        child: Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
-      ),
-
-            _Header(selectedCount: prefsState.selectedIds.length),
+            Column(
+              children: [
+                if (widget.isEditMode)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12, top: 12),
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    ),
+                  ),
+                _Header(selectedCount: prefsState.selectedIds.length),
                 Expanded(
                   child: taxonomyAsync.when(
                     data: (interests) => _InterestsGrid(interests: interests),
@@ -121,7 +101,7 @@ class _UserPreferencesScreenState
                 ),
               ],
             ),
-            // Show error snackbar reactively when notifier emits one
+            // Inline error banner shown when the Firestore save call fails.
             if (prefsState.errorMessage != null)
               Positioned(
                 left: 22,
@@ -169,8 +149,7 @@ class _UserPreferencesScreenState
     if (!context.mounted) return;
 
     if (success) {
-      // Stream in AuthNotifier propagates the Firestore update automatically.
-
+      // The AuthNotifier stream picks up the Firestore change automatically.
       if (widget.isEditMode) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -185,10 +164,6 @@ class _UserPreferencesScreenState
     }
   }
 }
-
-// ============================================================================
-// Header
-// ============================================================================
 
 class _Header extends StatelessWidget {
   final int selectedCount;
@@ -241,10 +216,6 @@ class _Header extends StatelessWidget {
   }
 }
 
-// ============================================================================
-// Grid
-// ============================================================================
-
 class _InterestsGrid extends ConsumerWidget {
   final List<TaxonomyInterest> interests;
   const _InterestsGrid({required this.interests});
@@ -279,10 +250,6 @@ class _InterestsGrid extends ConsumerWidget {
     );
   }
 }
-
-// ============================================================================
-// Tile
-// ============================================================================
 
 class _InterestTile extends StatelessWidget {
   final TaxonomyInterest interest;
@@ -348,10 +315,6 @@ class _InterestTile extends StatelessWidget {
   }
 }
 
-// ============================================================================
-// Continue / Save Button
-// ============================================================================
-
 class _ContinueButton extends ConsumerWidget {
   final bool isEditMode;
   final VoidCallback onPressed;
@@ -398,10 +361,6 @@ class _ContinueButton extends ConsumerWidget {
     );
   }
 }
-
-// ============================================================================
-// Error View
-// ============================================================================
 
 class _ErrorView extends StatelessWidget {
   final String message;
