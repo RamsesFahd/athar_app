@@ -1,10 +1,3 @@
-// ============================================================================
-// NEW SCREEN: Add to lib/features/admin/screens/content_migration_screen.dart
-// ----------------------------------------------------------------------------
-// One-time admin screen to migrate all existing content (98 docs) to have
-// interestIds + embeddings. Run it once after deploying the new Cloud Function.
-// ============================================================================
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:athar_app/core/theme/app_colors.dart';
@@ -128,7 +121,7 @@ class _ContentMigrationScreenState
           FirebaseFunctions.instanceFor(region: 'us-central1').httpsCallable(
         'embedMissingDocuments',
         options: HttpsCallableOptions(
-          timeout: const Duration(minutes: 10), // ✅ زيادة المهلة لـ 10 دقائق
+          timeout: const Duration(minutes: 10),
         ),
       );
       final result = await callable.call();
@@ -136,48 +129,48 @@ class _ContentMigrationScreenState
       final converted = _convertResponse(result.data) as Map<String, dynamic>;
       final stats = converted['stats'] as Map<String, dynamic>;
 
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Text(l10n.adminOperationComplete),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: stats.entries.map((e) {
-              final s = e.value as Map<String, dynamic>;
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  l10n.adminEmbeddingStatsLine(
-                    e.key,
-                    (s['processed'] ?? 0).toString(),
-                    (s['skipped'] ?? 0).toString(),
-                    (s['failed'] ?? 0).toString(),
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text(l10n.adminOperationComplete),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: stats.entries.map((e) {
+                final s = e.value as Map<String, dynamic>;
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Text(
+                    l10n.adminEmbeddingStatsLine(
+                      e.key,
+                      (s['processed'] ?? 0).toString(),
+                      (s['skipped'] ?? 0).toString(),
+                      (s['failed'] ?? 0).toString(),
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n.commonOk),
+                );
+              }).toList(),
             ),
-          ],
-        ),
-      );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(l10n.commonOk),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.commonErrorWithMessage('')), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isEmbedding = false);
     }
-  } catch (e) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.commonErrorWithMessage('')), backgroundColor: Colors.red),
-      );
-    }
-  } finally {
-    if (mounted) setState(() => _isEmbedding = false);
   }
-}
 
   Future<void> _inspectDocumentShapes() async {
     final l10n = AppLocalizations.of(context);
@@ -273,7 +266,6 @@ class _ContentMigrationScreenState
               ),
             ),
             const SizedBox(height: 16),
-            // TEMPORARY — remove once all trips have interestIds + embedding
             ElevatedButton.icon(
               onPressed: _isMigratingTrips ? null : _runTripsMigration,
               icon: _isMigratingTrips

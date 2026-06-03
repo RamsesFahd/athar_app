@@ -56,6 +56,7 @@ class _AddCulturalContentScreenState
     'southern': 'southern_region',
   };
 
+  // Handles contributions submitted before region IDs were standardised to the '_region' suffix format.
   String? _normalizeRegionId(String? id) {
     if (id == null) return null;
     final validIds = regionsData.map((r) => r.regionId).toSet();
@@ -73,6 +74,7 @@ class _AddCulturalContentScreenState
       _descArController.text = item.descriptionAr;
       _descEnController.text = item.descriptionEn;
       final validCategoryIds = _categories.map((c) => c.id).toSet();
+      // Fall back to 'food' if Firestore holds a category ID not in the current enum.
       _selectedCategory =
           validCategoryIds.contains(item.categoryId) ? item.categoryId : 'food';
       _selectedRegionId = _normalizeRegionId(item.regionId);

@@ -43,7 +43,7 @@ class _AdminNavigationContainerState
     final adminTheme = AppTheme.getTheme(
       AppSettings(fontSize: AppFontSize.medium, locale: const Locale('ar')),
     );
-    final fixedTheme = adminTheme.copyWith(
+    final theme = adminTheme.copyWith(
       colorScheme: adminTheme.colorScheme.copyWith(
         brightness: Brightness.light,
       ),
@@ -51,13 +51,12 @@ class _AdminNavigationContainerState
       primaryTextTheme:
           adminTheme.primaryTextTheme.apply(fontSizeFactor: 1.0),
     );
-    final theme = fixedTheme;
 
     return Localizations.override(
       context: context,
       locale: const Locale('ar'),
       child: Theme(
-        data: fixedTheme,
+        data: theme,
         child: MediaQuery(
           data:
               MediaQuery.of(context).copyWith(textScaler: TextScaler.noScaling),

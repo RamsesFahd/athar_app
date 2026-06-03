@@ -21,8 +21,6 @@ class _TutorVerificationDetailScreenState
 
   TutorModel get tutor => widget.tutor;
 
-  // ── Revoke verification ──────────────────────────────────────────────────────────────
-
   Future<void> _showRevokeDialog() async {
     final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
@@ -79,8 +77,6 @@ class _TutorVerificationDetailScreenState
     }
   }
 
-  // ── Approve ──────────────────────────────────────────────────────────────────
-
   Future<void> _showApproveDialog() async {
     final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
@@ -133,8 +129,6 @@ class _TutorVerificationDetailScreenState
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
-  // ── Reject ───────────────────────────────────────────────────────────────────
 
   Future<void> _showRejectSheet() async {
     final l10n = AppLocalizations.of(context);
@@ -234,8 +228,6 @@ class _TutorVerificationDetailScreenState
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
-  // ── Build ─────────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {

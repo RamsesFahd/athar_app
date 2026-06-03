@@ -98,25 +98,21 @@ class AttractionDetailsScreen extends ConsumerWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // ── Scrollable content ───────────────────────────────────────
           SingleChildScrollView(
             padding: const EdgeInsets.only(bottom: 100),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Hero image carousel ───────────────────────────────
                 _HeroCarousel(
                   heroTag: 'attraction-${attraction.id}-hero',
                   images: [attraction.mainImage, ...gallery],
                 ),
 
-                // ── Content ───────────────────────────────────────────
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ── Name ────────────────────────────────────────
                       Text(
                         attraction.getName(isAr),
                         style: _nameStyle(theme, isAr),
@@ -124,7 +120,6 @@ class AttractionDetailsScreen extends ConsumerWidget {
 
                       const SizedBox(height: 20),
 
-                      // ── Info cards (side by side) ────────────────────
                       IntrinsicHeight(
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -163,7 +158,6 @@ class AttractionDetailsScreen extends ConsumerWidget {
 
                       const SizedBox(height: 24),
 
-                      // ── Description ──────────────────────────────────
                       Text(
                         l10n.attractionAbout,
                         style: _sectionTitleStyle(theme, isAr),
@@ -174,7 +168,6 @@ class AttractionDetailsScreen extends ConsumerWidget {
                         style: _bodyStyle(theme, isAr),
                       ),
 
-                      // ── Location ─────────────────────────────────────
                       const SizedBox(height: 24),
                       Text(
                         l10n.locationLabel,
@@ -195,7 +188,6 @@ class AttractionDetailsScreen extends ConsumerWidget {
                         ],
                       ),
 
-                      // ── Ticket link ───────────────────────────────────
                       if (attraction.ticketBookingUrl != null) ...[
                         const SizedBox(height: 24),
                         GestureDetector(
@@ -230,7 +222,6 @@ class AttractionDetailsScreen extends ConsumerWidget {
             ),
           ),
 
-          // ── Top navigation overlay ───────────────────────────────────
           Positioned(
             top: 0,
             left: 0,
@@ -270,7 +261,6 @@ class AttractionDetailsScreen extends ConsumerWidget {
             ),
           ),
 
-          // ── Bottom action bar ────────────────────────────────────────
           Positioned(
             bottom: 0,
             left: 0,
@@ -325,8 +315,6 @@ class AttractionDetailsScreen extends ConsumerWidget {
     );
   }
 }
-
-// ── Sub-widgets ─────────────────────────────────────────────────────────────
 
 class _CircleNavButton extends StatelessWidget {
   final IconData icon;
@@ -519,12 +507,10 @@ class _HeroCarouselState extends State<_HeroCarousel> {
             // Dot indicators — IgnorePointer so swipes reach the PageView
             if (widget.images.length > 1)
               Positioned(
-                // <-- اجعل Positioned هي الحاوية الخارجية
                 bottom: 16,
                 left: 0,
                 right: 0,
                 child: IgnorePointer(
-                  // <-- ضع IgnorePointer بداخلها
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(

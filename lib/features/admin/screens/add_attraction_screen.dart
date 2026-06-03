@@ -25,13 +25,11 @@ class AddAttractionScreen extends ConsumerStatefulWidget {
 class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // ── Identity ─────────────────────────────────────────────────────────────────
   final _nameArController = TextEditingController();
   final _nameEnController = TextEditingController();
   final _descArController = TextEditingController();
   final _descEnController = TextEditingController();
 
-  // ── Classification ────────────────────────────────────────────────────────────
   String _selectedCategory = 'Heritage';
   String _categoryColorCode = '#7D5A3C';
 
@@ -66,32 +64,26 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
     'southern_region': 'southern',
   };
 
-  // ── Location ──────────────────────────────────────────────────────────────────
   String? _selectedRegionId;
   String? _selectedCityId;
   final _addressController = TextEditingController();
   final _latController = TextEditingController();
   final _lngController = TextEditingController();
 
-  // ── Main Image ────────────────────────────────────────────────────────────────
   File? _mainImageFile;
   String? _existingMainImageUrl;
 
-  // ── Gallery ───────────────────────────────────────────────────────────────────
   List<File> _galleryFiles = [];
   List<String> _existingGalleryUrls = [];
 
-  // ── Video ─────────────────────────────────────────────────────────────────────
   File? _videoFile;
   String? _existingVideoUrl;
 
-  // ── Hours & Fees ──────────────────────────────────────────────────────────────
   bool _isAlwaysOpen = false;
   final _hoursArController = TextEditingController();
   final _hoursEnController = TextEditingController();
   final _feeController = TextEditingController(text: '0');
 
-  // ── Optional ──────────────────────────────────────────────────────────────────
   final _ticketUrlController = TextEditingController();
 
   bool _isSubmitting = false;
@@ -136,6 +128,7 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
     _existingVideoUrl = a.videoUrl;
   }
 
+  // Resolves a city display name back to its canonical ID by checking both Arabic and English values.
   String? _findCityId(String cityName) {
     final lower = cityName.toLowerCase();
     for (final entry in cityMap.entries) {
@@ -163,8 +156,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
     super.dispose();
   }
 
-  // ── Media picking ─────────────────────────────────────────────────────────────
-
   Future<void> _pickMainImage() async {
     final picked = await ImagePicker()
         .pickImage(source: ImageSource.gallery, imageQuality: 80);
@@ -182,8 +173,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
     final picked = await ImagePicker().pickVideo(source: ImageSource.gallery);
     if (picked != null) setState(() => _videoFile = File(picked.path));
   }
-
-  // ── Upload helpers ────────────────────────────────────────────────────────────
 
   Future<String> _uploadImage(File file, String folder) async {
     final ref = FirebaseStorage.instance
@@ -203,8 +192,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
     final task = await ref.putFile(file);
     return await task.ref.getDownloadURL();
   }
-
-  // ── Submit ────────────────────────────────────────────────────────────────────
 
   Future<void> _submit() async {
     final l10n = AppLocalizations.of(context);
@@ -351,8 +338,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
     );
   }
 
-  // ── Build ─────────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -375,7 +360,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Main Image ─────────────────────────────────────────────
               _SectionHeader(l10n.adminMainImage),
               _ImagePickerTile(
                 file: _mainImageFile,
@@ -385,7 +369,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
 
               const SizedBox(height: 24),
 
-              // ── Identity ───────────────────────────────────────────────
               _SectionHeader(l10n.adminNameDescription),
               _FormField(
                 controller: _nameArController,
@@ -417,7 +400,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
 
               const SizedBox(height: 24),
 
-              // ── Classification ─────────────────────────────────────────
               _SectionHeader(l10n.adminClassification),
               _Label(l10n.adminCategory),
               DropdownButtonFormField<String>(
@@ -440,7 +422,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
 
               const SizedBox(height: 24),
 
-              // ── Location ───────────────────────────────────────────────
               _SectionHeader(l10n.adminLocation),
               _Label('${l10n.adminRegion} *'),
               DropdownButtonFormField<String>(
@@ -527,7 +508,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
 
               const SizedBox(height: 24),
 
-              // ── Hours & Fees ───────────────────────────────────────────
               _SectionHeader(l10n.adminHoursFees),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
@@ -568,13 +548,11 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
 
               const SizedBox(height: 24),
 
-              // ── Gallery Images ─────────────────────────────────────────
               _SectionHeader(l10n.adminGalleryImages),
               _buildGallerySection(theme),
 
               const SizedBox(height: 24),
 
-              // ── Video ──────────────────────────────────────────────────
               _SectionHeader(l10n.adminVideoOptional),
               _VideoPickerTile(
                 file: _videoFile,
@@ -588,7 +566,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
 
               const SizedBox(height: 24),
 
-              // ── Optional ───────────────────────────────────────────────
               _SectionHeader(l10n.adminOptional),
               _FormField(
                 controller: _ticketUrlController,
@@ -600,7 +577,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
 
               const SizedBox(height: 32),
 
-              // ── Submit ─────────────────────────────────────────────────
               SizedBox(
                 width: double.infinity,
                 height: 54,
@@ -709,8 +685,6 @@ class _AddAttractionScreenState extends ConsumerState<AddAttractionScreen> {
     );
   }
 }
-
-// ── Helper widgets ────────────────────────────────────────────────────────────
 
 class _SectionHeader extends StatelessWidget {
   final String text;

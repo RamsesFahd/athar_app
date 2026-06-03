@@ -21,9 +21,8 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
   String _selectedCategory = 'All';
   String _searchQuery = '';
 
-  // PERFORMANCE OPTIMIZATION: Cached derivations from stream data.
-  // Updated via ref.listen only when Firestore emits a new snapshot,
-  // not on every setState (search keystrokes, filter toggles, grid toggle).
+  // Cached from the stream to avoid re-deriving on every setState
+  // (search keystrokes, filter toggles, layout switch).
   List<AttractionModel> _allItems = const [];
   List<String> _regions = const ['All'];
   List<String> _categories = const ['All'];
@@ -47,9 +46,8 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
   }
 
   void _updateCache(List<AttractionModel> items) {
-    // Called from initState seed (no setState needed — first build hasn't run)
-    // and from listenManual (ref.watch in build triggers the rebuild, so
-    // setState is also not needed for subsequent emissions).
+    // No setState needed: initState seed hasn't run the first build yet,
+    // and subsequent emissions are caught by ref.watch in build().
     _allItems = items;
     _regions = [
       'All',
@@ -125,8 +123,8 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(l10n.commonErrorWithMessage(''))),
         data: (_) {
-          // Use pre-cached collections. Only the filter pass runs here,
-          // which is an O(n) scan — not the O(n) set/map allocations.
+          // Only the O(n) filter scan runs here; heavier set/map allocations
+          // happen once in _updateCache on each Firestore emission.
           final filtered = _allItems.where((item) {
             final matchRegion =
                 _selectedRegion == 'All' || item.region == _selectedRegion;
@@ -245,7 +243,6 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
               if (_showFilters) ...[
                 const SizedBox(height: 12),
                 _FilterRow(
-                  label: l10n.locationLabel,
                   options: _regions,
                   selected: _selectedRegion,
                   onSelected: (v) => setState(() => _selectedRegion = v),
@@ -254,7 +251,6 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
                 ),
                 const SizedBox(height: 6),
                 _FilterRow(
-                  label: l10n.categoryLabel,
                   options: _categories,
                   selected: _selectedCategory,
                   onSelected: (v) => setState(() => _selectedCategory = v),
@@ -313,7 +309,6 @@ class _AttractionsListScreenState extends ConsumerState<AttractionsListScreen> {
 }
 
 class _FilterRow extends StatelessWidget {
-  final String label;
   final List<String> options;
   final String selected;
   final ValueChanged<String> onSelected;
@@ -322,7 +317,6 @@ class _FilterRow extends StatelessWidget {
   final String Function(String)? labelFor;
 
   const _FilterRow({
-    required this.label,
     required this.options,
     required this.selected,
     required this.onSelected,

@@ -53,8 +53,7 @@ class _ContributionReviewDetailScreenState
     super.dispose();
   }
 
-  // ── Auto-translate ──────────────────────────────────────────────────────────
-
+  // Generates the admin-side translation so both languages are populated before the contribution is approved.
   Future<void> _autoTranslate() async {
     setState(() => _isTranslating = true);
     try {
@@ -92,8 +91,6 @@ class _ContributionReviewDetailScreenState
       if (mounted) setState(() => _isTranslating = false);
     }
   }
-
-  // ── Approve ─────────────────────────────────────────────────────────────────
 
   Future<void> _showApproveDialog() async {
     final l10n = AppLocalizations.of(context);
@@ -136,7 +133,6 @@ class _ContributionReviewDetailScreenState
                   style: const TextStyle(fontSize: 13),
                 ),
                 const SizedBox(height: 16),
-                // Base points chip
                 Row(
                   children: [
                     const Icon(Icons.star_outline, size: 16, color: Colors.amber),
@@ -155,7 +151,6 @@ class _ContributionReviewDetailScreenState
                   ],
                 ),
                 const SizedBox(height: 12),
-                // Bonus points input
                 TextField(
                   controller: bonusController,
                   keyboardType: TextInputType.number,
@@ -170,7 +165,6 @@ class _ContributionReviewDetailScreenState
                   onChanged: (_) => setDialogState(() {}),
                 ),
                 const SizedBox(height: 14),
-                // Total preview
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
@@ -271,8 +265,6 @@ class _ContributionReviewDetailScreenState
     }
   }
 
-  // ── Reject ──────────────────────────────────────────────────────────────────
-
   Future<void> _showRejectSheet() async {
     final l10n = AppLocalizations.of(context);
     final reasonController = TextEditingController();
@@ -371,8 +363,6 @@ class _ContributionReviewDetailScreenState
       if (mounted) setState(() => _isLoading = false);
     }
   }
-
-  // ── Build ────────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -667,8 +657,6 @@ class _ContributionReviewDetailScreenState
     );
   }
 }
-
-// ── Shared UI helpers ────────────────────────────────────────────────────────
 
 class _InfoCard extends StatelessWidget {
   final String title;

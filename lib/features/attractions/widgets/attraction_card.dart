@@ -85,9 +85,8 @@ class AttractionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. Full-cover hero image
           Expanded(
-            flex: 5, // ✨ خلينا الصورة تاخذ أغلب مساحة الكارد
+            flex: 5,
             child: Hero(
               tag: 'attraction-${attraction.id}-hero',
               child: CachedNetworkImage(
@@ -111,13 +110,8 @@ class AttractionCard extends StatelessWidget {
               ),
             ),
           ),
-
-          // 2. Bottom gradient
-          // ✨ حذفنا الـ gradient لأن النص صار تحت الصورة
-
-          // 3. Content overlay — name, city
           Expanded(
-            flex: 2, // ✨ مساحة النص أصغر بكثير من الصورة
+            flex: 2,
             child: Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 8,
@@ -129,10 +123,7 @@ class AttractionCard extends StatelessWidget {
                 children: [
                   Text(
                     attraction.getName(isAr),
-
-                    // ✨ اسم المعلم صار أصغر
                     maxLines: largeText ? 2 : 1,
-
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w700,
@@ -144,7 +135,7 @@ class AttractionCard extends StatelessWidget {
                     children: [
                       const Icon(
                         Icons.location_on,
-                        size: 11, // ✨ تصغير الايقونة
+                        size: 11,
                       ),
                       const SizedBox(width: 3),
                       Expanded(
@@ -157,10 +148,7 @@ class AttractionCard extends StatelessWidget {
                                 ? theme.colorScheme.onSurface
                                 : theme.colorScheme.onSurface
                                     .withValues(alpha: 0.55),
-
-                            // ✨ تصغير الموقع
                             fontSize: 10,
-
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -171,9 +159,6 @@ class AttractionCard extends StatelessWidget {
               ),
             ),
           ),
-
-          // 4. Invisible full-area tap
-          // ✨ صار الـ InkWell فوق بدل Positioned.fill
         ],
       ),
     );
@@ -191,7 +176,6 @@ class AttractionCard extends StatelessWidget {
         onTap: () => _openDetails(context),
         child: Row(
           children: [
-            // Thumbnail
             Hero(
               tag: 'attraction-${attraction.id}-hero',
               child: ClipRRect(
@@ -231,7 +215,6 @@ class AttractionCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title
                     Text(
                       attraction.getName(isAr),
                       maxLines: 2,
@@ -242,7 +225,6 @@ class AttractionCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    // City
                     Row(
                       children: [
                         Icon(Icons.location_on, size: 13, color: accent),
@@ -261,7 +243,6 @@ class AttractionCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    // Category
                     Text(
                       _categoryLabel(isAr),
                       maxLines: 1,
