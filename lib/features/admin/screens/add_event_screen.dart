@@ -433,7 +433,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image picker
             _SectionLabel(l10n.adminImage),
             GestureDetector(
               onTap: _pickImage,
@@ -470,12 +469,10 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Gallery images
             _SectionLabel('صور إضافية (اختياري)'),
             _buildGallerySection(theme),
             const SizedBox(height: 24),
 
-            // Video
             _SectionLabel('فيديو (اختياري)'),
             _VideoPickerTile(
               file: _videoFile,
@@ -515,7 +512,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Date range picker
             _SectionLabel(l10n.adminEventDate),
             InkWell(
               onTap: _pickDateRange,
@@ -550,7 +546,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Time pickers (start / end)
             _SectionLabel('وقت الفعالية'),
             Row(
               children: [
@@ -561,7 +556,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Lat / Lng with Smart Paste Button
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -612,7 +606,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Event type
             _SectionLabel(l10n.adminEventType),
             DropdownButtonFormField<EventType>(
               initialValue: _selectedEventType,
@@ -628,7 +621,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Region
             _SectionLabel(l10n.adminRegion),
             DropdownButtonFormField<String>(
               initialValue: _selectedRegionId,
@@ -642,7 +634,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Free / Paid toggle
             _SectionLabel(l10n.adminAdmission),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
@@ -665,7 +656,6 @@ class _AddEventScreenState extends ConsumerState<AddEventScreen> {
 
             const SizedBox(height: 16),
 
-            // Submit
             SizedBox(
               width: double.infinity,
               height: 54,

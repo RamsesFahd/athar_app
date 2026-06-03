@@ -81,6 +81,7 @@ class _EventsListScreenState extends ConsumerState<EventsListScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text(e.toString())),
         data: (_) {
+          // Apply event filters locally.
           final filtered = _allItems.where((item) {
             final matchRegion =
                 _selectedRegion == 'All' || item.regionId == _selectedRegion;

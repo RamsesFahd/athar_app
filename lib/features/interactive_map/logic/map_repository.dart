@@ -48,11 +48,14 @@ class MapRepository {
         .toList();
   }
 
-  /// Returns all upcoming events (eventDate >= now).
   Future<List<EventModel>> fetchUpcomingEvents() async {
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day);
+
     final snapshot = await _events
         .where('eventDate',
-            isGreaterThanOrEqualTo: Timestamp.fromDate(DateTime.now()))
+            // Compare from the start of today so same-day events stay visible.
+            isGreaterThanOrEqualTo: Timestamp.fromDate(todayStart))
         .orderBy('eventDate')
         .get();
 
