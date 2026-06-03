@@ -28,8 +28,7 @@ class SmartTextContent extends ConsumerWidget {
     final culturalState = ref.watch(culturalNotifierProvider);
     final bool isAr = Localizations.localeOf(context).languageCode == 'ar';
 
-    // Build the set of valid entity names from both archive and message suggestions.
-    // Only names in this set will be rendered as tappable entities.
+    // Union of archive items and current message suggestions — only these names become tappable entities.
     final Set<String> validEntityNames = {};
     for (final item in culturalState.value?.allItems ?? []) {
       if (item.titleAr.trim().isNotEmpty) {

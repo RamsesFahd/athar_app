@@ -52,6 +52,12 @@ class AuthNotifier extends _$AuthNotifier {
     final firebaseUser = repo.currentUser;
     if (firebaseUser == null) return null;
     final user = await repo.getUserData(firebaseUser.uid);
+    // If Auth has a session but no Firestore profile exists (e.g. interrupted
+    // registration), sign out to prevent the app from entering an inconsistent state.
+    if (user == null && !firebaseUser.isAnonymous) {
+      await repo.logOut();
+      return null;
+    }
     if (user != null) _applyAccessibilitySettings(user.accessibilitySettings);
     return user;
   }
@@ -102,7 +108,6 @@ class AuthNotifier extends _$AuthNotifier {
 
       final user = await _checkAuthStatus();
       if (user != null) {
-        // Register the device token after the new profile is available.
         await NotificationService.instance.registerToken(user.uId);
         if (user.role != UserRole.guest) _startUserStream(user.uId);
       }
@@ -156,7 +161,6 @@ class AuthNotifier extends _$AuthNotifier {
       if (error != null) throw error;
       final user = await _checkAuthStatus();
       if (user != null) {
-        // Register the device token after the new profile is available.
         await NotificationService.instance.registerToken(user.uId);
         if (user.role != UserRole.guest) _startUserStream(user.uId);
       }
@@ -174,14 +178,9 @@ class AuthNotifier extends _$AuthNotifier {
     });
   }
 
-  Future<bool> resetPassword({required String email}) async {
-    try {
-      final repo = ref.read(authRepositoryProvider);
-      final error = await repo.resetPassword(email);
-      return error == null;
-    } catch (_) {
-      return false;
-    }
+  // Returns null on success, or a localizable error key on failure.
+  Future<String?> resetPassword({required String email}) async {
+    return ref.read(authRepositoryProvider).resetPassword(email);
   }
 
   Future<void> sendVerificationLink() async {
@@ -206,9 +205,9 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> submitTutorVerification(String licence) async {
+    final currentUserId = state.value?.uId;
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final currentUserId = state.value?.uId;
       if (currentUserId != null) {
         await ref.read(profileRepositoryProvider).submitTutorCredentials(
           uId: currentUserId,
@@ -220,9 +219,9 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   Future<void> deleteAccount() async {
+    final currentUserId = state.value?.uId;
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      final currentUserId = state.value?.uId;
       if (currentUserId != null) {
         final error = await ref
             .read(authRepositoryProvider)
@@ -253,16 +252,19 @@ class AuthNotifier extends _$AuthNotifier {
     }
 
     if (imageFile != null) {
-      state = const AsyncLoading();
-      state = await AsyncValue.guard(() async {
-        final uId = state.value?.uId;
-        if (uId != null) {
+      final uId = state.value?.uId;
+      if (uId != null) {
+        // Upload without touching auth state. The active Firestore stream
+        // (_startUserStream) will push the updated profile image automatically
+        // once the write completes, keeping the user on the current screen.
+        try {
           await ref
               .read(profileRepositoryProvider)
-              .uploadProfileImage(uId, imageFile!);
+              .uploadProfileImage(uId, imageFile);
+        } catch (_) {
+          // Upload failed; the existing profile image remains unchanged.
         }
-        return await _checkAuthStatus();
-      });
+      }
     }
   }
 }

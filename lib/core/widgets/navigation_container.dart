@@ -103,28 +103,33 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
     // widget and reacts correctly if the user logs out or switches accounts.
     final userAsync = ref.watch(authNotifierProvider);
 
-    return userAsync.when(
-      loading: () => const Scaffold(
+    // Show loading/error only on initial launch before any data has arrived.
+    // Mid-session state updates (e.g. profile picture upload) keep the
+    // current tab visible instead of replacing the IndexedStack.
+    if (!userAsync.hasValue) {
+      if (userAsync.hasError) {
+        return const Scaffold(body: Center(child: Icon(Icons.error_outline)));
+      }
+      return const Scaffold(
         body: Center(child: CircularProgressIndicator.adaptive()),
-      ),
-      error: (_, __) => const Scaffold(
-        body: Center(child: Icon(Icons.error_outline)),
-      ),
-      data: (user) {
-        final isTutor = user?.role == UserRole.tutor;
+      );
+    }
 
-        // Rebuild screen list only when the role actually changes.
-        // This avoids re-instantiating all 5 screens on every auth update.
-        if (_screens == null || _lastIsTutor != isTutor) {
-          _screens = _buildScreens(isTutor);
-          _lastIsTutor = isTutor;
-          // Guard against a stale index that would exceed the new list length.
-          if (_currentIndex >= _screens!.length) {
-            _currentIndex = 0;
-          }
-        }
+    final user = userAsync.value;
+    final isTutor = user?.role == UserRole.tutor;
 
-        return Scaffold(
+    // Rebuild screen list only when the role actually changes.
+    // This avoids re-instantiating all 5 screens on every auth update.
+    if (_screens == null || _lastIsTutor != isTutor) {
+      _screens = _buildScreens(isTutor);
+      _lastIsTutor = isTutor;
+      // Guard against a stale index that would exceed the new list length.
+      if (_currentIndex >= _screens!.length) {
+        _currentIndex = 0;
+      }
+    }
+
+    return Scaffold(
           extendBodyBehindAppBar: true,
           appBar: _subPage != null
               ? null
@@ -184,7 +189,5 @@ class _NavigationContainerState extends ConsumerState<NavigationContainer> {
             },
           ),
         );
-      },
-    );
   }
 }

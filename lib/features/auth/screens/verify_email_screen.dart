@@ -26,7 +26,6 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
   void initState() {
     super.initState();
     _startTimer();
-    // Sending the verification link when the screen is first loaded
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(authNotifierProvider.notifier).sendVerificationLink();
     });
@@ -70,7 +69,6 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
     final theme = Theme.of(context);
     final authState = ref.watch(authNotifierProvider);
 
-    // مراقبة الحالة للانتقال للهوم
     ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
       next.when(
         data: (user) {
@@ -118,7 +116,6 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // أيقونة كبيرة معبرة
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -130,7 +127,6 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
               ),
               const SizedBox(height: 40),
 
-              // العنوان بخط الثيم الرسمي
               Text(
                 l10n.verifyEmailTitle,
                 textAlign: TextAlign.center,
@@ -141,7 +137,6 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
               ),
               const SizedBox(height: 16),
 
-              // رسالة الشرح والإيميل
               Text(
                 l10n.verifyEmailSubtitle,
                 textAlign: TextAlign.center,
@@ -160,7 +155,6 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
               ),
               const SizedBox(height: 48),
 
-              // الزر الرئيسي للتحقق
               AtharButton(
                 label: l10n.verifyButton,
                 isLoading: authState.isLoading,
@@ -171,12 +165,10 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
 
               const SizedBox(height: 20),
 
-              // زر إعادة الإرسال
               _buildResendButton(l10n, authState.isLoading),
 
               const SizedBox(height: 40),
 
-              // زر العودة لتسجيل الدخول (بشكل بسيط)
               TextButton(
                 onPressed: () => _handleBackToLogin(),
                 child: Text(
@@ -220,7 +212,7 @@ class _VerifyEmailScreenState extends ConsumerState<VerifyEmailScreen> {
   }
 
   void _handleBackToLogin() {
-    // يفضل تسجيل الخروج قبل العودة لضمان نظافة الحالة
+    // Logout before navigating back to guarantee a clean auth state.
     ref.read(authNotifierProvider.notifier).logout();
     Navigator.pushNamedAndRemoveUntil(
         context, AppRoutes.signIn, (route) => false);

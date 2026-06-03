@@ -24,13 +24,11 @@ class CustomHeader extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          // 1. صورة الخلفية الخاصة بمشروع أثر
           StorageAssetImage(
             storagePath: storagePath,
             fit: BoxFit.cover,
           ),
 
-          // 2. التدرج اللوني لضمان وضوح النص
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -44,19 +42,16 @@ class CustomHeader extends StatelessWidget {
             ),
           ),
 
-          // 3. نصوص الهيدر (العنوان والوصف)
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 60),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
-              // التعديل الجوهري: CrossAxisAlignment.start تعني اليمين في العربي تلقائيًا
               crossAxisAlignment: centerText
                   ? CrossAxisAlignment.center
                   : CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  // TextAlign.start تتبع اتجاه لغة التطبيق الحالية
                   textAlign: centerText ? TextAlign.center : TextAlign.start,
                   style: theme.textTheme.displayLarge?.copyWith(
                     color: Colors.white,
@@ -75,16 +70,14 @@ class CustomHeader extends StatelessWidget {
               ],
             ),
           ),
-          // ✨ 4. زر سهولة الوصول (في الزاوية العلوية)
           PositionedDirectional(
-            top: 50, // مسافة من الأعلى ليتجاوز النوتش
-            end: 16, // في نهاية الشاشة حسب اتجاه اللغة
+            top: 50,
+            end: 16,
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary,
                 shape: BoxShape.circle,
-                // أضفنا ظل خفيف عشان تبرز الأيقونة فوق صورة الخلفية
                 boxShadow: const [
                   BoxShadow(
                       color: Colors.black45,
@@ -97,7 +90,6 @@ class CustomHeader extends StatelessWidget {
                     color: Colors.white, size: 18),
                 tooltip: 'سهولة الوصول',
                 onPressed: () {
-                  // فتح النافذة المنبثقة للأداة
                   showDialog(
                     context: context,
                     builder: (context) => const AccessibilityControls(),

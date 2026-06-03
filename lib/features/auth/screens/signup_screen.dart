@@ -18,7 +18,6 @@ class SignUpScreen extends ConsumerStatefulWidget {
 }
 
 class _SignUpScreenState extends ConsumerState<SignUpScreen> {
-  // 1. Managing the selected role state (tourist or tutor)
   UserRole _selectedRole = UserRole.tourist;
   TutorType? _selectedTutorType;
   final _fullName = TextEditingController();
@@ -46,7 +45,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
-    // 2. Listening to auth state changes to show error messages or navigate to home screen on successful registration
     ref.listen<AsyncValue<UserModel?>>(authNotifierProvider, (previous, next) {
       next.whenOrNull(
         error: (error, stack) {
@@ -120,12 +118,10 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // --- اختيار الدور ---
                     _buildSectionLabel(l10n.signUpAsLabel, theme),
                     const SizedBox(height: 12),
                     _buildRoleSelector(theme, l10n),
                     const SizedBox(height: 25),
-                    // يظهر فقط إذا كان المستخدم اختار "مرشد"
                     if (_selectedRole == UserRole.tutor) ...[
                       _buildSectionLabel(l10n.guideTypeLabel, theme),
                       const SizedBox(height: 12),
@@ -140,7 +136,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                       ),
                       const SizedBox(height: 25),
                     ],
-                    // --- حقول البيانات ---
                     _buildSectionLabel(l10n.fullNameLabel, theme),
                     _buildTextField(_fullName, l10n.nameHint, false,
                         autofillHints: const [AutofillHints.name]),
@@ -163,7 +158,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
                     const SizedBox(height: 20),
 
-                    // Privacy Policy consent checkbox
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -194,7 +188,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
 
                     const SizedBox(height: 16),
 
-                    // register button
                     AtharButton(
                       label: l10n.createAccountButton,
                       isLoading: _isSignUpLoading,
@@ -222,7 +215,6 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     );
   }
 
-  // UI for role selection between tourist and tutor with visual feedback on selection
   Widget _buildRoleSelector(ThemeData theme, AppLocalizations l10n) {
     return Row(
       children: [
@@ -311,9 +303,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
       _showError(l10n.passwordsDoNotMatchError);
       return;
     }
-    setState(() =>
-        _isSignUpLoading = true); // Show loading state on the sign-up button
-    // triggering the sign-up process in the auth notifier with the selected role
+    setState(() => _isSignUpLoading = true);
     await ref.read(authNotifierProvider.notifier).signUp(
           email: email,
           password: pass,
