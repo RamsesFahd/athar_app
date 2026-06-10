@@ -56,6 +56,8 @@ functions/
 
 ## License
 
-Copyright (c) 2026 Rimas Alharthi. All Rights Reserved.
+Copyright (c) 2026 Athar Team. All Rights Reserved.
+
+**Team:** Rimas Alharthi · Razan Al-Otaibi · Ratal Malki · Agarid Kadu
 
 This project is proprietary software. Unauthorized copying, modification, distribution, or use of this software is strictly prohibited. See [LICENSE](LICENSE) for full terms.
